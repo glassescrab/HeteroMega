@@ -1,3 +1,13 @@
+# HeteroMega
+
+Asymmetric GPU–NPU tensor parallelism for FFN sublayers on AMD AI SoCs.
+The initial source-level NPU kernels, numerical reference, and build/run
+instructions are in [npu/ffn](npu/ffn/README.md). This work starts from the
+HeteroMosaic baseline at commit `61714a3`.
+
+The setup guide below is the inherited HeteroMosaic full-system workflow.
+For the AUP MLIR-AIE notebook, use the isolated NPU instructions above;
+the notebook already supplies the driver and compiler environment.
 
 # Setup Guide
 This guide provides the instructions required to set up, build, and run HeteroMosaic. It covers system prerequisites, kernel and GTT memory configuration, external library dependencies, environment setup, project compilation, and model execution.
