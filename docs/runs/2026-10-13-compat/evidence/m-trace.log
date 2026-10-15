@@ -1,0 +1,10 @@
+
+=== Case 2048x2048x2048 ===
+Artifact dir: "/notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M"
+Completed iGPU baseline avg_latency_us=2040.62 throughput_gops=8418.96 allclose=true max_abs_diff=0
+Running point npuM=256 gpuM=1792
+EXEC ctx=40 cmd=7 argc=4 handles: 5 2 2 3
+Failed to submit work: Operation already in progress
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  npuMatmul_zero failed
+timeout: the monitored command dumped core

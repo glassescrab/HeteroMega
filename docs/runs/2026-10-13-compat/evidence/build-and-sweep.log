@@ -1,0 +1,31 @@
+nohup: ignoring input
+[  8%] Built target npu_matmul_func
+[ 62%] Built target hipkernels
+[ 66%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/unified_llm_w4a16.cpp.o
+[ 70%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/npuSetup.cpp.o
+[ 75%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/hetero_compute.cpp.o
+[ 79%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/helper.cpp.o
+[ 83%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/__/cpu_avx_kernels/w4a16_gemv_avx_packed.cpp.o
+[ 87%] Linking HIP static library libunified_llm_w4a16_hetero_lib.a
+[ 91%] Built target unified_llm_w4a16_hetero_lib
+[ 95%] Building CXX object src/microbenchmarks/CMakeFiles/tensor_parallel_gemm_npu_gpu_sweepM.dir/tensor_parallel_gemm_npu_gpu_sweepM.cpp.o
+[100%] Linking HIP executable ../../bin/tensor_parallel_gemm_npu_gpu_sweepM
+[100%] Built target tensor_parallel_gemm_npu_gpu_sweepM
+[  8%] Built target npu_matmul_func
+[ 62%] Built target hipkernels
+[ 91%] Built target unified_llm_w4a16_hetero_lib
+[ 95%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_libtorch.dir/python_bindings.cpp.o
+[100%] Linking HIP shared module ../../py/unified_llm_w4a16/unified_llm_w4a16_hetero_libtorch.so
+[100%] Built target unified_llm_w4a16_hetero_libtorch
+build_exit=0
+
+=== Case 2048x2048x2048 ===
+Artifact dir: "/notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M"
+Completed iGPU baseline avg_latency_us=2168.41 throughput_gops=7922.81 allclose=true max_abs_diff=0
+Running point npuM=256 gpuM=1792
+Failed to submit work: Operation already in progress
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  npuMatmul_zero failed
+timeout: the monitored command dumped core
+bash: line 1:   444 Aborted                 timeout 90 /notebooks/HeteroMosaic-baseline/build/bin/tensor_parallel_gemm_npu_gpu_sweepM --results_json=/notebooks/heteromega-compat-2026-10-13/m-sweep.json
+sweep_exit=134

@@ -1,0 +1,21 @@
+
+=== Case 2048x2048x2048 ===
+Artifact dir: "/notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M"
+Completed iGPU baseline avg_latency_us=1913.99 throughput_gops=8975.94 allclose=true max_abs_diff=0
+Running point npuM=256 gpuM=1792
+PACKET inst_bo_addr=4108000 encoded=00000000:04108000 childhdr=0000f001 chainhdr=0980a001
+AFTER_WAIT rc=0 chain_state=4 child_state=1 submit_idx=0 error_idx=0
+PACKET inst_bo_addr=4108000 encoded=00000000:04108000 childhdr=0000f001 chainhdr=0980a001
+AFTER_WAIT rc=0 chain_state=4 child_state=1 submit_idx=0 error_idx=0
+Completed npuM=256 avg_latency_us=1919.3 throughput_gops=8951.12 allclose=false max_abs_diff=1.5
+Running point npuM=512 gpuM=1536
+Completed npuM=512 avg_latency_us=1687.14 throughput_gops=10182.8 allclose=false max_abs_diff=1.5
+Running point npuM=768 gpuM=1280
+Completed npuM=768 avg_latency_us=1466.24 throughput_gops=11716.9 allclose=false max_abs_diff=1.5
+Running point npuM=1024 gpuM=1024
+Completed npuM=1024 avg_latency_us=1234.86 throughput_gops=13912.4 allclose=false max_abs_diff=1.5
+Running point npuM=1280 gpuM=768
+Completed npuM=1280 avg_latency_us=1576.79 throughput_gops=10895.5 allclose=false max_abs_diff=1.5
+Running point npuM=1536 gpuM=512
+Completed npuM=1536 avg_latency_us=1772.09 throughput_gops=9694.71 allclose=false max_abs_diff=1.5
+Running point npuM=1792 gpuM=256

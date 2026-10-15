@@ -1,0 +1,79 @@
+{
+  "variant": "gpu_matched",
+  "trace": "sync",
+  "tag": "detail",
+  "input_sha256": "2c11d2476f8b0d68744bec04b88ae434fa2c7f2e1f15a66f6db8785ec5e481c7",
+  "setup_seconds": 33.474943119101226,
+  "context_capacity": 1536,
+  "records": [
+    {
+      "iteration": 0,
+      "warmup": true,
+      "wall_seconds": 2.3083976809866726,
+      "prefill_seconds": 1.86682,
+      "decode_loop_seconds": 0.433972,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648946950705310,
+      "end_ns": 2648949259303487,
+      "fallback_warnings": 0,
+      "command_errors": 0
+    },
+    {
+      "iteration": 1,
+      "warmup": false,
+      "wall_seconds": 2.213824647013098,
+      "prefill_seconds": 1.7806,
+      "decode_loop_seconds": 0.431625,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648949259903626,
+      "end_ns": 2648951473834370,
+      "fallback_warnings": 0,
+      "command_errors": 0
+    },
+    {
+      "iteration": 2,
+      "warmup": false,
+      "wall_seconds": 2.2102100420743227,
+      "prefill_seconds": 1.77809,
+      "decode_loop_seconds": 0.430577,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648951474360960,
+      "end_ns": 2648953684827917,
+      "fallback_warnings": 0,
+      "command_errors": 0
+    }
+  ]
+}

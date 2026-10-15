@@ -1,0 +1,109 @@
+nohup: ignoring input
+[  4%] Building CXX object src/npu_matmul_func/CMakeFiles/npu_matmul_func.dir/npu_matmul_func.cpp.o
+[  8%] Linking CXX static library libnpu_matmul_func.a
+[ 12%] Building HIP object src/hipkernels/CMakeFiles/hipkernels.dir/w4a16_gemm_packed.cu.o
+[ 12%] Built target npu_matmul_func
+[ 16%] Building HIP object src/hipkernels/CMakeFiles/hipkernels.dir/w4a16_gemv_packed.cu.o
+[ 20%] Building HIP object src/hipkernels/CMakeFiles/hipkernels.dir/w4a16_gemm_unpacked.cu.o
+[ 25%] Building HIP object src/hipkernels/CMakeFiles/hipkernels.dir/w4a16_gemv_unpacked.cu.o
+[ 29%] Building HIP object src/hipkernels/CMakeFiles/hipkernels.dir/embedding.cu.o
+[ 33%] Building HIP object src/hipkernels/CMakeFiles/hipkernels.dir/lm_head.cu.o
+[ 37%] Building HIP object src/hipkernels/CMakeFiles/hipkernels.dir/rope.cu.o
+[ 41%] Building HIP object src/hipkernels/CMakeFiles/hipkernels.dir/rmsnorm.cu.o
+[ 45%] Building HIP object src/hipkernels/CMakeFiles/hipkernels.dir/w4a16_gemv_packedGPU.cu.o
+[ 50%] Building HIP object src/hipkernels/CMakeFiles/hipkernels.dir/w4a16_gemm_packedGPU.cu.o
+[ 54%] Building HIP object src/hipkernels/CMakeFiles/hipkernels.dir/flash_attn_decode.cu.o
+[ 58%] Building HIP object src/hipkernels/CMakeFiles/hipkernels.dir/softmax.cu.o
+[ 62%] Linking HIP static library libhipkernels.a
+[ 62%] Built target hipkernels
+[ 70%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/unified_llm_w4a16.cpp.o
+[ 70%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/npuSetup.cpp.o
+In file included from /notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:1:
+/notebooks/HeteroMosaic-baseline/include/unified_llm_w4a16_hetero/unified_llm_w4a16.hpp:294:27: error: ‘HIPStream’ is not a member of ‘c10::hip’
+  294 |     std::vector<c10::hip::HIPStream> llama_chunk_slot_streams_;
+      |                           ^~~~~~~~~
+/notebooks/HeteroMosaic-baseline/include/unified_llm_w4a16_hetero/unified_llm_w4a16.hpp:294:36: error: template argument 1 is invalid
+  294 |     std::vector<c10::hip::HIPStream> llama_chunk_slot_streams_;
+      |                                    ^
+/notebooks/HeteroMosaic-baseline/include/unified_llm_w4a16_hetero/unified_llm_w4a16.hpp:294:36: error: template argument 2 is invalid
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In member function ‘void UnifiedLLMW4A16Impl::release_llama_chunk_async_runtime()’:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:1808:31: error: request for member ‘clear’ in ‘((UnifiedLLMW4A16Impl*)this)->UnifiedLLMW4A16Impl::llama_chunk_slot_streams_’, which is of non-class type ‘int’
+ 1808 |     llama_chunk_slot_streams_.clear();
+      |                               ^~~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In member function ‘void UnifiedLLMW4A16Impl::init_llama_chunk_async_runtime(bool)’:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:1834:77: error: request for member ‘size’ in ‘((UnifiedLLMW4A16Impl*)this)->UnifiedLLMW4A16Impl::llama_chunk_slot_streams_’, which is of non-class type ‘int’
+ 1834 |                              static_cast<int64_t>(llama_chunk_slot_streams_.size()) == max_pipeline_slots &&
+      |                                                                             ^~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:1842:31: error: request for member ‘reserve’ in ‘((UnifiedLLMW4A16Impl*)this)->UnifiedLLMW4A16Impl::llama_chunk_slot_streams_’, which is of non-class type ‘int’
+ 1842 |     llama_chunk_slot_streams_.reserve(static_cast<size_t>(max_pipeline_slots));
+      |                               ^~~~~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:1844:35: error: request for member ‘push_back’ in ‘((UnifiedLLMW4A16Impl*)this)->UnifiedLLMW4A16Impl::llama_chunk_slot_streams_’, which is of non-class type ‘int’
+ 1844 |         llama_chunk_slot_streams_.push_back(c10::hip::getStreamFromPool(false, device_index));
+      |                                   ^~~~~~~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In member function ‘at::Tensor UnifiedLLMW4A16Impl::forward_llama3_chunked(at::Tensor, int64_t)’:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:2225:77: error: request for member ‘size’ in ‘((UnifiedLLMW4A16Impl*)this)->UnifiedLLMW4A16Impl::llama_chunk_slot_streams_’, which is of non-class type ‘int’
+ 2225 |     if (max_pipeline_slots > static_cast<int64_t>(llama_chunk_slot_streams_.size())) {
+      |                                                                             ^~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In lambda function:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:2259:38: error: ‘HIPStreamGuard’ is not a member of ‘c10::hip’
+ 2259 |                            c10::hip::HIPStreamGuard stream_guard(slot_streams[static_cast<size_t>(slot_id)]);
+      |                                      ^~~~~~~~~~~~~~
+In file included from /notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:6:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In member function ‘at::Tensor UnifiedLLMW4A16Impl::forward_llama3_chunked(at::Tensor, int64_t)’:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:2279:52: error: invalid types ‘int[size_t {aka long unsigned int}]’ for array subscript
+ 2279 |         HIP_CHECK(hipStreamSynchronize(slot_streams[static_cast<size_t>(slot_id)].stream()));
+      |                                                    ^
+/notebooks/HeteroMosaic-baseline/include/unified_llm_w4a16_hetero/hipblasltSetup.hpp:11:27: note: in definition of macro ‘HIP_CHECK’
+   11 |         hipError_t err = (call);                                                                                                           \
+      |                           ^~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In member function ‘at::Tensor UnifiedLLMW4A16Impl::forward_gemma_chunked(at::Tensor, int64_t)’:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:2659:77: error: request for member ‘size’ in ‘((UnifiedLLMW4A16Impl*)this)->UnifiedLLMW4A16Impl::llama_chunk_slot_streams_’, which is of non-class type ‘int’
+ 2659 |     if (max_pipeline_slots > static_cast<int64_t>(llama_chunk_slot_streams_.size())) {
+      |                                                                             ^~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In lambda function:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:2690:27: error: ‘HIPStreamGuard’ is not a member of ‘c10::hip’
+ 2690 |                 c10::hip::HIPStreamGuard stream_guard(slot_streams[static_cast<size_t>(slot_id)]);
+      |                           ^~~~~~~~~~~~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In member function ‘at::Tensor UnifiedLLMW4A16Impl::forward_gemma_chunked(at::Tensor, int64_t)’:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:2707:52: error: invalid types ‘int[size_t {aka long unsigned int}]’ for array subscript
+ 2707 |         HIP_CHECK(hipStreamSynchronize(slot_streams[static_cast<size_t>(slot_id)].stream()));
+      |                                                    ^
+/notebooks/HeteroMosaic-baseline/include/unified_llm_w4a16_hetero/hipblasltSetup.hpp:11:27: note: in definition of macro ‘HIP_CHECK’
+   11 |         hipError_t err = (call);                                                                                                           \
+      |                           ^~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In member function ‘at::Tensor UnifiedLLMW4A16Impl::forward_qwen25_chunked_impl(at::Tensor, int64_t, bool)’:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:3024:77: error: request for member ‘size’ in ‘((UnifiedLLMW4A16Impl*)this)->UnifiedLLMW4A16Impl::llama_chunk_slot_streams_’, which is of non-class type ‘int’
+ 3024 |     if (max_pipeline_slots > static_cast<int64_t>(llama_chunk_slot_streams_.size())) {
+      |                                                                             ^~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In lambda function:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:3059:38: error: ‘HIPStreamGuard’ is not a member of ‘c10::hip’
+ 3059 |                            c10::hip::HIPStreamGuard stream_guard(slot_streams[static_cast<size_t>(slot_id)]);
+      |                                      ^~~~~~~~~~~~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In member function ‘at::Tensor UnifiedLLMW4A16Impl::forward_qwen25_chunked_impl(at::Tensor, int64_t, bool)’:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:3113:52: error: invalid types ‘int[size_t {aka long unsigned int}]’ for array subscript
+ 3113 |         HIP_CHECK(hipStreamSynchronize(slot_streams[static_cast<size_t>(slot_id)].stream()));
+      |                                                    ^
+/notebooks/HeteroMosaic-baseline/include/unified_llm_w4a16_hetero/hipblasltSetup.hpp:11:27: note: in definition of macro ‘HIP_CHECK’
+   11 |         hipError_t err = (call);                                                                                                           \
+      |                           ^~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In member function ‘at::Tensor UnifiedLLMW4A16Impl::forward_phi3_chunked(at::Tensor, int64_t)’:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:3511:77: error: request for member ‘size’ in ‘((UnifiedLLMW4A16Impl*)this)->UnifiedLLMW4A16Impl::llama_chunk_slot_streams_’, which is of non-class type ‘int’
+ 3511 |     if (max_pipeline_slots > static_cast<int64_t>(llama_chunk_slot_streams_.size())) {
+      |                                                                             ^~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In lambda function:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:3542:27: error: ‘HIPStreamGuard’ is not a member of ‘c10::hip’
+ 3542 |                 c10::hip::HIPStreamGuard stream_guard(slot_streams[static_cast<size_t>(slot_id)]);
+      |                           ^~~~~~~~~~~~~~
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp: In member function ‘at::Tensor UnifiedLLMW4A16Impl::forward_phi3_chunked(at::Tensor, int64_t)’:
+/notebooks/HeteroMosaic-baseline/src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp:3559:52: error: invalid types ‘int[size_t {aka long unsigned int}]’ for array subscript
+ 3559 |         HIP_CHECK(hipStreamSynchronize(slot_streams[static_cast<size_t>(slot_id)].stream()));
+      |                                                    ^
+/notebooks/HeteroMosaic-baseline/include/unified_llm_w4a16_hetero/hipblasltSetup.hpp:11:27: note: in definition of macro ‘HIP_CHECK’
+   11 |         hipError_t err = (call);                                                                                                           \
+      |                           ^~~~
+gmake[3]: *** [src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/build.make:79: src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/unified_llm_w4a16.cpp.o] Error 1
+gmake[3]: *** Waiting for unfinished jobs....
+gmake[2]: *** [CMakeFiles/Makefile2:311: src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/all] Error 2
+gmake[1]: *** [CMakeFiles/Makefile2:420: src/microbenchmarks/CMakeFiles/test_layout_hip.dir/rule] Error 2
+gmake: *** [Makefile:202: test_layout_hip] Error 2
+Build exit: 2

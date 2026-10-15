@@ -1,0 +1,4 @@
+nohup: ignoring input
+Pinned model revision: db1f81ad4b8c7e39777509fac66c652eb0a52f91
+Fetching 8 files:   0%|          | 0/8 [00:00<?, ?it/s]Fetching 8 files:  12%|█▎        | 1/8 [00:00<00:02,  2.38it/s]Fetching 8 files:  88%|████████▊ | 7/8 [00:26<00:03,  3.85s/it]Fetching 8 files: 100%|██████████| 8/8 [00:52<00:00,  6.58s/it]Fetching 8 files: 100%|██████████| 8/8 [00:52<00:00,  6.58s/it]
+MODEL DOWNLOAD COMPLETE

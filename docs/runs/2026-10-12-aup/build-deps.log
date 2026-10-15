@@ -1,0 +1,19 @@
+Collecting pybind11
+  Downloading pybind11-3.1.0-py3-none-any.whl.metadata (10 kB)
+Collecting numpy
+  Downloading numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting json5
+  Downloading json5-0.17.3-py3-none-any.whl.metadata (27 kB)
+Collecting safetensors
+  Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.2 kB)
+Downloading pybind11-3.1.0-py3-none-any.whl (319 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 319.4/319.4 kB 8.4 MB/s eta 0:00:00
+Downloading numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 71.1 MB/s eta 0:00:00
+Downloading json5-0.17.3-py3-none-any.whl (34 kB)
+Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (516 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 516.0/516.0 kB 22.6 MB/s eta 0:00:00
+Installing collected packages: safetensors, pybind11, numpy, json5
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+eudsl-python-extras 0.1.0.20260801.905+68a0d7a requires cloudpickle>=3.0.0, which is not installed.
+Successfully installed json5-0.17.3 numpy-2.5.4 pybind11-3.1.0 safetensors-0.8.0

@@ -1,0 +1,148 @@
+{
+  "variant": "gpu_matched",
+  "trace": "none",
+  "tag": "baseline",
+  "input_sha256": "2c11d2476f8b0d68744bec04b88ae434fa2c7f2e1f15a66f6db8785ec5e481c7",
+  "setup_seconds": 32.080602258909494,
+  "context_capacity": 1536,
+  "records": [
+    {
+      "iteration": 0,
+      "warmup": true,
+      "wall_seconds": 2.2932275678031147,
+      "prefill_seconds": 1.86901,
+      "decode_loop_seconds": 0.417446,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648726201751499,
+      "end_ns": 2648728495153925,
+      "fallback_warnings": 0,
+      "command_errors": 0
+    },
+    {
+      "iteration": 1,
+      "warmup": false,
+      "wall_seconds": 2.193491854239255,
+      "prefill_seconds": 1.77828,
+      "decode_loop_seconds": 0.414795,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648728495724024,
+      "end_ns": 2648730689336555,
+      "fallback_warnings": 0,
+      "command_errors": 0
+    },
+    {
+      "iteration": 2,
+      "warmup": false,
+      "wall_seconds": 2.192345220129937,
+      "prefill_seconds": 1.77728,
+      "decode_loop_seconds": 0.414659,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648730689808356,
+      "end_ns": 2648732882240516,
+      "fallback_warnings": 0,
+      "command_errors": 0
+    },
+    {
+      "iteration": 3,
+      "warmup": false,
+      "wall_seconds": 2.1966670150868595,
+      "prefill_seconds": 1.78022,
+      "decode_loop_seconds": 0.415885,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648732882796915,
+      "end_ns": 2648735079559369,
+      "fallback_warnings": 0,
+      "command_errors": 0
+    },
+    {
+      "iteration": 4,
+      "warmup": false,
+      "wall_seconds": 2.232115336228162,
+      "prefill_seconds": 1.81631,
+      "decode_loop_seconds": 0.415337,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648735080199267,
+      "end_ns": 2648737312410471,
+      "fallback_warnings": 0,
+      "command_errors": 0
+    },
+    {
+      "iteration": 5,
+      "warmup": false,
+      "wall_seconds": 2.2346602152101696,
+      "prefill_seconds": 1.81812,
+      "decode_loop_seconds": 0.415975,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648737313132928,
+      "end_ns": 2648739547913480,
+      "fallback_warnings": 0,
+      "command_errors": 0
+    }
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "variant": "hetero_pipeline",
+  "trace": "none",
+  "tag": "baseline",
+  "input_sha256": "2c11d2476f8b0d68744bec04b88ae434fa2c7f2e1f15a66f6db8785ec5e481c7",
+  "setup_seconds": 34.61282202368602,
+  "context_capacity": 1536,
+  "records": [
+    {
+      "iteration": 0,
+      "warmup": true,
+      "wall_seconds": 2.062094512861222,
+      "prefill_seconds": 1.62041,
+      "decode_loop_seconds": 0.43615,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648775748994807,
+      "end_ns": 2648777811270597,
+      "fallback_warnings": 224,
+      "command_errors": 0
+    },
+    {
+      "iteration": 1,
+      "warmup": false,
+      "wall_seconds": 1.765630830079317,
+      "prefill_seconds": 1.31608,
+      "decode_loop_seconds": 0.449114,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648777812047792,
+      "end_ns": 2648779577777800,
+      "fallback_warnings": 224,
+      "command_errors": 0
+    },
+    {
+      "iteration": 2,
+      "warmup": false,
+      "wall_seconds": 1.7618743777275085,
+      "prefill_seconds": 1.31655,
+      "decode_loop_seconds": 0.444917,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648779578490607,
+      "end_ns": 2648781340478262,
+      "fallback_warnings": 224,
+      "command_errors": 0
+    },
+    {
+      "iteration": 3,
+      "warmup": false,
+      "wall_seconds": 1.7609250331297517,
+      "prefill_seconds": 1.31761,
+      "decode_loop_seconds": 0.442916,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648781341171999,
+      "end_ns": 2648783102204320,
+      "fallback_warnings": 224,
+      "command_errors": 0
+    },
+    {
+      "iteration": 4,
+      "warmup": false,
+      "wall_seconds": 1.782617622986436,
+      "prefill_seconds": 1.31856,
+      "decode_loop_seconds": 0.463587,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648783102893967,
+      "end_ns": 2648784885614048,
+      "fallback_warnings": 224,
+      "command_errors": 0
+    },
+    {
+      "iteration": 5,
+      "warmup": false,
+      "wall_seconds": 1.757500821724534,
+      "prefill_seconds": 1.31213,
+      "decode_loop_seconds": 0.444927,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648784886349514,
+      "end_ns": 2648786643948794,
+      "fallback_warnings": 224,
+      "command_errors": 0
+    }
+  ]
+}

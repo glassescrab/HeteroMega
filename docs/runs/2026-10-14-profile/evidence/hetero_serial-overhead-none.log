@@ -1,0 +1,12 @@
+Initializing UnifiedLLMW4A16Impl_hetero
+Using NPU config: /notebooks/heteromega-profile-2026-10-14/hetero_serial-overhead-none.config.json
+Warmup: Disabled
+Loaded 291 parameters, skipped 0
+Loading quantized weights from /notebooks/heteromosaic-model...
+Using saved safetensors: /notebooks/HeteroMosaic-baseline/py/unified_llm_w4a16/model_weights/heteromosaic-model.safetensors
+Weights loaded in 30.31 seconds
+Importing weights to NPU...
+ITERATION hetero_serial-overhead-none {"iteration": 0, "warmup": true, "wall_seconds": 2.0350562892854214, "prefill_seconds": 1.59731, "decode_loop_seconds": 0.428696, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2649069176035873, "end_ns": 2649071215985039, "fallback_warnings": 224, "command_errors": 0}
+ITERATION hetero_serial-overhead-none {"iteration": 1, "warmup": false, "wall_seconds": 1.7674635439179838, "prefill_seconds": 1.3199, "decode_loop_seconds": 0.447111, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2649071222410157, "end_ns": 2649072990105376, "fallback_warnings": 224, "command_errors": 0}
+ITERATION hetero_serial-overhead-none {"iteration": 2, "warmup": false, "wall_seconds": 1.7777708969078958, "prefill_seconds": 1.33177, "decode_loop_seconds": 0.445469, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2649072992655738, "end_ns": 2649074770571492, "fallback_warnings": 224, "command_errors": 0}
+PROFILE COMPLETE hetero_serial-overhead-none

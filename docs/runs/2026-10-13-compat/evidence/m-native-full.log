@@ -1,0 +1,23 @@
+
+=== Case 2048x2048x2048 ===
+Artifact dir: "/notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M"
+Completed iGPU baseline avg_latency_us=1912.66 throughput_gops=8982.19 allclose=true max_abs_diff=0
+Running point npuM=256 gpuM=1792
+Completed npuM=256 avg_latency_us=1879.5 throughput_gops=9140.67 allclose=false max_abs_diff=26.125
+Running point npuM=512 gpuM=1536
+Completed npuM=512 avg_latency_us=1624.97 throughput_gops=10572.4 allclose=false max_abs_diff=26.125
+Running point npuM=768 gpuM=1280
+Completed npuM=768 avg_latency_us=1376.78 throughput_gops=12478.3 allclose=false max_abs_diff=26.125
+Running point npuM=1024 gpuM=1024
+Completed npuM=1024 avg_latency_us=1125.02 throughput_gops=15270.7 allclose=false max_abs_diff=26.125
+Running point npuM=1280 gpuM=768
+Completed npuM=1280 avg_latency_us=1060.56 throughput_gops=16198.8 allclose=false max_abs_diff=26.125
+Running point npuM=1536 gpuM=512
+Completed npuM=1536 avg_latency_us=1243.34 throughput_gops=13817.5 allclose=false max_abs_diff=26.125
+Running point npuM=1792 gpuM=256
+Completed npuM=1792 avg_latency_us=1424.05 throughput_gops=12064.1 allclose=false max_abs_diff=26.125
+Running point npuM=2048 gpuM=0
+Completed npuM=2048 avg_latency_us=1652.27 throughput_gops=10397.7 allclose=false max_abs_diff=26.125
+
+=== Case 4096x4096x4096 ===
+Artifact dir: "/notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M"

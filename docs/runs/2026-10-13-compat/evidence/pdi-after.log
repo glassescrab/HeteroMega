@@ -1,0 +1,10 @@
+Heap buffer @:                  0x78ceb0000000
+heap result=0 handle=1
+Started Creating HW Context 
+Loading PDI
+Pdi file size: 882736
+PDI file @:                     0x78ceb0000000
+PDI handle @:                     2
+Size of param_config_cu: 0x10
+Created HW Context 
+PDI context result=0

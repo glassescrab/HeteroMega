@@ -1,0 +1,28 @@
+System Configuration
+  OS Name              : Linux
+  Release              : 6.17.0-42-generic
+  Machine              : x86_64
+  CPU Cores            : 24
+  Memory               : 23636 MB
+  Distribution         : Ubuntu 24.04.4 LTS
+  GLIBC                : 2.39
+  Model                : EliteMini Series
+  BIOS Vendor          : American Megatrends International, LLC.
+  BIOS Version         : 1.07
+  Processor            : AMD Ryzen AI 9 HX 370 w/ Radeon 890M
+
+XRT
+  Version              : 2.26.0
+  Branch               : HEAD
+  Hash                 : e9db9ab15f10173f8d2fc93ff92ab4c7eb09d2e6
+  Hash Date            : Thu, 13 Aug 2026 13:49:05 -0700
+  amdxdna Version      : 2.26.0_20260818, bd02f5e75f7788dfbe0f3f716de928de1e7078f3
+  virtio-pci Version   : 6.17.0-42-generic
+  NPU Firmware Version : 1.1.2.64
+
+Device(s) Present
+|BDF             |Name       |Architecture  |Topology  |
+|----------------|-----------|--------------|----------|
+|[0000:66:00.1]  |NPU Strix  |aie2p         |6x8       |
+
+

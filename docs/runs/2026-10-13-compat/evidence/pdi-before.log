@@ -1,0 +1,10 @@
+Heap buffer @:                  0x777364000000
+heap result=0 handle=1
+Started Creating HW Context 
+Failed to config hwctx - 1: Invalid argument
+Loading PDI
+Pdi file size: 882736
+PDI file @:                     0x777364000000
+PDI handle @:                     2
+Size of param_config_cu: 0x10
+PDI context result=-1

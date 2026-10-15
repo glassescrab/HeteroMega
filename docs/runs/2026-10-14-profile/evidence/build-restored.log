@@ -1,0 +1,8 @@
+[  8%] Built target npu_matmul_func
+[ 62%] Built target hipkernels
+[ 66%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/unified_llm_w4a16.cpp.o
+[ 70%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/npuSetup.cpp.o
+[ 75%] Linking HIP static library libunified_llm_w4a16_hetero_lib.a
+[ 91%] Built target unified_llm_w4a16_hetero_lib
+[ 95%] Linking HIP shared module ../../py/unified_llm_w4a16/unified_llm_w4a16_hetero_libtorch.so
+[100%] Built target unified_llm_w4a16_hetero_libtorch

@@ -1,0 +1,34 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index fec5281..58fe00f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -32,7 +32,7 @@ endif()
+ set(DRIVER_PATH "${HOME_LIBS}/xdna-driver-05-19-25")
+ 
+ # Pin the toolchain to the ROCm 7.1.1 installation.
+-set(ROCM_PATH "/opt/rocm-7.1.1")
++set(ROCM_PATH "/opt/rocm-7.2.0")
+ set(ENV{ROCM_PATH} "${ROCM_PATH}")
+ message(STATUS "Using ROCM_PATH: ${ROCM_PATH}")
+ link_directories(${ROCM_PATH}/lib)
+@@ -78,3 +78,7 @@ add_subdirectory(src/microbenchmarks)
+ add_executable(test_sdpa_perf src/microbenchmarks/test_sdpa_perf.cpp)
+ target_link_libraries(test_sdpa_perf PRIVATE torch ${TORCH_LIBRARIES})
+ set_property(TARGET test_sdpa_perf PROPERTY CXX_STANDARD 17)
++
++# Cloud build adapter: PyTorch 2.11 ROCm retains HIP functions but renamed types.
++target_compile_options(unified_llm_w4a16_hetero_lib PUBLIC
++    -include /notebooks/heteromega-baseline-logs/torch211-hip-compat.hpp)
+diff --git a/src/unified_llm_w4a16_hetero/CMakeLists.txt b/src/unified_llm_w4a16_hetero/CMakeLists.txt
+index 0fc2dee..a9fafb6 100644
+--- a/src/unified_llm_w4a16_hetero/CMakeLists.txt
++++ b/src/unified_llm_w4a16_hetero/CMakeLists.txt
+@@ -8,7 +8,7 @@ add_library(unified_llm_w4a16_hetero_lib STATIC
+ )
+ 
+ if(NOT DEFINED ROCM_PATH)
+-    set(ROCM_PATH "/opt/rocm-7.1.1")
++    set(ROCM_PATH "/opt/rocm-7.2.0")
+ endif()
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${ROCM_PATH}/include")
+ set(ENV{ROCM_PATH} "${ROCM_PATH}")

@@ -1,0 +1,15 @@
+Initializing UnifiedLLMW4A16Impl_hetero
+Using NPU config: /notebooks/heteromega-profile-2026-10-14/gpu_native-baseline-none.config.json
+Warmup: Disabled
+Loaded 291 parameters, skipped 0
+Loading quantized weights from /notebooks/heteromosaic-model...
+Using saved safetensors: /notebooks/HeteroMosaic-baseline/py/unified_llm_w4a16/model_weights/heteromosaic-model.safetensors
+Weights loaded in 29.06 seconds
+Importing weights to NPU...
+ITERATION gpu_native-baseline-none {"iteration": 0, "warmup": true, "wall_seconds": 2.2629525559023023, "prefill_seconds": 1.81422, "decode_loop_seconds": 0.428246, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648632046477381, "end_ns": 2648634309596685, "fallback_warnings": 0, "command_errors": 0}
+ITERATION gpu_native-baseline-none {"iteration": 1, "warmup": false, "wall_seconds": 2.168127980083227, "prefill_seconds": 1.74424, "decode_loop_seconds": 0.423495, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648634310185694, "end_ns": 2648636478407442, "fallback_warnings": 0, "command_errors": 0}
+ITERATION gpu_native-baseline-none {"iteration": 2, "warmup": false, "wall_seconds": 2.167371359653771, "prefill_seconds": 1.7431, "decode_loop_seconds": 0.423821, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648636478871243, "end_ns": 2648638646330151, "fallback_warnings": 0, "command_errors": 0}
+ITERATION gpu_native-baseline-none {"iteration": 3, "warmup": false, "wall_seconds": 2.1693031080067158, "prefill_seconds": 1.74505, "decode_loop_seconds": 0.42388, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648638646816872, "end_ns": 2648640816193529, "fallback_warnings": 0, "command_errors": 0}
+ITERATION gpu_native-baseline-none {"iteration": 4, "warmup": false, "wall_seconds": 2.201237667351961, "prefill_seconds": 1.77806, "decode_loop_seconds": 0.422785, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648640816662210, "end_ns": 2648643017988795, "fallback_warnings": 0, "command_errors": 0}
+ITERATION gpu_native-baseline-none {"iteration": 5, "warmup": false, "wall_seconds": 2.205300366040319, "prefill_seconds": 1.78115, "decode_loop_seconds": 0.42372, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648643018497926, "end_ns": 2648645223876221, "fallback_warnings": 0, "command_errors": 0}
+PROFILE COMPLETE gpu_native-baseline-none
