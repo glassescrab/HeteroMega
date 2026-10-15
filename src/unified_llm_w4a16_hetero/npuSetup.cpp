@@ -1890,16 +1890,11 @@ int npuMatmul_zero(int hwctx_numb, int instctx_numb, void *output_pointer, void 
     }
 
     // Wait for the command to complete
-    struct amdxdna_drm_wait_cmd wait_cmd = {
-        .ctx = hwctxt_array[hwctx_numb].hw_ctx.handle,
-        .timeout = 500, // 50ms timeout
-        .seq = exec_cmd.seq,
-    };
-
     if (debug_verbosity >= 3)
         std::cout << "Waiting for NPU" << std::endl;
 
-    ret = ioctl(xdna_drv_fd, DRM_IOCTL_AMDXDNA_WAIT_CMD, &wait_cmd);
+    ret = wait_for_npu_command(xdna_drv_fd, hwctxt_array[hwctx_numb].hw_ctx,
+                              exec_cmd.seq, 500);
     if (ret != 0) {
         perror("Failed to wait");
         return -1;

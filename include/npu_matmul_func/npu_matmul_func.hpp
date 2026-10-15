@@ -88,6 +88,9 @@ int createHWctxt(int drv_fd, struct hwctxt &thisctxt, const char *pdi_path, cons
 
 int createInstctxt(int drv_fd, struct instctxt &thisctxt, const char *dpu_inst_path, bool npu_is_bin = false);
 
+int wait_for_npu_command(int drv_fd, const struct amdxdna_drm_create_ctx &hw_ctx,
+                         __u64 seq, __u32 timeout_ms);
+
 int create_matmul_bo_context(int drv_fd, struct matmul_bo_ctxt &new_bos, size_t sizeA, size_t sizeB, size_t sizeC);
 
 int allocate_and_load_resources(int drv_fd, uint64_t &pdi_vaddr, uint64_t &pdi_sram_vaddr, __u32 &pdi_handle,
