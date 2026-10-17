@@ -19,6 +19,7 @@ The handoff's proposed feasibility split, 4096 NPU / 10240 GPU channels, is `s =
 | `src/residual_add_cpu.cpp` | Boundary sum on the CPU (R-CPU): same math, AVX-512 with scalar fallback |
 | `tests/test_gpu_ffn.cpp` | Correctness tests: level 1 (each kernel vs fp32) and level 2 (`Y_G + Y_N` vs the unsplit FFN) |
 | `bench/bench_gpu_ffn_slice.cpp` | GPU slice latency for a grid of M and `s` |
+| `bench/bench_ffn_ablation.cpp` | Each GPU change measured alone, against HeteroMosaic's FFN order on the same weights, plus a dense bf16 reference |
 | `bench/bench_reduce.cpp` | R-GPU vs R-CPU latency |
 | `bench/bench_bandwidth.cpp` | GPU streaming-read bandwidth, alone or next to an NPU load |
 | `tools/check_packing.py` | CPU check of the layout and the split math (numpy only) |
@@ -100,11 +101,15 @@ Notes:
    ```bash
    ./build/gpu/bin/bench_gpu_ffn_slice --m 512 --s 10240,14336 > gpu_slice.csv
    ```
-5. Compare the two boundary-sum options:
+5. Measure what each change gives. Variants: HeteroMosaic order (`hm`), one gate/up GEMM (`merged`), plus the fused SiLU-and-multiply (`fused`), and a dense bf16 `torch::mm` reference (`dense`):
+   ```bash
+   ./build/gpu/bin/bench_ffn_ablation --m 1,128,512,2048 --s 10240,14336 > ablation.csv
+   ```
+6. Compare the two boundary-sum options:
    ```bash
    ./build/gpu/bin/bench_reduce > reduce.csv
    ```
-6. Measure GPU bandwidth alone. Then run it again while an NPU load runs:
+7. Measure GPU bandwidth alone. Then run it again while an NPU load runs:
    ```bash
    ./build/gpu/bin/bench_bandwidth --seconds 10
    ```

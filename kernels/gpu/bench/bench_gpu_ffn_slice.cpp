@@ -4,6 +4,7 @@
 // Usage: bench_gpu_ffn_slice [--m 1,128,512,2048,4096] [--s 1024,2048,...,14336] [--iters 50] [--warmup 10]
 // Output: CSV on stdout. s = 14336 is the GPU-only run of the same kernels (ablation A1).
 #include "bench_common.hpp"
+#include "bench_weights.hpp"
 #include "heteromega/gpu_ffn.hpp"
 
 #include <c10/hip/HIPStream.h>
@@ -16,16 +17,6 @@ namespace {
 
 constexpr int64_t kHidden = 4096;
 constexpr int64_t kInter = 14336;
-
-// Packed [k, n] weights: random 4-bit values, scale 0.01, zero 8.
-torch::Tensor random_packed(int64_t k, int64_t n, const torch::Device &dev) {
-    const int64_t tiles = (k / kTileK) * (n / kTileN);
-    auto p = torch::randint(0, 256, {tiles, kTileBytes}, torch::TensorOptions().dtype(torch::kUInt8).device(dev));
-    const auto scales = torch::full({tiles, 64}, 0.01, torch::TensorOptions().dtype(torch::kBFloat16).device(dev));
-    p.slice(1, 4096, 4224).copy_(scales.view(torch::kUInt8));
-    p.slice(1, 4224, kTileBytes).fill_(8);
-    return p.flatten();
-}
 
 std::string default_splits() {
     std::string s;
@@ -55,8 +46,8 @@ int main(int argc, char **argv) {
             continue;
         }
         FfnSliceWeights w;
-        w.gate_up = random_packed(kHidden, 2 * s, dev);
-        w.down = random_packed(s, kHidden, dev);
+        w.gate_up = bench::random_packed(kHidden, 2 * s, dev);
+        w.down = bench::random_packed(s, kHidden, dev);
         w.begin = 0, w.end = s, w.hidden = kHidden;
         auto buf = GpuFfnBuffers::allocate(max_m, s, kHidden, dev);
         const double weight_bytes = static_cast<double>(w.gate_up.numel() + w.down.numel());

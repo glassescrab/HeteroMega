@@ -127,7 +127,7 @@ endif()
 
 # Tests and benchmarks.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-foreach(name tests/test_gpu_ffn bench/bench_gpu_ffn_slice bench/bench_reduce)
+foreach(name tests/test_gpu_ffn bench/bench_gpu_ffn_slice bench/bench_ffn_ablation bench/bench_reduce)
     get_filename_component(target ${name} NAME)
     add_executable(${target} ${name}.cpp)
     target_link_libraries(${target} PRIVATE heteromega_gpu)
