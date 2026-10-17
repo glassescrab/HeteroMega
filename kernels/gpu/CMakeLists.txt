@@ -40,7 +40,10 @@ message(STATUS "ROCm: ${ROCM_PATH}")
 set(ENV{ROCM_PATH} "${ROCM_PATH}")
 list(APPEND CMAKE_PREFIX_PATH "${ROCM_PATH}")
 list(APPEND CMAKE_BUILD_RPATH "${ROCM_PATH}/lib")
-link_directories(${ROCM_PATH}/lib)
+# The AUP image also has HIP 5.7's libamdhip64.so in /lib/x86_64-linux-gnu, and the HIP driver's -lamdhip64 searched
+# there before ROCm's lib. bench_bandwidth then loaded both runtimes and crashed in comgr. CMake drops
+# link_directories() for ROCm's lib (it is an implicit HIP link directory), so pass -L explicitly; user -L comes first.
+add_link_options("-L${ROCM_PATH}/lib")
 
 if(NOT CMAKE_HIP_COMPILER AND NOT DEFINED ENV{HIPCXX} AND EXISTS "${ROCM_PATH}/lib/llvm/bin/clang++")
     set(CMAKE_HIP_COMPILER "${ROCM_PATH}/lib/llvm/bin/clang++")
