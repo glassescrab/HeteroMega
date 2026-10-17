@@ -1,5 +1,23 @@
 # HeteroMega progress
 
+## 2026-10-16: GPU FFN-slice module proposed (`kernels/gpu/`)
+
+- Added `kernels/gpu/`, a separate CMake project for the GPU half of the
+  persistent intermediate-channel FFN split: slice packer, gate/up GEMM,
+  SiLU-and-multiply and down GEMM on one HIP stream, boundary sum on the GPU or
+  the CPU, tests and benchmarks. It compiles the existing `src/hipkernels/`
+  packed GEMM/GEMV unchanged. Root build, model path and baseline are unchanged.
+- **Code-confirmed:** the GPU branch contract (shapes, packed layout, metadata,
+  dtype/strides, buffer ownership, completion) is in `kernels/gpu/README.md`.
+  Tests include the proposed 4096 NPU / 10240 GPU split and M=512.
+- **Executed (macOS, no GPU, 2026-10-06):** numpy and C++ packers are byte-equal
+  to a line-by-line translation of `_pack_weights_packed`; emulated GEMV
+  addressing on slices and `Y_G + Y_N` == full FFN for 3 split points pass.
+- **Not executed:** CMake configure, HIP/C++ compile, GPU tests or benchmarks on
+  the AUP cloud. No performance or GPU numerical result is claimed.
+- Next: build and run `test_gpu_ffn` in the `cloud-baseline.md` environment,
+  then `bench_gpu_ffn_slice --m 512 --s 10240,14336`.
+
 ## 2026-10-15: GitHub kernel teammate handoff
 
 - User explicitly requested committing/pushing the work so the GPU/NPU kernel

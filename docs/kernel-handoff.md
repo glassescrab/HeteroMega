@@ -5,7 +5,8 @@ Starting upstream source: `61714a3147f34857aa5dfef21a28e762777a2df0`.
 Runtime port commit: `20e4d3052ac21d95ae03f70ad916fab6c75de632`.
 The repository now includes the tested experimental runtime compatibility port,
 project plans, cloud reproduction instructions, profiling helpers and evidence.
-No persistent FFN implementation or new GPU/NPU math kernel has been added.
+No persistent FFN implementation is integrated into the model path.
+`kernels/gpu/` proposes the GPU half of the channel split (not yet run on the cloud).
 
 ## Read and reproduce
 
@@ -45,6 +46,7 @@ Model weights and sibling `Documents/` references are outside this handoff.
 | Direct XDNA runtime | `src/npu_matmul_func/` and `include/npu_matmul_func/`: hardware contexts, packets, unique residency handles and completion waits |
 | NPU artifacts | `hw_bins/npu2/`: shape-specific precompiled artifacts; selected decode paths need `_K_8c` folders, not only `_K` |
 | Split experiments | `src/microbenchmarks/tensor_parallel_gemm_npu_gpu_sweep{M,K,N}.cpp`; these do not preserve partitions across an FFN |
+| GPU FFN slice (proposed) | `kernels/gpu/`: separate CMake project with the GPU half of the channel split, its branch contract, tests and benchmarks; not yet run on the cloud |
 
 The runtime port changes heap mapping alignment, zeroed/padded configuration
 storage, duplicate residency handles and legacy-wait fallback to DRM timeline
