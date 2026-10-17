@@ -29,13 +29,18 @@ Details and tables: [kernels/gpu/README.md](../kernels/gpu/README.md#results-202
   s = 14336, 1.090 → 0.979 ms; 93 to 96 GB/s.
 - **Model integration (G6):** `slice_packed_ffn`, `GpuFfnModel`, and a switch in
   `forward_llama3_with_scratch` (CMake `-DHETEROMEGA_GPU_FFN=ON`, environment
-  `HETEROMEGA_GPU_FFN=1`). **Built and run end to end with the backend's seeded
-  random weights** (`kernels/gpu/tools/aup_model_ffn.sh`, GPU-only, 1024-token
-  prompt, 64 new tokens, 2 processes × 3 repetitions per mode, order OFF ON ON
-  OFF): prefill 1.739 → 1.712 s (−1.5 %), decode 16.86 → 18.14 tokens/s
-  (+7.6 %), peak allocation 6.68 → 8.21 GiB. Random weights give degenerate
-  tokens, so this run checks timing and stability only. **Real weights not run
-  yet** (the model download was not done in this session).
+  `HETEROMEGA_GPU_FFN=1`). **Executed end to end with real weights**
+  (`kernels/gpu/tools/aup_model_ffn.sh`, Llama 3.1 8B AWQ INT4, GPU-only,
+  1024-token prompt, 64 new tokens, 2 processes × 3 repetitions per mode, order
+  OFF ON ON OFF):
+  - **Correct (measured):** all 4 processes give the 8 reference greedy tokens
+    of `docs/runs/2026-10-12-aup/gpu-model-result.json`; all 12 repetitions give
+    the same 64 tokens with and without the switch.
+  - Prefill 1.801 → 1.781 s (−1.1 %), decode 16.49 → 18.09 tokens/s (+9.7 %).
+  - Peak allocation 8.94 to 9.32 GiB in both modes (probably set while loading;
+    not measured).
+  - With the backend's seeded random weights (timing only): prefill 1.739 →
+    1.712 s, decode 16.86 → 18.14 tokens/s, peak 6.68 → 8.21 GiB.
   - The build used the installed XDNA 2.26 UAPI header, renamed to the 2025 names
     by the script (`SYSTEM_XDNA_HEADER=1`; GPU-only). The Python extension needs
     ROCm's `-L` in `CMAKE_MODULE_LINKER_FLAGS`; without it, it linked HIP 5.7 from
