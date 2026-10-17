@@ -1,5 +1,49 @@
 # HeteroMega progress
 
+## 2026-10-17: GPU P0/P1 work (`kernels/gpu/`, branch `gpu-p0p1`)
+
+All runs on the AUP cloud (HX 370, Radeon 890M `gfx1150`, ROCm 7.2, Torch 2.11).
+Details and tables: [kernels/gpu/README.md](../kernels/gpu/README.md#results-2026-10-17-hx-370).
+
+- **Executed, pass:** `test_gpu_ffn` quick and full, 0 failed. New checks:
+  `slice_packed_ffn` byte-equal to `pack_ffn_slice` (20 cases), `GpuFfnModel`
+  bit-equal to the prefix path, prefix GEMM/GEMV blocks vs fp32.
+- **Repeated measurements (G1):** `bench_ffn_ablation` 5 rounds, shuffled order,
+  GPU clock/power/temperature per row. Per-round ratio to HeteroMosaic's order:
+  fused SiLU-and-multiply about −2 % at every M; merged gate/up GEMM 0 % at
+  M ≥ 128; `gemv_w4a16` −13 to −14 % of the decode FFN. Round 0 of each run was
+  up to 10 % slower (package 51 to 53 W, GPU about 2.3 GHz, for about 50 s).
+- **Bandwidth (G2, CPU as the second agent):** GPU alone 95.9 GB/s; GPU + 8 CPU
+  threads 67.6 + 27.1 GB/s. The sum stays at 93 to 97 GB/s. **Not measured with
+  the NPU** (needs the NPU side).
+- **One weight copy, two split points (G3):** `kInterleaved` gate/up layout and
+  `FfnSliceWeights::prefix`; same latency as a separately packed slice.
+- **GEMM (G4):** AUTOTUNE kept `generic` in all 24 FFN shapes, so it gives
+  no gain. `generic` is compute-bound at 9.1 to 9.5 TFLOPS from M = 128. Static
+  ISA count of its K loop: 64 WMMA, 756 other VALU (about 10 per unpacked
+  weight, incl. a software fp32 → bf16 rounding) and 487 LDS instructions per
+  wave per K step. Proposed fix (not implemented): exact integer weights
+  `0x4300 | q` into WMMA with zero/scale applied per K step, and B-fragment order
+  in LDS. `rocprofv3` aborts with Torch in the process, so no counters.
+- **Decode GEMV (G5):** new `gemv_w4a16` (fp32 accumulation): per layer at
+  s = 14336, 1.090 → 0.979 ms; 93 to 96 GB/s.
+- **Model integration (G6):** `slice_packed_ffn`, `GpuFfnModel`, and a switch in
+  `forward_llama3_with_scratch` (CMake `-DHETEROMEGA_GPU_FFN=ON`, environment
+  `HETEROMEGA_GPU_FFN=1`). **Built and run end to end with the backend's seeded
+  random weights** (`kernels/gpu/tools/aup_model_ffn.sh`, GPU-only, 1024-token
+  prompt, 64 new tokens, 2 processes × 3 repetitions per mode, order OFF ON ON
+  OFF): prefill 1.739 → 1.712 s (−1.5 %), decode 16.86 → 18.14 tokens/s
+  (+7.6 %), peak allocation 6.68 → 8.21 GiB. Random weights give degenerate
+  tokens, so this run checks timing and stability only. **Real weights not run
+  yet** (the model download was not done in this session).
+  - The build used the installed XDNA 2.26 UAPI header, renamed to the 2025 names
+    by the script (`SYSTEM_XDNA_HEADER=1`; GPU-only). The Python extension needs
+    ROCm's `-L` in `CMAKE_MODULE_LINKER_FLAGS`; without it, it linked HIP 5.7 from
+    `/lib/x86_64-linux-gnu` next to HIP 7.2 and crashed or found no device.
+- `src/hipkernels/w4a16_gemm_packed.cu`: new `w4a16_gemm_fused_packed_tiles`
+  entry point, K-loop bound fix for K prefixes in the K2048 kernel, `#ifndef`
+  guard on `AUTOTUNE`. Existing entry points are unchanged in behavior.
+
 ## 2026-10-16: GPU FFN-slice module proposed (`kernels/gpu/`)
 
 - Added `kernels/gpu/`, a separate CMake project for the GPU half of the
