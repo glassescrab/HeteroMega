@@ -65,7 +65,7 @@ torch::Tensor pack_w4a16(const torch::Tensor &qweight, const torch::Tensor &scal
     return out;
 }
 
-FfnSliceWeights pack_ffn_slice(const FfnLayerQuant &layer, int64_t begin, int64_t end) {
+FfnSliceWeights pack_ffn_slice(const FfnLayerQuant &layer, int64_t begin, int64_t end, GateUpLayout layout) {
     TORCH_CHECK(layer.gate_q.dim() == 2, "pack_ffn_slice: gate_q must be [H, I]");
     const int64_t hidden = layer.gate_q.size(0);
     const int64_t inter = layer.gate_q.size(1);
@@ -76,14 +76,102 @@ FfnSliceWeights pack_ffn_slice(const FfnLayerQuant &layer, int64_t begin, int64_
     auto cols = [&](const torch::Tensor &t) { return t.slice(1, begin, end); };
     auto rows = [&](const torch::Tensor &t, int64_t per_row) { return t.slice(0, begin / per_row, end / per_row); };
 
+    // [rows, n] gate and up -> [rows, 2n] in `layout` order.
+    const int64_t n = end - begin;
+    auto join = [&](const torch::Tensor &g, const torch::Tensor &u) {
+        if (layout == GateUpLayout::kBlocked) {
+            return torch::cat({g, u}, 1);
+        }
+        const int64_t r = g.size(0);
+        return torch::stack({g.reshape({r, n / kTileN, kTileN}), u.reshape({r, n / kTileN, kTileN})}, 2).reshape({r, 2 * n});
+    };
+
     FfnSliceWeights w;
-    w.gate_up = pack_w4a16(torch::cat({cols(layer.gate_q), cols(layer.up_q)}, 1),
-                           torch::cat({cols(layer.gate_s), cols(layer.up_s)}, 1),
-                           torch::cat({cols(layer.gate_z), cols(layer.up_z)}, 1));
+    w.gate_up = pack_w4a16(join(cols(layer.gate_q), cols(layer.up_q)), join(cols(layer.gate_s), cols(layer.up_s)),
+                           join(cols(layer.gate_z), cols(layer.up_z)));
     w.down = pack_w4a16(rows(layer.down_q, 1), rows(layer.down_s, kTileK), rows(layer.down_z, kTileK));
     w.begin = begin;
     w.end = end;
     w.hidden = hidden;
+    w.layout = layout;
+    return w;
+}
+
+int64_t packed_tile_index(int64_t c, int64_t r, int64_t tiles_k, int64_t tiles_n) {
+    // Column group g holds tile columns g, g + 8, ...: (tiles_n - g + 7) / 8 of them.
+    int64_t columns_before = c / 8;
+    for (int64_t g = 0; g < c % 8; ++g) {
+        columns_before += (tiles_n - g + 7) / 8;
+    }
+    return columns_before * tiles_k + r;
+}
+
+FfnSliceWeights slice_packed_ffn(const torch::Tensor &gate, const torch::Tensor &up, const torch::Tensor &down, int64_t hidden,
+                                 int64_t inter, int64_t begin, int64_t end, GateUpLayout layout) {
+    TORCH_CHECK(hidden % kTileK == 0 && inter % kTileK == 0, "slice_packed_ffn: hidden and inter must be multiples of 128");
+    TORCH_CHECK(0 <= begin && begin < end && end <= inter, "slice_packed_ffn: bad channel range [", begin, ", ", end, ")");
+    TORCH_CHECK(begin % kTileK == 0 && end % kTileK == 0, "slice_packed_ffn: begin and end must be multiples of 128");
+    const int64_t matrix_tiles = (hidden / kTileK) * (inter / kTileN);
+    for (const auto *t : {&gate, &up, &down}) {
+        TORCH_CHECK(t->defined(), "slice_packed_ffn: a packed matrix is undefined");
+        TORCH_CHECK(t->scalar_type() == torch::kUInt8 && t->is_contiguous() && t->numel() == matrix_tiles * kTileBytes,
+                    "slice_packed_ffn: expected contiguous uint8 packed matrices of ", matrix_tiles * kTileBytes, " bytes, got ",
+                    t->numel());
+        TORCH_CHECK(t->device() == gate.device(), "slice_packed_ffn: all matrices must be on one device");
+    }
+
+    const int64_t n = end - begin;
+    const auto gather = [&](const torch::Tensor &tiles, const std::vector<int64_t> &idx) {
+        const auto i = torch::from_blob(const_cast<int64_t *>(idx.data()), {static_cast<int64_t>(idx.size())}, torch::kInt64)
+                           .to(tiles.device());
+        return tiles.index_select(0, i).view(-1);
+    };
+
+    // gate_up [hidden, 2n]: output tile column c comes from tile column src of gate or up. up's tiles follow gate's.
+    std::vector<int64_t> idx;
+    const int64_t tiles_k = hidden / kTileK, tiles_n = inter / kTileN, out_tiles_n = 2 * n / kTileN, half = n / kTileN;
+    for (int64_t g = 0; g < 8; ++g) {
+        for (int64_t c = g; c < out_tiles_n; c += 8) {
+            const bool is_up = layout == GateUpLayout::kBlocked ? c >= half : c % 2 == 1;
+            const int64_t src = begin / kTileN + (layout == GateUpLayout::kBlocked ? c % half : c / 2);
+            for (int64_t r = 0; r < tiles_k; ++r) {
+                idx.push_back((is_up ? matrix_tiles : 0) + packed_tile_index(src, r, tiles_k, tiles_n));
+            }
+        }
+    }
+    FfnSliceWeights w;
+    w.gate_up = gather(torch::cat({gate.view({-1, kTileBytes}), up.view({-1, kTileBytes})}), idx);
+
+    // down [n, hidden]: tile rows [begin / 128, end / 128) of every tile column.
+    if (begin == 0 && end == inter) {
+        w.down = down;
+    } else {
+        idx.clear();
+        const int64_t down_tiles_k = inter / kTileK, down_tiles_n = hidden / kTileN;
+        for (int64_t g = 0; g < 8; ++g) {
+            for (int64_t c = g; c < down_tiles_n; c += 8) {
+                for (int64_t r = begin / kTileK; r < end / kTileK; ++r) {
+                    idx.push_back(packed_tile_index(c, r, down_tiles_k, down_tiles_n));
+                }
+            }
+        }
+        w.down = gather(down.view({-1, kTileBytes}), idx);
+    }
+    w.begin = begin;
+    w.end = end;
+    w.hidden = hidden;
+    w.layout = layout;
+    return w;
+}
+
+FfnSliceWeights FfnSliceWeights::prefix(int64_t n) const {
+    TORCH_CHECK(n > 0 && n <= stored_channels() && n % kTileK == 0, "FfnSliceWeights::prefix: n must be a multiple of 128 in (0, ",
+                stored_channels(), "], got ", n);
+    TORCH_CHECK(n == stored_channels() || layout == GateUpLayout::kInterleaved,
+                "FfnSliceWeights::prefix: a shorter prefix needs GateUpLayout::kInterleaved");
+    FfnSliceWeights w = *this;
+    w.packed_channels = stored_channels();
+    w.end = begin + n;
     return w;
 }
 
