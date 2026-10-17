@@ -75,6 +75,24 @@ find_package(Torch REQUIRED)
 find_package(hip REQUIRED)
 find_package(OpenMP)
 
+# The Torch ROCm wheel bundles its own HIP runtime and hipBLASLt in torch/lib, under names without a version
+# (libamdhip64.so has SONAME libamdhip64.so.7), and libtorch_hip loads them by those names. Our executables need
+# them by SONAME, which LD_LIBRARY_PATH resolved to ROCM_PATH. The process then had two copies of each, and
+# librocroller crashed at exit ("double free or corruption"). So give Torch's copies their SONAMEs in the build
+# tree and search there first. DT_RPATH (--disable-new-dtags) is searched before LD_LIBRARY_PATH; DT_RUNPATH is not.
+set(TORCH_LIB_DIR "${TORCH_PYTHON_PATH}/lib")
+set(TORCH_ROCM_ALIAS_DIR "${CMAKE_BINARY_DIR}/torch-rocm")
+foreach(name libamdhip64.so libhipblaslt.so)
+    if(CMAKE_READELF AND EXISTS "${TORCH_LIB_DIR}/${name}")
+        execute_process(COMMAND "${CMAKE_READELF}" -d "${TORCH_LIB_DIR}/${name}" OUTPUT_VARIABLE _dyn ERROR_QUIET)
+        if(_dyn MATCHES "soname: \\[([A-Za-z0-9_.+-]+)\\]")
+            file(MAKE_DIRECTORY "${TORCH_ROCM_ALIAS_DIR}")
+            file(CREATE_LINK "${TORCH_LIB_DIR}/${name}" "${TORCH_ROCM_ALIAS_DIR}/${CMAKE_MATCH_1}" SYMBOLIC)
+            message(STATUS "Using Torch's ${name} as ${CMAKE_MATCH_1}")
+        endif()
+    endif()
+endforeach()
+
 set(HETEROMEGA_HIP_OPTIONS $<$<COMPILE_LANGUAGE:HIP>:-O3> $<$<COMPILE_LANGUAGE:HIP>:-ffast-math>)
 
 # HeteroMosaic packed W4A16 GEMM and GEMV, built from its sources (no NPU dependencies).
@@ -113,6 +131,10 @@ foreach(name tests/test_gpu_ffn bench/bench_gpu_ffn_slice bench/bench_reduce)
     get_filename_component(target ${name} NAME)
     add_executable(${target} ${name}.cpp)
     target_link_libraries(${target} PRIVATE heteromega_gpu)
+    if(EXISTS "${TORCH_ROCM_ALIAS_DIR}")
+        set_target_properties(${target} PROPERTIES SKIP_BUILD_RPATH ON)
+        target_link_options(${target} PRIVATE "LINKER:--disable-new-dtags" "LINKER:-rpath,${TORCH_ROCM_ALIAS_DIR}:${TORCH_LIB_DIR}")
+    endif()
 endforeach()
 
 set_source_files_properties(bench/bench_bandwidth.cpp PROPERTIES LANGUAGE HIP)
