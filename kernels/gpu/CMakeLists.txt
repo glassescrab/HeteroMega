@@ -45,7 +45,10 @@ link_directories(${ROCM_PATH}/lib)
 if(NOT CMAKE_HIP_COMPILER AND NOT DEFINED ENV{HIPCXX} AND EXISTS "${ROCM_PATH}/lib/llvm/bin/clang++")
     set(CMAKE_HIP_COMPILER "${ROCM_PATH}/lib/llvm/bin/clang++")
 endif()
-string(APPEND CMAKE_HIP_FLAGS " --rocm-path=${ROCM_PATH} --hip-path=${ROCM_PATH}")
+# The AUP image also has HIP 5.7 headers in /usr/include/hip. Without this, HIP files picked them up and
+# clang 22 failed on them (__AMDGCN_WAVEFRONT_SIZE). Search ROCm's headers first, as docs/cloud-baseline.md does.
+string(APPEND CMAKE_HIP_FLAGS " --rocm-path=${ROCM_PATH} --hip-path=${ROCM_PATH} -isystem ${ROCM_PATH}/include")
+string(APPEND CMAKE_CXX_FLAGS " -isystem ${ROCM_PATH}/include")
 
 if(NOT CMAKE_HIP_ARCHITECTURES)
     find_program(_rocminfo rocminfo HINTS "${ROCM_PATH}/bin" NO_CACHE)
