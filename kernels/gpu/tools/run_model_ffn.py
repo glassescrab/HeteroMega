@@ -114,12 +114,19 @@ def main():
     p.add_argument("--out", required=True)
     p.add_argument("--build", default="build-model", help="build directory, relative to the repo root")
     p.add_argument("--config", default="py/unified_llm_w4a16/configs/configs_strixP_llama3_8b.json5")
+    p.add_argument("--heterogeneity", choices=("gpu", "hetero"), default="gpu")
+    p.add_argument("--prompt-tokens", type=int, help="use a prefix of --ref; never repeat or pad token IDs")
     p.add_argument("--reps", type=int, default=3)
     p.add_argument("--new-tokens", type=int, default=64)
     p.add_argument("--max-seq-len", type=int, default=1536)
     args = p.parse_args()
     if not args.dummy and not args.model:
         p.error("--model is required without --dummy")
+    ref = json.loads(Path(args.ref).read_text())
+    full_length = len(ref["input_ids"][0])
+    prompt_length = full_length if args.prompt_tokens is None else args.prompt_tokens
+    if not 0 < prompt_length <= full_length:
+        p.error(f"--prompt-tokens must be between 1 and the reference length ({full_length})")
 
     sys.path.insert(0, str(ROOT / args.build / "py" / "unified_llm_w4a16"))
     sys.path.insert(1, str(ROOT / "py" / "unified_llm_w4a16"))
@@ -136,22 +143,23 @@ def main():
             merge_shards(sorted(model_dir.glob("*.safetensors")), merged)
 
     config = load_config_with_comments(str(ROOT / args.config))
-    config.update(heterogeneity="gpu", prompt_len=1024, usePreSavedWeights=False, warmup=False, debug_verbosity=1,
+    config.update(heterogeneity=args.heterogeneity, prompt_len=prompt_length, usePreSavedWeights=False, warmup=False, debug_verbosity=1,
                   dummy_weights=args.dummy)
     config_path = out.with_name(out.stem + ".config.json")
     config_path.write_text(json.dumps(config, indent=2))
 
-    ref = json.loads(Path(args.ref).read_text())
-    ids = torch.tensor(ref["input_ids"], dtype=torch.int64, device="cuda")
-    assert ids.shape == (1, 1024), ids.shape
+    ids = torch.tensor([ref["input_ids"][0][:prompt_length]], dtype=torch.int64, device="cuda")
     sha = hashlib.sha256(ids.cpu().numpy().tobytes()).hexdigest()
-    assert sha == ref["input_sha256"], sha
+    if prompt_length == full_length:
+        assert sha == ref["input_sha256"], sha
 
     record = {"gpu_ffn_env": os.environ.get("HETEROMEGA_GPU_FFN", ""), "backend": backend.__file__,
               "config": str(config_path), "input_sha256": sha, "new_tokens": args.new_tokens, "dummy": args.dummy}
+    record.update(prompt_tokens=prompt_length, heterogeneity=args.heterogeneity, model=str(model_dir),
+                  torch_version=torch.__version__, gpu_name=torch.cuda.get_device_name())
     t = time.perf_counter()
     path = None if model_dir is None else str(model_dir)
-    model = LLaMA3W4A16Model(model_path=path, tokenizer_path=path, max_seq_len=args.max_seq_len, device="cuda",
+    model = LLaMA3W4A16Model(model_path=path, tokenizer_path=path, max_seq_len=max(args.max_seq_len, prompt_length + args.new_tokens), device="cuda",
                              config_path=str(config_path))
     record["load_s"] = time.perf_counter() - t
 
@@ -161,21 +169,21 @@ def main():
         with torch.no_grad():
             result = model.generate(ids, max_new_tokens=n, temperature=0.0)
         torch.cuda.synchronize()
-        return time.perf_counter() - t0, result[0, 1024:].tolist()
+        return time.perf_counter() - t0, result[0, prompt_length:].tolist()
 
     want = ref["generated_ids"]
     record["warmup_s"], record["warmup_ids"] = timed(len(want))
-    record["matches_reference"] = None if args.dummy else record["warmup_ids"] == want
-    verdict = {None: "dummy weights", True: "matches the reference", False: "DIFFERS from the reference"}
+    record["matches_reference"] = None if args.dummy or prompt_length != full_length else record["warmup_ids"] == want
+    verdict = {None: "no matching reference (dummy weights or shortened prompt)", True: "matches the reference", False: "DIFFERS from the reference"}
     print("WARMUP", record["warmup_s"], record["warmup_ids"], verdict[record["matches_reference"]], flush=True)
 
     record["reps"] = []
     for rep in range(args.reps):
-        prefill_s, _ = timed(1)
+        prefill_s, prefill_ids = timed(1)
         gen_s, gen_ids = timed(args.new_tokens)
         decode = (args.new_tokens - 1) / (gen_s - prefill_s) if gen_s > prefill_s else None
         record["reps"].append({"rep": rep, "prefill_s": prefill_s, "generate_s": gen_s, "decode_tok_s": decode,
-                               "generated_ids": gen_ids})
+                               "generated_ids": gen_ids, "prefill_ids": prefill_ids})
         print(f"REP {rep} prefill_s={prefill_s:.4f} generate_s={gen_s:.4f} decode_tok_s={decode}", flush=True)
     record["peak_allocated_GiB"] = torch.cuda.max_memory_allocated() / 2**30
     out.write_text(json.dumps(record, indent=2))

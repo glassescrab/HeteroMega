@@ -1,5 +1,18 @@
 # HeteroMega progress
 
+## 2026-10-18: local evaluation runner on GPU PR #1
+
+- Based on GPU PR #1 at `1b0023b`; preserves the earlier evaluation checkout.
+- Full plan lists Main A/B/C and paired GPU/NPU sanity checks, including pending endpoints.
+- Reuses synchronized `generate(1)` timing, adds prompt prefixes and the original
+  heterogeneous backend, and batches methods/lengths in alternating process order.
+- CSV reports median/range, token agreement and GPU activation. New persistent
+  GPU+NPU FFN and channel-ratio sweeps await the NPU integration; no new hardware
+  results are asserted. Commands and measurement limits: [evaluation](evaluation.md).
+- User reviewed the complete evaluation scope and authorized a follow-up PR to #1.
+- Mac validation: five CPU tests plus CLI command previews and synthetic
+  JSON-to-CSV checks; AMD execution remains untested in this change.
+
 ## 2026-10-17: GPU P0/P1 work (`kernels/gpu/`, branch `gpu-p0p1`)
 
 All runs on the AUP cloud (HX 370, Radeon 890M `gfx1150`, ROCm 7.2, Torch 2.11).
