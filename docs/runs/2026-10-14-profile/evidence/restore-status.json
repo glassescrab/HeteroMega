@@ -1,0 +1,8 @@
+{
+  "model-before-profiling.cpp": true,
+  "npu-before-profiling.cpp": true,
+  "baseline_binary_restored": true,
+  "after_rebuild_unified_llm_w4a16.cpp": true,
+  "after_rebuild_npuSetup.cpp": true,
+  "rebuilt_module_sha256": "6c236ceddeae0621c7668365a1c4ebfe381c6e73c5aef5953a598ea8620ae8ad"
+}

@@ -1,0 +1,72 @@
+nohup: ignoring input
+[  4%] Building CXX object src/npu_matmul_func/CMakeFiles/npu_matmul_func.dir/npu_matmul_func.cpp.o
+[ 58%] Built target hipkernels
+[ 62%] Linking CXX static library libnpu_matmul_func.a
+[ 62%] Built target npu_matmul_func
+[ 66%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/unified_llm_w4a16.cpp.o
+[ 70%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/npuSetup.cpp.o
+[ 75%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/hetero_compute.cpp.o
+[ 79%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/helper.cpp.o
+[ 83%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_lib.dir/__/cpu_avx_kernels/w4a16_gemv_avx_packed.cpp.o
+[ 87%] Linking HIP static library libunified_llm_w4a16_hetero_lib.a
+[ 91%] Built target unified_llm_w4a16_hetero_lib
+[ 95%] Building CXX object src/microbenchmarks/CMakeFiles/tensor_parallel_gemm_npu_gpu_sweepM.dir/tensor_parallel_gemm_npu_gpu_sweepM.cpp.o
+[100%] Linking HIP executable ../../bin/tensor_parallel_gemm_npu_gpu_sweepM
+[100%] Built target tensor_parallel_gemm_npu_gpu_sweepM
+[  8%] Built target npu_matmul_func
+[ 62%] Built target hipkernels
+[ 91%] Built target unified_llm_w4a16_hetero_lib
+[ 95%] Building CXX object src/unified_llm_w4a16_hetero/CMakeFiles/unified_llm_w4a16_hetero_libtorch.dir/python_bindings.cpp.o
+[100%] Linking HIP shared module ../../py/unified_llm_w4a16/unified_llm_w4a16_hetero_libtorch.so
+[100%] Built target unified_llm_w4a16_hetero_libtorch
+build_exit=0
+
+=== Case 2048x2048x2048 ===
+Artifact dir: "/notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M"
+Completed iGPU baseline avg_latency_us=2162.15 throughput_gops=7945.74 allclose=true max_abs_diff=0
+Running point npuM=256 gpuM=1792
+Completed npuM=256 avg_latency_us=1958.08 throughput_gops=8773.84 allclose=false max_abs_diff=1.5
+Running point npuM=512 gpuM=1536
+Completed npuM=512 avg_latency_us=1703.09 throughput_gops=10087.5 allclose=false max_abs_diff=1.5
+Running point npuM=768 gpuM=1280
+Completed npuM=768 avg_latency_us=1481.22 throughput_gops=11598.4 allclose=false max_abs_diff=1.5
+Running point npuM=1024 gpuM=1024
+Completed npuM=1024 avg_latency_us=1202.64 throughput_gops=14285.1 allclose=false max_abs_diff=1.5
+Running point npuM=1280 gpuM=768
+Completed npuM=1280 avg_latency_us=1334.51 throughput_gops=12873.5 allclose=false max_abs_diff=1.5
+Running point npuM=1536 gpuM=512
+Completed npuM=1536 avg_latency_us=1747.91 throughput_gops=9828.82 allclose=false max_abs_diff=1.5
+Running point npuM=1792 gpuM=256
+Completed npuM=1792 avg_latency_us=1997.62 throughput_gops=8600.16 allclose=false max_abs_diff=1.5
+Running point npuM=2048 gpuM=0
+Completed npuM=2048 avg_latency_us=2384.99 throughput_gops=7203.34 allclose=false max_abs_diff=1.5
+
+=== Case 4096x4096x4096 ===
+Artifact dir: "/notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M"
+Completed iGPU baseline avg_latency_us=15164.7 throughput_gops=9063.08 allclose=true max_abs_diff=0
+Running point npuM=256 gpuM=3840
+Completed npuM=256 avg_latency_us=14018 throughput_gops=9804.45 allclose=false max_abs_diff=3
+Running point npuM=512 gpuM=3584
+Completed npuM=512 avg_latency_us=13391.1 throughput_gops=10263.5 allclose=false max_abs_diff=3
+Running point npuM=768 gpuM=3328
+Completed npuM=768 avg_latency_us=12532.4 throughput_gops=10966.7 allclose=false max_abs_diff=3
+Running point npuM=1024 gpuM=3072
+Completed npuM=1024 avg_latency_us=11723.9 throughput_gops=11723 allclose=false max_abs_diff=3.25
+Running point npuM=1280 gpuM=2816
+Completed npuM=1280 avg_latency_us=10880.3 throughput_gops=12632 allclose=false max_abs_diff=3.25
+Running point npuM=1536 gpuM=2560
+Completed npuM=1536 avg_latency_us=10164.7 throughput_gops=13521.2 allclose=false max_abs_diff=3.25
+Running point npuM=1792 gpuM=2304
+Completed npuM=1792 avg_latency_us=9459.36 throughput_gops=14529.4 allclose=false max_abs_diff=3.25
+Running point npuM=2048 gpuM=2048
+Completed npuM=2048 avg_latency_us=8530.42 throughput_gops=16111.6 allclose=false max_abs_diff=3.25
+Running point npuM=2304 gpuM=1792
+Completed npuM=2304 avg_latency_us=8386.43 throughput_gops=16388.3 allclose=false max_abs_diff=3.25
+Running point npuM=2560 gpuM=1536
+Completed npuM=2560 avg_latency_us=9495.63 throughput_gops=14473.9 allclose=false max_abs_diff=3.25
+Running point npuM=2816 gpuM=1280
+Completed npuM=2816 avg_latency_us=10408.6 throughput_gops=13204.3 allclose=false max_abs_diff=3.25
+Running point npuM=3072 gpuM=1024
+Completed npuM=3072 avg_latency_us=11358.5 throughput_gops=12100.1 allclose=false max_abs_diff=3.25
+Running point npuM=3328 gpuM=768
+sweep_exit=124

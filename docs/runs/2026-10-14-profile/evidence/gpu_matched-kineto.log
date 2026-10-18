@@ -1,0 +1,19 @@
+Initializing UnifiedLLMW4A16Impl_hetero
+Using NPU config: /notebooks/heteromega-profile-2026-10-14/gpu_matched-kineto-none.config.json
+Warmup: Disabled
+Loaded 291 parameters, skipped 0
+Loading quantized weights from /notebooks/heteromosaic-model...
+Using saved safetensors: /notebooks/HeteroMosaic-baseline/py/unified_llm_w4a16/model_weights/heteromosaic-model.safetensors
+Weights loaded in 28.55 seconds
+Importing weights to NPU...
+ITERATION gpu_matched-kineto-none {"iteration": 0, "warmup": true, "wall_seconds": 2.406261206138879, "prefill_seconds": 1.97639, "decode_loop_seconds": 0.419821, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2649108255235029, "end_ns": 2649110661680232, "fallback_warnings": 0, "command_errors": 0}
+ITERATION gpu_matched-kineto-none {"iteration": 1, "warmup": false, "wall_seconds": 2.203844857867807, "prefill_seconds": 1.7859, "decode_loop_seconds": 0.417411, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2649110662255351, "end_ns": 2649112866214267, "fallback_warnings": 0, "command_errors": 0}
+/notebooks/heteromosaic-venv/lib/python3.12/site-packages/torch/profiler/profiler.py:224: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+Libtorch input_ids shape: [1, 1024]
+Generation phase
+Prefill time: 2.11217 seconds
+Total Generation Time: 0.419279 seconds
+Average Time per Token: 0.059897 seconds
+[W1015 03:05:58.354792848 collection.cpp:1148] Warning: ROCTracer produced duplicate flow start: 2 (function operator())
+PROFILE COMPLETE gpu_matched-kineto-none

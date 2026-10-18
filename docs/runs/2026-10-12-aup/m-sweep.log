@@ -1,0 +1,285 @@
+nohup: ignoring input
+
+=== Case 2048x2048x2048 ===
+Artifact dir: "/notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M"
+Completed iGPU baseline avg_latency_us=2125.4 throughput_gops=8083.13 allclose=true max_abs_diff=0
+Running point npuM=256 gpuM=1792
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=256: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M/final_256x2048x2048_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=512 gpuM=1536
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=512: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M/final_512x2048x2048_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=768 gpuM=1280
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=768: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M/final_768x2048x2048_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1024 gpuM=1024
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=1024: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M/final_1024x2048x2048_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1280 gpuM=768
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=1280: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M/final_1280x2048x2048_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1536 gpuM=512
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=1536: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M/final_1536x2048x2048_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1792 gpuM=256
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=1792: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M/final_1792x2048x2048_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=2048 gpuM=0
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=2048: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M/final_2048x2048x2048_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+
+=== Case 4096x4096x4096 ===
+Artifact dir: "/notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M"
+Completed iGPU baseline avg_latency_us=16022 throughput_gops=8578.12 allclose=true max_abs_diff=0
+Running point npuM=256 gpuM=3840
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=256: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_256x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=512 gpuM=3584
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=512: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_512x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=768 gpuM=3328
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=768: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_768x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1024 gpuM=3072
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=1024: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_1024x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1280 gpuM=2816
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=1280: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_1280x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1536 gpuM=2560
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=1536: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_1536x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1792 gpuM=2304
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=1792: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_1792x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=2048 gpuM=2048
+Failed to config hwctx - 1: Invalid argument
+Point failed for npuM=2048: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_2048x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=2304 gpuM=1792
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=2304: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_2304x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=2560 gpuM=1536
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=2560: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_2560x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=2816 gpuM=1280
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=2816: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_2816x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=3072 gpuM=1024
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=3072: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_3072x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=3328 gpuM=768
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=3328: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_3328x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=3584 gpuM=512
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=3584: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_3584x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=3840 gpuM=256
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=3840: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_3840x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=4096 gpuM=0
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=4096: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M/final_4096x4096x4096_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+
+=== Case 8192x8192x8192 ===
+Artifact dir: "/notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M"
+Completed iGPU baseline avg_latency_us=124349 throughput_gops=8842.16 allclose=true max_abs_diff=0
+Running point npuM=256 gpuM=7936
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=256: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_256x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=512 gpuM=7680
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=512: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_512x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=768 gpuM=7424
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=768: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_768x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1024 gpuM=7168
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=1024: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_1024x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1280 gpuM=6912
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=1280: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_1280x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1536 gpuM=6656
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=1536: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_1536x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1792 gpuM=6400
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=1792: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_1792x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=2048 gpuM=6144
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=2048: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_2048x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=2304 gpuM=5888
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=2304: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_2304x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=2560 gpuM=5632
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=2560: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_2560x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=2816 gpuM=5376
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=2816: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_2816x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=3072 gpuM=5120
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=3072: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_3072x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=3328 gpuM=4864
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=3328: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_3328x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=3584 gpuM=4608
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=3584: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_3584x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=3840 gpuM=4352
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=3840: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_3840x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=4096 gpuM=4096
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=4096: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_4096x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=4352 gpuM=3840
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=4352: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_4352x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=4608 gpuM=3584
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=4608: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_4608x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=4864 gpuM=3328
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=4864: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_4864x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=5120 gpuM=3072
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=5120: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_5120x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=5376 gpuM=2816
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=5376: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_5376x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=5632 gpuM=2560
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=5632: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_5632x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=5888 gpuM=2304
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=5888: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_5888x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=6144 gpuM=2048
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=6144: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_6144x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=6400 gpuM=1792
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=6400: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_6400x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=6656 gpuM=1536
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=6656: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_6656x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=6912 gpuM=1280
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=6912: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_6912x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=7168 gpuM=1024
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=7168: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_7168x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=7424 gpuM=768
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=7424: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_7424x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=7680 gpuM=512
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=7680: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_7680x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=7936 gpuM=256
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=7936: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_7936x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=8192 gpuM=0
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=8192: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M/final_8192x8192x8192_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+
+=== Case 8192x4096x14336 ===
+Artifact dir: "/notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M"
+Completed iGPU baseline avg_latency_us=101239 throughput_gops=9503.02 allclose=true max_abs_diff=0
+Running point npuM=256 gpuM=7936
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=256: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_256x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=512 gpuM=7680
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=512: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_512x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=768 gpuM=7424
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=768: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_768x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1024 gpuM=7168
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=1024: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_1024x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1280 gpuM=6912
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=1280: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_1280x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1536 gpuM=6656
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=1536: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_1536x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=1792 gpuM=6400
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=1792: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_1792x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=2048 gpuM=6144
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=2048: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_2048x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=2304 gpuM=5888
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=2304: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_2304x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=2560 gpuM=5632
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=2560: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_2560x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=2816 gpuM=5376
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=2816: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_2816x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=3072 gpuM=5120
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=3072: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_3072x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=3328 gpuM=4864
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=3328: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_3328x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=3584 gpuM=4608
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=3584: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_3584x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=3840 gpuM=4352
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=3840: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_3840x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=4096 gpuM=4096
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=4096: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_4096x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=4352 gpuM=3840
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=4352: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_4352x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=4608 gpuM=3584
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=4608: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_4608x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=4864 gpuM=3328
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=4864: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_4864x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=5120 gpuM=3072
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=5120: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_5120x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=5376 gpuM=2816
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=5376: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_5376x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=5632 gpuM=2560
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=5632: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_5632x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=5888 gpuM=2304
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=5888: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_5888x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=6144 gpuM=2048
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=6144: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_6144x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=6400 gpuM=1792
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=6400: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_6400x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=6656 gpuM=1536
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=6656: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_6656x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=6912 gpuM=1280
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=6912: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_6912x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=7168 gpuM=1024
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=7168: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_7168x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=7424 gpuM=768
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=7424: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_7424x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=7680 gpuM=512
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=7680: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_7680x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=7936 gpuM=256
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=7936: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_7936x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+Running point npuM=8192 gpuM=0
+Failed to create hwctx - 0: Invalid argument
+Point failed for npuM=8192: Failed to create HW context for /notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M/final_8192x4096x14336_64x128x64_8c_bf16_int4AWQ_bf16.pdi
+
+=== Case 8192x14336x4096 ===
+Artifact dir: "/notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x14336x4096/bf16_int4AWQ_bf16_K"
+M sweep exit: 124

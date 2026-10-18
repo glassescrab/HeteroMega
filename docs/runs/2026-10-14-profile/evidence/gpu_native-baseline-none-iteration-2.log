@@ -1,0 +1,5 @@
+Libtorch input_ids shape: [1, 1024]
+Generation phase
+Prefill time: 1.7431 seconds
+Total Generation Time: 0.423821 seconds
+Average Time per Token: 0.0605459 seconds

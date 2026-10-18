@@ -1,0 +1,254 @@
+
+=== Case 2048x2048x2048 ===
+Artifact dir: "/notebooks/HeteroMosaic-baseline/hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M"
+INDEPENDENT gpu_error=0 split_error=0 fp_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDAFloatType{8} ]
+DIAG ref_absmax=8 output_absmax=8 tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ] ref_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ]
+Completed iGPU baseline avg_latency_us=1879 throughput_gops=9143.09 allclose=true max_abs_diff=0
+Running point npuM=256 gpuM=1792
+INDEPENDENT gpu_error=0 split_error=0 fp_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDAFloatType{8} ]
+DIAG ref_absmax=8 output_absmax=8 tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ] ref_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ]
+Completed npuM=256 avg_latency_us=1679 throughput_gops=10232.2 allclose=true max_abs_diff=0
+Running point npuM=512 gpuM=1536
+INDEPENDENT gpu_error=0 split_error=0 fp_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDAFloatType{8} ]
+DIAG ref_absmax=8 output_absmax=8 tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ] ref_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ]
+Completed npuM=512 avg_latency_us=1441 throughput_gops=11922.2 allclose=true max_abs_diff=0
+Running point npuM=768 gpuM=1280
+INDEPENDENT gpu_error=0 split_error=0 fp_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDAFloatType{8} ]
+DIAG ref_absmax=8 output_absmax=8 tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ] ref_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ]
+Completed npuM=768 avg_latency_us=1237 throughput_gops=13888.3 allclose=true max_abs_diff=0
+Running point npuM=1024 gpuM=1024
+INDEPENDENT gpu_error=0 split_error=0 fp_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDAFloatType{8} ]
+DIAG ref_absmax=8 output_absmax=8 tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ] ref_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ]
+Completed npuM=1024 avg_latency_us=1204 throughput_gops=14269 allclose=true max_abs_diff=0
+Running point npuM=1280 gpuM=768
+INDEPENDENT gpu_error=0 split_error=0 fp_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDAFloatType{8} ]
+DIAG ref_absmax=8 output_absmax=8 tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ] ref_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ]
+Completed npuM=1280 avg_latency_us=1679 throughput_gops=10232.2 allclose=true max_abs_diff=0
+Running point npuM=1536 gpuM=512
+INDEPENDENT gpu_error=0 split_error=0 fp_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDAFloatType{8} ]
+DIAG ref_absmax=8 output_absmax=8 tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ] ref_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ]
+Completed npuM=1536 avg_latency_us=1588 throughput_gops=10818.6 allclose=true max_abs_diff=0
+Running point npuM=1792 gpuM=256
+INDEPENDENT gpu_error=0 split_error=0 fp_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDAFloatType{8} ]
+DIAG ref_absmax=8 output_absmax=8 tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ] ref_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ]
+Completed npuM=1792 avg_latency_us=2686 throughput_gops=6396.08 allclose=true max_abs_diff=0
+Running point npuM=2048 gpuM=0
+INDEPENDENT gpu_error=0 split_error=0 fp_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDAFloatType{8} ]
+DIAG ref_absmax=8 output_absmax=8 tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ] ref_tail= 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+ 8
+[ CUDABFloat16Type{8} ]
+Completed npuM=2048 avg_latency_us=2966 throughput_gops=5792.27 allclose=true max_abs_diff=0

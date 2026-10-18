@@ -9,6 +9,25 @@ The setup guide below is the inherited HeteroMosaic full-system workflow.
 For the AUP MLIR-AIE notebook, use the isolated NPU instructions above;
 the notebook already supplies the driver and compiler environment.
 
+# HeteroMega
+
+HeteroMega investigates persistent FFN tensor partitions across GPU and NPU,
+starting from HeteroMosaic. The current experimental cloud port runs both
+devices, but random packed-W4A16 numerical checks still fail. Kernel development
+and performance conclusions must account for that unresolved correctness issue.
+
+- [Kernel teammate handoff](docs/kernel-handoff.md): where to start, measured
+  bottlenecks, kernel interfaces, and the next milestone.
+- [Profiling report](docs/profiling-2026-10-14.md): repeated baseline latency,
+  stage breakdowns, raw evidence, and limitations.
+- [Cloud build/run guide](docs/cloud-baseline.md) and
+  [runtime compatibility port](docs/runtime-compatibility.md).
+- [Current research plan](agent.md), [architecture/build map](docs/project-plan.md),
+  [progress](docs/progress.md), and [session instructions](AGENTS.md).
+
+The setup guide below is inherited from upstream. The AUP cloud uses documented
+ROCm 7.2/Torch 2.11 adaptations; follow the cloud guide for that environment.
+
 # Setup Guide
 This guide provides the instructions required to set up, build, and run HeteroMosaic. It covers system prerequisites, kernel and GTT memory configuration, external library dependencies, environment setup, project compilation, and model execution.
 

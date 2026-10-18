@@ -1,0 +1,173 @@
+diff --git a/include/npu_matmul_func/npu_util.hpp b/include/npu_matmul_func/npu_util.hpp
+index 9a05654..34b603e 100644
+--- a/include/npu_matmul_func/npu_util.hpp
++++ b/include/npu_matmul_func/npu_util.hpp
+@@ -55,46 +55,60 @@ inline int get_driver_version(int fd, __u32 *major, __u32 *minor) {
+         Allocates a heap on the device by creating a BO of type dev heap
+ */
+ static int alloc_heap(int fd, __u32 size, __u32 *handle) {
+-  int ret;
+-  void *heap_buf = NULL;
+   const size_t alignment = 64 * 1024 * 1024;
+-  ret = posix_memalign(&heap_buf, alignment, size);
+-  if (ret != 0 || heap_buf == NULL) {
+-    if (npu_debug_verbosity >= 1) printf("[ERROR] Failed to allocate heap buffer of size %d\n", size);
+-  }
+-
+-  void *dev_heap_parent = mmap(0, alignment * 2 - 1, PROT_READ | PROT_WRITE,
++  if (size == 0) { errno = EINVAL; return -1; }
++  const size_t reservation_size = static_cast<size_t>(size) + alignment;
++  void *reservation = mmap(nullptr, reservation_size, PROT_NONE,
+     MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+-
+-  if (dev_heap_parent == MAP_FAILED) {
+-    dev_heap_parent = nullptr;
+-    return -1;
+-  }
++  if (reservation == MAP_FAILED) return -1;
++  const uintptr_t base = reinterpret_cast<uintptr_t>(reservation);
++  const uintptr_t aligned = (base + alignment - 1) & ~(alignment - 1);
+ 
+   struct amdxdna_drm_create_bo create_bo_params = {
+       .size = size,
+       .type = AMDXDNA_BO_DEV_HEAP,
+   };
+ 
+-  ret = ioctl(fd, DRM_IOCTL_AMDXDNA_CREATE_BO, &create_bo_params);
+-  if (ret == 0 && handle) {
+-    *handle = create_bo_params.handle;
++  int ret = ioctl(fd, DRM_IOCTL_AMDXDNA_CREATE_BO, &create_bo_params);
++  if (ret != 0) {
++    const int saved_errno = errno;
++    munmap(reservation, reservation_size);
++    errno = saved_errno;
++    return ret;
+   }
+ 
+   struct amdxdna_drm_get_bo_info get_bo_info = {.handle = create_bo_params.handle};
+   ret = ioctl(fd, DRM_IOCTL_AMDXDNA_GET_BO_INFO, &get_bo_info);
+   if (ret != 0) {
++    const int saved_errno = errno;
+     perror("Failed to get BO info");
++    struct drm_gem_close close_bo = {.handle = create_bo_params.handle};
++    ioctl(fd, DRM_IOCTL_GEM_CLOSE, &close_bo);
++    munmap(reservation, reservation_size);
++    errno = saved_errno;
+     return -2;
+   }
+ 
+-  // Need to free the heap buf but still use the address so we can 
+-  // ensure alignment
+-  free(heap_buf);
+-  heap_buf = (void  *)mmap(heap_buf, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, get_bo_info.map_offset);
++  // MAP_FIXED replaces only pages in our own reservation. An address hint
++  // alone can return an unaligned mapping, which the XDNA driver cannot pin.
++  void *heap_buf = mmap(reinterpret_cast<void *>(aligned), size,
++    PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED, fd, get_bo_info.map_offset);
++  if (heap_buf == MAP_FAILED) {
++    const int saved_errno = errno;
++    struct drm_gem_close close_bo = {.handle = create_bo_params.handle};
++    ioctl(fd, DRM_IOCTL_GEM_CLOSE, &close_bo);
++    munmap(reservation, reservation_size);
++    errno = saved_errno;
++    return -3;
++  }
++  const size_t prefix = aligned - base;
++  const size_t suffix = reservation_size - prefix - size;
++  if (prefix) munmap(reservation, prefix);
++  if (suffix) munmap(reinterpret_cast<void *>(aligned + size), suffix);
++  if (handle) *handle = create_bo_params.handle;
+   if (npu_debug_verbosity >= 1) printf("Heap buffer @:                  %p\n", heap_buf);
+ 
+-  return ret;
++  return 0;
+ }
+ 
+ /*
+diff --git a/src/npu_matmul_func/npu_matmul_func.cpp b/src/npu_matmul_func/npu_matmul_func.cpp
+index 110b4e7..4a00c92 100644
+--- a/src/npu_matmul_func/npu_matmul_func.cpp
++++ b/src/npu_matmul_func/npu_matmul_func.cpp
+@@ -14,6 +14,19 @@ int npu_debug_verbosity = 1;
+ 
+ void set_npu_debug_verbosity(int level) { npu_debug_verbosity = level; }
+ 
++// Different logical tensors can share one HIP allocation and imported GEM BO.
++// The residency list must contain each BO once: locking the same reservation
++// twice causes the current XDNA driver to reject submission with EALREADY.
++static uint32_t deduplicate_bo_args(uint32_t *args, uint32_t count) {
++    uint32_t unique_count = 0;
++    for (uint32_t i = 0; i < count; ++i) {
++        if (std::find(args, args + unique_count, args[i]) == args + unique_count) {
++            args[unique_count++] = args[i];
++        }
++    }
++    return unique_count;
++}
++
+ void allocate_heap_and_error(int drv_fd) {
+     __u32 heap_handle;
+     // Reserve some device memory for the heap
+@@ -71,7 +84,12 @@ int createHWInstctxt(int drv_fd, struct hwInstctxt &thisctxt, const char *pdi_pa
+     }
+ 
+     // Allocating a structure to store QOS information
+-    struct amdxdna_qos_info *qos = (struct amdxdna_qos_info *)malloc(sizeof(struct amdxdna_qos_info));
++    // Zero reserved bytes and round storage to eight bytes. The pinned UAPI
++    // has a 28-byte QoS structure; the current driver reads 32 bytes, including
++    // user_start_col (zero selects column 0 for these full-width PDIs).
++    const size_t qos_size = (sizeof(struct amdxdna_qos_info) + 7) & ~size_t(7);
++    struct amdxdna_qos_info *qos = (struct amdxdna_qos_info *)calloc(1, qos_size);
++    if (!qos) return -1;
+     qos->gops = 0;
+     qos->fps = 0;
+     qos->dma_bandwidth = 0;
+@@ -107,7 +125,7 @@ int createHWInstctxt(int drv_fd, struct hwInstctxt &thisctxt, const char *pdi_pa
+     // Allocate memory for the struct plus the flexible array member
+     size_t param_size = sizeof(struct amdxdna_ctx_param_config_cu) + sizeof(struct amdxdna_cu_config);
+     struct amdxdna_ctx_param_config_cu *param_config_cu =
+-        (struct amdxdna_ctx_param_config_cu *)malloc(param_size);
++        (struct amdxdna_ctx_param_config_cu *)calloc(1, param_size);
+     if (!param_config_cu) {
+         perror("Failed to allocate memory for param_config_cu");
+         return -1;
+@@ -167,7 +185,10 @@ int createHWctxt(int drv_fd, struct hwctxt &thisctxt, const char *pdi_path, cons
+     }
+ 
+     // Allocating a structure to store QOS information
+-    struct amdxdna_qos_info *qos = (struct amdxdna_qos_info *)malloc(sizeof(struct amdxdna_qos_info));
++    // See createHWInstctxt: current XDNA reads the padded QoS storage.
++    const size_t qos_size = (sizeof(struct amdxdna_qos_info) + 7) & ~size_t(7);
++    struct amdxdna_qos_info *qos = (struct amdxdna_qos_info *)calloc(1, qos_size);
++    if (!qos) return -1;
+     qos->gops = 0;
+     qos->fps = 0;
+     qos->dma_bandwidth = 0;
+@@ -203,7 +224,7 @@ int createHWctxt(int drv_fd, struct hwctxt &thisctxt, const char *pdi_path, cons
+     // Allocate memory for the struct plus the flexible array member
+     size_t param_size = sizeof(struct amdxdna_ctx_param_config_cu) + sizeof(struct amdxdna_cu_config);
+     struct amdxdna_ctx_param_config_cu *param_config_cu =
+-        (struct amdxdna_ctx_param_config_cu *)malloc(param_size);
++        (struct amdxdna_ctx_param_config_cu *)calloc(1, param_size);
+     if (!param_config_cu) {
+         perror("Failed to allocate memory for param_config_cu");
+         return -1;
+@@ -422,7 +443,7 @@ int create_cmd_packet(int drv_fd, __u32 pdi_handle, uint64_t dpu_0_sram_vaddr, _
+         .cmd_handles = create_cmd_chain_bo.handle,
+         .args = (__u64)bo_args,
+         .cmd_count = 1,
+-        .arg_count = bo_args_count,
++        .arg_count = deduplicate_bo_args(bo_args, bo_args_count),
+     };
+ 
+     cmd = exec_cmd_0;
+@@ -599,7 +620,7 @@ int create_cmd_packet_chain_bmm(int drv_fd, __u32 pdi_handle, uint64_t dpu_0_sra
+         .cmd_handles = create_cmd_chain_bo.handle,
+         .args = (__u64)bo_args,
+         .cmd_count = 1,
+-        .arg_count = bo_args_count,
++        .arg_count = deduplicate_bo_args(bo_args, bo_args_count),
+     };
+ 
+     cmd = exec_cmd_0;
+

@@ -14,6 +14,43 @@ int npu_debug_verbosity = 1;
 
 void set_npu_debug_verbosity(int level) { npu_debug_verbosity = level; }
 
+// Different logical tensors can share one HIP allocation and imported GEM BO.
+// The residency list must contain each BO once: locking the same reservation
+// twice causes the current XDNA driver to reject submission with EALREADY.
+static uint32_t deduplicate_bo_args(uint32_t *args, uint32_t count) {
+    uint32_t unique_count = 0;
+    for (uint32_t i = 0; i < count; ++i) {
+        if (std::find(args, args + unique_count, args[i]) == args + unique_count) {
+            args[unique_count++] = args[i];
+        }
+    }
+    return unique_count;
+}
+
+int wait_for_npu_command(int drv_fd, const struct amdxdna_drm_create_ctx &hw_ctx,
+                         __u64 seq, __u32 timeout_ms) {
+    struct amdxdna_drm_wait_cmd legacy_wait = {
+        .ctx = hw_ctx.handle, .timeout = timeout_ms, .seq = seq,
+    };
+    int ret = ioctl(drv_fd, DRM_IOCTL_AMDXDNA_WAIT_CMD, &legacy_wait);
+    if (ret == 0 || (errno != EOPNOTSUPP && errno != ENOTTY)) return ret;
+    if (hw_ctx.syncobj_handle == 0) { errno = EOPNOTSUPP; return -1; }
+
+    // Current XDNA exposes completion through the context's DRM timeline.
+    // Its timeout is absolute CLOCK_MONOTONIC time, rather than milliseconds.
+    struct timespec now;
+    if (clock_gettime(CLOCK_MONOTONIC, &now) != 0) return -1;
+    __u32 handle = hw_ctx.syncobj_handle;
+    struct drm_syncobj_timeline_wait timeline_wait = {};
+    timeline_wait.handles = reinterpret_cast<__u64>(&handle);
+    timeline_wait.points = reinterpret_cast<__u64>(&seq);
+    timeline_wait.timeout_nsec = static_cast<__s64>(now.tv_sec) * 1000000000LL +
+        now.tv_nsec + static_cast<__s64>(timeout_ms) * 1000000LL;
+    timeline_wait.count_handles = 1;
+    timeline_wait.flags = DRM_SYNCOBJ_WAIT_FLAGS_WAIT_FOR_SUBMIT;
+    return ioctl(drv_fd, DRM_IOCTL_SYNCOBJ_TIMELINE_WAIT, &timeline_wait);
+}
+
 void allocate_heap_and_error(int drv_fd) {
     __u32 heap_handle;
     // Reserve some device memory for the heap
@@ -71,7 +108,12 @@ int createHWInstctxt(int drv_fd, struct hwInstctxt &thisctxt, const char *pdi_pa
     }
 
     // Allocating a structure to store QOS information
-    struct amdxdna_qos_info *qos = (struct amdxdna_qos_info *)malloc(sizeof(struct amdxdna_qos_info));
+    // Zero reserved bytes and round storage to eight bytes. The pinned UAPI
+    // has a 28-byte QoS structure; the current driver reads 32 bytes, including
+    // user_start_col (zero selects column 0 for these full-width PDIs).
+    const size_t qos_size = (sizeof(struct amdxdna_qos_info) + 7) & ~size_t(7);
+    struct amdxdna_qos_info *qos = (struct amdxdna_qos_info *)calloc(1, qos_size);
+    if (!qos) return -1;
     qos->gops = 0;
     qos->fps = 0;
     qos->dma_bandwidth = 0;
@@ -107,7 +149,7 @@ int createHWInstctxt(int drv_fd, struct hwInstctxt &thisctxt, const char *pdi_pa
     // Allocate memory for the struct plus the flexible array member
     size_t param_size = sizeof(struct amdxdna_ctx_param_config_cu) + sizeof(struct amdxdna_cu_config);
     struct amdxdna_ctx_param_config_cu *param_config_cu =
-        (struct amdxdna_ctx_param_config_cu *)malloc(param_size);
+        (struct amdxdna_ctx_param_config_cu *)calloc(1, param_size);
     if (!param_config_cu) {
         perror("Failed to allocate memory for param_config_cu");
         return -1;
@@ -167,7 +209,10 @@ int createHWctxt(int drv_fd, struct hwctxt &thisctxt, const char *pdi_path, cons
     }
 
     // Allocating a structure to store QOS information
-    struct amdxdna_qos_info *qos = (struct amdxdna_qos_info *)malloc(sizeof(struct amdxdna_qos_info));
+    // See createHWInstctxt: current XDNA reads the padded QoS storage.
+    const size_t qos_size = (sizeof(struct amdxdna_qos_info) + 7) & ~size_t(7);
+    struct amdxdna_qos_info *qos = (struct amdxdna_qos_info *)calloc(1, qos_size);
+    if (!qos) return -1;
     qos->gops = 0;
     qos->fps = 0;
     qos->dma_bandwidth = 0;
@@ -203,7 +248,7 @@ int createHWctxt(int drv_fd, struct hwctxt &thisctxt, const char *pdi_path, cons
     // Allocate memory for the struct plus the flexible array member
     size_t param_size = sizeof(struct amdxdna_ctx_param_config_cu) + sizeof(struct amdxdna_cu_config);
     struct amdxdna_ctx_param_config_cu *param_config_cu =
-        (struct amdxdna_ctx_param_config_cu *)malloc(param_size);
+        (struct amdxdna_ctx_param_config_cu *)calloc(1, param_size);
     if (!param_config_cu) {
         perror("Failed to allocate memory for param_config_cu");
         return -1;
@@ -422,7 +467,7 @@ int create_cmd_packet(int drv_fd, __u32 pdi_handle, uint64_t dpu_0_sram_vaddr, _
         .cmd_handles = create_cmd_chain_bo.handle,
         .args = (__u64)bo_args,
         .cmd_count = 1,
-        .arg_count = bo_args_count,
+        .arg_count = deduplicate_bo_args(bo_args, bo_args_count),
     };
 
     cmd = exec_cmd_0;
@@ -460,13 +505,7 @@ int execute_command_packet(int drv_fd, struct amdxdna_drm_create_ctx hw_ctx, __u
     }
 
     // Wait for the command to complete
-    struct amdxdna_drm_wait_cmd wait_cmd = {
-        .ctx = hw_ctx.handle,
-        .timeout = 800, // 50ms timeout
-        .seq = exec_cmd.seq,
-    };
-
-    ret = ioctl(drv_fd, DRM_IOCTL_AMDXDNA_WAIT_CMD, &wait_cmd);
+    ret = wait_for_npu_command(drv_fd, hw_ctx, exec_cmd.seq, 800);
     if (ret != 0) {
         perror("Failed to wait");
         return -1;
@@ -599,7 +638,7 @@ int create_cmd_packet_chain_bmm(int drv_fd, __u32 pdi_handle, uint64_t dpu_0_sra
         .cmd_handles = create_cmd_chain_bo.handle,
         .args = (__u64)bo_args,
         .cmd_count = 1,
-        .arg_count = bo_args_count,
+        .arg_count = deduplicate_bo_args(bo_args, bo_args_count),
     };
 
     cmd = exec_cmd_0;

@@ -1,0 +1,15 @@
+Initializing UnifiedLLMW4A16Impl_hetero
+Using NPU config: /notebooks/heteromega-profile-2026-10-14/hetero_pipeline-baseline-none.config.json
+Warmup: Disabled
+Loaded 291 parameters, skipped 0
+Loading quantized weights from /notebooks/heteromosaic-model...
+Using saved safetensors: /notebooks/HeteroMosaic-baseline/py/unified_llm_w4a16/model_weights/heteromosaic-model.safetensors
+Weights loaded in 32.65 seconds
+Importing weights to NPU...
+ITERATION hetero_pipeline-baseline-none {"iteration": 0, "warmup": true, "wall_seconds": 2.062094512861222, "prefill_seconds": 1.62041, "decode_loop_seconds": 0.43615, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648775748994807, "end_ns": 2648777811270597, "fallback_warnings": 224, "command_errors": 0}
+ITERATION hetero_pipeline-baseline-none {"iteration": 1, "warmup": false, "wall_seconds": 1.765630830079317, "prefill_seconds": 1.31608, "decode_loop_seconds": 0.449114, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648777812047792, "end_ns": 2648779577777800, "fallback_warnings": 224, "command_errors": 0}
+ITERATION hetero_pipeline-baseline-none {"iteration": 2, "warmup": false, "wall_seconds": 1.7618743777275085, "prefill_seconds": 1.31655, "decode_loop_seconds": 0.444917, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648779578490607, "end_ns": 2648781340478262, "fallback_warnings": 224, "command_errors": 0}
+ITERATION hetero_pipeline-baseline-none {"iteration": 3, "warmup": false, "wall_seconds": 1.7609250331297517, "prefill_seconds": 1.31761, "decode_loop_seconds": 0.442916, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648781341171999, "end_ns": 2648783102204320, "fallback_warnings": 224, "command_errors": 0}
+ITERATION hetero_pipeline-baseline-none {"iteration": 4, "warmup": false, "wall_seconds": 1.782617622986436, "prefill_seconds": 1.31856, "decode_loop_seconds": 0.463587, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648783102893967, "end_ns": 2648784885614048, "fallback_warnings": 224, "command_errors": 0}
+ITERATION hetero_pipeline-baseline-none {"iteration": 5, "warmup": false, "wall_seconds": 1.757500821724534, "prefill_seconds": 1.31213, "decode_loop_seconds": 0.444927, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648784886349514, "end_ns": 2648786643948794, "fallback_warnings": 224, "command_errors": 0}
+PROFILE COMPLETE hetero_pipeline-baseline-none

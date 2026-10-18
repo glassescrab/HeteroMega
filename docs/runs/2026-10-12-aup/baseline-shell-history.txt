@@ -1,0 +1,186 @@
+    1  python3 -m venv /notebooks/heteromosaic-venv
+    2  nohup /notebooks/heteromosaic-venv/bin/pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/rocm7.2 > /notebooks/heteromega-baseline-logs/torch-install.log 2>&1 &
+    3  git clone --filter=blob:none --no-checkout https://github.com/glassescrab/HeteroMega.git /notebooks/HeteroMosaic-baseline > /notebooks/heteromega-baseline-logs/clone.log 2>&1 && git -C /notebooks/HeteroMosaic-baseline sparse-checkout set src include py && git -C /notebooks/HeteroMosaic-baseline checkout 61714a3147f34857aa5dfef21a28e762777a2df0
+    4  tail -8 /notebooks/heteromega-baseline-logs/torch-install.log
+    5  mkdir -p /notebooks/heteromosaic-libraries
+    6  git clone --filter=blob:none --no-checkout https://github.com/amd/xdna-driver.git /notebooks/heteromosaic-libraries/xdna-driver-05-19-25 > /notebooks/heteromega-baseline-logs/xdna-clone.log 2>&1 && git -C /notebooks/heteromosaic-libraries/xdna-driver-05-19-25 sparse-checkout set src/include && git -C /notebooks/heteromosaic-libraries/xdna-driver-05-19-25 checkout 0e6d303b2cc2b3fe1cf10aba0acbf57a422588fb
+    7  git -C /notebooks/HeteroMosaic-baseline sparse-checkout add hw_bins/npu2/8192x2048x2048/bf16_int4AWQ_bf16_M hw_bins/npu2/8192x4096x4096/bf16_int4AWQ_bf16_M hw_bins/npu2/8192x8192x8192/bf16_int4AWQ_bf16_M hw_bins/npu2/8192x4096x14336/bf16_int4AWQ_bf16_M hw_bins/npu2/8192x14336x4096/bf16_int4AWQ_bf16_K > /notebooks/heteromega-baseline-logs/artifacts.log 2>&1
+    8  python3 - <<'PY'
+from pathlib import Path
+r=Path('/notebooks/HeteroMosaic-baseline')
+for p in r.rglob('CMakeLists.txt'):
+ s=p.read_text(); t=s.replace('/opt/rocm-7.1.1','/opt/rocm-7.2.0')
+ if s!=t:p.write_text(t)
+PY
+
+    9  git -C /notebooks/HeteroMosaic-baseline diff > /notebooks/heteromega-baseline-logs/cloud-build.patch
+   10  tail -6 /notebooks/heteromega-baseline-logs/torch-install.log
+   11  ps -o pid,etime,comm -p 131
+   12  du -h /tmp/pip-unpack-* 2>/dev/null | tail -3
+   13  cat /sys/class/drm/card0/device/mem_info_gtt_total /sys/class/drm/card0/device/mem_info_vram_total 2>/dev/null
+   14  wait %1
+   15  source /notebooks/heteromosaic-venv/bin/activate
+   16  pip install pybind11 numpy json5 safetensors > /notebooks/heteromega-baseline-logs/build-deps.log 2>&1
+   17  unset PYTHONPATH HSA_OVERRIDE_GFX_VERSION
+   18  export HOME_LIBS=/notebooks/heteromosaic-libraries
+   19  export HETEROMOSAIC_ROOT=/notebooks/HeteroMosaic-baseline
+   20  export ROCM_PATH=/opt/rocm-7.2.0
+   21  export LD_LIBRARY_PATH=/opt/rocm-7.2.0/lib:/opt/xilinx/xrt/lib
+   22  python -c "import torch; print(torch.__version__,torch.version.hip,torch.cuda.is_available()); x=torch.arange(16,device='cuda'); print('GPU tensor sum',x.sum().item()); print('GPU free/total',torch.cuda.mem_get_info())" > /notebooks/heteromega-baseline-logs/torch-gpu.log 2>&1
+   23  cat /notebooks/heteromega-baseline-logs/torch-gpu.log
+   24  cmake -S /notebooks/HeteroMosaic-baseline -B /notebooks/HeteroMosaic-baseline/build -DCMAKE_HIP_ARCHITECTURES=gfx1150 -DCMAKE_HIP_COMPILER=/opt/rocm-7.2.0/lib/llvm/bin/clang++ -Dpybind11_DIR="$(python -m pybind11 --cmakedir)" -DCMAKE_PREFIX_PATH=/opt/rocm-7.2.0 '-DCMAKE_CXX_FLAGS=-isystem /opt/rocm-7.2.0/include' '-DCMAKE_HIP_FLAGS=-isystem /opt/rocm-7.2.0/include --hip-path=/opt/rocm-7.2.0 --rocm-path=/opt/rocm-7.2.0' '-DCMAKE_EXE_LINKER_FLAGS=-L/opt/rocm-7.2.0/lib -Wl,-rpath,/opt/rocm-7.2.0/lib' '-DCMAKE_SHARED_LINKER_FLAGS=-L/opt/rocm-7.2.0/lib -Wl,-rpath,/opt/rocm-7.2.0/lib' > /notebooks/heteromega-baseline-logs/configure.log 2>&1; printf 'Configure exit: %s\n' "$?"; tail -18 /notebooks/heteromega-baseline-logs/configure.log
+   25  nohup bash -c 'cmake --build /notebooks/HeteroMosaic-baseline/build -j2 --target test_layout_hip tensor_parallel_gemm_npu_gpu_sweepM unified_llm_w4a16_hetero_libtorch; r=$?; printf "Build exit: %s\n" "$r"; exit "$r"' > /notebooks/heteromega-baseline-logs/build.log 2>&1 &
+   26  tail -12 /notebooks/heteromega-baseline-logs/build.log
+   27  grep -m 10 'error:' /notebooks/heteromega-baseline-logs/build.log
+   28  sed -n '1,70p' /notebooks/heteromosaic-venv/lib/python3.12/site-packages/torch/include/c10/hip/HIPStream.h
+   29  sed -n '1,65p' /notebooks/heteromosaic-venv/lib/python3.12/site-packages/torch/include/c10/hip/HIPGuard.h
+   30  grep -m 8 'error:' /notebooks/heteromega-baseline-logs/build.log
+   31  grep -nE 'namespace|class .*Stream|struct .*Guard|getCurrent.*Stream|getStreamFromPool|HIPStream' /notebooks/heteromosaic-venv/lib/python3.12/site-packages/torch/include/c10/hip/HIPStream.h | head -20
+   32  grep -nE 'namespace|HIPStreamGuard|CUDAStreamGuard' /notebooks/heteromosaic-venv/lib/python3.12/site-packages/torch/include/c10/hip/HIPGuard.h | head -12
+   33  cp /notebooks/heteromega-baseline-logs/build.log /notebooks/heteromega-baseline-logs/build-first.log
+   34  cat > /notebooks/heteromega-baseline-logs/torch211-hip-compat.hpp <<'EOF'
+#pragma once
+#include <c10/hip/HIPStream.h>
+#include <c10/hip/HIPGuard.h>
+namespace c10::hip {
+using HIPStream = c10::cuda::CUDAStream;
+using HIPStreamGuard = c10::cuda::CUDAStreamGuard;
+}
+EOF
+
+   35  cat >> /notebooks/HeteroMosaic-baseline/CMakeLists.txt <<'EOF'
+
+# Cloud build adapter: PyTorch 2.11 ROCm retains HIP functions but renamed types.
+target_compile_options(unified_llm_w4a16_hetero_lib PUBLIC
+    -include /notebooks/heteromega-baseline-logs/torch211-hip-compat.hpp)
+EOF
+
+   36  git -C /notebooks/HeteroMosaic-baseline diff > /notebooks/heteromega-baseline-logs/cloud-build.patch
+   37  nohup bash -c 'cmake --build /notebooks/HeteroMosaic-baseline/build -j2 --target test_layout_hip tensor_parallel_gemm_npu_gpu_sweepM unified_llm_w4a16_hetero_libtorch; r=$?; printf "Build exit: %s\n" "$r"; exit "$r"' > /notebooks/heteromega-baseline-logs/build.log 2>&1 &
+   38  tail -12 /notebooks/heteromega-baseline-logs/build.log
+   39  nohup bash -c 'timeout 180 /notebooks/HeteroMosaic-baseline/build/bin/test_layout_hip; printf "GPU layout exit: %s\n" "$?"' > /notebooks/heteromega-baseline-logs/gpu-layout.log 2>&1 &
+   40  pip install transformers==4.51.3 sentencepiece protobuf > /notebooks/heteromega-baseline-logs/model-deps.log 2>&1
+   41  tail -5 /notebooks/heteromega-baseline-logs/build.log
+   42  tail -12 /notebooks/heteromega-baseline-logs/gpu-layout.log
+   43  python - <<'PY'
+from huggingface_hub import HfApi
+i=HfApi().model_info('hugging-quants/Meta-Llama-3.1-8B-Instruct-AWQ-INT4',files_metadata=True)
+print('Model revision:',i.sha,'gated:',i.gated)
+for f in i.siblings:
+ if f.rfilename.endswith('.safetensors'):print(f.rfilename,f.size)
+open('/notebooks/heteromega-baseline-logs/model-revision.txt','w').write(i.sha+'\n')
+PY
+
+   44  nohup bash -c 'timeout 180 /notebooks/HeteroMosaic-baseline/build/bin/tensor_parallel_gemm_npu_gpu_sweepM --results_json=/notebooks/heteromega-baseline-logs/m-sweep.json; printf "M sweep exit: %s\n" "$?"' > /notebooks/heteromega-baseline-logs/m-sweep.log 2>&1 &
+   45  tail -24 /notebooks/heteromega-baseline-logs/m-sweep.log
+   46  git -C /notebooks/heteromosaic-libraries/xdna-driver-05-19-25 ls-tree -r --name-only refs/remotes/origin/HEAD | grep -E 'amdxdna_accel.h|ctx.c$'
+   47  git -C /notebooks/heteromosaic-libraries/xdna-driver-05-19-25 show refs/remotes/origin/HEAD:src/include/uapi/drm_local/amdxdna_accel.h > /notebooks/heteromega-baseline-logs/amdxdna-current.h
+   48  diff -u /notebooks/heteromosaic-libraries/xdna-driver-05-19-25/src/include/uapi/drm_local/amdxdna_accel.h /notebooks/heteromega-baseline-logs/amdxdna-current.h | head -90
+   49  cat > /notebooks/heteromega-baseline-logs/download-model.py <<'PY'
+from pathlib import Path
+from huggingface_hub import snapshot_download
+rev=Path('/notebooks/heteromega-baseline-logs/model-revision.txt').read_text().strip().split('\\')[0]
+print('Pinned model revision:',rev,flush=True)
+snapshot_download(repo_id='hugging-quants/Meta-Llama-3.1-8B-Instruct-AWQ-INT4', revision=rev, local_dir='/notebooks/heteromosaic-model', allow_patterns=['*.json','*.safetensors','*.model'])
+print('MODEL DOWNLOAD COMPLETE',flush=True)
+PY
+
+   50  nohup python -u /notebooks/heteromega-baseline-logs/download-model.py > /notebooks/heteromega-baseline-logs/model-download.log 2>&1 &
+   51  git -C /notebooks/heteromosaic-libraries/xdna-driver-05-19-25 show refs/remotes/origin/HEAD:drivers/accel/amdxdna/aie2_ctx.c > /notebooks/heteromega-baseline-logs/aie2-current.c
+   52  grep -nE 'max_opc|qos|num_tiles|EINVAL' /notebooks/heteromega-baseline-logs/aie2-current.c | head -32
+   53  xrt-smi examine | grep -A2 'amdxdna Version'
+   54  sed -n '540,605p' /notebooks/heteromega-baseline-logs/aie2-current.c
+   55  sed -n '65,145p' /notebooks/heteromega-baseline-logs/amdxdna-current.h
+   56  tail -4 /notebooks/heteromega-baseline-logs/model-download.log
+   57  cat > /notebooks/heteromega-baseline-logs/run-model.py <<'PY'
+import sys,json,time,hashlib
+from pathlib import Path
+import torch
+root=Path('/notebooks/HeteroMosaic-baseline')
+sys.path.insert(0,str(root/'py/unified_llm_w4a16'))
+from llama3_8b_w4a16_model import LLaMA3W4A16Model
+mode=sys.argv[1]
+config=Path('/notebooks/heteromega-baseline-logs')/(mode+'-model-config.json')
+c=json.loads((root/'py/unified_llm_w4a16/configs/configs_strixP_llama3_8b.json5').read_text())
+c.update(heterogeneity=mode,prompt_len=1024,usePreSavedWeights=False,warmup=False,debug_verbosity=1)
+config.write_text(json.dumps(c,indent=2))
+m=LLaMA3W4A16Model(model_path='/notebooks/heteromosaic-model',tokenizer_path='/notebooks/heteromosaic-model',max_seq_len=1536,device='cuda',config_path=str(config))
+text=('This experiment measures language model inference on heterogeneous processors. '*200)+' Explain the purpose of this experiment.'
+ids=m.tokenizer(text,return_tensors='pt')['input_ids'][:,:1024].contiguous().to('cuda')
+assert ids.shape==(1,1024)
+record={'mode':mode,'input_ids':ids.cpu().tolist(),'context_capacity':1536,'max_new_tokens':8,'temperature':0.0}
+record['input_sha256']=hashlib.sha256(ids.cpu().numpy().tobytes()).hexdigest()
+print('INPUT',record['input_sha256'],ids.shape,flush=True)
+torch.cuda.synchronize(); t=time.perf_counter()
+with torch.no_grad():out=m.generate(ids,max_new_tokens=8,temperature=0.0)
+torch.cuda.synchronize(); record['generation_wall_seconds']=time.perf_counter()-t
+record['output_ids']=out.cpu().tolist(); record['generated_ids']=out[0,1024:].cpu().tolist()
+record['generated_text']=m.tokenizer.decode(record['generated_ids'],skip_special_tokens=False)
+Path('/notebooks/heteromega-baseline-logs',mode+'-model-result.json').write_text(json.dumps(record,indent=2))
+print('MODEL GENERATION COMPLETE',json.dumps({k:v for k,v in record.items() if k not in ['input_ids','output_ids']}),flush=True)
+PY
+
+   58  tail -4 /notebooks/heteromega-baseline-logs/model-download.log
+   59  tail -3 /notebooks/heteromega-baseline-logs/m-sweep.log
+   60  export TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1
+   61  nohup bash -c 'timeout 600 python -u /notebooks/heteromega-baseline-logs/run-model.py gpu; printf "GPU model exit: %s\n" "$?"' > /notebooks/heteromega-baseline-logs/gpu-model.log 2>&1 &
+   62  xrt-smi examine > /notebooks/heteromega-baseline-logs/cloud-environment.txt
+   63  grep 'amdxdna Version' /notebooks/heteromega-baseline-logs/cloud-environment.txt
+   64  sed -n '548,604p' /notebooks/heteromega-baseline-logs/aie2-current.c
+   65  git -C /notebooks/heteromosaic-libraries/xdna-driver-05-19-25 fetch origin bd02f5e75f7788dfbe0f3f716de928de1e7078f3 > /notebooks/heteromega-baseline-logs/xdna-cloud-fetch.log 2>&1
+   66  git -C /notebooks/heteromosaic-libraries/xdna-driver-05-19-25 show bd02f5e75f7788dfbe0f3f716de928de1e7078f3:src/include/uapi/drm_local/amdxdna_accel.h > /notebooks/heteromega-baseline-logs/amdxdna-cloud.h
+   67  git -C /notebooks/heteromosaic-libraries/xdna-driver-05-19-25 ls-tree -r --name-only bd02f5e75f7788dfbe0f3f716de928de1e7078f3 | grep -E 'ctx.c$|ioctl.c$'
+   68  diff -u /notebooks/heteromosaic-libraries/xdna-driver-05-19-25/src/include/uapi/drm_local/amdxdna_accel.h /notebooks/heteromega-baseline-logs/amdxdna-cloud.h | head -65
+   69  tail -10 /notebooks/heteromega-baseline-logs/gpu-model.log
+   70  cat > /notebooks/heteromega-baseline-logs/xdna-qos-compat.c <<'EOF'
+#define _GNU_SOURCE
+#include <stdint.h>
+#include <stdarg.h>
+#include <string.h>
+#include <dlfcn.h>
+#include <sys/ioctl.h>
+#include <stdio.h>
+#include "amdxdna_accel.h"
+struct cloud_qos { uint32_t fields[6]; uint32_t user_start_col; uint32_t reserved; };
+int ioctl(int fd, unsigned long request, ...) {
+ va_list ap; va_start(ap,request); void* arg=va_arg(ap,void*); va_end(ap);
+ int (*real_ioctl)(int,unsigned long,...)=dlsym(RTLD_NEXT,"ioctl");
+ if(request==DRM_IOCTL_AMDXDNA_CREATE_CTX && arg) {
+  struct amdxdna_drm_create_ctx* old=arg;
+  if(old->qos_p) {
+   struct cloud_qos q={0}; memcpy(q.fields,(void*)(uintptr_t)old->qos_p,sizeof(q.fields)); q.user_start_col=0xff;
+   struct amdxdna_drm_create_ctx c=*old; uint64_t oldp=c.qos_p; c.qos_p=(uint64_t)(uintptr_t)&q;
+   int r=real_ioctl(fd,request,&c); c.qos_p=oldp; *old=c;
+   fprintf(stderr,"XDNA QoS compatibility translation: context result %d\n",r); return r;
+  }
+ }
+ return real_ioctl(fd,request,arg);
+}
+EOF
+
+   71  cc -shared -fPIC -I/notebooks/heteromosaic-libraries/xdna-driver-05-19-25/src/include/uapi/drm_local -I/usr/include/libdrm /notebooks/heteromega-baseline-logs/xdna-qos-compat.c -ldl -o /notebooks/heteromega-baseline-logs/xdna-qos-compat.so
+   72  nohup bash -c 'LD_PRELOAD=/notebooks/heteromega-baseline-logs/xdna-qos-compat.so timeout 90 /notebooks/HeteroMosaic-baseline/build/bin/tensor_parallel_gemm_npu_gpu_sweepM --results_json=/notebooks/heteromega-baseline-logs/m-sweep-qos.json; printf "QoS-adapted sweep exit: %s\n" "$?"' > /notebooks/heteromega-baseline-logs/m-sweep-qos.log 2>&1 &
+   73  tail -20 /notebooks/heteromega-baseline-logs/m-sweep-qos.log
+   74  python - <<'PY'
+import json
+from collections import Counter
+from pathlib import Path
+p=Path('/notebooks/heteromega-baseline-logs/m-sweep.json')
+if p.exists():
+ d=json.loads(p.read_text()); print('Original sweep statuses:',Counter(v.get('status') for v in d['results'].values()))
+PY
+
+   75  git -C /notebooks/heteromosaic-libraries/xdna-driver-05-19-25 ls-tree -r --name-only bd02f5e75f7788dfbe0f3f716de928de1e7078f3 drivers/accel/amdxdna | grep -E '(drv|ctx|ioctl|drm).*\.c$'
+   76  git -C /notebooks/heteromosaic-libraries/xdna-driver-05-19-25 show bd02f5e75f7788dfbe0f3f716de928de1e7078f3:drivers/accel/amdxdna/amdxdna_drv.c > /notebooks/heteromega-baseline-logs/amdxdna-cloud-driver.c
+   77  grep -nE 'create_hwctx|qos|args->|EINVAL' /notebooks/heteromega-baseline-logs/amdxdna-cloud-driver.c | head -45
+   78  git -C /notebooks/heteromosaic-libraries/xdna-driver-05-19-25 show bd02f5e75f7788dfbe0f3f716de928de1e7078f3:drivers/accel/amdxdna/amdxdna_ctx.c > /notebooks/heteromega-baseline-logs/amdxdna-cloud-ctx.c
+   79  grep -nE 'max_opc|qos|EINVAL|create_hwctx' /notebooks/heteromega-baseline-logs/amdxdna-cloud-ctx.c | head -32
+   80  sed -n '290,351p' /notebooks/heteromega-baseline-logs/amdxdna-cloud-ctx.c
+   81  git -C /notebooks/heteromosaic-libraries/xdna-driver-05-19-25 show bd02f5e75f7788dfbe0f3f716de928de1e7078f3:drivers/accel/amdxdna/aie2_ctx.c > /notebooks/heteromega-baseline-logs/aie2-cloud.c
+   82  grep -nE 'hwctx_init|user_start_col|num_col|qos.reserved' /notebooks/heteromega-baseline-logs/aie2-cloud.c | tail -16
+   83  dmesg | tail -12
+   84  sed -n '733,818p' /notebooks/heteromega-baseline-logs/aie2-cloud.c
+   85  pip freeze > /notebooks/heteromega-baseline-logs/packages.txt
+   86  git -C /notebooks/HeteroMosaic-baseline diff > /notebooks/heteromega-baseline-logs/cloud-build.patch
+   87  git -C /notebooks/HeteroMosaic-baseline status --short > /notebooks/heteromega-baseline-logs/source-status.txt
+   88  history > /notebooks/heteromega-baseline-logs/baseline-shell-history.txt

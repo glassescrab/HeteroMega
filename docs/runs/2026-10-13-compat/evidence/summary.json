@@ -1,0 +1,20 @@
+{
+  "gpu_seconds": 2.436990095768124,
+  "hetero_seconds": 2.0059483549557626,
+  "input_matches": true,
+  "generated_tokens_match": true,
+  "generated_ids": [
+    4221,
+    1646,
+    45478,
+    389,
+    98882,
+    37686,
+    13,
+    1115
+  ],
+  "generated_text": " language model inference on heterogeneous processors. This",
+  "npu_counts": "IOCTL_COUNTS ctx_ok=2 exec_ok=512 exec_fail=0 legacy_ok=0 legacy_fail=512 timeline_ok=512 timeline_fail=0",
+  "random_weight_numerical_gate": "FAIL - unresolved",
+  "exact_matrix_all_splits": "PASS, max_abs_diff=0"
+}

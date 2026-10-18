@@ -1,0 +1,7 @@
+ CMakeLists.txt  |  6 +-
+ ...mul_func.hpp |  3 +
+ ...npu_util.hpp | 56 +++--
+ ...mul_func.cpp | 65 ++++--
+ ...akeLists.txt |  2 +-
+ ...npuSetup.cpp |  9 +-
+ 6 files changed, 98 insertions(+), 43 deletions(-)

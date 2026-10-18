@@ -1,0 +1,23 @@
+nohup: ignoring input
+Testing w4a16 HIP Kernels against QuantizedLinear (New Layout)
+Weights K=4096, N=14336
+Generating Ground Truth Manually (Unpacked)...
+w_ref shape: [14336, 4096] device: cuda:0
+
+=== Testing GEMM M=4096 ===
+input_gemm shape: [4096, 4096] device: cuda:0
+Running UNPACKED GEMM Kernel...
+First 8 values of y_ref_gemm: -5.19 2.72 5.78 -3.14 -13.50 3.77 3.53 0.00 
+First 8 values of output_gemm: -5.19 2.72 5.78 -3.14 -13.50 3.77 3.53 0.00 
+SUCCESS: GEMM Output matches reference!
+UNPACKED GEMM Avg Time: 65.93 ms
+UNPACKED GEMM Performance: 7.30 TOPS
+
+=== Testing GEMV M=1 ===
+Running UNPACKED GEMV Kernel...
+First 8 values of y_ref_gemv: -4.91 2.44 2.92 -3.98 -12.56 3.62 5.03 -1.03 
+First 8 values of output_gemv: -4.91 2.44 2.94 -3.97 -12.56 3.64 5.03 -1.03 
+SUCCESS: GEMV Output matches reference!
+UNPACKED GEMV Avg Time: 0.38 ms
+UNPACKED GEMV Performance: 0.31 TOPS
+GPU layout exit: 0

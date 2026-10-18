@@ -1,0 +1,56 @@
+{
+  "variant": "gpu_matched",
+  "trace": "none",
+  "tag": "kineto",
+  "input_sha256": "2c11d2476f8b0d68744bec04b88ae434fa2c7f2e1f15a66f6db8785ec5e481c7",
+  "setup_seconds": 30.12822829093784,
+  "context_capacity": 1536,
+  "records": [
+    {
+      "iteration": 0,
+      "warmup": true,
+      "wall_seconds": 2.406261206138879,
+      "prefill_seconds": 1.97639,
+      "decode_loop_seconds": 0.419821,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2649108255235029,
+      "end_ns": 2649110661680232,
+      "fallback_warnings": 0,
+      "command_errors": 0
+    },
+    {
+      "iteration": 1,
+      "warmup": false,
+      "wall_seconds": 2.203844857867807,
+      "prefill_seconds": 1.7859,
+      "decode_loop_seconds": 0.417411,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2649110662255351,
+      "end_ns": 2649112866214267,
+      "fallback_warnings": 0,
+      "command_errors": 0
+    }
+  ]
+}

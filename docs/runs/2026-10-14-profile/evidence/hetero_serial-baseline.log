@@ -1,0 +1,15 @@
+Initializing UnifiedLLMW4A16Impl_hetero
+Using NPU config: /notebooks/heteromega-profile-2026-10-14/hetero_serial-baseline-none.config.json
+Warmup: Disabled
+Loaded 291 parameters, skipped 0
+Loading quantized weights from /notebooks/heteromosaic-model...
+Using saved safetensors: /notebooks/HeteroMosaic-baseline/py/unified_llm_w4a16/model_weights/heteromosaic-model.safetensors
+Weights loaded in 31.91 seconds
+Importing weights to NPU...
+ITERATION hetero_serial-baseline-none {"iteration": 0, "warmup": true, "wall_seconds": 2.0329183037392795, "prefill_seconds": 1.5939, "decode_loop_seconds": 0.432166, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648681100059487, "end_ns": 2648683133142548, "fallback_warnings": 224, "command_errors": 0}
+ITERATION hetero_serial-baseline-none {"iteration": 1, "warmup": false, "wall_seconds": 1.761851710267365, "prefill_seconds": 1.3197, "decode_loop_seconds": 0.44149, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648683133901174, "end_ns": 2648684895866092, "fallback_warnings": 224, "command_errors": 0}
+ITERATION hetero_serial-baseline-none {"iteration": 2, "warmup": false, "wall_seconds": 1.769705998711288, "prefill_seconds": 1.3278, "decode_loop_seconds": 0.441453, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648684896509980, "end_ns": 2648686666325717, "fallback_warnings": 224, "command_errors": 0}
+ITERATION hetero_serial-baseline-none {"iteration": 3, "warmup": false, "wall_seconds": 1.766759382095188, "prefill_seconds": 1.32725, "decode_loop_seconds": 0.439007, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648686666990884, "end_ns": 2648688433854534, "fallback_warnings": 224, "command_errors": 0}
+ITERATION hetero_serial-baseline-none {"iteration": 4, "warmup": false, "wall_seconds": 1.7678780779242516, "prefill_seconds": 1.3274, "decode_loop_seconds": 0.439906, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648688434507882, "end_ns": 2648690202500298, "fallback_warnings": 224, "command_errors": 0}
+ITERATION hetero_serial-baseline-none {"iteration": 5, "warmup": false, "wall_seconds": 1.764062985777855, "prefill_seconds": 1.32439, "decode_loop_seconds": 0.43922, "decode_steps": 7, "generated_ids": [4221, 1646, 45478, 389, 98882, 37686, 13, 1115], "matches_previous_gpu": true, "start_ns": 2648690203194105, "end_ns": 2648691967363229, "fallback_warnings": 224, "command_errors": 0}
+PROFILE COMPLETE hetero_serial-baseline-none

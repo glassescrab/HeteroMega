@@ -1,0 +1,79 @@
+{
+  "variant": "hetero_serial",
+  "trace": "sync",
+  "tag": "detail",
+  "input_sha256": "2c11d2476f8b0d68744bec04b88ae434fa2c7f2e1f15a66f6db8785ec5e481c7",
+  "setup_seconds": 32.66830824315548,
+  "context_capacity": 1536,
+  "records": [
+    {
+      "iteration": 0,
+      "warmup": true,
+      "wall_seconds": 2.102237009909004,
+      "prefill_seconds": 1.61631,
+      "decode_loop_seconds": 0.480416,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648987934966661,
+      "end_ns": 2648990037375038,
+      "fallback_warnings": 224,
+      "command_errors": 0
+    },
+    {
+      "iteration": 1,
+      "warmup": false,
+      "wall_seconds": 1.833728101104498,
+      "prefill_seconds": 1.34706,
+      "decode_loop_seconds": 0.484578,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648990037933198,
+      "end_ns": 2648991871965793,
+      "fallback_warnings": 224,
+      "command_errors": 0
+    },
+    {
+      "iteration": 2,
+      "warmup": false,
+      "wall_seconds": 1.8209311407990754,
+      "prefill_seconds": 1.33446,
+      "decode_loop_seconds": 0.484408,
+      "decode_steps": 7,
+      "generated_ids": [
+        4221,
+        1646,
+        45478,
+        389,
+        98882,
+        37686,
+        13,
+        1115
+      ],
+      "matches_previous_gpu": true,
+      "start_ns": 2648991872610820,
+      "end_ns": 2648993693658049,
+      "fallback_warnings": 224,
+      "command_errors": 0
+    }
+  ]
+}
