@@ -1,0 +1,6 @@
+Repeated same context: gate
+Repeated same context: up
+Repeated same context: silu_mul
+Repeated same context: down
+Cyclic contexts: gate -> up -> silu_mul -> down
+{"status": "passed", "output": "experiments/ffn_partition/results/context_m512_h4096_p512_array8.json", "cyclic_over_same_context_median_dispatch_ratio": {"gate": 2.6960604386526894, "up": 2.7966255711913646, "silu_mul": 5.061131416113622, "down": 2.7693565069349946}}

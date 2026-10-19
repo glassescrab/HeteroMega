@@ -1,0 +1,297 @@
+{
+  "schema_version": 1,
+  "status": "failed",
+  "config": {
+    "m": 128,
+    "hidden": 256,
+    "intermediate": 512,
+    "npu_channels": "128",
+    "columns": 4,
+    "warmup": 2,
+    "iterations": 10,
+    "seed": 12832,
+    "artifact_root": "experiments/ffn_partition/artifacts",
+    "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+    "output": "experiments/ffn_partition/results/smoke_hx370.json",
+    "build_only": false,
+    "verbose_build": false
+  },
+  "scope": "prefill FFN microbenchmark, not whole-model prefill/TTFT",
+  "weights": "seeded synthetic unsigned W4A16, group 128; same canonical weights for all modes",
+  "baseline": "original HeteroMosaic packed GPU GEMMs, BF16 SiLU then multiply, all FFN channels on GPU",
+  "boundary": "ready GPU BF16 [M,H] input to synchronized GPU BF16 [M,H] output, including all host staging/layout/copies/reduction; no normalization or residual",
+  "excluded": [
+    "compilation",
+    "weight packing/upload",
+    "one-time setup allocations",
+    "reference computation",
+    "validation output readback"
+  ],
+  "provenance": {
+    "git_head": "61714a3147f34857aa5dfef21a28e762777a2df0",
+    "git_branch": "codex/npu-ffn-mlir-aie",
+    "git_status": "M README.md\n?? .ipynb_checkpoints/\n?? experiments/\n?? include/unified_llm_w4a16_hetero/hipblasltSetup_hip.hpp\n?? npu/\n?? src/hipkernels/w4a16_gemm_packed.hip",
+    "source_sha256": {
+      "experiments/ffn_partition/test_contract.py": "4b569223d9fd18f5c14ae2da0c55031fb9ef1fd2e2f3b7525e5016cb8dee6b84",
+      "experiments/ffn_partition/npu_backend.py": "1efceb0f38a814a252227e1fcbefcf567968a3d8dae27c40faaea6ab9510e6b4",
+      "experiments/ffn_partition/test_gpu_packing.py": "0e73f412742d37a683c018a9881fcbe252d6faaf1c4a2fb9f5b70807443a6769",
+      "experiments/ffn_partition/run.py": "f7bbfbe4cd029362479baee280c99c2379a76ce695496cb661b9c904868e5774",
+      "experiments/ffn_partition/gpu_backend.py": "ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7",
+      "experiments/ffn_partition/contract.py": "fccebc8a524216372fa77d8c289b98d50bf8616812d82ba615bbf50af33f88e5",
+      "experiments/ffn_partition/gpu_bindings.cpp": "98a1e34dbd38cc49a488d4f2db861dd9d8bbf527996a1642f5b55d0a069cda6a",
+      "src/hipkernels/w4a16_gemm_packed.cu": "bc5f0480bb322c9a76217ab0e4805bf6d8aea26156a6971e160af3901792575a"
+    },
+    "platform": "Linux-6.17.0-42-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "torch": "2.11.0+rocm7.2",
+    "hip": "7.2.26015",
+    "gpu_name": "AMD Radeon 890M"
+  },
+  "partitions": [
+    {
+      "npu_channels": 128,
+      "gpu_channels": 384,
+      "npu_fraction": 0.25,
+      "correctness": {
+        "serial_run_0_input_0_partition_reference": {
+          "passed": false,
+          "correctness": "failed",
+          "finite": true,
+          "max_abs_error": 5.1328125,
+          "relative_l2_error": 0.555792825393762,
+          "normalized_max_error": 0.7365470852017937,
+          "rms_error": 0.42730433526139366,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.96875,
+          "max_error_limit": 0.2590625,
+          "elementwise_close_fraction": 0.213958740234375
+        }
+      },
+      "samples": [],
+      "setup_seconds": 0.05775060597807169,
+      "gpu": {
+        "source_sha256": {
+          "src/hipkernels/w4a16_gemm_packed.cu": "bc5f0480bb322c9a76217ab0e4805bf6d8aea26156a6971e160af3901792575a",
+          "include/hipkernels/w4a16_gemm_packed.hpp": "967b3634311a45b217b8a1d88cd06541b460a573a2875b2e453bf5559e48b639",
+          "experiments/ffn_partition/gpu_bindings.cpp": "98a1e34dbd38cc49a488d4f2db861dd9d8bbf527996a1642f5b55d0a069cda6a",
+          "experiments/ffn_partition/gpu_backend.py": "ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7"
+        },
+        "torch_version": "2.11.0+rocm7.2",
+        "hip_version": "7.2.26015",
+        "gpu_arch": "gfx1150",
+        "rocm_path": "/opt/rocm-7.2.0",
+        "pytorch_rocm_arch": "gfx1150",
+        "packed_layout": "heteromosaic_k128_n64_zigzag8_v1",
+        "build_fingerprint": "eb0e39babf78d01437feb02f48d128bac4b2ed9a2d997758afc1496bc748f0a1",
+        "backend": "heteromosaic_original_gpu_packed",
+        "m": 128,
+        "hidden": 256,
+        "channels": 384,
+        "weight_bytes": 156672,
+        "scratch_bytes": 262144,
+        "activation": "separate_bf16_silu_then_multiply"
+      },
+      "npu": {
+        "backend": "mlir_aie_xrt_host_staged_ffn",
+        "layout": "prefill_m16_k128_n32_mmul4x8x8_v1",
+        "m": 128,
+        "hidden": 256,
+        "channels": 128,
+        "columns_requested": 4,
+        "artifacts": {
+          "gate_up": {
+            "xclbin": "/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_prefill_m128_k256_n128_c4_296b19c6f401/final.xclbin",
+            "insts": "/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_prefill_m128_k256_n128_c4_296b19c6f401/insts.bin",
+            "manifest": {
+              "kind": "w4a16_prefill_bf16",
+              "m": 128,
+              "k": 256,
+              "n": 128,
+              "cols": 4,
+              "tile_m": 16,
+              "tile_k": 128,
+              "tile_n": 32,
+              "group_size": 128,
+              "weight_tile_bytes": 2144,
+              "source_sha256": "090e87845395f730b580be537c7da5f11c0f53eaee110b28786e362cdfd32ba2",
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+              "xclbin_sha256": "f93092be09e23b48647c371960edeb936ef5ac3486ccc00d221e71dad96284c0",
+              "insts_sha256": "de4eb381ed1c4af3d8870007faf58811ca2586f2b8bc375ae7d5625a4059876f"
+            },
+            "build_contract": {
+              "version": 1,
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill.py": "8e35485ad1f40852efd97f9ea289643f07648cf9f2f1bf932fdd4a11b62cbdf7",
+                "npu/ffn/w4a16_prefill.cc": "090e87845395f730b580be537c7da5f11c0f53eaee110b28786e362cdfd32ba2"
+              },
+              "expected_manifest": {
+                "kind": "w4a16_prefill_bf16",
+                "m": 128,
+                "k": 256,
+                "n": 128,
+                "cols": 4,
+                "tile_m": 16,
+                "tile_k": 128,
+                "tile_n": 32,
+                "group_size": 128,
+                "weight_tile_bytes": 2144
+              },
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858"
+            }
+          },
+          "down": {
+            "xclbin": "/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_prefill_m128_k128_n256_c4_296b19c6f401/final.xclbin",
+            "insts": "/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_prefill_m128_k128_n256_c4_296b19c6f401/insts.bin",
+            "manifest": {
+              "kind": "w4a16_prefill_bf16",
+              "m": 128,
+              "k": 128,
+              "n": 256,
+              "cols": 4,
+              "tile_m": 16,
+              "tile_k": 128,
+              "tile_n": 32,
+              "group_size": 128,
+              "weight_tile_bytes": 2144,
+              "source_sha256": "090e87845395f730b580be537c7da5f11c0f53eaee110b28786e362cdfd32ba2",
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+              "xclbin_sha256": "7931e57f57cfa85a0521c5cbb76c7e71a48aefd85a6dfb3384e143a4a896d971",
+              "insts_sha256": "668e025524c350872ef41f02412f3d8a388b25da58d70916fb7ab268fc33714e"
+            },
+            "build_contract": {
+              "version": 1,
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill.py": "8e35485ad1f40852efd97f9ea289643f07648cf9f2f1bf932fdd4a11b62cbdf7",
+                "npu/ffn/w4a16_prefill.cc": "090e87845395f730b580be537c7da5f11c0f53eaee110b28786e362cdfd32ba2"
+              },
+              "expected_manifest": {
+                "kind": "w4a16_prefill_bf16",
+                "m": 128,
+                "k": 128,
+                "n": 256,
+                "cols": 4,
+                "tile_m": 16,
+                "tile_k": 128,
+                "tile_n": 32,
+                "group_size": 128,
+                "weight_tile_bytes": 2144
+              },
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858"
+            }
+          },
+          "silu_mul": {
+            "xclbin": "/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_silu_l16384_t1024_c4_0924ce4b3bc4/final.xclbin",
+            "insts": "/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_silu_l16384_t1024_c4_0924ce4b3bc4/insts.bin",
+            "manifest": {
+              "kind": "silu_mul_bf16",
+              "size": 16384,
+              "tile_size": 1024,
+              "num_columns": 4,
+              "device": "npu2",
+              "xclbin_sha256": "58e490c541fe02508b8ea4c44c4397fd01cebfa225f3371d7345749a228bee1d",
+              "insts_sha256": "b9ed96ec62bd3d39f29cc22ed6e20d85f55331c70242d36ce3950031aa44a40d",
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+              "source_sha256": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+            },
+            "build_contract": {
+              "version": 1,
+              "source_sha256": {
+                "npu/ffn/silu_mul.py": "46fbde0fb57e72be60b4544e8bfa0c3d80c1f36409a25b70dcde3afe8da638d9",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "expected_manifest": {
+                "kind": "silu_mul_bf16",
+                "size": 16384,
+                "tile_size": 1024,
+                "num_columns": 4,
+                "device": "npu2"
+              },
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858"
+            }
+          }
+        },
+        "fixed_weight_uploads": 3,
+        "fixed_weight_bytes": 51456,
+        "launches_per_run": 4,
+        "cpu_activation_fallback": false,
+        "intermediates": "host-staged BF16; CPU layout conversion before down",
+        "host_bo_io_bytes_per_run_estimate": 393216,
+        "host_bo_io_estimate_note": "BO write/read payload bytes, excludes layout copies, instruction reads and device DMA traffic",
+        "timing_note": "dispatch/wait intervals are host times; whole-FFN timing must include GPU transfers and boundary sum"
+      }
+    }
+  ],
+  "correctness": {
+    "baseline_input_0": {
+      "passed": true,
+      "correctness": "passed",
+      "finite": true,
+      "max_abs_error": 0.0078125,
+      "relative_l2_error": 6.996442142581571e-05,
+      "normalized_max_error": 0.0011210762331838565,
+      "rms_error": 5.379242637307871e-05,
+      "rtol": 0.03,
+      "atol": 0.05,
+      "l2_limit": 0.02,
+      "reference_max_abs": 6.96875,
+      "max_error_limit": 0.2590625,
+      "elementwise_close_fraction": 1.0
+    },
+    "baseline_input_1": {
+      "passed": true,
+      "correctness": "passed",
+      "finite": true,
+      "max_abs_error": 0.015625,
+      "relative_l2_error": 0.00013905521135952766,
+      "normalized_max_error": 0.0020161290322580645,
+      "rms_error": 0.00010542091989051737,
+      "rtol": 0.03,
+      "atol": 0.05,
+      "l2_limit": 0.02,
+      "reference_max_abs": 7.75,
+      "max_error_limit": 0.2825,
+      "elementwise_close_fraction": 1.0
+    },
+    "baseline_input_2": {
+      "passed": true,
+      "correctness": "passed",
+      "finite": true,
+      "max_abs_error": 0.0,
+      "relative_l2_error": 0.0,
+      "normalized_max_error": 0.0,
+      "rms_error": 0.0,
+      "rtol": 0.03,
+      "atol": 0.05,
+      "l2_limit": 0.02,
+      "reference_max_abs": 0.0,
+      "max_error_limit": 0.05,
+      "elementwise_close_fraction": 1.0
+    }
+  },
+  "gpu_baseline": {
+    "source_sha256": {
+      "src/hipkernels/w4a16_gemm_packed.cu": "bc5f0480bb322c9a76217ab0e4805bf6d8aea26156a6971e160af3901792575a",
+      "include/hipkernels/w4a16_gemm_packed.hpp": "967b3634311a45b217b8a1d88cd06541b460a573a2875b2e453bf5559e48b639",
+      "experiments/ffn_partition/gpu_bindings.cpp": "98a1e34dbd38cc49a488d4f2db861dd9d8bbf527996a1642f5b55d0a069cda6a",
+      "experiments/ffn_partition/gpu_backend.py": "ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7"
+    },
+    "torch_version": "2.11.0+rocm7.2",
+    "hip_version": "7.2.26015",
+    "gpu_arch": "gfx1150",
+    "rocm_path": "/opt/rocm-7.2.0",
+    "pytorch_rocm_arch": "gfx1150",
+    "packed_layout": "heteromosaic_k128_n64_zigzag8_v1",
+    "build_fingerprint": "eb0e39babf78d01437feb02f48d128bac4b2ed9a2d997758afc1496bc748f0a1",
+    "backend": "heteromosaic_original_gpu_packed",
+    "m": 128,
+    "hidden": 256,
+    "channels": 512,
+    "weight_bytes": 208896,
+    "scratch_bytes": 327680,
+    "activation": "separate_bf16_silu_then_multiply"
+  },
+  "error": "correctness failed: serial_run_0_input_0_partition_reference: {'passed': False, 'correctness': 'failed', 'finite': True, 'max_abs_error': 5.1328125, 'relative_l2_error': 0.555792825393762, 'normalized_max_error': 0.7365470852017937, 'rms_error': 0.42730433526139366, 'rtol': 0.03, 'atol': 0.05, 'l2_limit': 0.02, 'reference_max_abs': 6.96875, 'max_error_limit': 0.2590625, 'elementwise_close_fraction': 0.213958740234375}",
+  "traceback": "Traceback (most recent call last):\n  File \"/notebooks/HeteroMega/experiments/ffn_partition/run.py\", line 217, in main\n    check(actual, partition_refs[index], label + \"_partition_reference\", entry[\"correctness\"])\n  File \"/notebooks/HeteroMega/experiments/ffn_partition/run.py\", line 116, in check\n    raise RuntimeError(f\"correctness failed: {label}: {metrics}\")\nRuntimeError: correctness failed: serial_run_0_input_0_partition_reference: {'passed': False, 'correctness': 'failed', 'finite': True, 'max_abs_error': 5.1328125, 'relative_l2_error': 0.555792825393762, 'normalized_max_error': 0.7365470852017937, 'rms_error': 0.42730433526139366, 'rtol': 0.03, 'atol': 0.05, 'l2_limit': 0.02, 'reference_max_abs': 6.96875, 'max_error_limit': 0.2590625, 'elementwise_close_fraction': 0.213958740234375}\n"
+}

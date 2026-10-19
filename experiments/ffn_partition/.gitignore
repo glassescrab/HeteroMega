@@ -1,0 +1,5 @@
+__pycache__/
+artifacts/
+build_*/
+*.log
+!results/logs/*.log

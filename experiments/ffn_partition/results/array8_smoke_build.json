@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "status": "build_complete",
+  "config": {
+    "m": 128,
+    "hidden": 256,
+    "intermediate": 512,
+    "npu_channels": "128",
+    "columns": 8,
+    "npu_design": "array8",
+    "warmup": 1,
+    "iterations": 3,
+    "seed": 12832,
+    "artifact_root": "experiments/ffn_partition/artifacts",
+    "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+    "output": "experiments/ffn_partition/results/array8_smoke_build.json",
+    "build_only": true,
+    "verbose_build": false
+  },
+  "scope": "prefill FFN microbenchmark, not whole-model prefill/TTFT",
+  "weights": "seeded synthetic unsigned W4A16, group 128; same canonical weights for all modes",
+  "baseline": "original HeteroMosaic packed GPU GEMMs, BF16 SiLU then multiply, all FFN channels on GPU",
+  "boundary": "ready GPU BF16 [M,H] input to synchronized GPU BF16 [M,H] output, including all host staging/layout/copies/reduction; no normalization or residual",
+  "excluded": [
+    "compilation",
+    "weight packing/upload",
+    "one-time setup allocations",
+    "reference computation",
+    "validation output readback"
+  ],
+  "provenance": {
+    "started_at_utc": "2026-10-18T23:25:02.101702+00:00",
+    "git_head": "61714a3147f34857aa5dfef21a28e762777a2df0",
+    "git_branch": "codex/npu-ffn-mlir-aie",
+    "git_status": "M README.md\n?? .ipynb_checkpoints/\n?? experiments/\n?? include/unified_llm_w4a16_hetero/hipblasltSetup_hip.hpp\n?? npu/\n?? src/hipkernels/w4a16_gemm_packed.hip",
+    "source_sha256": {
+      "experiments/ffn_partition/test_npu_backend.py": "a1a09ecf5115c2b3eb7ea24358d8cb30903e80ba1ec00f57bff81964c62d053c",
+      "experiments/ffn_partition/analyze_bottleneck.py": "277e054a043d82c12eb29f3333188390272b5e61e130bdae02b914c4758ea1fa",
+      "experiments/ffn_partition/test_contract.py": "4b569223d9fd18f5c14ae2da0c55031fb9ef1fd2e2f3b7525e5016cb8dee6b84",
+      "experiments/ffn_partition/npu_backend.py": "2e733b4b23ecdcedf666ca7b7244c9bea9e4f64aa4a1d8708723663c62cc22c8",
+      "experiments/ffn_partition/test_gpu_packing.py": "0e73f412742d37a683c018a9881fcbe252d6faaf1c4a2fb9f5b70807443a6769",
+      "experiments/ffn_partition/diagnose.py": "818801784357b5a5d1948a45be63784f3e67ef6d4c72e8c16eb64bd8eeca5397",
+      "experiments/ffn_partition/run.py": "30d6101fbb636444692d19fec020d9b239bf95b7745fa43b6dcc7f60d46d0dfd",
+      "experiments/ffn_partition/gpu_backend.py": "ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7",
+      "experiments/ffn_partition/contract.py": "fccebc8a524216372fa77d8c289b98d50bf8616812d82ba615bbf50af33f88e5",
+      "experiments/ffn_partition/gpu_bindings.cpp": "98a1e34dbd38cc49a488d4f2db861dd9d8bbf527996a1642f5b55d0a069cda6a",
+      "src/hipkernels/w4a16_gemm_packed.cu": "bc5f0480bb322c9a76217ab0e4805bf6d8aea26156a6971e160af3901792575a"
+    },
+    "platform": "Linux-6.17.0-42-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "numpy": "1.26.4",
+    "cpu_model": "AMD Ryzen AI 9 HX 370 w/ Radeon 890M",
+    "environment": {
+      "HETEROMEGA_ROCM_PATH": "/opt/rocm-7.2.0",
+      "ROCM_PATH": "/opt/rocm-7.2.0",
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "HSA_OVERRIDE_GFX_VERSION": null
+    }
+  },
+  "partitions": [],
+  "correctness": {}
+}

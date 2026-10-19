@@ -1,0 +1,21 @@
+Sun Oct 18 11:57:12 PM UTC 2026
+XRT build version: 2.26.0
+Build hash: e9db9ab15f10173f8d2fc93ff92ab4c7eb09d2e6
+Build hash date: Thu, 13 Aug 2026 13:49:05 -0700
+Git branch: HEAD
+PID: 23067
+UID: 1003
+[Sun Oct 18 23:57:12 2026 GMT]
+HOST: 6402aa6efbe7
+EXE: /opt/xilinx/xrt/bin/unwrapped/xrt-smi
+[xrt-smi] ERROR: DRM_IOCTL_AMDXDNA_SET_STATE IOCTL failed (err=-13): Permission denied
+XRT build version: 2.26.0
+Build hash: e9db9ab15f10173f8d2fc93ff92ab4c7eb09d2e6
+Build hash date: Thu, 13 Aug 2026 13:49:05 -0700
+Git branch: HEAD
+PID: 23085
+UID: 0
+[Sun Oct 18 23:57:12 2026 GMT]
+HOST: 6402aa6efbe7
+EXE: /opt/xilinx/xrt/bin/unwrapped/xrt-smi
+[xrt-smi] ERROR: DRM_IOCTL_AMDXDNA_SET_STATE IOCTL failed (err=-13): Permission denied

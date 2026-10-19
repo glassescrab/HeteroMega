@@ -1,0 +1,6 @@
+Building/verifying NPU artifacts: M=512 H=4096 P=512
+[92mSuccessfully preprocessed all matching files.[0m
+Validating original GPU FFN against independent CPU reference
+Validating partition P=512/14336
+{"P": 512, "stats": {"baseline": {"count": 50, "median_us": 22184.309, "p10_us": 21971.219999999998, "p90_us": 22543.423000000003, "min_us": 20586.982, "max_us": 23014.162}, "concurrent": {"count": 50, "median_us": 20705.2805, "p10_us": 20191.0212, "p90_us": 21704.7229, "min_us": 19805.838, "max_us": 23093.601}, "serial": {"count": 50, "median_us": 41270.3375, "p10_us": 39934.7824, "p90_us": 42498.7904, "min_us": 38520.55, "max_us": 43409.709}}, "speedup_vs_gpu_baseline": 1.0714324300025784}
+Saved experiments/ffn_partition/results/array8_repeat_m512_p512_hx370.json

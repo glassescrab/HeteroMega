@@ -1,0 +1,12 @@
+Building/verifying NPU artifacts: M=128 H=4096 P=128
+Building/verifying NPU artifacts: M=128 H=4096 P=512
+Building/verifying NPU artifacts: M=128 H=4096 P=2048
+[92mSuccessfully preprocessed all matching files.[0m
+Validating original GPU FFN against independent CPU reference
+Validating partition P=128/14336
+{"P": 128, "stats": {"baseline": {"count": 20, "median_us": 6552.485000000001, "p10_us": 6273.5871, "p90_us": 6910.8108, "min_us": 6138.583, "max_us": 7108.725}, "serial": {"count": 20, "median_us": 13928.9755, "p10_us": 13202.048999999999, "p90_us": 14903.0629, "min_us": 13019.783, "max_us": 15471.627}, "concurrent": {"count": 20, "median_us": 7392.9145, "p10_us": 6915.1257000000005, "p90_us": 8054.9369, "min_us": 6577.965, "max_us": 8603.167}}, "speedup_vs_gpu_baseline": 0.8863195969600353}
+Validating partition P=512/14336
+{"P": 512, "stats": {"serial": {"count": 20, "median_us": 20510.286, "p10_us": 20149.2722, "p90_us": 20862.1578, "min_us": 19985.661, "max_us": 20992.352}, "baseline": {"count": 20, "median_us": 6736.5425, "p10_us": 6200.8129, "p90_us": 6876.770100000001, "min_us": 6193.463, "max_us": 7068.976}, "concurrent": {"count": 20, "median_us": 14218.23, "p10_us": 13577.7762, "p90_us": 14455.5359, "min_us": 12102.57, "max_us": 14798.419}}, "speedup_vs_gpu_baseline": 0.47379614058852615}
+Validating partition P=2048/14336
+{"P": 2048, "stats": {"concurrent": {"count": 20, "median_us": 40584.454, "p10_us": 39487.9351, "p90_us": 42072.538, "min_us": 38516.169, "max_us": 42283.147}, "serial": {"count": 20, "median_us": 46970.693499999994, "p10_us": 46486.498100000004, "p90_us": 47997.651600000005, "min_us": 45286.14, "max_us": 48158.516}, "baseline": {"count": 20, "median_us": 6832.5205000000005, "p10_us": 6226.0792, "p90_us": 7106.107, "min_us": 6131.854, "max_us": 7161.404}}, "speedup_vs_gpu_baseline": 0.16835314576364638}
+Saved experiments/ffn_partition/results/ffn_m128_h4096_i14336_hx370.json

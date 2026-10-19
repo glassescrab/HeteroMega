@@ -1,5 +1,167 @@
 # HeteroMega progress
 
+## 2026-10-18: NPU power verification and device/launch timing
+
+- **Measured:** XRT reports NPU mode `default`, eight columns, at PCI address
+  `0000:66:00.1`. Configuration to `performance` was rejected with err=-13
+  both as UID 1003 and sudo UID 0. Performance mode is not established; no
+  driver/kernel changes were made. Queries before and after both new runs
+  remain `default`. Earlier benchmark files did not capture power mode.
+- **Measured ordinary FFN:** M512/H4096/I14336/P512, 50 samples per mode
+  after three warmups, gives 22.208 ms GPU-only versus 20.425 ms concurrent:
+  1.0873× / 8.03% lower latency. All 50 paired iterations improve; all 150
+  timed calls pass correctness. The serialized control is 40.295 ms. This
+  uses original HeteroMosaic GPU kernels and remains a synthetic complete-FFN
+  result, not whole-model prefill, TTFT or a performance-mode comparison.
+- Added separate `profile_timeline.py` instrumentation. **Measured diagnostic:**
+  30 samples give 20.925 ms instrumented wall time; the GPU branch HIP event
+  median is 20.188 ms and GPU boundary reduction is 0.133 ms after dependency
+  waits. GPU gate/up/down event medians are 7.057/6.247/6.119 ms. NPU gate/up/
+  down CPU wait medians are 4.359/4.066/4.127 ms; fused SiLU/multiply waits
+  1.150 ms. Separate CPU submission intervals are recorded for both devices.
+- HIP events include scheduling and event overhead; NPU waits are host spans,
+  and CPU submission calls are not driver-only launch cost. CPU/GPU clock
+  origins are not calibrated and stage medians are not additive. Ordinary
+  latency and instrumented diagnostics remain separate. The NPU path still
+  uses four contexts and host staging; GPU performs the final partial sum.
+- Validation: the ordinary run records 456 successful NPU dispatches and the
+  diagnostic 148; all 30 diagnostic samples and 49 checks pass, maximum
+  explicit relative-L2 error 0.003476 under unchanged 0.02 tolerance. Fixed
+  gate/up/down weights upload once. The existing 52 CPU tests were rerun and
+  passed before adding the diagnostic. Raw evidence and reproduction are in
+  `experiments/ffn_partition/POWER_TIMING.md` and `results/power/`.
+- Next: reduce NPU context transitions and intermediate staging, measure
+  complete FFN again, then integrate with the prefill schedule. A verified
+  performance-mode comparison requires host permission to change the mode.
+
+## 2026-10-18: eight-column/four-row NPU prefill redesign
+
+- **Implemented and hardware-validated:** added `w4a16_prefill_reuse.py/.cc`
+  and the CPU-only `prefill_schedule.py`. The graph uses all eight columns
+  and four rows (32 workers), horizontal activation multicast, vertical weight
+  multicast and up to two M16 blocks of dequantized-weight reuse. N128 shards
+  split token rows across two four-column groups. Host packing and native
+  BF16/FP32 accumulation remain unchanged. The default backend is `array8`;
+  `--npu-design legacy` preserves the original one-row graph and artifacts.
+- Corrected the pinned DMA verifier's 512-element dimension constraint using
+  quarter-chunk shim transfers and a memory-tile permutation. Added exact
+  address/layout tests and schedule hashes; manifests require 32 workers.
+- **Measured on HX370:** M512/H4096/I14336/P512 complete FFN improved from
+  22.198 ms GPU-only to 20.718 ms concurrent (20 samples). An independent
+  50-sample repeat measured 22.184 versus 20.705 ms: 1.071x speedup / 6.67%
+  lower latency. Includes all staging, four NPU launches, waits and reduction.
+  This uses original HeteroMosaic GPU kernels; teammate PRs were not merged.
+- Fresh legacy eight-column controls show NPU-branch medians of 28.022,
+  46.358 and 82.571 ms at P512/1024/2048; array8 takes 18.602, 22.375 and
+  29.488 ms. Shared-host variation remains; each run retains its GPU control.
+- All tested prompt lengths 128/512/2048/4096 pass numerical checks. Small
+  prefill loses to GPU-only; long prompts are near parity, with at most a
+  1.019x gain among tested M4096 allocations. No whole-model prefill/TTFT or
+  Max+395 acceleration is established.
+- **Measured diagnostic:** cycling four initialized XRT contexts takes
+  2.70–2.80x the repeated-same-context projection dispatch medians; SiLU is
+  5.06x. This includes context/program/cache/scheduling effects, not isolated
+  context-switch time. Next prioritize fewer launches/context transitions and
+  resident intermediates; retain complete-FFN correctness/timing checks.
+- Validation: 52 CPU tests; 939 passing timed FFN invocations; 3,492 completed
+  NPU dispatches including the context diagnostic. Maximum recorded explicit
+  relative-L2 error is 0.003589 under unchanged 0.02 tolerance. Fixed weights
+  upload once. Source hashes match tested artifacts; no arithmetic fallback.
+- Evidence and reproduction commands: `experiments/ffn_partition/ARRAY8_RESULTS.md`;
+  architecture/traffic: `npu/ffn/ARRAY8.md`. Raw JSON, logs and derived analysis
+  are saved locally and on the notebook. No commit/push in this turn.
+
+## 2026-10-18: teammate PR review and FFN bottleneck analysis
+
+- Located and fetched open PR #1 (`1b0023b`, GPU FFN) and PR #2 (`71c95d8`,
+  evaluation). PR #2 contains #1 by verified Git ancestry; its separate diff
+  is six evaluation/documentation files. The previous ordinary-branch check
+  missed these PR refs. No PR was merged or published during this review.
+- **Code-confirmed:** PR #1 can provide the GPU branch through its lower-level
+  slice API. Its activation uses a different BF16 rounding boundary, and its
+  model partial-split switch still omits the NPU output. GPU and our MLIR-AIE
+  NPU packed layouts differ. The PR's FFN ablation also generates independent
+  weights for several variants; retain shared canonical weights for fair tests.
+- **Code-confirmed:** PR #2 depends on #1 and supplies existing model controls,
+  not the complete new GPU+NPU path. Its default runner still performs decode;
+  strict prefill requires one-token warmups and measurements. Its five CPU
+  tests were rerun from the pinned stack and passed.
+- **Measured, derived from existing raw data:** at M512/P2048/four columns,
+  median summed projection dispatch/waits are 142.320 ms and account for 95.9%
+  of NPU branch time. Explicit BO I/O and layouts outside those waits are only
+  about 2.145 and 2.405 ms. The complete GPU baseline is 27.154 ms. These host
+  waits include DMA/runtime costs and are not pure compute times.
+- **Code-confirmed:** the graph uses one GEMM worker per column and repeats
+  weight DMA/dequantization for every M16 block (32 times at M512). Larger
+  tiles/reuse and additional compute rows are concrete optimization candidates,
+  but their gains and the compute/DMA/stall breakdown remain unmeasured.
+- Added `experiments/ffn_partition/BOTTLENECKS.md`, a CPU-only analysis script
+  and derived JSON with report hashes. Corrected the old missing-PR wording.
+  No new hardware runs or kernel changes; old measurements still use original
+  GPU kernels. Next: controlled PR backend integration, strict-prefill runner,
+  projection instrumentation/reuse improvements, then complete-FFN retesting.
+
+## 2026-10-18: prefill FFN partition microbenchmark
+
+- User requested a GPU–NPU FFN partition experiment against HeteroMosaic
+  without FFN offload. Created local branch `codex/ffn-partition-microbench`
+  and merged published `origin/main` (`24bb066`), preserving existing NPU work.
+  The fetched remote advertised only `main`; the teammate's separate new GPU
+  FFN implementation has not yet been located. Requested its branch/commit.
+- **Code-confirmed:** added `experiments/ffn_partition/` with an adapter around
+  unchanged HeteroMosaic packed GPU kernels, matching channel slices through
+  gate/up/SiLU/down, a four-launch MLIR-AIE/XRT NPU branch with persistent
+  weight BOs, GPU boundary reduction, and concurrent/serialized comparisons.
+  The original model runtime and GPU kernel source remain unchanged.
+- Timing runs from ready GPU input to synchronized GPU output, including
+  NPU host staging, dynamic allocations, layout conversions, transfers and
+  waits. Setup packing/upload and compilation are excluded. This is complete
+  FFN latency, not whole-model prefill or TTFT. The NPU path retains logical
+  partitions but stages intermediates in host DRAM and is not zero-copy.
+- **Measured checks:** CPU contract/packing/backend regression tests pass. Hardware
+  validation uses fixed synthetic W4A16 weights, an independent CPU reference,
+  branch partial checks, changed/zero/repeated inputs, and unchanged fixed
+  tolerances. Performance results require these gates to pass first.
+- Notebook setup uses isolated `/notebooks/heteromega-ffn-venv` with
+  Torch 2.11.0+rocm7.2, NumPy 1.26.4, ml_dtypes and ninja; existing IRON environment
+  and host drivers are unchanged. Native `gfx1150` compilation is forced to
+  avoid Torch's default all-architecture list failing rocWMMA's target check.
+  **Measured compatibility issue:** the prebuilt XRT Python binding with
+  NumPy 2.5.4 returned zero-stride byte arrays, silently repeating the first
+  byte. The composed FFN correctly failed its numerical gate. Pinning NumPy
+  1.26.4 restored correct readback and the small composed FFN passed. The
+  backend rejects malformed byte views before interpreting BF16 values.
+  The available machine is HX370/Radeon 890M, not Max+ 395.
+- **Measured:** ten model-shaped configurations pass: `H=4096`, `I=14336`,
+  `M=128/512`, four-column maximum with `P=128/512/2048`, plus `M=512`
+  eight-column maximum with `P=128/256/512/1024`. Each uses three excluded
+  warmups and 20 samples per mode, with randomized mode order and alternating
+  inputs. All 600 recorded invocations pass validation. The 2,160 NPU
+  dispatches in these runs complete; each fixed weight is uploaded once.
+- **Measured:** no tested allocation beats GPU-only median FFN latency.
+  Best four-column `M=128` result is 7.393 ms versus 6.552 ms GPU-only
+  (0.886x). At `M=512`, `P=128` is effectively tied: 27.192 versus 27.178 ms
+  (0.999x). Eight-column allocations range from 0.601x to 0.990x. Concurrent
+  execution improves over the same serialized partition, but that is a
+  separate comparison. Some samples show large common slowdowns; retain
+  them and do not assign a cause without load/clock/temperature evidence.
+- NPU projection stages dominate large partitions. For four columns,
+  `M=512/P=2048`, gate/up/down host intervals including I/O are approximately
+  47.86/47.73/48.32 ms; SiLU is 2.16 ms and down-input reorder is 0.088 ms.
+  These are not pure device compute measurements. Output-stage diagnostics
+  include GPU completion waiting, not just copy/reduction cost.
+- **Validated:** 20 CPU regressions pass; the additional hardware stage
+  diagnostic passes all 15 checks. Model-shaped reports contain 329 detailed
+  checks plus the 600 timed-invocation checks. Their source hashes match local
+  files, and the original GPU kernel hash matches both upstream baseline and
+  fetched main. Cloud execution used the old baseline checkout with source
+  overlays, recorded explicitly by its Git status and source hashes.
+- Raw JSON, logs, a CSV summary and reproduction/report instructions are under
+  `experiments/ffn_partition/`. Next: obtain the teammate GPU implementation,
+  improve NPU projection throughput and intermediate residency, then repeat
+  the complete-FFN comparison. Attention interference and whole-model prefill
+  remain subsequent measurements; no model-level acceleration is established.
+
 ## 2026-10-15: GitHub kernel teammate handoff
 
 - User explicitly requested committing/pushing the work so the GPU/NPU kernel

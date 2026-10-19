@@ -1,0 +1,6 @@
+Building/verifying NPU artifacts: M=128 H=256 P=128
+[92mSuccessfully preprocessed all matching files.[0m
+Validating original GPU FFN against independent CPU reference
+Validating partition P=128/512
+{"P": 128, "stats": {"concurrent": {"count": 3, "median_us": 9122.545, "p10_us": 8981.5082, "p90_us": 9122.912999999999, "min_us": 8946.249, "max_us": 9123.005}, "baseline": {"count": 3, "median_us": 418.641, "p10_us": 200.0938, "p90_us": 441.2162, "min_us": 145.457, "max_us": 446.86}, "serial": {"count": 3, "median_us": 9326.14, "p10_us": 9089.9056, "p90_us": 9416.3544, "min_us": 9030.847, "max_us": 9438.908}}, "speedup_vs_gpu_baseline": 0.0458908122678485}
+Saved experiments/ffn_partition/results/array8_smoke_hx370.json

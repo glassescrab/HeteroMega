@@ -1,0 +1,28 @@
+{
+    "schema_version": {
+        "schema": "JSON",
+        "creation_date": "Sun Oct 18 23:51:56 2026 GMT"
+    },
+    "devices": [
+        {
+            "interface_type": "pcie",
+            "device_id": "0000:66:00.1",
+            "platforms": [
+                {
+                    "static_region": {
+                        "name": "NPU Strix",
+                        "total_columns": "8"
+                    },
+                    "status": {
+                        "power_mode": "default"
+                    },
+                    "electrical": {
+                        "error_msg": "DRM_IOCTL_AMDXDNA_GET_INFO IOCTL failed (err=-95): Operation not supported",
+                        "": "DRM_IOCTL_AMDXDNA_GET_INFO IOCTL failed (err=-95): Operation not supported"
+                    }
+                }
+            ]
+        }
+    ]
+}
+

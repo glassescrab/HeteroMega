@@ -1,0 +1,1569 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "config": {
+    "m": 128,
+    "hidden": 256,
+    "intermediate": 512,
+    "npu_channels": "128",
+    "columns": 4,
+    "warmup": 2,
+    "iterations": 10,
+    "seed": 12832,
+    "artifact_root": "experiments/ffn_partition/artifacts",
+    "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+    "output": "experiments/ffn_partition/results/smoke_hx370.json",
+    "build_only": false,
+    "verbose_build": false
+  },
+  "scope": "prefill FFN microbenchmark, not whole-model prefill/TTFT",
+  "weights": "seeded synthetic unsigned W4A16, group 128; same canonical weights for all modes",
+  "baseline": "original HeteroMosaic packed GPU GEMMs, BF16 SiLU then multiply, all FFN channels on GPU",
+  "boundary": "ready GPU BF16 [M,H] input to synchronized GPU BF16 [M,H] output, including all host staging/layout/copies/reduction; no normalization or residual",
+  "excluded": [
+    "compilation",
+    "weight packing/upload",
+    "one-time setup allocations",
+    "reference computation",
+    "validation output readback"
+  ],
+  "provenance": {
+    "git_head": "61714a3147f34857aa5dfef21a28e762777a2df0",
+    "git_branch": "codex/npu-ffn-mlir-aie",
+    "git_status": "M README.md\n?? .ipynb_checkpoints/\n?? experiments/\n?? include/unified_llm_w4a16_hetero/hipblasltSetup_hip.hpp\n?? npu/\n?? src/hipkernels/w4a16_gemm_packed.hip",
+    "source_sha256": {
+      "experiments/ffn_partition/test_contract.py": "4b569223d9fd18f5c14ae2da0c55031fb9ef1fd2e2f3b7525e5016cb8dee6b84",
+      "experiments/ffn_partition/npu_backend.py": "1efceb0f38a814a252227e1fcbefcf567968a3d8dae27c40faaea6ab9510e6b4",
+      "experiments/ffn_partition/test_gpu_packing.py": "0e73f412742d37a683c018a9881fcbe252d6faaf1c4a2fb9f5b70807443a6769",
+      "experiments/ffn_partition/run.py": "f7bbfbe4cd029362479baee280c99c2379a76ce695496cb661b9c904868e5774",
+      "experiments/ffn_partition/gpu_backend.py": "ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7",
+      "experiments/ffn_partition/contract.py": "fccebc8a524216372fa77d8c289b98d50bf8616812d82ba615bbf50af33f88e5",
+      "experiments/ffn_partition/gpu_bindings.cpp": "98a1e34dbd38cc49a488d4f2db861dd9d8bbf527996a1642f5b55d0a069cda6a",
+      "src/hipkernels/w4a16_gemm_packed.cu": "bc5f0480bb322c9a76217ab0e4805bf6d8aea26156a6971e160af3901792575a"
+    },
+    "platform": "Linux-6.17.0-42-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "torch": "2.11.0+rocm7.2",
+    "hip": "7.2.26015",
+    "gpu_name": "AMD Radeon 890M"
+  },
+  "partitions": [
+    {
+      "npu_channels": 128,
+      "gpu_channels": 384,
+      "npu_fraction": 0.25,
+      "correctness": {
+        "serial_run_0_input_0_partition_reference": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.0024568279455353054,
+          "normalized_max_error": 0.004484304932735426,
+          "rms_error": 0.001888857107191397,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.96875,
+          "max_error_limit": 0.2590625,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_0_input_0_gpu_baseline": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.003261025576591216,
+          "normalized_max_error": 0.004484304932735426,
+          "rms_error": 0.002507249899835015,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.96875,
+          "max_error_limit": 0.2590625,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_0_input_0_gpu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.00390625,
+          "relative_l2_error": 5.0503050135798075e-05,
+          "normalized_max_error": 0.000576036866359447,
+          "rms_error": 3.288258362034554e-05,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.78125,
+          "max_error_limit": 0.2534375,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_0_input_0_npu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.015625,
+          "relative_l2_error": 0.0033668744295443985,
+          "normalized_max_error": 0.003048780487804878,
+          "rms_error": 0.0014387088941725107,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 5.125,
+          "max_error_limit": 0.20375,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_0_input_0_partition_reference": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.0024568279455353054,
+          "normalized_max_error": 0.004484304932735426,
+          "rms_error": 0.001888857107191397,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.96875,
+          "max_error_limit": 0.2590625,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_0_input_0_gpu_baseline": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.003261025576591216,
+          "normalized_max_error": 0.004484304932735426,
+          "rms_error": 0.002507249899835015,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.96875,
+          "max_error_limit": 0.2590625,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_0_input_0_gpu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.00390625,
+          "relative_l2_error": 5.0503050135798075e-05,
+          "normalized_max_error": 0.000576036866359447,
+          "rms_error": 3.288258362034554e-05,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.78125,
+          "max_error_limit": 0.2534375,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_0_input_0_npu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.015625,
+          "relative_l2_error": 0.0033668744295443985,
+          "normalized_max_error": 0.003048780487804878,
+          "rms_error": 0.0014387088941725107,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 5.125,
+          "max_error_limit": 0.20375,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_1_input_1_partition_reference": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.0022937767399346678,
+          "normalized_max_error": 0.004032258064516129,
+          "rms_error": 0.0017389133950385907,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 7.75,
+          "max_error_limit": 0.2825,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_1_input_1_gpu_baseline": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.0032114038813758823,
+          "normalized_max_error": 0.004032258064516129,
+          "rms_error": 0.0024346322640346235,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 7.75,
+          "max_error_limit": 0.2825,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_1_input_1_gpu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.00390625,
+          "relative_l2_error": 4.8653614939671026e-05,
+          "normalized_max_error": 0.0006443298969072165,
+          "rms_error": 3.252700612033893e-05,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.0625,
+          "max_error_limit": 0.231875,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_1_input_1_npu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.003553961034649028,
+          "normalized_max_error": 0.006944444444444444,
+          "rms_error": 0.0013014158326611655,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 4.5,
+          "max_error_limit": 0.185,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_1_input_1_partition_reference": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.0022937767399346678,
+          "normalized_max_error": 0.004032258064516129,
+          "rms_error": 0.0017389133950385907,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 7.75,
+          "max_error_limit": 0.2825,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_1_input_1_gpu_baseline": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.0032114038813758823,
+          "normalized_max_error": 0.004032258064516129,
+          "rms_error": 0.0024346322640346235,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 7.75,
+          "max_error_limit": 0.2825,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_1_input_1_gpu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.00390625,
+          "relative_l2_error": 4.8653614939671026e-05,
+          "normalized_max_error": 0.0006443298969072165,
+          "rms_error": 3.252700612033893e-05,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.0625,
+          "max_error_limit": 0.231875,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_1_input_1_npu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.003553961034649028,
+          "normalized_max_error": 0.006944444444444444,
+          "rms_error": 0.0013014158326611655,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 4.5,
+          "max_error_limit": 0.185,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_2_input_2_partition_reference": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.0,
+          "relative_l2_error": 0.0,
+          "normalized_max_error": 0.0,
+          "rms_error": 0.0,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 0.0,
+          "max_error_limit": 0.05,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_2_input_2_gpu_baseline": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.0,
+          "relative_l2_error": 0.0,
+          "normalized_max_error": 0.0,
+          "rms_error": 0.0,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 0.0,
+          "max_error_limit": 0.05,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_2_input_2_gpu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.0,
+          "relative_l2_error": 0.0,
+          "normalized_max_error": 0.0,
+          "rms_error": 0.0,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 0.0,
+          "max_error_limit": 0.05,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_2_input_2_npu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.0,
+          "relative_l2_error": 0.0,
+          "normalized_max_error": 0.0,
+          "rms_error": 0.0,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 0.0,
+          "max_error_limit": 0.05,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_2_input_2_partition_reference": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.0,
+          "relative_l2_error": 0.0,
+          "normalized_max_error": 0.0,
+          "rms_error": 0.0,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 0.0,
+          "max_error_limit": 0.05,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_2_input_2_gpu_baseline": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.0,
+          "relative_l2_error": 0.0,
+          "normalized_max_error": 0.0,
+          "rms_error": 0.0,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 0.0,
+          "max_error_limit": 0.05,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_2_input_2_gpu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.0,
+          "relative_l2_error": 0.0,
+          "normalized_max_error": 0.0,
+          "rms_error": 0.0,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 0.0,
+          "max_error_limit": 0.05,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_2_input_2_npu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.0,
+          "relative_l2_error": 0.0,
+          "normalized_max_error": 0.0,
+          "rms_error": 0.0,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 0.0,
+          "max_error_limit": 0.05,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_3_input_0_partition_reference": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.0024568279455353054,
+          "normalized_max_error": 0.004484304932735426,
+          "rms_error": 0.001888857107191397,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.96875,
+          "max_error_limit": 0.2590625,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_3_input_0_gpu_baseline": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.003261025576591216,
+          "normalized_max_error": 0.004484304932735426,
+          "rms_error": 0.002507249899835015,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.96875,
+          "max_error_limit": 0.2590625,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_3_input_0_gpu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.00390625,
+          "relative_l2_error": 5.0503050135798075e-05,
+          "normalized_max_error": 0.000576036866359447,
+          "rms_error": 3.288258362034554e-05,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.78125,
+          "max_error_limit": 0.2534375,
+          "elementwise_close_fraction": 1.0
+        },
+        "serial_run_3_input_0_npu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.015625,
+          "relative_l2_error": 0.0033668744295443985,
+          "normalized_max_error": 0.003048780487804878,
+          "rms_error": 0.0014387088941725107,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 5.125,
+          "max_error_limit": 0.20375,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_3_input_0_partition_reference": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.0024568279455353054,
+          "normalized_max_error": 0.004484304932735426,
+          "rms_error": 0.001888857107191397,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.96875,
+          "max_error_limit": 0.2590625,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_3_input_0_gpu_baseline": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.03125,
+          "relative_l2_error": 0.003261025576591216,
+          "normalized_max_error": 0.004484304932735426,
+          "rms_error": 0.002507249899835015,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.96875,
+          "max_error_limit": 0.2590625,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_3_input_0_gpu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.00390625,
+          "relative_l2_error": 5.0503050135798075e-05,
+          "normalized_max_error": 0.000576036866359447,
+          "rms_error": 3.288258362034554e-05,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 6.78125,
+          "max_error_limit": 0.2534375,
+          "elementwise_close_fraction": 1.0
+        },
+        "concurrent_run_3_input_0_npu_partial": {
+          "passed": true,
+          "correctness": "passed",
+          "finite": true,
+          "max_abs_error": 0.015625,
+          "relative_l2_error": 0.0033668744295443985,
+          "normalized_max_error": 0.003048780487804878,
+          "rms_error": 0.0014387088941725107,
+          "rtol": 0.03,
+          "atol": 0.05,
+          "l2_limit": 0.02,
+          "reference_max_abs": 5.125,
+          "max_error_limit": 0.20375,
+          "elementwise_close_fraction": 1.0
+        }
+      },
+      "samples": [
+        {
+          "iteration": 0,
+          "input_index": 0,
+          "mode": "baseline",
+          "wall_us": 153.687,
+          "correctness_passed": true,
+          "diagnostics": {}
+        },
+        {
+          "iteration": 0,
+          "input_index": 0,
+          "mode": "serial",
+          "wall_us": 2339.606,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 16.839,
+            "output_stage_and_boundary_wait_us": 100.399,
+            "npu": {
+              "branch_host_wall_us": 2071.331,
+              "stages": {
+                "input_layout_us": 15.27,
+                "gate_with_host_io_us": 518.18,
+                "up_with_host_io_us": 520.8,
+                "silu_mul_with_host_io_us": 485.151,
+                "down_input_layout_us": 7.0,
+                "down_with_host_io_us": 503.94,
+                "output_layout_us": 17.64
+              },
+              "dispatch_wait_us": {
+                "gate": 490.21,
+                "up": 501.09,
+                "silu_mul": 465.791,
+                "down": 488.081
+              },
+              "completed_dispatches_total": 52,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 0,
+          "input_index": 0,
+          "mode": "concurrent",
+          "wall_us": 2311.896,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 160.607,
+            "output_stage_and_boundary_wait_us": 68.308,
+            "npu": {
+              "branch_host_wall_us": 2015.272,
+              "stages": {
+                "input_layout_us": 14.99,
+                "gate_with_host_io_us": 496.63,
+                "up_with_host_io_us": 510.13,
+                "silu_mul_with_host_io_us": 469.772,
+                "down_input_layout_us": 6.399,
+                "down_with_host_io_us": 496.531,
+                "output_layout_us": 17.94
+              },
+              "dispatch_wait_us": {
+                "gate": 475.391,
+                "up": 494.771,
+                "silu_mul": 453.302,
+                "down": 481.361
+              },
+              "completed_dispatches_total": 56,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 1,
+          "input_index": 1,
+          "mode": "concurrent",
+          "wall_us": 2171.268,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 15.88,
+            "output_stage_and_boundary_wait_us": 68.468,
+            "npu": {
+              "branch_host_wall_us": 2020.822,
+              "stages": {
+                "input_layout_us": 14.84,
+                "gate_with_host_io_us": 492.001,
+                "up_with_host_io_us": 505.31,
+                "silu_mul_with_host_io_us": 471.611,
+                "down_input_layout_us": 6.53,
+                "down_with_host_io_us": 509.44,
+                "output_layout_us": 17.75
+              },
+              "dispatch_wait_us": {
+                "gate": 470.341,
+                "up": 489.3,
+                "silu_mul": 455.341,
+                "down": 493.11
+              },
+              "completed_dispatches_total": 60,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 1,
+          "input_index": 1,
+          "mode": "baseline",
+          "wall_us": 153.597,
+          "correctness_passed": true,
+          "diagnostics": {}
+        },
+        {
+          "iteration": 1,
+          "input_index": 1,
+          "mode": "serial",
+          "wall_us": 2508.442,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 39.199,
+            "output_stage_and_boundary_wait_us": 69.598,
+            "npu": {
+              "branch_host_wall_us": 2051.201,
+              "stages": {
+                "input_layout_us": 14.91,
+                "gate_with_host_io_us": 516.78,
+                "up_with_host_io_us": 520.82,
+                "silu_mul_with_host_io_us": 476.951,
+                "down_input_layout_us": 6.9,
+                "down_with_host_io_us": 493.37,
+                "output_layout_us": 18.1
+              },
+              "dispatch_wait_us": {
+                "gate": 488.981,
+                "up": 501.12,
+                "silu_mul": 458.761,
+                "down": 477.401
+              },
+              "completed_dispatches_total": 64,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 2,
+          "input_index": 0,
+          "mode": "serial",
+          "wall_us": 2412.814,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 16.43,
+            "output_stage_and_boundary_wait_us": 224.866,
+            "npu": {
+              "branch_host_wall_us": 2019.951,
+              "stages": {
+                "input_layout_us": 15.259,
+                "gate_with_host_io_us": 508.901,
+                "up_with_host_io_us": 505.49,
+                "silu_mul_with_host_io_us": 465.121,
+                "down_input_layout_us": 6.57,
+                "down_with_host_io_us": 498.43,
+                "output_layout_us": 17.1
+              },
+              "dispatch_wait_us": {
+                "gate": 486.041,
+                "up": 489.99,
+                "silu_mul": 449.291,
+                "down": 483.111
+              },
+              "completed_dispatches_total": 68,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 2,
+          "input_index": 0,
+          "mode": "baseline",
+          "wall_us": 429.271,
+          "correctness_passed": true,
+          "diagnostics": {}
+        },
+        {
+          "iteration": 2,
+          "input_index": 0,
+          "mode": "concurrent",
+          "wall_us": 2189.719,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 15.589,
+            "output_stage_and_boundary_wait_us": 119.498,
+            "npu": {
+              "branch_host_wall_us": 1995.972,
+              "stages": {
+                "input_layout_us": 14.89,
+                "gate_with_host_io_us": 487.37,
+                "up_with_host_io_us": 501.231,
+                "silu_mul_with_host_io_us": 468.571,
+                "down_input_layout_us": 6.57,
+                "down_with_host_io_us": 495.81,
+                "output_layout_us": 18.56
+              },
+              "dispatch_wait_us": {
+                "gate": 466.031,
+                "up": 485.681,
+                "silu_mul": 451.481,
+                "down": 480.241
+              },
+              "completed_dispatches_total": 72,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 3,
+          "input_index": 1,
+          "mode": "baseline",
+          "wall_us": 433.752,
+          "correctness_passed": true,
+          "diagnostics": {}
+        },
+        {
+          "iteration": 3,
+          "input_index": 1,
+          "mode": "concurrent",
+          "wall_us": 2253.237,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 21.369,
+            "output_stage_and_boundary_wait_us": 78.439,
+            "npu": {
+              "branch_host_wall_us": 2056.881,
+              "stages": {
+                "input_layout_us": 17.009,
+                "gate_with_host_io_us": 519.261,
+                "up_with_host_io_us": 516.731,
+                "silu_mul_with_host_io_us": 466.641,
+                "down_input_layout_us": 8.54,
+                "down_with_host_io_us": 506.6,
+                "output_layout_us": 18.1
+              },
+              "dispatch_wait_us": {
+                "gate": 486.221,
+                "up": 499.421,
+                "silu_mul": 449.211,
+                "down": 490.561
+              },
+              "completed_dispatches_total": 76,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 3,
+          "input_index": 1,
+          "mode": "serial",
+          "wall_us": 2459.743,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 18.24,
+            "output_stage_and_boundary_wait_us": 262.375,
+            "npu": {
+              "branch_host_wall_us": 2019.411,
+              "stages": {
+                "input_layout_us": 15.729,
+                "gate_with_host_io_us": 508.141,
+                "up_with_host_io_us": 503.53,
+                "silu_mul_with_host_io_us": 469.341,
+                "down_input_layout_us": 7.8,
+                "down_with_host_io_us": 493.801,
+                "output_layout_us": 17.819
+              },
+              "dispatch_wait_us": {
+                "gate": 483.271,
+                "up": 487.33,
+                "silu_mul": 452.641,
+                "down": 477.281
+              },
+              "completed_dispatches_total": 80,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 4,
+          "input_index": 0,
+          "mode": "baseline",
+          "wall_us": 421.272,
+          "correctness_passed": true,
+          "diagnostics": {}
+        },
+        {
+          "iteration": 4,
+          "input_index": 0,
+          "mode": "concurrent",
+          "wall_us": 2966.743,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 15.64,
+            "output_stage_and_boundary_wait_us": 528.27,
+            "npu": {
+              "branch_host_wall_us": 2344.496,
+              "stages": {
+                "input_layout_us": 15.32,
+                "gate_with_host_io_us": 497.19,
+                "up_with_host_io_us": 502.281,
+                "silu_mul_with_host_io_us": 471.151,
+                "down_input_layout_us": 6.95,
+                "down_with_host_io_us": 778.725,
+                "output_layout_us": 63.599
+              },
+              "dispatch_wait_us": {
+                "gate": 472.091,
+                "up": 486.231,
+                "silu_mul": 453.901,
+                "down": 542.659
+              },
+              "completed_dispatches_total": 84,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 4,
+          "input_index": 0,
+          "mode": "serial",
+          "wall_us": 3145.53,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 36.51,
+            "output_stage_and_boundary_wait_us": 177.107,
+            "npu": {
+              "branch_host_wall_us": 2590.11,
+              "stages": {
+                "input_layout_us": 35.779,
+                "gate_with_host_io_us": 665.717,
+                "up_with_host_io_us": 605.269,
+                "silu_mul_with_host_io_us": 614.468,
+                "down_input_layout_us": 32.059,
+                "down_with_host_io_us": 584.699,
+                "output_layout_us": 38.279
+              },
+              "dispatch_wait_us": {
+                "gate": 584.309,
+                "up": 533.02,
+                "silu_mul": 535.57,
+                "down": 528.91
+              },
+              "completed_dispatches_total": 88,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 5,
+          "input_index": 1,
+          "mode": "baseline",
+          "wall_us": 448.651,
+          "correctness_passed": true,
+          "diagnostics": {}
+        },
+        {
+          "iteration": 5,
+          "input_index": 1,
+          "mode": "serial",
+          "wall_us": 2919.364,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 33.499,
+            "output_stage_and_boundary_wait_us": 177.007,
+            "npu": {
+              "branch_host_wall_us": 2512.172,
+              "stages": {
+                "input_layout_us": 34.87,
+                "gate_with_host_io_us": 597.118,
+                "up_with_host_io_us": 564.89,
+                "silu_mul_with_host_io_us": 578.469,
+                "down_input_layout_us": 26.56,
+                "down_with_host_io_us": 635.058,
+                "output_layout_us": 61.359
+              },
+              "dispatch_wait_us": {
+                "gate": 536.979,
+                "up": 517.07,
+                "silu_mul": 501.311,
+                "down": 556.399
+              },
+              "completed_dispatches_total": 92,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 5,
+          "input_index": 1,
+          "mode": "concurrent",
+          "wall_us": 2814.326,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 44.319,
+            "output_stage_and_boundary_wait_us": 233.926,
+            "npu": {
+              "branch_host_wall_us": 2394.625,
+              "stages": {
+                "input_layout_us": 34.89,
+                "gate_with_host_io_us": 574.189,
+                "up_with_host_io_us": 565.499,
+                "silu_mul_with_host_io_us": 556.189,
+                "down_input_layout_us": 16.28,
+                "down_with_host_io_us": 577.559,
+                "output_layout_us": 59.729
+              },
+              "dispatch_wait_us": {
+                "gate": 515.651,
+                "up": 517.171,
+                "silu_mul": 503.72,
+                "down": 527.95
+              },
+              "completed_dispatches_total": 96,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 6,
+          "input_index": 0,
+          "mode": "concurrent",
+          "wall_us": 2827.426,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 27.349,
+            "output_stage_and_boundary_wait_us": 195.547,
+            "npu": {
+              "branch_host_wall_us": 2462.883,
+              "stages": {
+                "input_layout_us": 34.729,
+                "gate_with_host_io_us": 592.679,
+                "up_with_host_io_us": 598.778,
+                "silu_mul_with_host_io_us": 567.349,
+                "down_input_layout_us": 30.42,
+                "down_with_host_io_us": 570.039,
+                "output_layout_us": 56.789
+              },
+              "dispatch_wait_us": {
+                "gate": 532.42,
+                "up": 528.819,
+                "silu_mul": 509.16,
+                "down": 521.36
+              },
+              "completed_dispatches_total": 100,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 6,
+          "input_index": 0,
+          "mode": "baseline",
+          "wall_us": 438.342,
+          "correctness_passed": true,
+          "diagnostics": {}
+        },
+        {
+          "iteration": 6,
+          "input_index": 0,
+          "mode": "serial",
+          "wall_us": 2541.611,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 33.199,
+            "output_stage_and_boundary_wait_us": 114.398,
+            "npu": {
+              "branch_host_wall_us": 2203.538,
+              "stages": {
+                "input_layout_us": 35.189,
+                "gate_with_host_io_us": 562.379,
+                "up_with_host_io_us": 508.86,
+                "silu_mul_with_host_io_us": 509.591,
+                "down_input_layout_us": 12.929,
+                "down_with_host_io_us": 531.9,
+                "output_layout_us": 35.99
+              },
+              "dispatch_wait_us": {
+                "gate": 512.73,
+                "up": 479.221,
+                "silu_mul": 479.351,
+                "down": 503.411
+              },
+              "completed_dispatches_total": 104,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 7,
+          "input_index": 1,
+          "mode": "serial",
+          "wall_us": 2832.426,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 57.709,
+            "output_stage_and_boundary_wait_us": 146.937,
+            "npu": {
+              "branch_host_wall_us": 2203.028,
+              "stages": {
+                "input_layout_us": 33.06,
+                "gate_with_host_io_us": 553.099,
+                "up_with_host_io_us": 521.78,
+                "silu_mul_with_host_io_us": 508.6,
+                "down_input_layout_us": 13.49,
+                "down_with_host_io_us": 532.29,
+                "output_layout_us": 33.839
+              },
+              "dispatch_wait_us": {
+                "gate": 511.921,
+                "up": 493.08,
+                "silu_mul": 479.261,
+                "down": 503.55
+              },
+              "completed_dispatches_total": 108,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 7,
+          "input_index": 1,
+          "mode": "baseline",
+          "wall_us": 386.982,
+          "correctness_passed": true,
+          "diagnostics": {}
+        },
+        {
+          "iteration": 7,
+          "input_index": 1,
+          "mode": "concurrent",
+          "wall_us": 2455.024,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 27.2,
+            "output_stage_and_boundary_wait_us": 117.818,
+            "npu": {
+              "branch_host_wall_us": 2208.528,
+              "stages": {
+                "input_layout_us": 32.279,
+                "gate_with_host_io_us": 562.48,
+                "up_with_host_io_us": 521.15,
+                "silu_mul_with_host_io_us": 508.12,
+                "down_input_layout_us": 12.82,
+                "down_with_host_io_us": 530.92,
+                "output_layout_us": 34.429
+              },
+              "dispatch_wait_us": {
+                "gate": 517.5,
+                "up": 491.701,
+                "silu_mul": 480.091,
+                "down": 502.77
+              },
+              "completed_dispatches_total": 112,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 8,
+          "input_index": 0,
+          "mode": "baseline",
+          "wall_us": 435.041,
+          "correctness_passed": true,
+          "diagnostics": {}
+        },
+        {
+          "iteration": 8,
+          "input_index": 0,
+          "mode": "concurrent",
+          "wall_us": 2533.842,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 92.679,
+            "output_stage_and_boundary_wait_us": 146.518,
+            "npu": {
+              "branch_host_wall_us": 2195.328,
+              "stages": {
+                "input_layout_us": 31.569,
+                "gate_with_host_io_us": 543.27,
+                "up_with_host_io_us": 522.92,
+                "silu_mul_with_host_io_us": 506.281,
+                "down_input_layout_us": 12.639,
+                "down_with_host_io_us": 538.66,
+                "output_layout_us": 34.079
+              },
+              "dispatch_wait_us": {
+                "gate": 502.131,
+                "up": 493.481,
+                "silu_mul": 477.371,
+                "down": 510.231
+              },
+              "completed_dispatches_total": 116,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 8,
+          "input_index": 0,
+          "mode": "serial",
+          "wall_us": 2774.627,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 50.459,
+            "output_stage_and_boundary_wait_us": 108.418,
+            "npu": {
+              "branch_host_wall_us": 2198.908,
+              "stages": {
+                "input_layout_us": 31.239,
+                "gate_with_host_io_us": 554.81,
+                "up_with_host_io_us": 521.45,
+                "silu_mul_with_host_io_us": 508.91,
+                "down_input_layout_us": 12.0,
+                "down_with_host_io_us": 531.19,
+                "output_layout_us": 33.409
+              },
+              "dispatch_wait_us": {
+                "gate": 511.77,
+                "up": 492.78,
+                "silu_mul": 481.841,
+                "down": 503.65
+              },
+              "completed_dispatches_total": 120,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 9,
+          "input_index": 1,
+          "mode": "serial",
+          "wall_us": 2787.737,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 50.969,
+            "output_stage_and_boundary_wait_us": 113.568,
+            "npu": {
+              "branch_host_wall_us": 2200.908,
+              "stages": {
+                "input_layout_us": 31.439,
+                "gate_with_host_io_us": 558.56,
+                "up_with_host_io_us": 521.31,
+                "silu_mul_with_host_io_us": 507.98,
+                "down_input_layout_us": 11.53,
+                "down_with_host_io_us": 530.05,
+                "output_layout_us": 33.789
+              },
+              "dispatch_wait_us": {
+                "gate": 514.13,
+                "up": 492.1,
+                "silu_mul": 478.91,
+                "down": 502.66
+              },
+              "completed_dispatches_total": 124,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 9,
+          "input_index": 1,
+          "mode": "concurrent",
+          "wall_us": 2446.953,
+          "correctness_passed": true,
+          "diagnostics": {
+            "input_gpu_to_host_us": 42.21,
+            "output_stage_and_boundary_wait_us": 106.528,
+            "npu": {
+              "branch_host_wall_us": 2183.838,
+              "stages": {
+                "input_layout_us": 30.949,
+                "gate_with_host_io_us": 537.34,
+                "up_with_host_io_us": 518.81,
+                "silu_mul_with_host_io_us": 513.24,
+                "down_input_layout_us": 11.45,
+                "down_with_host_io_us": 531.8,
+                "output_layout_us": 34.189
+              },
+              "dispatch_wait_us": {
+                "gate": 496.431,
+                "up": 490.611,
+                "silu_mul": 484.791,
+                "down": 504.371
+              },
+              "completed_dispatches_total": 128,
+              "weight_upload_counts": {
+                "gate": 1,
+                "up": 1,
+                "down": 1
+              }
+            }
+          }
+        },
+        {
+          "iteration": 9,
+          "input_index": 1,
+          "mode": "baseline",
+          "wall_us": 480.311,
+          "correctness_passed": true,
+          "diagnostics": {}
+        }
+      ],
+      "setup_seconds": 0.05925784120336175,
+      "gpu": {
+        "source_sha256": {
+          "src/hipkernels/w4a16_gemm_packed.cu": "bc5f0480bb322c9a76217ab0e4805bf6d8aea26156a6971e160af3901792575a",
+          "include/hipkernels/w4a16_gemm_packed.hpp": "967b3634311a45b217b8a1d88cd06541b460a573a2875b2e453bf5559e48b639",
+          "experiments/ffn_partition/gpu_bindings.cpp": "98a1e34dbd38cc49a488d4f2db861dd9d8bbf527996a1642f5b55d0a069cda6a",
+          "experiments/ffn_partition/gpu_backend.py": "ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7"
+        },
+        "torch_version": "2.11.0+rocm7.2",
+        "hip_version": "7.2.26015",
+        "gpu_arch": "gfx1150",
+        "rocm_path": "/opt/rocm-7.2.0",
+        "pytorch_rocm_arch": "gfx1150",
+        "packed_layout": "heteromosaic_k128_n64_zigzag8_v1",
+        "build_fingerprint": "eb0e39babf78d01437feb02f48d128bac4b2ed9a2d997758afc1496bc748f0a1",
+        "backend": "heteromosaic_original_gpu_packed",
+        "m": 128,
+        "hidden": 256,
+        "channels": 384,
+        "weight_bytes": 156672,
+        "scratch_bytes": 262144,
+        "activation": "separate_bf16_silu_then_multiply"
+      },
+      "npu": {
+        "backend": "mlir_aie_xrt_host_staged_ffn",
+        "layout": "prefill_m16_k128_n32_mmul4x8x8_v1",
+        "m": 128,
+        "hidden": 256,
+        "channels": 128,
+        "columns_requested": 4,
+        "artifacts": {
+          "gate_up": {
+            "xclbin": "/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_prefill_m128_k256_n128_c4_296b19c6f401/final.xclbin",
+            "insts": "/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_prefill_m128_k256_n128_c4_296b19c6f401/insts.bin",
+            "manifest": {
+              "kind": "w4a16_prefill_bf16",
+              "m": 128,
+              "k": 256,
+              "n": 128,
+              "cols": 4,
+              "tile_m": 16,
+              "tile_k": 128,
+              "tile_n": 32,
+              "group_size": 128,
+              "weight_tile_bytes": 2144,
+              "source_sha256": "090e87845395f730b580be537c7da5f11c0f53eaee110b28786e362cdfd32ba2",
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+              "xclbin_sha256": "f93092be09e23b48647c371960edeb936ef5ac3486ccc00d221e71dad96284c0",
+              "insts_sha256": "de4eb381ed1c4af3d8870007faf58811ca2586f2b8bc375ae7d5625a4059876f"
+            },
+            "build_contract": {
+              "version": 1,
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill.py": "8e35485ad1f40852efd97f9ea289643f07648cf9f2f1bf932fdd4a11b62cbdf7",
+                "npu/ffn/w4a16_prefill.cc": "090e87845395f730b580be537c7da5f11c0f53eaee110b28786e362cdfd32ba2"
+              },
+              "expected_manifest": {
+                "kind": "w4a16_prefill_bf16",
+                "m": 128,
+                "k": 256,
+                "n": 128,
+                "cols": 4,
+                "tile_m": 16,
+                "tile_k": 128,
+                "tile_n": 32,
+                "group_size": 128,
+                "weight_tile_bytes": 2144
+              },
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858"
+            }
+          },
+          "down": {
+            "xclbin": "/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_prefill_m128_k128_n256_c4_296b19c6f401/final.xclbin",
+            "insts": "/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_prefill_m128_k128_n256_c4_296b19c6f401/insts.bin",
+            "manifest": {
+              "kind": "w4a16_prefill_bf16",
+              "m": 128,
+              "k": 128,
+              "n": 256,
+              "cols": 4,
+              "tile_m": 16,
+              "tile_k": 128,
+              "tile_n": 32,
+              "group_size": 128,
+              "weight_tile_bytes": 2144,
+              "source_sha256": "090e87845395f730b580be537c7da5f11c0f53eaee110b28786e362cdfd32ba2",
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+              "xclbin_sha256": "7931e57f57cfa85a0521c5cbb76c7e71a48aefd85a6dfb3384e143a4a896d971",
+              "insts_sha256": "668e025524c350872ef41f02412f3d8a388b25da58d70916fb7ab268fc33714e"
+            },
+            "build_contract": {
+              "version": 1,
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill.py": "8e35485ad1f40852efd97f9ea289643f07648cf9f2f1bf932fdd4a11b62cbdf7",
+                "npu/ffn/w4a16_prefill.cc": "090e87845395f730b580be537c7da5f11c0f53eaee110b28786e362cdfd32ba2"
+              },
+              "expected_manifest": {
+                "kind": "w4a16_prefill_bf16",
+                "m": 128,
+                "k": 128,
+                "n": 256,
+                "cols": 4,
+                "tile_m": 16,
+                "tile_k": 128,
+                "tile_n": 32,
+                "group_size": 128,
+                "weight_tile_bytes": 2144
+              },
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858"
+            }
+          },
+          "silu_mul": {
+            "xclbin": "/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_silu_l16384_t1024_c4_0924ce4b3bc4/final.xclbin",
+            "insts": "/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_silu_l16384_t1024_c4_0924ce4b3bc4/insts.bin",
+            "manifest": {
+              "kind": "silu_mul_bf16",
+              "size": 16384,
+              "tile_size": 1024,
+              "num_columns": 4,
+              "device": "npu2",
+              "xclbin_sha256": "58e490c541fe02508b8ea4c44c4397fd01cebfa225f3371d7345749a228bee1d",
+              "insts_sha256": "b9ed96ec62bd3d39f29cc22ed6e20d85f55331c70242d36ce3950031aa44a40d",
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+              "source_sha256": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+            },
+            "build_contract": {
+              "version": 1,
+              "source_sha256": {
+                "npu/ffn/silu_mul.py": "46fbde0fb57e72be60b4544e8bfa0c3d80c1f36409a25b70dcde3afe8da638d9",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "expected_manifest": {
+                "kind": "silu_mul_bf16",
+                "size": 16384,
+                "tile_size": 1024,
+                "num_columns": 4,
+                "device": "npu2"
+              },
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858"
+            }
+          }
+        },
+        "fixed_weight_uploads": 3,
+        "fixed_weight_bytes": 51456,
+        "launches_per_run": 4,
+        "cpu_activation_fallback": false,
+        "intermediates": "host-staged BF16; CPU layout conversion before down",
+        "host_bo_io_bytes_per_run_estimate": 393216,
+        "host_bo_io_estimate_note": "BO write/read payload bytes, excludes layout copies, instruction reads and device DMA traffic",
+        "timing_note": "dispatch/wait intervals are host times; whole-FFN timing must include GPU transfers and boundary sum"
+      },
+      "stats": {
+        "serial": {
+          "count": 10,
+          "median_us": 2658.1189999999997,
+          "p10_us": 2405.4932,
+          "p90_us": 2941.9806,
+          "min_us": 2339.606,
+          "max_us": 3145.53
+        },
+        "concurrent": {
+          "count": 10,
+          "median_us": 2450.9885,
+          "p10_us": 2187.8739,
+          "p90_us": 2841.3577,
+          "min_us": 2171.268,
+          "max_us": 2966.743
+        },
+        "baseline": {
+          "count": 10,
+          "median_us": 431.5115,
+          "p10_us": 153.67800000000003,
+          "p90_us": 451.817,
+          "min_us": 153.597,
+          "max_us": 480.311
+        }
+      },
+      "speedup_vs_gpu_baseline": 0.17605610960638943,
+      "speedup_vs_serial_partition": 1.0845089644443455
+    }
+  ],
+  "correctness": {
+    "baseline_input_0": {
+      "passed": true,
+      "correctness": "passed",
+      "finite": true,
+      "max_abs_error": 0.0078125,
+      "relative_l2_error": 6.996442142581571e-05,
+      "normalized_max_error": 0.0011210762331838565,
+      "rms_error": 5.379242637307871e-05,
+      "rtol": 0.03,
+      "atol": 0.05,
+      "l2_limit": 0.02,
+      "reference_max_abs": 6.96875,
+      "max_error_limit": 0.2590625,
+      "elementwise_close_fraction": 1.0
+    },
+    "baseline_input_1": {
+      "passed": true,
+      "correctness": "passed",
+      "finite": true,
+      "max_abs_error": 0.015625,
+      "relative_l2_error": 0.00013905521135952766,
+      "normalized_max_error": 0.0020161290322580645,
+      "rms_error": 0.00010542091989051737,
+      "rtol": 0.03,
+      "atol": 0.05,
+      "l2_limit": 0.02,
+      "reference_max_abs": 7.75,
+      "max_error_limit": 0.2825,
+      "elementwise_close_fraction": 1.0
+    },
+    "baseline_input_2": {
+      "passed": true,
+      "correctness": "passed",
+      "finite": true,
+      "max_abs_error": 0.0,
+      "relative_l2_error": 0.0,
+      "normalized_max_error": 0.0,
+      "rms_error": 0.0,
+      "rtol": 0.03,
+      "atol": 0.05,
+      "l2_limit": 0.02,
+      "reference_max_abs": 0.0,
+      "max_error_limit": 0.05,
+      "elementwise_close_fraction": 1.0
+    }
+  },
+  "gpu_baseline": {
+    "source_sha256": {
+      "src/hipkernels/w4a16_gemm_packed.cu": "bc5f0480bb322c9a76217ab0e4805bf6d8aea26156a6971e160af3901792575a",
+      "include/hipkernels/w4a16_gemm_packed.hpp": "967b3634311a45b217b8a1d88cd06541b460a573a2875b2e453bf5559e48b639",
+      "experiments/ffn_partition/gpu_bindings.cpp": "98a1e34dbd38cc49a488d4f2db861dd9d8bbf527996a1642f5b55d0a069cda6a",
+      "experiments/ffn_partition/gpu_backend.py": "ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7"
+    },
+    "torch_version": "2.11.0+rocm7.2",
+    "hip_version": "7.2.26015",
+    "gpu_arch": "gfx1150",
+    "rocm_path": "/opt/rocm-7.2.0",
+    "pytorch_rocm_arch": "gfx1150",
+    "packed_layout": "heteromosaic_k128_n64_zigzag8_v1",
+    "build_fingerprint": "eb0e39babf78d01437feb02f48d128bac4b2ed9a2d997758afc1496bc748f0a1",
+    "backend": "heteromosaic_original_gpu_packed",
+    "m": 128,
+    "hidden": 256,
+    "channels": 512,
+    "weight_bytes": 208896,
+    "scratch_bytes": 327680,
+    "activation": "separate_bf16_silu_then_multiply"
+  }
+}

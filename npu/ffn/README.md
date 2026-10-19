@@ -1,8 +1,18 @@
 # NPU FFN kernel bring-up
 
 This directory adds editable MLIR-AIE/IRON sources to the HeteroMosaic
-baseline. It is the first NPU milestone for HeteroMega, not yet an integrated
-GPU–NPU FFN or an end-to-end Llama speedup.
+baseline. A complete host-staged GPU–NPU FFN microbenchmark is available in
+[experiments/ffn_partition](../../experiments/ffn_partition/README.md). Whole-model
+Llama prefill acceleration remains unvalidated.
+
+Current development targets **multi-token prefill projections**. The default
+FFN experiment now uses [eight columns and four compute rows](ARRAY8.md),
+with multicast and weight reuse. See
+[PREFILL.md](PREFILL.md) for the tiled W4A16 matrix-multiply design, compact
+buffer ABI, build commands, and correctness checks. The scalar single-token
+and activation examples below preserve the earlier bring-up work.
+Hardware results for 128/512/2048/4096-token projections are recorded in
+[PREFILL_VALIDATION.md](PREFILL_VALIDATION.md).
 
 ## Environment
 
@@ -87,9 +97,9 @@ python npu/ffn/run_w4a16_linear.py --self-test
 
 ## Integration work remaining
 
-1. Vectorize and tile the W4 linear core, including multi-token prefill and
-   accumulation across K tiles. Add weight residency/reuse and avoid
-   per-token repacking.
+1. Profile the validated [tiled prefill projection](PREFILL.md) to separate
+   dequantization, matrix arithmetic, and DMA costs. Add on-chip weight reuse
+   and connect checkpoint loading to its packed layout.
 2. Connect gate/up, local activation, and sliced down projection within the
    NPU graph. The current standalone activation crosses host/device BO
    boundaries; it does not yet prove persistent intermediate locality.

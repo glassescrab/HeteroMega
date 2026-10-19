@@ -1,0 +1,1831 @@
+{
+  "kind": "derived_analysis_no_new_hardware_measurements",
+  "notes": [
+    "Host dispatch/wait includes device DMA and runtime costs; it is not pure compute time.",
+    "Stage sums are computed per sample before taking medians; separate medians need not add.",
+    "Graph payloads exclude SiLU, instruction traffic, caches and scratch; they are not DRAM counters.",
+    "Architecture and effective reuse come from each projection manifest; gate/up and down may use different reuse.",
+    "Array8 shim traffic includes horizontal A and vertical W multicast; core traffic and dequantization are reported separately.",
+    "Proportional work model assumes linear GPU scaling, instantaneous NPU and zero overhead; it is not a measured speedup or universal bound.",
+    "Effective GFLOPS counts three projection FLOPs over the entire host NPU branch."
+  ],
+  "source_reports_sha256": {
+    "array8_m128_h4096_i14336_hx370.json": "739e2e92fadd902b1e233419c97ae9c41c0d76e866becc39dc8e78f30e8467b7",
+    "array8_m512_h4096_i14336_hx370.json": "f47a04c9276d45b4b4b0478b702b57d0576833ffff481473d1bad836c03c41d5",
+    "array8_m2048_h4096_i14336_hx370.json": "5ed2805200a2e5c0e4131f55268d85bfc4d295578b1aa863f0d89f1f662d95aa",
+    "array8_m4096_h4096_i14336_hx370.json": "cf5ec9c3f8281a799ededaba2b31c577d3a91ecb98d23a1d3addcd10f037986b",
+    "array8_repeat_m512_p512_hx370.json": "5a259bee5e33a3bdd19b9fffe2e155244895d90b1ce25473447ed76e2a861280",
+    "legacy8_control_m512_hx370.json": "581ca436bcf7262fd5f895ad00deacd65b6bb05fde165c35e69cf11cb760727d"
+  },
+  "rows": [
+    {
+      "report": "array8_m128_h4096_i14336_hx370.json",
+      "m": 128,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 512,
+      "columns_max": 8,
+      "architecture": "array8",
+      "projection_workers": {
+        "gate_up": 32,
+        "down": 32
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 2,
+        "down": 2
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "array8",
+          "m": 128,
+          "k": 4096,
+          "n": 512,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 4096,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 2097152,
+          "weight_shim_payload_bytes": 1097728,
+          "output_shim_payload_bytes": 131072,
+          "a_core_payload_bytes": 16777216,
+          "weight_core_payload_bytes": 4390912,
+          "dequantization_calls": 2048,
+          "weight_shim_replays_per_unique_tile": 1,
+          "dequant_replays_per_unique_tile": 4
+        },
+        "up": {
+          "architecture": "array8",
+          "m": 128,
+          "k": 4096,
+          "n": 512,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 4096,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 2097152,
+          "weight_shim_payload_bytes": 1097728,
+          "output_shim_payload_bytes": 131072,
+          "a_core_payload_bytes": 16777216,
+          "weight_core_payload_bytes": 4390912,
+          "dequantization_calls": 2048,
+          "weight_shim_replays_per_unique_tile": 1,
+          "dequant_replays_per_unique_tile": 4
+        },
+        "down": {
+          "architecture": "array8",
+          "m": 128,
+          "k": 512,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 4096,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 2097152,
+          "weight_shim_payload_bytes": 1097728,
+          "output_shim_payload_bytes": 1048576,
+          "a_core_payload_bytes": 16777216,
+          "weight_core_payload_bytes": 4390912,
+          "dequantization_calls": 2048,
+          "weight_shim_replays_per_unique_tile": 1,
+          "dequant_replays_per_unique_tile": 4
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 5.8211854999999995,
+        "serial": 17.637211500000003,
+        "concurrent": 12.1017505,
+        "npu_branch": 11.334767,
+        "projection_dispatch_wait_sum": 9.054811,
+        "silu_dispatch_wait": 0.955775,
+        "host_bo_io_outside_dispatch": 0.6407610000000002,
+        "layouts": 0.713615,
+        "input_gpu_to_host": 0.0582635,
+        "output_stage_and_boundary_wait": 0.40417650000000005
+      },
+      "median_projection_wait_share_of_npu_percent": 79.21943771797041,
+      "speedup_vs_gpu": 0.481020121841051,
+      "npu_branch_over_full_gpu_ratio": 1.9471578426765477,
+      "npu_branch_effective_projection_gflops": 142.09491346403505,
+      "proportional_work_model": {
+        "npu_fraction": 0.03571428571428571,
+        "gpu_time_released_ms": 0.2078994821428571,
+        "zero_overhead_instant_npu_speedup": 1.037037037037037
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 3293184,
+        "projection_graph_a_payload": 6291456,
+        "projection_graph_weight_payload": 3293184,
+        "projection_graph_output_payload": 1310720,
+        "projection_graph_total_payload": 10895360,
+        "host_bo_read_write_payload": 3932160,
+        "gpu_host_input_output_payload": 2097152
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 50331648,
+        "projection_weight_payload": 13172736
+      },
+      "projection_dequantization_calls": 6144
+    },
+    {
+      "report": "array8_m128_h4096_i14336_hx370.json",
+      "m": 128,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 2048,
+      "columns_max": 8,
+      "architecture": "array8",
+      "projection_workers": {
+        "gate_up": 32,
+        "down": 32
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 2,
+        "down": 2
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "array8",
+          "m": 128,
+          "k": 4096,
+          "n": 2048,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 16384,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 8388608,
+          "weight_shim_payload_bytes": 4390912,
+          "output_shim_payload_bytes": 524288,
+          "a_core_payload_bytes": 67108864,
+          "weight_core_payload_bytes": 17563648,
+          "dequantization_calls": 8192,
+          "weight_shim_replays_per_unique_tile": 1,
+          "dequant_replays_per_unique_tile": 4
+        },
+        "up": {
+          "architecture": "array8",
+          "m": 128,
+          "k": 4096,
+          "n": 2048,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 16384,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 8388608,
+          "weight_shim_payload_bytes": 4390912,
+          "output_shim_payload_bytes": 524288,
+          "a_core_payload_bytes": 67108864,
+          "weight_core_payload_bytes": 17563648,
+          "dequantization_calls": 8192,
+          "weight_shim_replays_per_unique_tile": 1,
+          "dequant_replays_per_unique_tile": 4
+        },
+        "down": {
+          "architecture": "array8",
+          "m": 128,
+          "k": 2048,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 16384,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 8388608,
+          "weight_shim_payload_bytes": 4390912,
+          "output_shim_payload_bytes": 1048576,
+          "a_core_payload_bytes": 67108864,
+          "weight_core_payload_bytes": 17563648,
+          "dequantization_calls": 8192,
+          "weight_shim_replays_per_unique_tile": 1,
+          "dequant_replays_per_unique_tile": 4
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 5.757912,
+        "serial": 19.920703,
+        "concurrent": 15.4460435,
+        "npu_branch": 14.790638,
+        "projection_dispatch_wait_sum": 12.1289495,
+        "silu_dispatch_wait": 1.2369290000000002,
+        "host_bo_io_outside_dispatch": 0.6797210000000001,
+        "layouts": 0.6142664999999999,
+        "input_gpu_to_host": 0.06779349999999999,
+        "output_stage_and_boundary_wait": 0.3166835
+      },
+      "median_projection_wait_share_of_npu_percent": 82.1142650807351,
+      "speedup_vs_gpu": 0.37277585033345273,
+      "npu_branch_over_full_gpu_ratio": 2.568750269194805,
+      "npu_branch_effective_projection_gflops": 435.5762708816212,
+      "proportional_work_model": {
+        "npu_fraction": 0.14285714285714285,
+        "gpu_time_released_ms": 0.8225588571428571,
+        "zero_overhead_instant_npu_speedup": 1.1666666666666665
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 13172736,
+        "projection_graph_a_payload": 25165824,
+        "projection_graph_weight_payload": 13172736,
+        "projection_graph_output_payload": 2097152,
+        "projection_graph_total_payload": 40435712,
+        "host_bo_read_write_payload": 6291456,
+        "gpu_host_input_output_payload": 2097152
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 201326592,
+        "projection_weight_payload": 52690944
+      },
+      "projection_dequantization_calls": 24576
+    },
+    {
+      "report": "array8_m512_h4096_i14336_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 128,
+      "columns_max": 8,
+      "architecture": "array8",
+      "projection_workers": {
+        "gate_up": 32,
+        "down": 32
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 2,
+        "down": 2
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 4096,
+          "n": 128,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 4,
+          "m_column_groups": 2,
+          "mkn_tiles": 4096,
+          "unique_packed_weight_bytes": 274432,
+          "a_shim_payload_bytes": 4194304,
+          "weight_shim_payload_bytes": 1097728,
+          "output_shim_payload_bytes": 131072,
+          "a_core_payload_bytes": 16777216,
+          "weight_core_payload_bytes": 4390912,
+          "dequantization_calls": 2048,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        },
+        "up": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 4096,
+          "n": 128,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 4,
+          "m_column_groups": 2,
+          "mkn_tiles": 4096,
+          "unique_packed_weight_bytes": 274432,
+          "a_shim_payload_bytes": 4194304,
+          "weight_shim_payload_bytes": 1097728,
+          "output_shim_payload_bytes": 131072,
+          "a_core_payload_bytes": 16777216,
+          "weight_core_payload_bytes": 4390912,
+          "dequantization_calls": 2048,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        },
+        "down": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 128,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 4096,
+          "unique_packed_weight_bytes": 274432,
+          "a_shim_payload_bytes": 2097152,
+          "weight_shim_payload_bytes": 1097728,
+          "output_shim_payload_bytes": 4194304,
+          "a_core_payload_bytes": 16777216,
+          "weight_core_payload_bytes": 4390912,
+          "dequantization_calls": 2048,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 22.249907500000003,
+        "serial": 38.446464500000005,
+        "concurrent": 21.6723955,
+        "npu_branch": 15.256552,
+        "projection_dispatch_wait_sum": 10.076512,
+        "silu_dispatch_wait": 1.2897260000000002,
+        "host_bo_io_outside_dispatch": 1.587545,
+        "layouts": 2.204596,
+        "input_gpu_to_host": 0.2560845,
+        "output_stage_and_boundary_wait": 5.5807165
+      },
+      "median_projection_wait_share_of_npu_percent": 66.66949653556713,
+      "speedup_vs_gpu": 1.0266473542345609,
+      "npu_branch_over_full_gpu_ratio": 0.6856905809608421,
+      "npu_branch_effective_projection_gflops": 105.56859348036176,
+      "proportional_work_model": {
+        "npu_fraction": 0.008928571428571428,
+        "gpu_time_released_ms": 0.19865988839285717,
+        "zero_overhead_instant_npu_speedup": 1.009009009009009
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 823296,
+        "projection_graph_a_payload": 10485760,
+        "projection_graph_weight_payload": 3293184,
+        "projection_graph_output_payload": 4456448,
+        "projection_graph_total_payload": 18235392,
+        "host_bo_read_write_payload": 13369344,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 50331648,
+        "projection_weight_payload": 13172736
+      },
+      "projection_dequantization_calls": 6144
+    },
+    {
+      "report": "array8_m512_h4096_i14336_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 512,
+      "columns_max": 8,
+      "architecture": "array8",
+      "projection_workers": {
+        "gate_up": 32,
+        "down": 32
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 2,
+        "down": 2
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 4096,
+          "n": 512,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 16384,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 8388608,
+          "weight_shim_payload_bytes": 4390912,
+          "output_shim_payload_bytes": 524288,
+          "a_core_payload_bytes": 67108864,
+          "weight_core_payload_bytes": 17563648,
+          "dequantization_calls": 8192,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        },
+        "up": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 4096,
+          "n": 512,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 16384,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 8388608,
+          "weight_shim_payload_bytes": 4390912,
+          "output_shim_payload_bytes": 524288,
+          "a_core_payload_bytes": 67108864,
+          "weight_core_payload_bytes": 17563648,
+          "dequantization_calls": 8192,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        },
+        "down": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 512,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 16384,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 8388608,
+          "weight_shim_payload_bytes": 4390912,
+          "output_shim_payload_bytes": 4194304,
+          "a_core_payload_bytes": 67108864,
+          "weight_core_payload_bytes": 17563648,
+          "dequantization_calls": 8192,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 22.197898999999996,
+        "serial": 40.381073,
+        "concurrent": 20.718052000000004,
+        "npu_branch": 18.601843499999998,
+        "projection_dispatch_wait_sum": 13.056261999999998,
+        "silu_dispatch_wait": 1.3025915,
+        "host_bo_io_outside_dispatch": 2.0233545000000004,
+        "layouts": 2.1517325,
+        "input_gpu_to_host": 0.2560245,
+        "output_stage_and_boundary_wait": 0.9591135
+      },
+      "median_projection_wait_share_of_npu_percent": 70.92218914260452,
+      "speedup_vs_gpu": 1.0714279025846634,
+      "npu_branch_over_full_gpu_ratio": 0.8380001864140386,
+      "npu_branch_effective_projection_gflops": 346.3340041539432,
+      "proportional_work_model": {
+        "npu_fraction": 0.03571428571428571,
+        "gpu_time_released_ms": 0.792782107142857,
+        "zero_overhead_instant_npu_speedup": 1.037037037037037
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 3293184,
+        "projection_graph_a_payload": 25165824,
+        "projection_graph_weight_payload": 13172736,
+        "projection_graph_output_payload": 5242880,
+        "projection_graph_total_payload": 43581440,
+        "host_bo_read_write_payload": 15728640,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 201326592,
+        "projection_weight_payload": 52690944
+      },
+      "projection_dequantization_calls": 24576
+    },
+    {
+      "report": "array8_m512_h4096_i14336_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 1024,
+      "columns_max": 8,
+      "architecture": "array8",
+      "projection_workers": {
+        "gate_up": 32,
+        "down": 32
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 2,
+        "down": 2
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 4096,
+          "n": 1024,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 32768,
+          "unique_packed_weight_bytes": 2195456,
+          "a_shim_payload_bytes": 16777216,
+          "weight_shim_payload_bytes": 8781824,
+          "output_shim_payload_bytes": 1048576,
+          "a_core_payload_bytes": 134217728,
+          "weight_core_payload_bytes": 35127296,
+          "dequantization_calls": 16384,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        },
+        "up": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 4096,
+          "n": 1024,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 32768,
+          "unique_packed_weight_bytes": 2195456,
+          "a_shim_payload_bytes": 16777216,
+          "weight_shim_payload_bytes": 8781824,
+          "output_shim_payload_bytes": 1048576,
+          "a_core_payload_bytes": 134217728,
+          "weight_core_payload_bytes": 35127296,
+          "dequantization_calls": 16384,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        },
+        "down": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 1024,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 32768,
+          "unique_packed_weight_bytes": 2195456,
+          "a_shim_payload_bytes": 16777216,
+          "weight_shim_payload_bytes": 8781824,
+          "output_shim_payload_bytes": 4194304,
+          "a_core_payload_bytes": 134217728,
+          "weight_core_payload_bytes": 35127296,
+          "dequantization_calls": 16384,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 22.248514000000004,
+        "serial": 43.8186835,
+        "concurrent": 23.883623,
+        "npu_branch": 22.374841,
+        "projection_dispatch_wait_sum": 16.166059,
+        "silu_dispatch_wait": 1.536236,
+        "host_bo_io_outside_dispatch": 2.205435499999999,
+        "layouts": 2.341434,
+        "input_gpu_to_host": 0.255559,
+        "output_stage_and_boundary_wait": 0.7223040000000001
+      },
+      "median_projection_wait_share_of_npu_percent": 72.10749199919331,
+      "speedup_vs_gpu": 0.9315384855974324,
+      "npu_branch_over_full_gpu_ratio": 1.0056779971911831,
+      "npu_branch_effective_projection_gflops": 575.8656290786603,
+      "proportional_work_model": {
+        "npu_fraction": 0.07142857142857142,
+        "gpu_time_released_ms": 1.5891795714285717,
+        "zero_overhead_instant_npu_speedup": 1.0769230769230769
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 6586368,
+        "projection_graph_a_payload": 50331648,
+        "projection_graph_weight_payload": 26345472,
+        "projection_graph_output_payload": 6291456,
+        "projection_graph_total_payload": 82968576,
+        "host_bo_read_write_payload": 18874368,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 402653184,
+        "projection_weight_payload": 105381888
+      },
+      "projection_dequantization_calls": 49152
+    },
+    {
+      "report": "array8_m512_h4096_i14336_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 2048,
+      "columns_max": 8,
+      "architecture": "array8",
+      "projection_workers": {
+        "gate_up": 32,
+        "down": 32
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 2,
+        "down": 2
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 4096,
+          "n": 2048,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 65536,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 33554432,
+          "weight_shim_payload_bytes": 17563648,
+          "output_shim_payload_bytes": 2097152,
+          "a_core_payload_bytes": 268435456,
+          "weight_core_payload_bytes": 70254592,
+          "dequantization_calls": 32768,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        },
+        "up": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 4096,
+          "n": 2048,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 65536,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 33554432,
+          "weight_shim_payload_bytes": 17563648,
+          "output_shim_payload_bytes": 2097152,
+          "a_core_payload_bytes": 268435456,
+          "weight_core_payload_bytes": 70254592,
+          "dequantization_calls": 32768,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        },
+        "down": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 2048,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 65536,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 33554432,
+          "weight_shim_payload_bytes": 17563648,
+          "output_shim_payload_bytes": 4194304,
+          "a_core_payload_bytes": 268435456,
+          "weight_core_payload_bytes": 70254592,
+          "dequantization_calls": 32768,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 22.2728995,
+        "serial": 49.7861685,
+        "concurrent": 31.080916,
+        "npu_branch": 29.488216,
+        "projection_dispatch_wait_sum": 22.843837,
+        "silu_dispatch_wait": 1.558471,
+        "host_bo_io_outside_dispatch": 2.7845735000000005,
+        "layouts": 2.263566,
+        "input_gpu_to_host": 0.256229,
+        "output_stage_and_boundary_wait": 0.7171095000000001
+      },
+      "median_projection_wait_share_of_npu_percent": 77.18946859164559,
+      "speedup_vs_gpu": 0.7166101378736714,
+      "npu_branch_over_full_gpu_ratio": 1.3239504807176092,
+      "npu_branch_effective_projection_gflops": 873.9017570951054,
+      "proportional_work_model": {
+        "npu_fraction": 0.14285714285714285,
+        "gpu_time_released_ms": 3.1818427857142857,
+        "zero_overhead_instant_npu_speedup": 1.1666666666666665
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 13172736,
+        "projection_graph_a_payload": 100663296,
+        "projection_graph_weight_payload": 52690944,
+        "projection_graph_output_payload": 8388608,
+        "projection_graph_total_payload": 161742848,
+        "host_bo_read_write_payload": 25165824,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 805306368,
+        "projection_weight_payload": 210763776
+      },
+      "projection_dequantization_calls": 98304
+    },
+    {
+      "report": "array8_m2048_h4096_i14336_hx370.json",
+      "m": 2048,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 512,
+      "columns_max": 8,
+      "architecture": "array8",
+      "projection_workers": {
+        "gate_up": 32,
+        "down": 32
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 2,
+        "down": 2
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "array8",
+          "m": 2048,
+          "k": 4096,
+          "n": 512,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 65536,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 33554432,
+          "weight_shim_payload_bytes": 17563648,
+          "output_shim_payload_bytes": 2097152,
+          "a_core_payload_bytes": 268435456,
+          "weight_core_payload_bytes": 70254592,
+          "dequantization_calls": 32768,
+          "weight_shim_replays_per_unique_tile": 16,
+          "dequant_replays_per_unique_tile": 64
+        },
+        "up": {
+          "architecture": "array8",
+          "m": 2048,
+          "k": 4096,
+          "n": 512,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 65536,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 33554432,
+          "weight_shim_payload_bytes": 17563648,
+          "output_shim_payload_bytes": 2097152,
+          "a_core_payload_bytes": 268435456,
+          "weight_core_payload_bytes": 70254592,
+          "dequantization_calls": 32768,
+          "weight_shim_replays_per_unique_tile": 16,
+          "dequant_replays_per_unique_tile": 64
+        },
+        "down": {
+          "architecture": "array8",
+          "m": 2048,
+          "k": 512,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 65536,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 33554432,
+          "weight_shim_payload_bytes": 17563648,
+          "output_shim_payload_bytes": 16777216,
+          "a_core_payload_bytes": 268435456,
+          "weight_core_payload_bytes": 70254592,
+          "dequantization_calls": 32768,
+          "weight_shim_replays_per_unique_tile": 16,
+          "dequant_replays_per_unique_tile": 64
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 89.158734,
+        "serial": 129.6773975,
+        "concurrent": 88.6439905,
+        "npu_branch": 38.660083,
+        "projection_dispatch_wait_sum": 21.9528375,
+        "silu_dispatch_wait": 1.705164,
+        "host_bo_io_outside_dispatch": 5.590735500000002,
+        "layouts": 9.343315500000001,
+        "input_gpu_to_host": 1.9941225,
+        "output_stage_and_boundary_wait": 45.67224349999999
+      },
+      "median_projection_wait_share_of_npu_percent": 56.85695284096009,
+      "speedup_vs_gpu": 1.005806862902906,
+      "npu_branch_over_full_gpu_ratio": 0.43360960015425976,
+      "npu_branch_effective_projection_gflops": 666.5739381883893,
+      "proportional_work_model": {
+        "npu_fraction": 0.03571428571428571,
+        "gpu_time_released_ms": 3.1842405,
+        "zero_overhead_instant_npu_speedup": 1.037037037037037
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 3293184,
+        "projection_graph_a_payload": 100663296,
+        "projection_graph_weight_payload": 52690944,
+        "projection_graph_output_payload": 20971520,
+        "projection_graph_total_payload": 174325760,
+        "host_bo_read_write_payload": 62914560,
+        "gpu_host_input_output_payload": 33554432
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 805306368,
+        "projection_weight_payload": 210763776
+      },
+      "projection_dequantization_calls": 98304
+    },
+    {
+      "report": "array8_m2048_h4096_i14336_hx370.json",
+      "m": 2048,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 2048,
+      "columns_max": 8,
+      "architecture": "array8",
+      "projection_workers": {
+        "gate_up": 32,
+        "down": 32
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 2,
+        "down": 2
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "array8",
+          "m": 2048,
+          "k": 4096,
+          "n": 2048,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 262144,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 134217728,
+          "weight_shim_payload_bytes": 70254592,
+          "output_shim_payload_bytes": 8388608,
+          "a_core_payload_bytes": 1073741824,
+          "weight_core_payload_bytes": 281018368,
+          "dequantization_calls": 131072,
+          "weight_shim_replays_per_unique_tile": 16,
+          "dequant_replays_per_unique_tile": 64
+        },
+        "up": {
+          "architecture": "array8",
+          "m": 2048,
+          "k": 4096,
+          "n": 2048,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 262144,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 134217728,
+          "weight_shim_payload_bytes": 70254592,
+          "output_shim_payload_bytes": 8388608,
+          "a_core_payload_bytes": 1073741824,
+          "weight_core_payload_bytes": 281018368,
+          "dequantization_calls": 131072,
+          "weight_shim_replays_per_unique_tile": 16,
+          "dequant_replays_per_unique_tile": 64
+        },
+        "down": {
+          "architecture": "array8",
+          "m": 2048,
+          "k": 2048,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 262144,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 134217728,
+          "weight_shim_payload_bytes": 70254592,
+          "output_shim_payload_bytes": 16777216,
+          "a_core_payload_bytes": 1073741824,
+          "weight_core_payload_bytes": 281018368,
+          "dequantization_calls": 131072,
+          "weight_shim_replays_per_unique_tile": 16,
+          "dequant_replays_per_unique_tile": 64
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 87.805913,
+        "serial": 162.204042,
+        "concurrent": 89.35131099999998,
+        "npu_branch": 84.12908250000001,
+        "projection_dispatch_wait_sum": 62.742870499999995,
+        "silu_dispatch_wait": 2.9706315,
+        "host_bo_io_outside_dispatch": 9.212530000000003,
+        "layouts": 9.060903,
+        "input_gpu_to_host": 0.518654,
+        "output_stage_and_boundary_wait": 2.3600245
+      },
+      "median_projection_wait_share_of_npu_percent": 74.66127525298921,
+      "speedup_vs_gpu": 0.9827042492974728,
+      "npu_branch_over_full_gpu_ratio": 0.9581254795448685,
+      "npu_branch_effective_projection_gflops": 1225.2506748067767,
+      "proportional_work_model": {
+        "npu_fraction": 0.14285714285714285,
+        "gpu_time_released_ms": 12.543701857142858,
+        "zero_overhead_instant_npu_speedup": 1.1666666666666665
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 13172736,
+        "projection_graph_a_payload": 402653184,
+        "projection_graph_weight_payload": 210763776,
+        "projection_graph_output_payload": 33554432,
+        "projection_graph_total_payload": 646971392,
+        "host_bo_read_write_payload": 100663296,
+        "gpu_host_input_output_payload": 33554432
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 3221225472,
+        "projection_weight_payload": 843055104
+      },
+      "projection_dequantization_calls": 393216
+    },
+    {
+      "report": "array8_m4096_h4096_i14336_hx370.json",
+      "m": 4096,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 512,
+      "columns_max": 8,
+      "architecture": "array8",
+      "projection_workers": {
+        "gate_up": 32,
+        "down": 32
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 2,
+        "down": 2
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "array8",
+          "m": 4096,
+          "k": 4096,
+          "n": 512,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 131072,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 67108864,
+          "weight_shim_payload_bytes": 35127296,
+          "output_shim_payload_bytes": 4194304,
+          "a_core_payload_bytes": 536870912,
+          "weight_core_payload_bytes": 140509184,
+          "dequantization_calls": 65536,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 128
+        },
+        "up": {
+          "architecture": "array8",
+          "m": 4096,
+          "k": 4096,
+          "n": 512,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 131072,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 67108864,
+          "weight_shim_payload_bytes": 35127296,
+          "output_shim_payload_bytes": 4194304,
+          "a_core_payload_bytes": 536870912,
+          "weight_core_payload_bytes": 140509184,
+          "dequantization_calls": 65536,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 128
+        },
+        "down": {
+          "architecture": "array8",
+          "m": 4096,
+          "k": 512,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 131072,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 67108864,
+          "weight_shim_payload_bytes": 35127296,
+          "output_shim_payload_bytes": 33554432,
+          "a_core_payload_bytes": 536870912,
+          "weight_core_payload_bytes": 140509184,
+          "dequantization_calls": 65536,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 128
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 175.2375565,
+        "serial": 249.35380849999999,
+        "concurrent": 174.3053405,
+        "npu_branch": 74.0088025,
+        "projection_dispatch_wait_sum": 37.4108255,
+        "silu_dispatch_wait": 2.4187089999999998,
+        "host_bo_io_outside_dispatch": 13.9366135,
+        "layouts": 20.152877,
+        "input_gpu_to_host": 1.0054939999999999,
+        "output_stage_and_boundary_wait": 94.108182
+      },
+      "median_projection_wait_share_of_npu_percent": 50.469027447922116,
+      "speedup_vs_gpu": 1.0053481780726048,
+      "npu_branch_over_full_gpu_ratio": 0.4223341387438257,
+      "npu_branch_effective_projection_gflops": 696.398344669879,
+      "proportional_work_model": {
+        "npu_fraction": 0.03571428571428571,
+        "gpu_time_released_ms": 6.2584841607142865,
+        "zero_overhead_instant_npu_speedup": 1.037037037037037
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 3293184,
+        "projection_graph_a_payload": 201326592,
+        "projection_graph_weight_payload": 105381888,
+        "projection_graph_output_payload": 41943040,
+        "projection_graph_total_payload": 348651520,
+        "host_bo_read_write_payload": 125829120,
+        "gpu_host_input_output_payload": 67108864
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 1610612736,
+        "projection_weight_payload": 421527552
+      },
+      "projection_dequantization_calls": 196608
+    },
+    {
+      "report": "array8_m4096_h4096_i14336_hx370.json",
+      "m": 4096,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 2048,
+      "columns_max": 8,
+      "architecture": "array8",
+      "projection_workers": {
+        "gate_up": 32,
+        "down": 32
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 2,
+        "down": 2
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "array8",
+          "m": 4096,
+          "k": 4096,
+          "n": 2048,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 524288,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 268435456,
+          "weight_shim_payload_bytes": 140509184,
+          "output_shim_payload_bytes": 16777216,
+          "a_core_payload_bytes": 2147483648,
+          "weight_core_payload_bytes": 562036736,
+          "dequantization_calls": 262144,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 128
+        },
+        "up": {
+          "architecture": "array8",
+          "m": 4096,
+          "k": 4096,
+          "n": 2048,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 524288,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 268435456,
+          "weight_shim_payload_bytes": 140509184,
+          "output_shim_payload_bytes": 16777216,
+          "a_core_payload_bytes": 2147483648,
+          "weight_core_payload_bytes": 562036736,
+          "dequantization_calls": 262144,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 128
+        },
+        "down": {
+          "architecture": "array8",
+          "m": 4096,
+          "k": 2048,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 524288,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 268435456,
+          "weight_shim_payload_bytes": 140509184,
+          "output_shim_payload_bytes": 33554432,
+          "a_core_payload_bytes": 2147483648,
+          "weight_core_payload_bytes": 562036736,
+          "dequantization_calls": 262144,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 128
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 176.1888535,
+        "serial": 318.12130099999996,
+        "concurrent": 172.89964,
+        "npu_branch": 162.53211249999998,
+        "projection_dispatch_wait_sum": 115.46266,
+        "silu_dispatch_wait": 4.387968,
+        "host_bo_io_outside_dispatch": 22.174035000000003,
+        "layouts": 20.508242,
+        "input_gpu_to_host": 1.2465344999999999,
+        "output_stage_and_boundary_wait": 3.9984265
+      },
+      "median_projection_wait_share_of_npu_percent": 71.06281000422317,
+      "speedup_vs_gpu": 1.0190238308188495,
+      "npu_branch_over_full_gpu_ratio": 0.9224880534227439,
+      "npu_branch_effective_projection_gflops": 1268.4166041833735,
+      "proportional_work_model": {
+        "npu_fraction": 0.14285714285714285,
+        "gpu_time_released_ms": 25.169836214285713,
+        "zero_overhead_instant_npu_speedup": 1.1666666666666665
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 13172736,
+        "projection_graph_a_payload": 805306368,
+        "projection_graph_weight_payload": 421527552,
+        "projection_graph_output_payload": 67108864,
+        "projection_graph_total_payload": 1293942784,
+        "host_bo_read_write_payload": 201326592,
+        "gpu_host_input_output_payload": 67108864
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 6442450944,
+        "projection_weight_payload": 1686110208
+      },
+      "projection_dequantization_calls": 786432
+    },
+    {
+      "report": "array8_repeat_m512_p512_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 512,
+      "columns_max": 8,
+      "architecture": "array8",
+      "projection_workers": {
+        "gate_up": 32,
+        "down": 32
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 2,
+        "down": 2
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 4096,
+          "n": 512,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 16384,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 8388608,
+          "weight_shim_payload_bytes": 4390912,
+          "output_shim_payload_bytes": 524288,
+          "a_core_payload_bytes": 67108864,
+          "weight_core_payload_bytes": 17563648,
+          "dequantization_calls": 8192,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        },
+        "up": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 4096,
+          "n": 512,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 16384,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 8388608,
+          "weight_shim_payload_bytes": 4390912,
+          "output_shim_payload_bytes": 524288,
+          "a_core_payload_bytes": 67108864,
+          "weight_core_payload_bytes": 17563648,
+          "dequantization_calls": 8192,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        },
+        "down": {
+          "architecture": "array8",
+          "m": 512,
+          "k": 512,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 4,
+          "worker_count": 32,
+          "m_reuse": 2,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 16384,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 8388608,
+          "weight_shim_payload_bytes": 4390912,
+          "output_shim_payload_bytes": 4194304,
+          "a_core_payload_bytes": 67108864,
+          "weight_core_payload_bytes": 17563648,
+          "dequantization_calls": 8192,
+          "weight_shim_replays_per_unique_tile": 4,
+          "dequant_replays_per_unique_tile": 16
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 50,
+        "serial": 50,
+        "concurrent": 50
+      },
+      "median_ms": {
+        "baseline": 22.184309000000002,
+        "serial": 41.270337500000004,
+        "concurrent": 20.7052805,
+        "npu_branch": 18.973091,
+        "projection_dispatch_wait_sum": 13.135157,
+        "silu_dispatch_wait": 1.605002,
+        "host_bo_io_outside_dispatch": 2.1376144999999998,
+        "layouts": 1.9679145,
+        "input_gpu_to_host": 0.25652949999999997,
+        "output_stage_and_boundary_wait": 0.8070634999999999
+      },
+      "median_projection_wait_share_of_npu_percent": 69.44351769673881,
+      "speedup_vs_gpu": 1.0714324300025784,
+      "npu_branch_over_full_gpu_ratio": 0.8552482297284986,
+      "npu_branch_effective_projection_gflops": 339.5572679222379,
+      "proportional_work_model": {
+        "npu_fraction": 0.03571428571428571,
+        "gpu_time_released_ms": 0.7922967500000001,
+        "zero_overhead_instant_npu_speedup": 1.037037037037037
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 3293184,
+        "projection_graph_a_payload": 25165824,
+        "projection_graph_weight_payload": 13172736,
+        "projection_graph_output_payload": 5242880,
+        "projection_graph_total_payload": 43581440,
+        "host_bo_read_write_payload": 15728640,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 201326592,
+        "projection_weight_payload": 52690944
+      },
+      "projection_dequantization_calls": 24576
+    },
+    {
+      "report": "legacy8_control_m512_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 512,
+      "columns_max": 8,
+      "architecture": "legacy",
+      "projection_workers": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 1,
+        "down": 1
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "legacy",
+          "m": 512,
+          "k": 4096,
+          "n": 512,
+          "columns": 8,
+          "compute_rows": 1,
+          "worker_count": 8,
+          "m_reuse": 1,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 16384,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 67108864,
+          "weight_shim_payload_bytes": 35127296,
+          "output_shim_payload_bytes": 524288,
+          "a_core_payload_bytes": 67108864,
+          "weight_core_payload_bytes": 35127296,
+          "dequantization_calls": 16384,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 32
+        },
+        "up": {
+          "architecture": "legacy",
+          "m": 512,
+          "k": 4096,
+          "n": 512,
+          "columns": 8,
+          "compute_rows": 1,
+          "worker_count": 8,
+          "m_reuse": 1,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 16384,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 67108864,
+          "weight_shim_payload_bytes": 35127296,
+          "output_shim_payload_bytes": 524288,
+          "a_core_payload_bytes": 67108864,
+          "weight_core_payload_bytes": 35127296,
+          "dequantization_calls": 16384,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 32
+        },
+        "down": {
+          "architecture": "legacy",
+          "m": 512,
+          "k": 512,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 1,
+          "worker_count": 8,
+          "m_reuse": 1,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 16384,
+          "unique_packed_weight_bytes": 1097728,
+          "a_shim_payload_bytes": 67108864,
+          "weight_shim_payload_bytes": 35127296,
+          "output_shim_payload_bytes": 4194304,
+          "a_core_payload_bytes": 67108864,
+          "weight_core_payload_bytes": 35127296,
+          "dequantization_calls": 16384,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 32
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 22.267028,
+        "serial": 50.9599215,
+        "concurrent": 29.5294205,
+        "npu_branch": 28.022368000000004,
+        "projection_dispatch_wait_sum": 22.117842,
+        "silu_dispatch_wait": 1.242313,
+        "host_bo_io_outside_dispatch": 2.0861595000000017,
+        "layouts": 2.2904505,
+        "input_gpu_to_host": 0.255554,
+        "output_stage_and_boundary_wait": 0.70718
+      },
+      "median_projection_wait_share_of_npu_percent": 79.704191512523,
+      "speedup_vs_gpu": 0.7540624781309203,
+      "npu_branch_over_full_gpu_ratio": 1.2584691589735282,
+      "npu_branch_effective_projection_gflops": 229.9038733628792,
+      "proportional_work_model": {
+        "npu_fraction": 0.03571428571428571,
+        "gpu_time_released_ms": 0.795251,
+        "zero_overhead_instant_npu_speedup": 1.037037037037037
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 3293184,
+        "projection_graph_a_payload": 201326592,
+        "projection_graph_weight_payload": 105381888,
+        "projection_graph_output_payload": 5242880,
+        "projection_graph_total_payload": 311951360,
+        "host_bo_read_write_payload": 15728640,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 201326592,
+        "projection_weight_payload": 105381888
+      },
+      "projection_dequantization_calls": 49152,
+      "weight_dma_and_dequant_replays": 32
+    },
+    {
+      "report": "legacy8_control_m512_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 1024,
+      "columns_max": 8,
+      "architecture": "legacy",
+      "projection_workers": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 1,
+        "down": 1
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "legacy",
+          "m": 512,
+          "k": 4096,
+          "n": 1024,
+          "columns": 8,
+          "compute_rows": 1,
+          "worker_count": 8,
+          "m_reuse": 1,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 32768,
+          "unique_packed_weight_bytes": 2195456,
+          "a_shim_payload_bytes": 134217728,
+          "weight_shim_payload_bytes": 70254592,
+          "output_shim_payload_bytes": 1048576,
+          "a_core_payload_bytes": 134217728,
+          "weight_core_payload_bytes": 70254592,
+          "dequantization_calls": 32768,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 32
+        },
+        "up": {
+          "architecture": "legacy",
+          "m": 512,
+          "k": 4096,
+          "n": 1024,
+          "columns": 8,
+          "compute_rows": 1,
+          "worker_count": 8,
+          "m_reuse": 1,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 32768,
+          "unique_packed_weight_bytes": 2195456,
+          "a_shim_payload_bytes": 134217728,
+          "weight_shim_payload_bytes": 70254592,
+          "output_shim_payload_bytes": 1048576,
+          "a_core_payload_bytes": 134217728,
+          "weight_core_payload_bytes": 70254592,
+          "dequantization_calls": 32768,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 32
+        },
+        "down": {
+          "architecture": "legacy",
+          "m": 512,
+          "k": 1024,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 1,
+          "worker_count": 8,
+          "m_reuse": 1,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 32768,
+          "unique_packed_weight_bytes": 2195456,
+          "a_shim_payload_bytes": 134217728,
+          "weight_shim_payload_bytes": 70254592,
+          "output_shim_payload_bytes": 4194304,
+          "a_core_payload_bytes": 134217728,
+          "weight_core_payload_bytes": 70254592,
+          "dequantization_calls": 32768,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 32
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 20.632664000000002,
+        "serial": 68.91829449999999,
+        "concurrent": 47.909504,
+        "npu_branch": 46.357917,
+        "projection_dispatch_wait_sum": 40.2204755,
+        "silu_dispatch_wait": 1.3144969999999998,
+        "host_bo_io_outside_dispatch": 2.4831570000000003,
+        "layouts": 2.4432815,
+        "input_gpu_to_host": 0.25790949999999996,
+        "output_stage_and_boundary_wait": 0.730164
+      },
+      "median_projection_wait_share_of_npu_percent": 86.60007409313778,
+      "speedup_vs_gpu": 0.430659102628155,
+      "npu_branch_over_full_gpu_ratio": 2.246821690112338,
+      "npu_branch_effective_projection_gflops": 277.94393540158416,
+      "proportional_work_model": {
+        "npu_fraction": 0.07142857142857142,
+        "gpu_time_released_ms": 1.4737617142857145,
+        "zero_overhead_instant_npu_speedup": 1.0769230769230769
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 6586368,
+        "projection_graph_a_payload": 402653184,
+        "projection_graph_weight_payload": 210763776,
+        "projection_graph_output_payload": 6291456,
+        "projection_graph_total_payload": 619708416,
+        "host_bo_read_write_payload": 18874368,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 402653184,
+        "projection_weight_payload": 210763776
+      },
+      "projection_dequantization_calls": 98304,
+      "weight_dma_and_dequant_replays": 32
+    },
+    {
+      "report": "legacy8_control_m512_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 2048,
+      "columns_max": 8,
+      "architecture": "legacy",
+      "projection_workers": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "projection_columns": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "effective_m_reuse": {
+        "gate_up": 1,
+        "down": 1
+      },
+      "projection_details": {
+        "gate": {
+          "architecture": "legacy",
+          "m": 512,
+          "k": 4096,
+          "n": 2048,
+          "columns": 8,
+          "compute_rows": 1,
+          "worker_count": 8,
+          "m_reuse": 1,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 65536,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 268435456,
+          "weight_shim_payload_bytes": 140509184,
+          "output_shim_payload_bytes": 2097152,
+          "a_core_payload_bytes": 268435456,
+          "weight_core_payload_bytes": 140509184,
+          "dequantization_calls": 65536,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 32
+        },
+        "up": {
+          "architecture": "legacy",
+          "m": 512,
+          "k": 4096,
+          "n": 2048,
+          "columns": 8,
+          "compute_rows": 1,
+          "worker_count": 8,
+          "m_reuse": 1,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 65536,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 268435456,
+          "weight_shim_payload_bytes": 140509184,
+          "output_shim_payload_bytes": 2097152,
+          "a_core_payload_bytes": 268435456,
+          "weight_core_payload_bytes": 140509184,
+          "dequantization_calls": 65536,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 32
+        },
+        "down": {
+          "architecture": "legacy",
+          "m": 512,
+          "k": 2048,
+          "n": 4096,
+          "columns": 8,
+          "compute_rows": 1,
+          "worker_count": 8,
+          "m_reuse": 1,
+          "n_columns": 8,
+          "m_column_groups": 1,
+          "mkn_tiles": 65536,
+          "unique_packed_weight_bytes": 4390912,
+          "a_shim_payload_bytes": 268435456,
+          "weight_shim_payload_bytes": 140509184,
+          "output_shim_payload_bytes": 4194304,
+          "a_core_payload_bytes": 268435456,
+          "weight_core_payload_bytes": 140509184,
+          "dequantization_calls": 65536,
+          "weight_shim_replays_per_unique_tile": 32,
+          "dequant_replays_per_unique_tile": 32
+        }
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 19.589862,
+        "serial": 102.558021,
+        "concurrent": 85.45928500000001,
+        "npu_branch": 82.57085250000002,
+        "projection_dispatch_wait_sum": 75.0505405,
+        "silu_dispatch_wait": 1.7755014999999998,
+        "host_bo_io_outside_dispatch": 2.934697000000004,
+        "layouts": 2.3930535,
+        "input_gpu_to_host": 0.2602595,
+        "output_stage_and_boundary_wait": 1.995547
+      },
+      "median_projection_wait_share_of_npu_percent": 91.14839557402628,
+      "speedup_vs_gpu": 0.22923035220807192,
+      "npu_branch_over_full_gpu_ratio": 4.214978773204223,
+      "npu_branch_effective_projection_gflops": 312.0932265535226,
+      "proportional_work_model": {
+        "npu_fraction": 0.14285714285714285,
+        "gpu_time_released_ms": 2.7985517142857144,
+        "zero_overhead_instant_npu_speedup": 1.1666666666666665
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 13172736,
+        "projection_graph_a_payload": 805306368,
+        "projection_graph_weight_payload": 421527552,
+        "projection_graph_output_payload": 8388608,
+        "projection_graph_total_payload": 1235222528,
+        "host_bo_read_write_payload": 25165824,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "calculated_core_bytes": {
+        "projection_a_payload": 805306368,
+        "projection_weight_payload": 421527552
+      },
+      "projection_dequantization_calls": 196608,
+      "weight_dma_and_dequant_replays": 32
+    }
+  ]
+}
