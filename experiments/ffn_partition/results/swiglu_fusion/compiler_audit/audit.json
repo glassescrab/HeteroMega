@@ -1,0 +1,5192 @@
+{
+  "schema_version": 1,
+  "classification": "compiled artifact audit",
+  "build_directory_name": "build_swiglu_array8_m128_k128_p128_6975d0ccfe57",
+  "scope": {
+    "m": 128,
+    "k": 128,
+    "channels": 128,
+    "reuse": 2
+  },
+  "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+  "source_sha256": {
+    "npu/ffn/w4a16_swiglu.py": "00476a6c9f9216bbc7ad4690dfb19023d131f2eaf25480fbc27137bc7229cc21",
+    "npu/ffn/w4a16_prefill_reuse.cc": "4aceceb605b57b4ca224dee4b1c4b4ec8d5013225262cf8232ffbb3dc0c33ee7",
+    "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+    "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+    "npu/ffn/prefill_swiglu_schedule.py": "b4a94a07239fc1fbfe2e58259501f46037b1bb48d2daf816e678fe34f8438894",
+    "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+  },
+  "all_checks_passed": true,
+  "explicit_check_count": 661,
+  "checks": [
+    {
+      "check": "source hash: npu/ffn/w4a16_swiglu.py",
+      "passed": true
+    },
+    {
+      "check": "source hash: npu/ffn/w4a16_prefill_reuse.cc",
+      "passed": true
+    },
+    {
+      "check": "source hash: npu/ffn/prefill_schedule.py",
+      "passed": true
+    },
+    {
+      "check": "source hash: npu/ffn/prefill_gate_up_schedule.py",
+      "passed": true
+    },
+    {
+      "check": "source hash: npu/ffn/prefill_swiglu_schedule.py",
+      "passed": true
+    },
+    {
+      "check": "source hash: npu/ffn/silu_mul.cc",
+      "passed": true
+    },
+    {
+      "check": "manifest: kind",
+      "passed": true
+    },
+    {
+      "check": "manifest: design",
+      "passed": true
+    },
+    {
+      "check": "manifest: m",
+      "passed": true
+    },
+    {
+      "check": "manifest: k",
+      "passed": true
+    },
+    {
+      "check": "manifest: n",
+      "passed": true
+    },
+    {
+      "check": "manifest: channels",
+      "passed": true
+    },
+    {
+      "check": "manifest: cols",
+      "passed": true
+    },
+    {
+      "check": "manifest: compute_rows",
+      "passed": true
+    },
+    {
+      "check": "manifest: worker_count",
+      "passed": true
+    },
+    {
+      "check": "manifest: output_count",
+      "passed": true
+    },
+    {
+      "check": "manifest: output_order",
+      "passed": true
+    },
+    {
+      "check": "manifest: m_reuse",
+      "passed": true
+    },
+    {
+      "check": "manifest: m_column_groups",
+      "passed": true
+    },
+    {
+      "check": "manifest: n_columns",
+      "passed": true
+    },
+    {
+      "check": "manifest: schedule_sha256",
+      "passed": true
+    },
+    {
+      "check": "manifest: gate_up_schedule_sha256",
+      "passed": true
+    },
+    {
+      "check": "manifest: swiglu_schedule_sha256",
+      "passed": true
+    },
+    {
+      "check": "manifest: silu_source_sha256",
+      "passed": true
+    },
+    {
+      "check": "manifest: tile_m",
+      "passed": true
+    },
+    {
+      "check": "manifest: tile_k",
+      "passed": true
+    },
+    {
+      "check": "manifest: tile_n",
+      "passed": true
+    },
+    {
+      "check": "manifest: group_size",
+      "passed": true
+    },
+    {
+      "check": "manifest: weight_tile_bytes",
+      "passed": true
+    },
+    {
+      "check": "binary hash: final.xclbin",
+      "passed": true
+    },
+    {
+      "check": "binary hash: insts.bin",
+      "passed": true
+    },
+    {
+      "check": "32 projection cores",
+      "passed": true
+    },
+    {
+      "check": "32 compute DMA regions",
+      "passed": true
+    },
+    {
+      "check": "one two-deep gate pool for each of 16 pairs",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_3_3_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_3_3_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_3_2_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_3_2_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_3_1_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_3_1_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_3_0_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_3_0_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_2_3_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_2_3_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_2_2_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_2_2_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_2_1_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_2_1_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_2_0_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_2_0_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_1_3_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_1_3_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_1_2_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_1_2_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_1_1_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_1_1_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_1_0_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_1_0_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_0_3_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_0_3_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_0_2_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_0_2_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_0_1_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_0_1_buff_1",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_0_0_buff_0",
+      "passed": true
+    },
+    {
+      "check": "gate pool on producer: swiglu_gate_0_0_buff_1",
+      "passed": true
+    },
+    {
+      "check": "no gate buffer used by any DMA descriptor",
+      "passed": true
+    },
+    {
+      "check": "no compute-to-compute stream flow",
+      "passed": true
+    },
+    {
+      "check": "four compact Z output shim drains",
+      "passed": true
+    },
+    {
+      "check": "0_2: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "0_2: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "0_2: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "0_2: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "0_2: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "0_2: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "0_2: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "0_2: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "0_2: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "0_2: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "0_2: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "0_2: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "0_2: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "0_2: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "0_2: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "0_3: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "0_3: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "0_3: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "0_3: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "0_3: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "0_3: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "0_3: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "0_3: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "0_3: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "0_3: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "0_3: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "0_3: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "0_3: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "0_3: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "0_3: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "0_4: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "0_4: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "0_4: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "0_4: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "0_4: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "0_4: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "0_4: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "0_4: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "0_4: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "0_4: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "0_4: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "0_4: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "0_4: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "0_4: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "0_4: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "0_5: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "0_5: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "0_5: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "0_5: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "0_5: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "0_5: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "0_5: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "0_5: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "0_5: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "0_5: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "0_5: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "0_5: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "0_5: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "0_5: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "0_5: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "1_2: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "1_2: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "1_2: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "1_2: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "1_2: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "1_2: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "1_2: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "1_2: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "1_2: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "1_2: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "1_2: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "1_2: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "1_2: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "1_2: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "1_2: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "1_2: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "1_2: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "1_2: directly references shared swiglu_gate_0_0_buff_0",
+      "passed": true
+    },
+    {
+      "check": "1_2: west-memory symbol for swiglu_gate_0_0_buff_0",
+      "passed": true
+    },
+    {
+      "check": "1_2: directly references shared swiglu_gate_0_0_buff_1",
+      "passed": true
+    },
+    {
+      "check": "1_2: west-memory symbol for swiglu_gate_0_0_buff_1",
+      "passed": true
+    },
+    {
+      "check": "1_2: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "1_3: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "1_3: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "1_3: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "1_3: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "1_3: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "1_3: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "1_3: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "1_3: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "1_3: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "1_3: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "1_3: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "1_3: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "1_3: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "1_3: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "1_3: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "1_3: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "1_3: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "1_3: directly references shared swiglu_gate_0_1_buff_0",
+      "passed": true
+    },
+    {
+      "check": "1_3: west-memory symbol for swiglu_gate_0_1_buff_0",
+      "passed": true
+    },
+    {
+      "check": "1_3: directly references shared swiglu_gate_0_1_buff_1",
+      "passed": true
+    },
+    {
+      "check": "1_3: west-memory symbol for swiglu_gate_0_1_buff_1",
+      "passed": true
+    },
+    {
+      "check": "1_3: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "1_4: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "1_4: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "1_4: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "1_4: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "1_4: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "1_4: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "1_4: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "1_4: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "1_4: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "1_4: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "1_4: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "1_4: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "1_4: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "1_4: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "1_4: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "1_4: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "1_4: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "1_4: directly references shared swiglu_gate_0_2_buff_0",
+      "passed": true
+    },
+    {
+      "check": "1_4: west-memory symbol for swiglu_gate_0_2_buff_0",
+      "passed": true
+    },
+    {
+      "check": "1_4: directly references shared swiglu_gate_0_2_buff_1",
+      "passed": true
+    },
+    {
+      "check": "1_4: west-memory symbol for swiglu_gate_0_2_buff_1",
+      "passed": true
+    },
+    {
+      "check": "1_4: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "1_5: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "1_5: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "1_5: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "1_5: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "1_5: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "1_5: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "1_5: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "1_5: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "1_5: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "1_5: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "1_5: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "1_5: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "1_5: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "1_5: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "1_5: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "1_5: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "1_5: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "1_5: directly references shared swiglu_gate_0_3_buff_0",
+      "passed": true
+    },
+    {
+      "check": "1_5: west-memory symbol for swiglu_gate_0_3_buff_0",
+      "passed": true
+    },
+    {
+      "check": "1_5: directly references shared swiglu_gate_0_3_buff_1",
+      "passed": true
+    },
+    {
+      "check": "1_5: west-memory symbol for swiglu_gate_0_3_buff_1",
+      "passed": true
+    },
+    {
+      "check": "1_5: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "2_2: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "2_2: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "2_2: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "2_2: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "2_2: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "2_2: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "2_2: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "2_2: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "2_2: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "2_2: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "2_2: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "2_2: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "2_2: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "2_2: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "2_2: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "2_3: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "2_3: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "2_3: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "2_3: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "2_3: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "2_3: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "2_3: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "2_3: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "2_3: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "2_3: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "2_3: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "2_3: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "2_3: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "2_3: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "2_3: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "2_4: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "2_4: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "2_4: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "2_4: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "2_4: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "2_4: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "2_4: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "2_4: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "2_4: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "2_4: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "2_4: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "2_4: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "2_4: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "2_4: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "2_4: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "2_5: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "2_5: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "2_5: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "2_5: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "2_5: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "2_5: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "2_5: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "2_5: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "2_5: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "2_5: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "2_5: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "2_5: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "2_5: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "2_5: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "2_5: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "3_2: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "3_2: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "3_2: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "3_2: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "3_2: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "3_2: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "3_2: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "3_2: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "3_2: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "3_2: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "3_2: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "3_2: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "3_2: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "3_2: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "3_2: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "3_2: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "3_2: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "3_2: directly references shared swiglu_gate_1_0_buff_0",
+      "passed": true
+    },
+    {
+      "check": "3_2: west-memory symbol for swiglu_gate_1_0_buff_0",
+      "passed": true
+    },
+    {
+      "check": "3_2: directly references shared swiglu_gate_1_0_buff_1",
+      "passed": true
+    },
+    {
+      "check": "3_2: west-memory symbol for swiglu_gate_1_0_buff_1",
+      "passed": true
+    },
+    {
+      "check": "3_2: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "3_3: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "3_3: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "3_3: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "3_3: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "3_3: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "3_3: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "3_3: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "3_3: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "3_3: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "3_3: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "3_3: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "3_3: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "3_3: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "3_3: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "3_3: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "3_3: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "3_3: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "3_3: directly references shared swiglu_gate_1_1_buff_0",
+      "passed": true
+    },
+    {
+      "check": "3_3: west-memory symbol for swiglu_gate_1_1_buff_0",
+      "passed": true
+    },
+    {
+      "check": "3_3: directly references shared swiglu_gate_1_1_buff_1",
+      "passed": true
+    },
+    {
+      "check": "3_3: west-memory symbol for swiglu_gate_1_1_buff_1",
+      "passed": true
+    },
+    {
+      "check": "3_3: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "3_4: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "3_4: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "3_4: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "3_4: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "3_4: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "3_4: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "3_4: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "3_4: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "3_4: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "3_4: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "3_4: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "3_4: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "3_4: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "3_4: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "3_4: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "3_4: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "3_4: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "3_4: directly references shared swiglu_gate_1_2_buff_0",
+      "passed": true
+    },
+    {
+      "check": "3_4: west-memory symbol for swiglu_gate_1_2_buff_0",
+      "passed": true
+    },
+    {
+      "check": "3_4: directly references shared swiglu_gate_1_2_buff_1",
+      "passed": true
+    },
+    {
+      "check": "3_4: west-memory symbol for swiglu_gate_1_2_buff_1",
+      "passed": true
+    },
+    {
+      "check": "3_4: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "3_5: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "3_5: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "3_5: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "3_5: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "3_5: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "3_5: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "3_5: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "3_5: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "3_5: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "3_5: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "3_5: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "3_5: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "3_5: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "3_5: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "3_5: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "3_5: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "3_5: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "3_5: directly references shared swiglu_gate_1_3_buff_0",
+      "passed": true
+    },
+    {
+      "check": "3_5: west-memory symbol for swiglu_gate_1_3_buff_0",
+      "passed": true
+    },
+    {
+      "check": "3_5: directly references shared swiglu_gate_1_3_buff_1",
+      "passed": true
+    },
+    {
+      "check": "3_5: west-memory symbol for swiglu_gate_1_3_buff_1",
+      "passed": true
+    },
+    {
+      "check": "3_5: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "4_2: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "4_2: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "4_2: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "4_2: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "4_2: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "4_2: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "4_2: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "4_2: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "4_2: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "4_2: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "4_2: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "4_2: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "4_2: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "4_2: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "4_2: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "4_3: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "4_3: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "4_3: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "4_3: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "4_3: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "4_3: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "4_3: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "4_3: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "4_3: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "4_3: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "4_3: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "4_3: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "4_3: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "4_3: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "4_3: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "4_4: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "4_4: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "4_4: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "4_4: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "4_4: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "4_4: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "4_4: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "4_4: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "4_4: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "4_4: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "4_4: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "4_4: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "4_4: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "4_4: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "4_4: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "4_5: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "4_5: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "4_5: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "4_5: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "4_5: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "4_5: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "4_5: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "4_5: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "4_5: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "4_5: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "4_5: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "4_5: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "4_5: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "4_5: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "4_5: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "5_2: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "5_2: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "5_2: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "5_2: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "5_2: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "5_2: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "5_2: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "5_2: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "5_2: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "5_2: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "5_2: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "5_2: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "5_2: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "5_2: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "5_2: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "5_2: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "5_2: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "5_2: directly references shared swiglu_gate_2_0_buff_0",
+      "passed": true
+    },
+    {
+      "check": "5_2: west-memory symbol for swiglu_gate_2_0_buff_0",
+      "passed": true
+    },
+    {
+      "check": "5_2: directly references shared swiglu_gate_2_0_buff_1",
+      "passed": true
+    },
+    {
+      "check": "5_2: west-memory symbol for swiglu_gate_2_0_buff_1",
+      "passed": true
+    },
+    {
+      "check": "5_2: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "5_3: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "5_3: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "5_3: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "5_3: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "5_3: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "5_3: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "5_3: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "5_3: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "5_3: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "5_3: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "5_3: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "5_3: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "5_3: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "5_3: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "5_3: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "5_3: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "5_3: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "5_3: directly references shared swiglu_gate_2_1_buff_0",
+      "passed": true
+    },
+    {
+      "check": "5_3: west-memory symbol for swiglu_gate_2_1_buff_0",
+      "passed": true
+    },
+    {
+      "check": "5_3: directly references shared swiglu_gate_2_1_buff_1",
+      "passed": true
+    },
+    {
+      "check": "5_3: west-memory symbol for swiglu_gate_2_1_buff_1",
+      "passed": true
+    },
+    {
+      "check": "5_3: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "5_4: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "5_4: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "5_4: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "5_4: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "5_4: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "5_4: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "5_4: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "5_4: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "5_4: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "5_4: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "5_4: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "5_4: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "5_4: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "5_4: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "5_4: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "5_4: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "5_4: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "5_4: directly references shared swiglu_gate_2_2_buff_0",
+      "passed": true
+    },
+    {
+      "check": "5_4: west-memory symbol for swiglu_gate_2_2_buff_0",
+      "passed": true
+    },
+    {
+      "check": "5_4: directly references shared swiglu_gate_2_2_buff_1",
+      "passed": true
+    },
+    {
+      "check": "5_4: west-memory symbol for swiglu_gate_2_2_buff_1",
+      "passed": true
+    },
+    {
+      "check": "5_4: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "5_5: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "5_5: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "5_5: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "5_5: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "5_5: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "5_5: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "5_5: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "5_5: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "5_5: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "5_5: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "5_5: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "5_5: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "5_5: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "5_5: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "5_5: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "5_5: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "5_5: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "5_5: directly references shared swiglu_gate_2_3_buff_0",
+      "passed": true
+    },
+    {
+      "check": "5_5: west-memory symbol for swiglu_gate_2_3_buff_0",
+      "passed": true
+    },
+    {
+      "check": "5_5: directly references shared swiglu_gate_2_3_buff_1",
+      "passed": true
+    },
+    {
+      "check": "5_5: west-memory symbol for swiglu_gate_2_3_buff_1",
+      "passed": true
+    },
+    {
+      "check": "5_5: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "6_2: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "6_2: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "6_2: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "6_2: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "6_2: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "6_2: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "6_2: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "6_2: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "6_2: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "6_2: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "6_2: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "6_2: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "6_2: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "6_2: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "6_2: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "6_3: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "6_3: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "6_3: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "6_3: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "6_3: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "6_3: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "6_3: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "6_3: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "6_3: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "6_3: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "6_3: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "6_3: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "6_3: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "6_3: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "6_3: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "6_4: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "6_4: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "6_4: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "6_4: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "6_4: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "6_4: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "6_4: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "6_4: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "6_4: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "6_4: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "6_4: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "6_4: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "6_4: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "6_4: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "6_4: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "6_5: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "6_5: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "6_5: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "6_5: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "6_5: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "6_5: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "6_5: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "6_5: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "6_5: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "6_5: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "6_5: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "6_5: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "6_5: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "6_5: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "6_5: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "7_2: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "7_2: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "7_2: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "7_2: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "7_2: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "7_2: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "7_2: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "7_2: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "7_2: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "7_2: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "7_2: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "7_2: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "7_2: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "7_2: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "7_2: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "7_2: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "7_2: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "7_2: directly references shared swiglu_gate_3_0_buff_0",
+      "passed": true
+    },
+    {
+      "check": "7_2: west-memory symbol for swiglu_gate_3_0_buff_0",
+      "passed": true
+    },
+    {
+      "check": "7_2: directly references shared swiglu_gate_3_0_buff_1",
+      "passed": true
+    },
+    {
+      "check": "7_2: west-memory symbol for swiglu_gate_3_0_buff_1",
+      "passed": true
+    },
+    {
+      "check": "7_2: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "7_3: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "7_3: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "7_3: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "7_3: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "7_3: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "7_3: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "7_3: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "7_3: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "7_3: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "7_3: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "7_3: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "7_3: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "7_3: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "7_3: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "7_3: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "7_3: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "7_3: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "7_3: directly references shared swiglu_gate_3_1_buff_0",
+      "passed": true
+    },
+    {
+      "check": "7_3: west-memory symbol for swiglu_gate_3_1_buff_0",
+      "passed": true
+    },
+    {
+      "check": "7_3: directly references shared swiglu_gate_3_1_buff_1",
+      "passed": true
+    },
+    {
+      "check": "7_3: west-memory symbol for swiglu_gate_3_1_buff_1",
+      "passed": true
+    },
+    {
+      "check": "7_3: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "7_4: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "7_4: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "7_4: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "7_4: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "7_4: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "7_4: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "7_4: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "7_4: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "7_4: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "7_4: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "7_4: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "7_4: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "7_4: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "7_4: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "7_4: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "7_4: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "7_4: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "7_4: directly references shared swiglu_gate_3_2_buff_0",
+      "passed": true
+    },
+    {
+      "check": "7_4: west-memory symbol for swiglu_gate_3_2_buff_0",
+      "passed": true
+    },
+    {
+      "check": "7_4: directly references shared swiglu_gate_3_2_buff_1",
+      "passed": true
+    },
+    {
+      "check": "7_4: west-memory symbol for swiglu_gate_3_2_buff_1",
+      "passed": true
+    },
+    {
+      "check": "7_4: BF16 projection finish precedes activation",
+      "passed": true
+    },
+    {
+      "check": "7_5: allocated data belongs to own tile",
+      "passed": true
+    },
+    {
+      "check": "7_5: nonoverlapping SRAM buffers/stack/ELF data",
+      "passed": true
+    },
+    {
+      "check": "7_5: static allocations fit 64 KiB",
+      "passed": true
+    },
+    {
+      "check": "7_5: expected static SRAM high water",
+      "passed": true
+    },
+    {
+      "check": "7_5: reserved stack is 2048 bytes",
+      "passed": true
+    },
+    {
+      "check": "7_5: exactly A/W inbound channels",
+      "passed": true
+    },
+    {
+      "check": "7_5: only up cores drain Z",
+      "passed": true
+    },
+    {
+      "check": "7_5: DMA buffers are A/W and optional Z",
+      "passed": true
+    },
+    {
+      "check": "7_5: S2MM0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "7_5: S2MM1 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "7_5: MM2S0 buffer ownership",
+      "passed": true
+    },
+    {
+      "check": "7_5: unchanged projection entry points",
+      "passed": true
+    },
+    {
+      "check": "7_5: pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "7_5: linked pointwise on odd cores only",
+      "passed": true
+    },
+    {
+      "check": "7_5: all projection symbols present",
+      "passed": true
+    },
+    {
+      "check": "7_5: ELF data is only expected LUT",
+      "passed": true
+    },
+    {
+      "check": "7_5: linked code fits 128 KiB program region",
+      "passed": true
+    },
+    {
+      "check": "7_5: directly references shared swiglu_gate_3_3_buff_0",
+      "passed": true
+    },
+    {
+      "check": "7_5: west-memory symbol for swiglu_gate_3_3_buff_0",
+      "passed": true
+    },
+    {
+      "check": "7_5: directly references shared swiglu_gate_3_3_buff_1",
+      "passed": true
+    },
+    {
+      "check": "7_5: west-memory symbol for swiglu_gate_3_3_buff_1",
+      "passed": true
+    },
+    {
+      "check": "7_5: BF16 projection finish precedes activation",
+      "passed": true
+    }
+  ],
+  "cores": [
+    {
+      "column": 0,
+      "row": 2,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_0_0_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_0_0_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_0_0"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_0_0"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_0_0_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_0_0_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_0_0_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_0_0_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 0,
+      "row": 3,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_1_0_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_1_0_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_0_1"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_0_1"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_0_1_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_0_1_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_0_1_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_0_1_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 0,
+      "row": 4,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_2_0_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_2_0_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_0_2"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_0_2"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_0_2_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_0_2_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_0_2_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_0_2_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 0,
+      "row": 5,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_3_0_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_3_0_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_0_3"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_0_3"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_0_3_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_0_3_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_0_3_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_0_3_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 1,
+      "row": 2,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_0_1_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_0_1_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_1_0"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_1_0"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_1_0_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_1_0_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_1_0_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_1_0_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_1_0"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 1,
+      "row": 3,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_1_1_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_1_1_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_1_1"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_1_1"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_1_1_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_1_1_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_1_1_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_1_1_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_1_1"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 1,
+      "row": 4,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_2_1_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_2_1_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_1_2"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_1_2"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_1_2_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_1_2_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_1_2_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_1_2_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_1_2"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 1,
+      "row": 5,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_3_1_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_3_1_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_1_3"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_1_3"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_1_3_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_1_3_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_1_3_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_1_3_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_1_3"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 2,
+      "row": 2,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_0_2_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_0_2_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_2_0"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_2_0"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_2_0_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_2_0_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_1_0_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_1_0_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 2,
+      "row": 3,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_1_2_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_1_2_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_2_1"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_2_1"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_2_1_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_2_1_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_1_1_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_1_1_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 2,
+      "row": 4,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_2_2_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_2_2_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_2_2"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_2_2"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_2_2_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_2_2_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_1_2_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_1_2_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 2,
+      "row": 5,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_3_2_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_3_2_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_2_3"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_2_3"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_2_3_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_2_3_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_1_3_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_1_3_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 3,
+      "row": 2,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_0_3_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_0_3_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_3_0"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_3_0"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_3_0_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_3_0_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_3_0_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_3_0_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_3_0"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 3,
+      "row": 3,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_1_3_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_1_3_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_3_1"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_3_1"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_3_1_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_3_1_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_3_1_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_3_1_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_3_1"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 3,
+      "row": 4,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_2_3_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_2_3_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_3_2"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_3_2"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_3_2_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_3_2_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_3_2_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_3_2_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_3_2"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 3,
+      "row": 5,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_3_3_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_3_3_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_3_3"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_3_3"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_3_3_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_3_3_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_3_3_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_3_3_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_3_3"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 4,
+      "row": 2,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_0_4_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_0_4_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_4_0"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_4_0"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_4_0_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_4_0_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_2_0_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_2_0_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 4,
+      "row": 3,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_1_4_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_1_4_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_4_1"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_4_1"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_4_1_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_4_1_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_2_1_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_2_1_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 4,
+      "row": 4,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_2_4_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_2_4_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_4_2"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_4_2"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_4_2_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_4_2_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_2_2_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_2_2_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 4,
+      "row": 5,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_3_4_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_3_4_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_4_3"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_4_3"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_4_3_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_4_3_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_2_3_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_2_3_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 5,
+      "row": 2,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_0_5_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_0_5_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_5_0"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_5_0"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_5_0_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_5_0_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_5_0_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_5_0_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_5_0"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 5,
+      "row": 3,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_1_5_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_1_5_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_5_1"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_5_1"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_5_1_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_5_1_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_5_1_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_5_1_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_5_1"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 5,
+      "row": 4,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_2_5_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_2_5_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_5_2"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_5_2"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_5_2_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_5_2_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_5_2_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_5_2_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_5_2"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 5,
+      "row": 5,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_3_5_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_3_5_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_5_3"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_5_3"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_5_3_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_5_3_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_5_3_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_5_3_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_5_3"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 6,
+      "row": 2,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_0_6_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_0_6_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_6_0"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_6_0"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_6_0_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_6_0_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_3_0_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_3_0_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 6,
+      "row": 3,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_1_6_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_1_6_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_6_1"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_6_1"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_6_1_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_6_1_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_3_1_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_3_1_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 6,
+      "row": 4,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_2_6_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_2_6_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_6_2"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_6_2"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_6_2_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_6_2_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_3_2_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_3_2_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 6,
+      "row": 5,
+      "role": "gate",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [],
+      "graph_buffer_bytes": 37056,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 0,
+      "static_sram_high_water_bytes": 39104,
+      "static_sram_headroom_bytes": 26432,
+      "program_text_bytes": 4624,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_3_6_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_3_6_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_6_3"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_6_3"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_6_3_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_6_3_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_gate_3_3_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_gate_3_3_buff_1"
+        }
+      ]
+    },
+    {
+      "column": 7,
+      "row": 2,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_0_7_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_0_7_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_7_0"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_7_0"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_7_0_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_7_0_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_7_0_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_7_0_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_7_0"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 7,
+      "row": 3,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_1_7_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_1_7_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_7_1"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_7_1"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_7_1_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_7_1_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_7_1_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_7_1_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_7_1"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 7,
+      "row": 4,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_2_7_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_2_7_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_7_2"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_7_2"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_7_2_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_7_2_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_7_2_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_7_2_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_7_2"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    },
+    {
+      "column": 7,
+      "row": 5,
+      "role": "up_and_silu",
+      "s2mm_channels": [
+        0,
+        1
+      ],
+      "mm2s_channels": [
+        0
+      ],
+      "graph_buffer_bytes": 39104,
+      "stack_reserved_bytes": 2048,
+      "elf_data_bytes": 4096,
+      "static_sram_high_water_bytes": 45248,
+      "static_sram_headroom_bytes": 20288,
+      "program_text_bytes": 5312,
+      "buffer_intervals": [
+        {
+          "begin": 0,
+          "end": 2048,
+          "name": "reserved stack"
+        },
+        {
+          "begin": 2048,
+          "end": 10240,
+          "name": "swiglu_a_broadcast_3_7_cons_buff_0"
+        },
+        {
+          "begin": 10240,
+          "end": 18432,
+          "name": "swiglu_a_broadcast_3_7_cons_buff_1"
+        },
+        {
+          "begin": 18432,
+          "end": 26624,
+          "name": "swiglu_dequant_7_3"
+        },
+        {
+          "begin": 26624,
+          "end": 30720,
+          "name": "swiglu_acc_7_3"
+        },
+        {
+          "begin": 30720,
+          "end": 32864,
+          "name": "swiglu_w_broadcast_7_3_cons_buff_0"
+        },
+        {
+          "begin": 32864,
+          "end": 35008,
+          "name": "swiglu_w_broadcast_7_3_cons_buff_1"
+        },
+        {
+          "begin": 35008,
+          "end": 37056,
+          "name": "swiglu_z_worker_7_3_buff_0"
+        },
+        {
+          "begin": 37056,
+          "end": 39104,
+          "name": "swiglu_z_worker_7_3_buff_1"
+        },
+        {
+          "begin": 39104,
+          "end": 41152,
+          "name": "swiglu_up_bf16_7_3"
+        },
+        {
+          "begin": 41152,
+          "end": 45248,
+          "name": ".data"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "projection_cores": 32,
+    "pointwise_cores": 16,
+    "shared_gate_pools": 16,
+    "shared_gate_buffers": 32,
+    "gate_dma_descriptors": 0,
+    "per_core_s2mm_channels": 2,
+    "output_columns": [
+      1,
+      3,
+      5,
+      7
+    ],
+    "gate_static_sram_high_water_bytes": 39104,
+    "up_static_sram_high_water_bytes": 45248,
+    "gate_static_sram_headroom_bytes": 26432,
+    "up_static_sram_headroom_bytes": 20288
+  },
+  "limitations": [
+    "This exact compiled allocation audit covers only M128/K128/P128 with reuse=2.",
+    "Static allocation plus reserved stack is not a runtime stack high-water measurement or a bank-contention profile.",
+    "The retained .stack_sizes section is incomplete for the linked call graph; no dynamic stack bound is inferred.",
+    "No claim about model-size correctness or performance is derived from this compiler audit."
+  ],
+  "evidence": {
+    "build_contract.json": {
+      "sha256": "d0f5f4918da57e2682cb5497929c9789dc681363dabaacc742eb51c4b261749d",
+      "bytes": 15066
+    },
+    "final.xclbin.json": {
+      "sha256": "50a0133a8875c772a9ec73af9c17fa1b1e94a6dce57cbb41413f4ac04e1f216e",
+      "bytes": 1360
+    },
+    "compile.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "final.prj/input_with_addresses.mlir": {
+      "sha256": "3920115ffc9ab1848bb328c94f7c7dc48afa9829d30a6f27b329eff2d3b4bbca",
+      "bytes": 549496
+    },
+    "final.prj/aie.mlir": {
+      "sha256": "8cc162c888cde1db798d21dab0a8f2384e0312af535afeca59ea5f5f57472dd9",
+      "bytes": 92610
+    },
+    "final.prj/ldScripts_main_core_0_2.ld.script": {
+      "sha256": "42dc570eaf594dabbb080e7488b7f9395223ae903db68407e04cca1e7bede791",
+      "bytes": 2096
+    },
+    "final.prj/elfs_main_core_0_2/elfs_main_core_0_2.elf": {
+      "sha256": "a9e9ebda9f68f1208c17e2d69ab8d3703b127bb3019cf7f8a4bb65c5e31d2de1",
+      "bytes": 7052
+    },
+    "final.prj/ldScripts_main_core_0_3.ld.script": {
+      "sha256": "7288f8c325de91a5fbb657671f34b1a944bbb95403a14d0606c99300b97f71f0",
+      "bytes": 2486
+    },
+    "final.prj/elfs_main_core_0_3/elfs_main_core_0_3.elf": {
+      "sha256": "888b902db306381013d46b4b56dbd23c5a3df3e54266b28799544e38a2224319",
+      "bytes": 7400
+    },
+    "final.prj/ldScripts_main_core_0_4.ld.script": {
+      "sha256": "511d3779d8e21c23cef995cc92d76aab265607c4eee09830eb7390c303a913bd",
+      "bytes": 2486
+    },
+    "final.prj/elfs_main_core_0_4/elfs_main_core_0_4.elf": {
+      "sha256": "1ec1b72f2341361e47821c0c0fbb15cc2b9f31103644d3d774d76bb95a922638",
+      "bytes": 7400
+    },
+    "final.prj/ldScripts_main_core_0_5.ld.script": {
+      "sha256": "560ef6766afac2be1c62ac873c32a797a088908f9261551db31224f696f69488",
+      "bytes": 2096
+    },
+    "final.prj/elfs_main_core_0_5/elfs_main_core_0_5.elf": {
+      "sha256": "acd91df878ebb31dd8049c998c8f29c893aa25b5ac8f8eda190e19ec31778cc2",
+      "bytes": 7052
+    },
+    "final.prj/ldScripts_main_core_1_2.ld.script": {
+      "sha256": "7ffc2592eae48926068e3aa5ca9249727109044448e78af477f968553da219c8",
+      "bytes": 2806
+    },
+    "final.prj/elfs_main_core_1_2/elfs_main_core_1_2.elf": {
+      "sha256": "824cf7265a718d2e298a078a0b1f72272f41e82f51f3b926558dbc365c3e6703",
+      "bytes": 12556
+    },
+    "final.prj/ldScripts_main_core_1_3.ld.script": {
+      "sha256": "04da3efb533defa743c2c5e40391a8081ddacca158360b7a7fa70a9aeb98a766",
+      "bytes": 3253
+    },
+    "final.prj/elfs_main_core_1_3/elfs_main_core_1_3.elf": {
+      "sha256": "e17bddcc825e2be2e123310a0f249146b18aef4e4ec0f0aec955f25096a6f3a7",
+      "bytes": 12948
+    },
+    "final.prj/ldScripts_main_core_1_4.ld.script": {
+      "sha256": "3da1a44ee34f23ffb9e917e552f991a944db50571676e53881b584df469ffda9",
+      "bytes": 3253
+    },
+    "final.prj/elfs_main_core_1_4/elfs_main_core_1_4.elf": {
+      "sha256": "c3691440e70c1cacafb95dede7ac0ed5608f3ba0c4bdd4ce86116ce6f61f7ae5",
+      "bytes": 12948
+    },
+    "final.prj/ldScripts_main_core_1_5.ld.script": {
+      "sha256": "3f2561fd4d03a595500ce1eb5a98194a1848ac6cbf9c559f9551a54774256ed3",
+      "bytes": 2806
+    },
+    "final.prj/elfs_main_core_1_5/elfs_main_core_1_5.elf": {
+      "sha256": "665158321672226a16bff66fb054416bccbed1adebcd794fa473aab191224d31",
+      "bytes": 12556
+    },
+    "final.prj/ldScripts_main_core_2_2.ld.script": {
+      "sha256": "410af9b28a57377be3d107fc757600097684862490420c2d9e07f300a84efb49",
+      "bytes": 2544
+    },
+    "final.prj/elfs_main_core_2_2/elfs_main_core_2_2.elf": {
+      "sha256": "673c5ac326c8334d41d5090b0e38b39ce6365517a5ff1253df1dfcb513be5c80",
+      "bytes": 7444
+    },
+    "final.prj/ldScripts_main_core_2_3.ld.script": {
+      "sha256": "c146360c6a4fa80ce97f9f16e2961f19ab9ddc8a2fb428602c14cd05b2f1c3d3",
+      "bytes": 2934
+    },
+    "final.prj/elfs_main_core_2_3/elfs_main_core_2_3.elf": {
+      "sha256": "1bb76f0b8b47dcce96834c8b426b20dc10ace9e1bc59d7747a53ea4f21aa914c",
+      "bytes": 7792
+    },
+    "final.prj/ldScripts_main_core_2_4.ld.script": {
+      "sha256": "eb3a771713c86a9b6945e6520aa13ce8fb3c8b8f95bf4a0d7d8841ab07a29015",
+      "bytes": 2934
+    },
+    "final.prj/elfs_main_core_2_4/elfs_main_core_2_4.elf": {
+      "sha256": "02c46f6c96e7c355705188c1b3b3d4a8f7c0d00d4c3881751eb65731277c9120",
+      "bytes": 7792
+    },
+    "final.prj/ldScripts_main_core_2_5.ld.script": {
+      "sha256": "d3117f0aceafd7315be820d27b87e54a67da05328e0b53f6ee3d71de887cbe96",
+      "bytes": 2544
+    },
+    "final.prj/elfs_main_core_2_5/elfs_main_core_2_5.elf": {
+      "sha256": "9be09a4d9232c77e4e600ecc4dd413bd8b63d1026160ed62de3f3d122c971bb5",
+      "bytes": 7444
+    },
+    "final.prj/ldScripts_main_core_3_2.ld.script": {
+      "sha256": "8262adec655909a24ed684293ccac71224f869972eb7750cb4bccfa06a722194",
+      "bytes": 2806
+    },
+    "final.prj/elfs_main_core_3_2/elfs_main_core_3_2.elf": {
+      "sha256": "dcfab4d62e226cac5aaa633e158d69881792ec4a2a3ddc621f2ec54c8895c64c",
+      "bytes": 12556
+    },
+    "final.prj/ldScripts_main_core_3_3.ld.script": {
+      "sha256": "6dc72b3340ebd0a3cf060cd6df208edb3e1c4b4992210a14d67aab776d80d475",
+      "bytes": 3253
+    },
+    "final.prj/elfs_main_core_3_3/elfs_main_core_3_3.elf": {
+      "sha256": "15ade02a95f5e0335832032372f005eda15d904e766c3ceda1771566a4e7b3c8",
+      "bytes": 12948
+    },
+    "final.prj/ldScripts_main_core_3_4.ld.script": {
+      "sha256": "0c34bf3df48d8376580854cfa2bb1be70b3a9a3e7e6f7fec813abab528f69ae1",
+      "bytes": 3253
+    },
+    "final.prj/elfs_main_core_3_4/elfs_main_core_3_4.elf": {
+      "sha256": "65566bdbeb7059c89d0078c94153798e56546fac261bec5c938d726c37368dbc",
+      "bytes": 12948
+    },
+    "final.prj/ldScripts_main_core_3_5.ld.script": {
+      "sha256": "21b1f76168d9a7f5c309d1b41c572a485b9129eaf63b3bfb7fe186cad285ae97",
+      "bytes": 2806
+    },
+    "final.prj/elfs_main_core_3_5/elfs_main_core_3_5.elf": {
+      "sha256": "f61b75c5bbd1d1a5706af6ef7d62507a9783dda61acfe9ef62c5fa318bffbee4",
+      "bytes": 12556
+    },
+    "final.prj/ldScripts_main_core_4_2.ld.script": {
+      "sha256": "e9400907b6265346a54a55645977774f0f06108151b5bd06179fd46c738e247a",
+      "bytes": 2544
+    },
+    "final.prj/elfs_main_core_4_2/elfs_main_core_4_2.elf": {
+      "sha256": "38357b021283ad9082d16043cf11cea59ac0606f0a35a96c8c4402f0cf04d476",
+      "bytes": 7444
+    },
+    "final.prj/ldScripts_main_core_4_3.ld.script": {
+      "sha256": "f45cf2d4cb54f3524f8e62966712c544fb66b82d7b37fbded8f5e08ddede05e4",
+      "bytes": 2934
+    },
+    "final.prj/elfs_main_core_4_3/elfs_main_core_4_3.elf": {
+      "sha256": "78f051b093f645b55002d9066aa89bf1dfcc3e061fd136eb586cf53b273da5bd",
+      "bytes": 7792
+    },
+    "final.prj/ldScripts_main_core_4_4.ld.script": {
+      "sha256": "7d15d6f28fad858799857921438b753ca080814a48739392d84bccbc099a3a7e",
+      "bytes": 2934
+    },
+    "final.prj/elfs_main_core_4_4/elfs_main_core_4_4.elf": {
+      "sha256": "f0202bc8c8fdaf778022571708c9f00c3ed71e0ec8f92893584e5e90eb9917ad",
+      "bytes": 7792
+    },
+    "final.prj/ldScripts_main_core_4_5.ld.script": {
+      "sha256": "83a0f42b22d60ae7c76ed25d2fdaaaa4c5528a2d7b92a66124665052ec3074a4",
+      "bytes": 2544
+    },
+    "final.prj/elfs_main_core_4_5/elfs_main_core_4_5.elf": {
+      "sha256": "9059598800a08a0f4c284328053cac1a6cbf7094fb3577dc1ff83121964b4f65",
+      "bytes": 7444
+    },
+    "final.prj/ldScripts_main_core_5_2.ld.script": {
+      "sha256": "7c53235b1116ab4a4ad0ba9996d8427ae8dbe49f2007064844954933e3df6ecd",
+      "bytes": 2806
+    },
+    "final.prj/elfs_main_core_5_2/elfs_main_core_5_2.elf": {
+      "sha256": "0bc51a010d21698f623fd632d9bf8bf9f0134268a97ff6aaa2fd44667758dd7b",
+      "bytes": 12556
+    },
+    "final.prj/ldScripts_main_core_5_3.ld.script": {
+      "sha256": "cf807bf8276d44854899ade697673560bc412db9ea89fd594c0a1fbbfb8029b0",
+      "bytes": 3253
+    },
+    "final.prj/elfs_main_core_5_3/elfs_main_core_5_3.elf": {
+      "sha256": "cf1093f8d9d88e70a296850f9c27337377cbbf24f1c3944c853d0f91f5397816",
+      "bytes": 12948
+    },
+    "final.prj/ldScripts_main_core_5_4.ld.script": {
+      "sha256": "a6e810e320f97f150562393bf01b8ef85829b6131dde7e19055a6a20586354e5",
+      "bytes": 3253
+    },
+    "final.prj/elfs_main_core_5_4/elfs_main_core_5_4.elf": {
+      "sha256": "decee5e494e155c98ceea0f04585a32c594f9211ff1b27e4d601ed5ca47ea6e2",
+      "bytes": 12948
+    },
+    "final.prj/ldScripts_main_core_5_5.ld.script": {
+      "sha256": "8436fa7fdab7ac7d52c91edf84838fb166017ca90920a0308b19e1ffcd19a061",
+      "bytes": 2806
+    },
+    "final.prj/elfs_main_core_5_5/elfs_main_core_5_5.elf": {
+      "sha256": "eb8acfa1feb22ef1fc1d04a01591bced6452bf010fc40461eaceaacba8968327",
+      "bytes": 12556
+    },
+    "final.prj/ldScripts_main_core_6_2.ld.script": {
+      "sha256": "e2a1b08e100dab0341760ab51f495ce842d997d6eaa0d289c0fb0b60026759cf",
+      "bytes": 2544
+    },
+    "final.prj/elfs_main_core_6_2/elfs_main_core_6_2.elf": {
+      "sha256": "f8337983a949c5f845a55387c4c88a2e34a640b222413cd2d97ce92a945a0939",
+      "bytes": 7444
+    },
+    "final.prj/ldScripts_main_core_6_3.ld.script": {
+      "sha256": "a636a1bc93289981763e842d9cfc86bed541306187e1ab79ee9435311202050c",
+      "bytes": 2934
+    },
+    "final.prj/elfs_main_core_6_3/elfs_main_core_6_3.elf": {
+      "sha256": "78432cee589895816348d5488f688b0b874b3e4b66f53cfde2567692282d7883",
+      "bytes": 7792
+    },
+    "final.prj/ldScripts_main_core_6_4.ld.script": {
+      "sha256": "edf6d81c27f55feea9f586b4974d6a175f078a4f8247b853b18cd67e86b54505",
+      "bytes": 2934
+    },
+    "final.prj/elfs_main_core_6_4/elfs_main_core_6_4.elf": {
+      "sha256": "7d363ff88ec70d346f4b998d62c78b3e533f10a77142c53e5515ec3d2fe5a3d4",
+      "bytes": 7792
+    },
+    "final.prj/ldScripts_main_core_6_5.ld.script": {
+      "sha256": "2d2a30664e950a8df991170c705fea23b0e7690dd84059726c8c18328379486b",
+      "bytes": 2544
+    },
+    "final.prj/elfs_main_core_6_5/elfs_main_core_6_5.elf": {
+      "sha256": "d5e08c29bf5e96d950b16f1463a7d64b8195ceaebea58fa085231f794833a789",
+      "bytes": 7444
+    },
+    "final.prj/ldScripts_main_core_7_2.ld.script": {
+      "sha256": "fbcee18dd658c5bfe28167546423bdf287cbfc75b7c87db15ccfff4795c88f21",
+      "bytes": 2806
+    },
+    "final.prj/elfs_main_core_7_2/elfs_main_core_7_2.elf": {
+      "sha256": "5d46bf3fd669228e744abd5a38252cb9cfd662390b9ca3e5480e3be69aabc88d",
+      "bytes": 12556
+    },
+    "final.prj/ldScripts_main_core_7_3.ld.script": {
+      "sha256": "ecb72646dfeaca9c49a38af14526580a96416d002f1ad492405e94f1af4d8867",
+      "bytes": 3253
+    },
+    "final.prj/elfs_main_core_7_3/elfs_main_core_7_3.elf": {
+      "sha256": "536d3eb55b6d5ccd58ad40f9540d486cfa4af37dde59ae39fc94cf960162ae80",
+      "bytes": 12948
+    },
+    "final.prj/ldScripts_main_core_7_4.ld.script": {
+      "sha256": "78bb0c2f8d88ae2c1a4c91fb750d574bb41a404b72a5e6b7e471c8cfd6652444",
+      "bytes": 3253
+    },
+    "final.prj/elfs_main_core_7_4/elfs_main_core_7_4.elf": {
+      "sha256": "25979a174447eb80937c5ebc5174222b8eeb0acd5a07bff5ca8a2438944e3343",
+      "bytes": 12948
+    },
+    "final.prj/ldScripts_main_core_7_5.ld.script": {
+      "sha256": "444077fa0c5356ee81a7736483f2e3689ad98fae655056b8bb210615513c90e4",
+      "bytes": 2806
+    },
+    "final.prj/elfs_main_core_7_5/elfs_main_core_7_5.elf": {
+      "sha256": "7a146fb8a8d26f3fbfffcc8b418ef3f96f7b94a3a2dc7ab98480dc41da90eb69",
+      "bytes": 12556
+    },
+    "final.xclbin": {
+      "sha256": "654a6888b90dbc602fec23cb960e5702b8bf9b41c0157f2c6fccb048ecb84dab",
+      "bytes": 271055
+    },
+    "insts.bin": {
+      "sha256": "69eb4cac350c42e3d8640b648809936bcb8629d42bb11a3b15b4aaff2d2d9b9c",
+      "bytes": 2112
+    },
+    "final.pdi": {
+      "sha256": "2d6532ad720e9292a394383e6b2c0527ed6b86c2d1455a1e56fd09d9c4e2baf7",
+      "bytes": 264592
+    }
+  }
+}

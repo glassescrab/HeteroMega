@@ -1,0 +1,6 @@
+Building/verifying NPU artifacts: M=512 H=4096 P=128
+[92mSuccessfully preprocessed all matching files.[0m
+Validating original GPU FFN against independent CPU reference
+Validating partition P=128/14336
+{"P": 128, "stats": {"baseline": {"count": 30, "median_us": 22323.307, "p10_us": 22139.485, "p90_us": 22596.8099, "min_us": 22003.258, "max_us": 22740.655}, "concurrent": {"count": 30, "median_us": 21595.940000000002, "p10_us": 21129.5462, "p90_us": 22230.2628, "min_us": 20633.741, "max_us": 22967.481}, "serial": {"count": 30, "median_us": 35211.0595, "p10_us": 34358.741200000004, "p90_us": 37165.355800000005, "min_us": 33885.637, "max_us": 37705.903}}, "speedup_vs_gpu_baseline": 1.0336807288777428}
+Saved /notebooks/HeteroMega/experiments/ffn_partition/results/fusion_sweep_m512/jobs/m512_p128_fused_ordinary.json

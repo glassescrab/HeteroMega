@@ -1,0 +1,576 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1024_fused_ordinary.json",
+      "sha256": "43171e15b464a5c676995ed0fbe08d954f03a886981a91f50c7e9f384755f961"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1024_swiglu_ordinary.json",
+      "sha256": "60882bff355f6e6a088df482e55e4741997de09f1ee445ded714da400b06a8c7"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1152_fused_ordinary.json",
+      "sha256": "2b18c211832101af3951a29bd8e169822424521bb76ceef285869a19e9f1a98e"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1152_swiglu_ordinary.json",
+      "sha256": "4ae0fb8340e4121c9ac24429ebdda9bece47f0e55183fd552162e821880c1e98"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1280_fused_ordinary.json",
+      "sha256": "95c40234a8ca4be9a4757ab9a9e9453cb82f3c834fb41c82293aef368799825d"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1280_swiglu_ordinary.json",
+      "sha256": "0172ffeac41d19768c1cbe9b24d4d7e5259d454e10e395d203df39e46824f5c1"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p896_fused_ordinary.json",
+      "sha256": "f3d94e0c82c6ab5eee5ea71e0a90c6f278f96904250bba4a537a9d356a2d2f73"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p896_swiglu_ordinary.json",
+      "sha256": "02134d3e88b2f590aacf3c6006dc07d5000171f88d8fcea0a5deaeb140504929"
+    }
+  ],
+  "ordinary": [
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1024_fused_ordinary.json",
+      "series": "confirmation_m512",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "fuse_swiglu": false,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p1024_fused_ordinary_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p1024_fused_ordinary_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T02:03:29.465652+00:00",
+      "npu_channels": 1024,
+      "npu_percent": 7.142857142857143,
+      "timing_ms": {
+        "baseline": {
+          "count": 50,
+          "median": 22.4282165,
+          "p10": 22.089945,
+          "p90": 22.7703009,
+          "min": 19.42775,
+          "max": 22.867313
+        },
+        "concurrent": {
+          "count": 50,
+          "median": 20.6707805,
+          "p10": 20.042061100000005,
+          "p90": 21.523576900000002,
+          "min": 19.674865,
+          "max": 21.933701
+        },
+        "serial": {
+          "count": 50,
+          "median": 40.3469055,
+          "p10": 39.4747637,
+          "p90": 41.642750400000004,
+          "min": 38.721492,
+          "max": 42.970279999999995
+        }
+      },
+      "speedup": 1.0850203019668272,
+      "paired_speedup": {
+        "count": 50,
+        "median": 1.0833441677935192,
+        "p10": 1.0355431618262838,
+        "p90": 1.126027182443748,
+        "min": 0.8982731415232565,
+        "max": 1.1408749691548075
+      },
+      "paired_wins": 48,
+      "paired_count": 50
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1024_swiglu_ordinary.json",
+      "series": "confirmation_m512",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "fuse_swiglu": true,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p1024_swiglu_ordinary_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p1024_swiglu_ordinary_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T02:03:48.965973+00:00",
+      "npu_channels": 1024,
+      "npu_percent": 7.142857142857143,
+      "timing_ms": {
+        "baseline": {
+          "count": 50,
+          "median": 22.2340205,
+          "p10": 22.048915,
+          "p90": 22.613858,
+          "min": 21.93607,
+          "max": 22.818604
+        },
+        "concurrent": {
+          "count": 50,
+          "median": 19.676845,
+          "p10": 19.1743281,
+          "p90": 20.0828949,
+          "min": 19.000106,
+          "max": 20.858842
+        },
+        "serial": {
+          "count": 50,
+          "median": 38.59497,
+          "p10": 37.7948782,
+          "p90": 39.6392959,
+          "min": 37.057025,
+          "max": 40.515457999999995
+        }
+      },
+      "speedup": 1.1299586137919977,
+      "paired_speedup": {
+        "count": 50,
+        "median": 1.1333256377514256,
+        "p10": 1.0996216683581082,
+        "p90": 1.1684842424616657,
+        "min": 1.0593914082095257,
+        "max": 1.1884606854298603
+      },
+      "paired_wins": 50,
+      "paired_count": 50
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1152_fused_ordinary.json",
+      "series": "confirmation_m512",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "fuse_swiglu": false,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p1152_fused_ordinary_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p1152_fused_ordinary_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T02:03:10.016406+00:00",
+      "npu_channels": 1152,
+      "npu_percent": 8.035714285714286,
+      "timing_ms": {
+        "baseline": {
+          "count": 50,
+          "median": 22.273655,
+          "p10": 21.990264999999997,
+          "p90": 22.5880729,
+          "min": 21.853333,
+          "max": 23.081648
+        },
+        "concurrent": {
+          "count": 50,
+          "median": 20.8161225,
+          "p10": 20.3903592,
+          "p90": 21.895547200000003,
+          "min": 19.675275000000003,
+          "max": 22.615628
+        },
+        "serial": {
+          "count": 50,
+          "median": 41.0847465,
+          "p10": 39.7334421,
+          "p90": 42.142653800000005,
+          "min": 38.185894,
+          "max": 42.617277
+        }
+      },
+      "speedup": 1.0700194044303881,
+      "paired_speedup": {
+        "count": 50,
+        "median": 1.0670929598136238,
+        "p10": 1.027428777649538,
+        "p90": 1.0952125062114815,
+        "min": 0.97925752784356,
+        "max": 1.1542291530868056
+      },
+      "paired_wins": 48,
+      "paired_count": 50
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1152_swiglu_ordinary.json",
+      "series": "confirmation_m512",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "fuse_swiglu": true,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p1152_swiglu_ordinary_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p1152_swiglu_ordinary_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T02:02:50.939861+00:00",
+      "npu_channels": 1152,
+      "npu_percent": 8.035714285714286,
+      "timing_ms": {
+        "baseline": {
+          "count": 50,
+          "median": 22.292619000000002,
+          "p10": 21.959308,
+          "p90": 22.7355258,
+          "min": 20.370682000000002,
+          "max": 23.207876
+        },
+        "concurrent": {
+          "count": 50,
+          "median": 19.642946000000002,
+          "p10": 19.216053100000003,
+          "p90": 20.840068799999997,
+          "min": 19.059478,
+          "max": 21.930731
+        },
+        "serial": {
+          "count": 50,
+          "median": 39.7312785,
+          "p10": 38.83575329999999,
+          "p90": 40.429784,
+          "min": 37.715443,
+          "max": 43.635247
+        }
+      },
+      "speedup": 1.1348918334347606,
+      "paired_speedup": {
+        "count": 50,
+        "median": 1.1413626171791607,
+        "p10": 1.061997199342276,
+        "p90": 1.1756869512989343,
+        "min": 0.9417718319049502,
+        "max": 1.1917916095429906
+      },
+      "paired_wins": 48,
+      "paired_count": 50
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1280_fused_ordinary.json",
+      "series": "confirmation_m512",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "fuse_swiglu": false,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p1280_fused_ordinary_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p1280_fused_ordinary_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T02:02:12.215834+00:00",
+      "npu_channels": 1280,
+      "npu_percent": 8.928571428571429,
+      "timing_ms": {
+        "baseline": {
+          "count": 50,
+          "median": 22.244995000000003,
+          "p10": 21.942208,
+          "p90": 22.5841169,
+          "min": 21.861133000000002,
+          "max": 22.642297
+        },
+        "concurrent": {
+          "count": 50,
+          "median": 22.305319,
+          "p10": 21.4983562,
+          "p90": 23.5810407,
+          "min": 20.249425,
+          "max": 24.56092
+        },
+        "serial": {
+          "count": 50,
+          "median": 41.466975,
+          "p10": 40.571162,
+          "p90": 43.2942087,
+          "min": 39.161555,
+          "max": 44.456931
+        }
+      },
+      "speedup": 0.9972955329623397,
+      "paired_speedup": {
+        "count": 50,
+        "median": 0.993512948762637,
+        "p10": 0.9447113474850608,
+        "p90": 1.035200815934002,
+        "min": 0.8917187141198295,
+        "max": 1.1025919995259126
+      },
+      "paired_wins": 24,
+      "paired_count": 50
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1280_swiglu_ordinary.json",
+      "series": "confirmation_m512",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "fuse_swiglu": true,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p1280_swiglu_ordinary_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p1280_swiglu_ordinary_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T02:02:31.740943+00:00",
+      "npu_channels": 1280,
+      "npu_percent": 8.928571428571429,
+      "timing_ms": {
+        "baseline": {
+          "count": 50,
+          "median": 22.231636,
+          "p10": 22.0672192,
+          "p90": 22.6240379,
+          "min": 21.780685000000002,
+          "max": 22.839384
+        },
+        "concurrent": {
+          "count": 50,
+          "median": 20.300719,
+          "p10": 19.6761991,
+          "p90": 20.7910269,
+          "min": 19.404511,
+          "max": 21.922691999999998
+        },
+        "serial": {
+          "count": 50,
+          "median": 39.7651525,
+          "p10": 39.0739644,
+          "p90": 40.5288231,
+          "min": 38.043936,
+          "max": 41.024288
+        }
+      },
+      "speedup": 1.0951156951633092,
+      "paired_speedup": {
+        "count": 50,
+        "median": 1.09964589208453,
+        "p10": 1.0618535433711775,
+        "p90": 1.1330912505888078,
+        "min": 1.020235243007565,
+        "max": 1.1490038597560153
+      },
+      "paired_wins": 50,
+      "paired_count": 50
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p896_fused_ordinary.json",
+      "series": "confirmation_m512",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "fuse_swiglu": false,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p896_fused_ordinary_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p896_fused_ordinary_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T02:04:27.402317+00:00",
+      "npu_channels": 896,
+      "npu_percent": 6.25,
+      "timing_ms": {
+        "baseline": {
+          "count": 50,
+          "median": 22.2645345,
+          "p10": 22.038451000000002,
+          "p90": 22.586559899999997,
+          "min": 21.883632000000002,
+          "max": 22.725685000000002
+        },
+        "concurrent": {
+          "count": 50,
+          "median": 20.247723999999998,
+          "p10": 19.716057,
+          "p90": 21.033200899999997,
+          "min": 19.286763,
+          "max": 22.393901999999997
+        },
+        "serial": {
+          "count": 50,
+          "median": 39.9406285,
+          "p10": 38.895633000000004,
+          "p90": 40.6167599,
+          "min": 37.775601,
+          "max": 41.158585
+        }
+      },
+      "speedup": 1.099606775556601,
+      "paired_speedup": {
+        "count": 50,
+        "median": 1.1012366217803713,
+        "p10": 1.061651448555339,
+        "p90": 1.1298196236521176,
+        "min": 0.97721388617312,
+        "max": 1.1436449444626866
+      },
+      "paired_wins": 48,
+      "paired_count": 50
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p896_swiglu_ordinary.json",
+      "series": "confirmation_m512",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "fuse_swiglu": true,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p896_swiglu_ordinary_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/power/m512_p896_swiglu_ordinary_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T02:04:08.252067+00:00",
+      "npu_channels": 896,
+      "npu_percent": 6.25,
+      "timing_ms": {
+        "baseline": {
+          "count": 50,
+          "median": 22.325153,
+          "p10": 22.0256711,
+          "p90": 22.6601049,
+          "min": 21.866092000000002,
+          "max": 23.529028999999998
+        },
+        "concurrent": {
+          "count": 50,
+          "median": 19.981254,
+          "p10": 19.5357413,
+          "p90": 20.430339,
+          "min": 19.263924,
+          "max": 25.787986
+        },
+        "serial": {
+          "count": 50,
+          "median": 37.75920649999999,
+          "p10": 37.2253491,
+          "p90": 38.39197599999999,
+          "min": 36.623724,
+          "max": 40.529117
+        }
+      },
+      "speedup": 1.11730489988266,
+      "paired_speedup": {
+        "count": 50,
+        "median": 1.1190499173442565,
+        "p10": 1.083881773720485,
+        "p90": 1.1548728555283718,
+        "min": 0.8617751304813024,
+        "max": 1.1790607704380176
+      },
+      "paired_wins": 49,
+      "paired_count": 50
+    }
+  ],
+  "diagnostic": [],
+  "ignored_inputs": [],
+  "interpretation": {
+    "variability": "p10-p90 sample ranges, not confidence intervals",
+    "speedup": "matched per-report GPU baseline median / concurrent median",
+    "selection": "best sampled median among plotted configurations, not a global optimum",
+    "pooling": "independent reports are not pooled",
+    "clocks": "GPU HIP event and NPU CPU host clocks are not aligned",
+    "stages": "independent stage medians are not additive; diagnostics can perturb scheduling",
+    "power": "only recorded before/after snapshots establish the reported mode"
+  },
+  "rendering_provenance": {
+    "plotter_sha256": "e6f8035e3feabd3b9d486227a605fd1dc01e9b80e23350826c0b8d12becd8040",
+    "matplotlib": "3.11.2",
+    "formats": [
+      "svg",
+      "png",
+      "pdf"
+    ]
+  },
+  "sampled_best": [
+    {
+      "shape": [
+        512,
+        4096,
+        14336
+      ],
+      "series": "confirmation_m512",
+      "fused": true,
+      "fuse_swiglu": false,
+      "variant": "fused",
+      "npu_channels": 896,
+      "npu_percent": 6.25,
+      "median_ms": 20.247723999999998,
+      "speedup": 1.099606775556601,
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p896_fused_ordinary.json",
+      "criterion": "lowest sampled concurrent median in this series",
+      "highest_matched_speedup": {
+        "npu_channels": 896,
+        "speedup": 1.099606775556601,
+        "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p896_fused_ordinary.json",
+        "criterion": "highest sampled matched-baseline median ratio; distinct from minimum latency"
+      }
+    },
+    {
+      "shape": [
+        512,
+        4096,
+        14336
+      ],
+      "series": "confirmation_m512",
+      "fused": true,
+      "fuse_swiglu": true,
+      "variant": "swiglu",
+      "npu_channels": 1152,
+      "npu_percent": 8.035714285714286,
+      "median_ms": 19.642946000000002,
+      "speedup": 1.1348918334347606,
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1152_swiglu_ordinary.json",
+      "criterion": "lowest sampled concurrent median in this series",
+      "highest_matched_speedup": {
+        "npu_channels": 1152,
+        "speedup": 1.1348918334347606,
+        "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/confirmation_m512/jobs/m512_p1152_swiglu_ordinary.json",
+        "criterion": "highest sampled matched-baseline median ratio; distinct from minimum latency"
+      }
+    }
+  ],
+  "figures": [
+    "experiments/ffn_partition/results/swiglu_fusion/confirmation_figures/total_ffn_m512_h4096_i14336.svg",
+    "experiments/ffn_partition/results/swiglu_fusion/confirmation_figures/total_ffn_m512_h4096_i14336.png",
+    "experiments/ffn_partition/results/swiglu_fusion/confirmation_figures/total_ffn_m512_h4096_i14336.pdf"
+  ]
+}

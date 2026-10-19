@@ -1,0 +1,812 @@
+{
+  "status": "passed",
+  "auditor_script": "experiments/ffn_partition/results/swiglu_fusion/compare_sweeps.py",
+  "auditor_sha256": "0772c8d146bed20b4ba7788fc481b7b785eef1c3ad549ad5ec668e7eef1cfb5d",
+  "shape": [
+    512,
+    4096,
+    14336
+  ],
+  "gpu": "AMD Radeon 890M",
+  "variant": "swiglu",
+  "channels": [
+    896,
+    1024,
+    1152,
+    1280
+  ],
+  "independent_runs": [
+    {
+      "series": "sweep_m512",
+      "started_utc": "2026-10-19T01:55:12.440642+00:00",
+      "candidate_order": [
+        896,
+        1024,
+        1152,
+        1280
+      ],
+      "candidates": [
+        {
+          "npu_channels": 896,
+          "npu_percent": 6.25,
+          "variant": "swiglu",
+          "concurrent_ms": {
+            "count": 30,
+            "median": 20.0201955,
+            "p10": 19.4520113,
+            "p90": 20.7814818,
+            "min": 19.167856,
+            "max": 21.327154
+          },
+          "gpu_baseline_ms": {
+            "count": 30,
+            "median": 22.4272685,
+            "p10": 22.216448200000002,
+            "p90": 22.772238899999998,
+            "min": 21.991212,
+            "max": 22.945713
+          },
+          "speedup": 1.1202322424873423,
+          "paired_speedup": {
+            "count": 30,
+            "median": 1.12532260319918,
+            "p10": 1.0726596697637059,
+            "p90": 1.1533757278234626,
+            "min": 1.0422913437020243,
+            "max": 1.1880398621525536
+          },
+          "paired_wins": 30,
+          "paired_count": 30,
+          "report": "jobs/m512_p896_swiglu_ordinary.json",
+          "started_utc": "2026-10-19T01:55:12.440642+00:00"
+        },
+        {
+          "npu_channels": 1024,
+          "npu_percent": 7.142857142857143,
+          "variant": "swiglu",
+          "concurrent_ms": {
+            "count": 30,
+            "median": 20.068889,
+            "p10": 19.7454381,
+            "p90": 20.725553400000003,
+            "min": 19.580519,
+            "max": 21.725627
+          },
+          "gpu_baseline_ms": {
+            "count": 30,
+            "median": 22.378874500000002,
+            "p10": 22.006186999999997,
+            "p90": 22.8598827,
+            "min": 21.925603,
+            "max": 23.173269
+          },
+          "speedup": 1.1151028091290955,
+          "paired_speedup": {
+            "count": 30,
+            "median": 1.1111114912765205,
+            "p10": 1.0635213116777098,
+            "p90": 1.1427919747303936,
+            "min": 1.0449386968508614,
+            "max": 1.1698312624900655
+          },
+          "paired_wins": 30,
+          "paired_count": 30,
+          "report": "jobs/m512_p1024_swiglu_ordinary.json",
+          "started_utc": "2026-10-19T01:55:29.377548+00:00"
+        },
+        {
+          "npu_channels": 1152,
+          "npu_percent": 8.035714285714286,
+          "variant": "swiglu",
+          "concurrent_ms": {
+            "count": 30,
+            "median": 19.657197,
+            "p10": 19.359975,
+            "p90": 20.0615168,
+            "min": 18.98393,
+            "max": 22.492442
+          },
+          "gpu_baseline_ms": {
+            "count": 30,
+            "median": 22.473882,
+            "p10": 22.170374,
+            "p90": 22.7731899,
+            "min": 22.151189,
+            "max": 22.949831999999997
+          },
+          "speedup": 1.1432902666641638,
+          "paired_speedup": {
+            "count": 30,
+            "median": 1.1467864338780893,
+            "p10": 1.1148140793693857,
+            "p90": 1.1683779191231192,
+            "min": 0.9961676904624229,
+            "max": 1.1805728845397134
+          },
+          "paired_wins": 29,
+          "paired_count": 30,
+          "report": "jobs/m512_p1152_swiglu_ordinary.json",
+          "started_utc": "2026-10-19T01:56:27.794107+00:00"
+        },
+        {
+          "npu_channels": 1280,
+          "npu_percent": 8.928571428571429,
+          "variant": "swiglu",
+          "concurrent_ms": {
+            "count": 30,
+            "median": 20.4085025,
+            "p10": 19.673319300000003,
+            "p90": 21.344242,
+            "min": 19.355733,
+            "max": 21.552809
+          },
+          "gpu_baseline_ms": {
+            "count": 30,
+            "median": 22.4963815,
+            "p10": 22.024401199999996,
+            "p90": 22.7184208,
+            "min": 19.867142,
+            "max": 22.907403
+          },
+          "speedup": 1.1023043704456021,
+          "paired_speedup": {
+            "count": 30,
+            "median": 1.0949713343192617,
+            "p10": 1.0505812794168778,
+            "p90": 1.1444843077481155,
+            "min": 0.9479488793579893,
+            "max": 1.1768851636876785
+          },
+          "paired_wins": 29,
+          "paired_count": 30,
+          "report": "jobs/m512_p1280_swiglu_ordinary.json",
+          "started_utc": "2026-10-19T01:56:51.654274+00:00"
+        }
+      ],
+      "counts": {
+        "power_snapshots": 56,
+        "ordinary_reports": 14,
+        "timed_invocations": 1400,
+        "explicit_checks": 896,
+        "completed_npu_dispatches": 3185,
+        "diagnostic_reports": 14
+      },
+      "manifest_sha256": "7aab1821688f0066b834bf90e8b2f0e43bf2d11fff62b7e00040626a5291a4b3",
+      "sampled_best": {
+        "fused": {
+          "lowest_sampled_latency": {
+            "npu_channels": 896,
+            "npu_percent": 6.25,
+            "variant": "fused",
+            "concurrent_ms": {
+              "count": 30,
+              "median": 20.0290195,
+              "p10": 19.584378,
+              "p90": 21.680070900000004,
+              "min": 19.286205000000002,
+              "max": 22.032531
+            },
+            "gpu_baseline_ms": {
+              "count": 30,
+              "median": 22.371644500000002,
+              "p10": 22.0295651,
+              "p90": 22.590096,
+              "min": 21.816744999999997,
+              "max": 22.762817
+            },
+            "speedup": 1.1169615417269927,
+            "paired_speedup": {
+              "count": 30,
+              "median": 1.1080538795916257,
+              "p10": 1.039756630831462,
+              "p90": 1.1426689885363002,
+              "min": 1.008064257347465,
+              "max": 1.1604410198379123
+            },
+            "paired_wins": 30,
+            "paired_count": 30,
+            "report": "jobs/m512_p896_fused_ordinary.json",
+            "started_utc": "2026-10-19T01:54:55.458374+00:00"
+          },
+          "highest_matched_speedup": {
+            "npu_channels": 896,
+            "npu_percent": 6.25,
+            "variant": "fused",
+            "concurrent_ms": {
+              "count": 30,
+              "median": 20.0290195,
+              "p10": 19.584378,
+              "p90": 21.680070900000004,
+              "min": 19.286205000000002,
+              "max": 22.032531
+            },
+            "gpu_baseline_ms": {
+              "count": 30,
+              "median": 22.371644500000002,
+              "p10": 22.0295651,
+              "p90": 22.590096,
+              "min": 21.816744999999997,
+              "max": 22.762817
+            },
+            "speedup": 1.1169615417269927,
+            "paired_speedup": {
+              "count": 30,
+              "median": 1.1080538795916257,
+              "p10": 1.039756630831462,
+              "p90": 1.1426689885363002,
+              "min": 1.008064257347465,
+              "max": 1.1604410198379123
+            },
+            "paired_wins": 30,
+            "paired_count": 30,
+            "report": "jobs/m512_p896_fused_ordinary.json",
+            "started_utc": "2026-10-19T01:54:55.458374+00:00"
+          }
+        },
+        "swiglu": {
+          "lowest_sampled_latency": {
+            "npu_channels": 1152,
+            "npu_percent": 8.035714285714286,
+            "variant": "swiglu",
+            "concurrent_ms": {
+              "count": 30,
+              "median": 19.657197,
+              "p10": 19.359975,
+              "p90": 20.0615168,
+              "min": 18.98393,
+              "max": 22.492442
+            },
+            "gpu_baseline_ms": {
+              "count": 30,
+              "median": 22.473882,
+              "p10": 22.170374,
+              "p90": 22.7731899,
+              "min": 22.151189,
+              "max": 22.949831999999997
+            },
+            "speedup": 1.1432902666641638,
+            "paired_speedup": {
+              "count": 30,
+              "median": 1.1467864338780893,
+              "p10": 1.1148140793693857,
+              "p90": 1.1683779191231192,
+              "min": 0.9961676904624229,
+              "max": 1.1805728845397134
+            },
+            "paired_wins": 29,
+            "paired_count": 30,
+            "report": "jobs/m512_p1152_swiglu_ordinary.json",
+            "started_utc": "2026-10-19T01:56:27.794107+00:00"
+          },
+          "highest_matched_speedup": {
+            "npu_channels": 1152,
+            "npu_percent": 8.035714285714286,
+            "variant": "swiglu",
+            "concurrent_ms": {
+              "count": 30,
+              "median": 19.657197,
+              "p10": 19.359975,
+              "p90": 20.0615168,
+              "min": 18.98393,
+              "max": 22.492442
+            },
+            "gpu_baseline_ms": {
+              "count": 30,
+              "median": 22.473882,
+              "p10": 22.170374,
+              "p90": 22.7731899,
+              "min": 22.151189,
+              "max": 22.949831999999997
+            },
+            "speedup": 1.1432902666641638,
+            "paired_speedup": {
+              "count": 30,
+              "median": 1.1467864338780893,
+              "p10": 1.1148140793693857,
+              "p90": 1.1683779191231192,
+              "min": 0.9961676904624229,
+              "max": 1.1805728845397134
+            },
+            "paired_wins": 29,
+            "paired_count": 30,
+            "report": "jobs/m512_p1152_swiglu_ordinary.json",
+            "started_utc": "2026-10-19T01:56:27.794107+00:00"
+          }
+        }
+      },
+      "retuned_best_comparison": {
+        "fused_channels": 896,
+        "swiglu_channels": 1152,
+        "fused_over_swiglu": 1.018915336708484,
+        "latency_reduction_percent": 1.8564188826117989,
+        "interpretation": "separate configurations/runs at their sampled latency minima; not a controlled fixed-partition fusion effect"
+      },
+      "fixed_partition_comparison": [
+        {
+          "npu_channels": 512,
+          "fused_ms": 20.8657695,
+          "swiglu_ms": 21.077510500000002,
+          "latency_saved_ms": -0.2117410000000035,
+          "fused_over_swiglu": 0.98995417414215,
+          "latency_reduction_percent": -1.014776857378797
+        },
+        {
+          "npu_channels": 768,
+          "fused_ms": 20.400498,
+          "swiglu_ms": 20.585154499999998,
+          "latency_saved_ms": -0.1846564999999991,
+          "fused_over_swiglu": 0.9910296276863019,
+          "latency_reduction_percent": -0.9051568250931871
+        },
+        {
+          "npu_channels": 896,
+          "fused_ms": 20.0290195,
+          "swiglu_ms": 20.0201955,
+          "latency_saved_ms": 0.00882400000000061,
+          "fused_over_swiglu": 1.0004407549366838,
+          "latency_reduction_percent": 0.044056075735512706
+        },
+        {
+          "npu_channels": 1024,
+          "fused_ms": 20.274659999999997,
+          "swiglu_ms": 20.068889,
+          "latency_saved_ms": 0.2057709999999986,
+          "fused_over_swiglu": 1.0102532332507295,
+          "latency_reduction_percent": 1.014917142876865
+        },
+        {
+          "npu_channels": 1152,
+          "fused_ms": 21.7356615,
+          "swiglu_ms": 19.657197,
+          "latency_saved_ms": 2.078464499999999,
+          "fused_over_swiglu": 1.1057355481557212,
+          "latency_reduction_percent": 9.56246259171822
+        },
+        {
+          "npu_channels": 1280,
+          "fused_ms": 22.84216,
+          "swiglu_ms": 20.4085025,
+          "latency_saved_ms": 2.433657499999999,
+          "fused_over_swiglu": 1.1192472353128309,
+          "latency_reduction_percent": 10.65423541381375
+        },
+        {
+          "npu_channels": 1536,
+          "fused_ms": 24.124519499999998,
+          "swiglu_ms": 22.402307999999998,
+          "latency_saved_ms": 1.7222115000000002,
+          "fused_over_swiglu": 1.0768765209370392,
+          "latency_reduction_percent": 7.138842703167623
+        }
+      ],
+      "partition_order": [
+        512,
+        768,
+        896,
+        1024,
+        1152,
+        1280,
+        1536
+      ]
+    },
+    {
+      "series": "confirmation_m512",
+      "started_utc": "2026-10-19T02:02:31.740943+00:00",
+      "candidate_order": [
+        1280,
+        1152,
+        1024,
+        896
+      ],
+      "candidates": [
+        {
+          "npu_channels": 896,
+          "npu_percent": 6.25,
+          "variant": "swiglu",
+          "concurrent_ms": {
+            "count": 50,
+            "median": 19.981254,
+            "p10": 19.5357413,
+            "p90": 20.430339,
+            "min": 19.263924,
+            "max": 25.787986
+          },
+          "gpu_baseline_ms": {
+            "count": 50,
+            "median": 22.325153,
+            "p10": 22.0256711,
+            "p90": 22.6601049,
+            "min": 21.866092000000002,
+            "max": 23.529028999999998
+          },
+          "speedup": 1.11730489988266,
+          "paired_speedup": {
+            "count": 50,
+            "median": 1.1190499173442565,
+            "p10": 1.083881773720485,
+            "p90": 1.1548728555283718,
+            "min": 0.8617751304813024,
+            "max": 1.1790607704380176
+          },
+          "paired_wins": 49,
+          "paired_count": 50,
+          "report": "jobs/m512_p896_swiglu_ordinary.json",
+          "started_utc": "2026-10-19T02:04:08.252067+00:00"
+        },
+        {
+          "npu_channels": 1024,
+          "npu_percent": 7.142857142857143,
+          "variant": "swiglu",
+          "concurrent_ms": {
+            "count": 50,
+            "median": 19.676845,
+            "p10": 19.1743281,
+            "p90": 20.0828949,
+            "min": 19.000106,
+            "max": 20.858842
+          },
+          "gpu_baseline_ms": {
+            "count": 50,
+            "median": 22.2340205,
+            "p10": 22.048915,
+            "p90": 22.613858,
+            "min": 21.93607,
+            "max": 22.818604
+          },
+          "speedup": 1.1299586137919977,
+          "paired_speedup": {
+            "count": 50,
+            "median": 1.1333256377514256,
+            "p10": 1.0996216683581082,
+            "p90": 1.1684842424616657,
+            "min": 1.0593914082095257,
+            "max": 1.1884606854298603
+          },
+          "paired_wins": 50,
+          "paired_count": 50,
+          "report": "jobs/m512_p1024_swiglu_ordinary.json",
+          "started_utc": "2026-10-19T02:03:48.965973+00:00"
+        },
+        {
+          "npu_channels": 1152,
+          "npu_percent": 8.035714285714286,
+          "variant": "swiglu",
+          "concurrent_ms": {
+            "count": 50,
+            "median": 19.642946000000002,
+            "p10": 19.216053100000003,
+            "p90": 20.840068799999997,
+            "min": 19.059478,
+            "max": 21.930731
+          },
+          "gpu_baseline_ms": {
+            "count": 50,
+            "median": 22.292619000000002,
+            "p10": 21.959308,
+            "p90": 22.7355258,
+            "min": 20.370682000000002,
+            "max": 23.207876
+          },
+          "speedup": 1.1348918334347606,
+          "paired_speedup": {
+            "count": 50,
+            "median": 1.1413626171791607,
+            "p10": 1.061997199342276,
+            "p90": 1.1756869512989343,
+            "min": 0.9417718319049502,
+            "max": 1.1917916095429906
+          },
+          "paired_wins": 48,
+          "paired_count": 50,
+          "report": "jobs/m512_p1152_swiglu_ordinary.json",
+          "started_utc": "2026-10-19T02:02:50.939861+00:00"
+        },
+        {
+          "npu_channels": 1280,
+          "npu_percent": 8.928571428571429,
+          "variant": "swiglu",
+          "concurrent_ms": {
+            "count": 50,
+            "median": 20.300719,
+            "p10": 19.6761991,
+            "p90": 20.7910269,
+            "min": 19.404511,
+            "max": 21.922691999999998
+          },
+          "gpu_baseline_ms": {
+            "count": 50,
+            "median": 22.231636,
+            "p10": 22.0672192,
+            "p90": 22.6240379,
+            "min": 21.780685000000002,
+            "max": 22.839384
+          },
+          "speedup": 1.0951156951633092,
+          "paired_speedup": {
+            "count": 50,
+            "median": 1.09964589208453,
+            "p10": 1.0618535433711775,
+            "p90": 1.1330912505888078,
+            "min": 1.020235243007565,
+            "max": 1.1490038597560153
+          },
+          "paired_wins": 50,
+          "paired_count": 50,
+          "report": "jobs/m512_p1280_swiglu_ordinary.json",
+          "started_utc": "2026-10-19T02:02:31.740943+00:00"
+        }
+      ],
+      "counts": {
+        "power_snapshots": 16,
+        "ordinary_reports": 8,
+        "timed_invocations": 1200,
+        "explicit_checks": 280,
+        "completed_npu_dispatches": 2280
+      },
+      "manifest_sha256": "75b7b6aee6936a51da519b2d893818fc4ccf1074187e6b491a6c750cff597deb",
+      "sampled_best": {
+        "fused": {
+          "lowest_sampled_latency": {
+            "npu_channels": 896,
+            "npu_percent": 6.25,
+            "variant": "fused",
+            "concurrent_ms": {
+              "count": 50,
+              "median": 20.247723999999998,
+              "p10": 19.716057,
+              "p90": 21.033200899999997,
+              "min": 19.286763,
+              "max": 22.393901999999997
+            },
+            "gpu_baseline_ms": {
+              "count": 50,
+              "median": 22.2645345,
+              "p10": 22.038451000000002,
+              "p90": 22.586559899999997,
+              "min": 21.883632000000002,
+              "max": 22.725685000000002
+            },
+            "speedup": 1.099606775556601,
+            "paired_speedup": {
+              "count": 50,
+              "median": 1.1012366217803713,
+              "p10": 1.061651448555339,
+              "p90": 1.1298196236521176,
+              "min": 0.97721388617312,
+              "max": 1.1436449444626866
+            },
+            "paired_wins": 48,
+            "paired_count": 50,
+            "report": "jobs/m512_p896_fused_ordinary.json",
+            "started_utc": "2026-10-19T02:04:27.402317+00:00"
+          },
+          "highest_matched_speedup": {
+            "npu_channels": 896,
+            "npu_percent": 6.25,
+            "variant": "fused",
+            "concurrent_ms": {
+              "count": 50,
+              "median": 20.247723999999998,
+              "p10": 19.716057,
+              "p90": 21.033200899999997,
+              "min": 19.286763,
+              "max": 22.393901999999997
+            },
+            "gpu_baseline_ms": {
+              "count": 50,
+              "median": 22.2645345,
+              "p10": 22.038451000000002,
+              "p90": 22.586559899999997,
+              "min": 21.883632000000002,
+              "max": 22.725685000000002
+            },
+            "speedup": 1.099606775556601,
+            "paired_speedup": {
+              "count": 50,
+              "median": 1.1012366217803713,
+              "p10": 1.061651448555339,
+              "p90": 1.1298196236521176,
+              "min": 0.97721388617312,
+              "max": 1.1436449444626866
+            },
+            "paired_wins": 48,
+            "paired_count": 50,
+            "report": "jobs/m512_p896_fused_ordinary.json",
+            "started_utc": "2026-10-19T02:04:27.402317+00:00"
+          }
+        },
+        "swiglu": {
+          "lowest_sampled_latency": {
+            "npu_channels": 1152,
+            "npu_percent": 8.035714285714286,
+            "variant": "swiglu",
+            "concurrent_ms": {
+              "count": 50,
+              "median": 19.642946000000002,
+              "p10": 19.216053100000003,
+              "p90": 20.840068799999997,
+              "min": 19.059478,
+              "max": 21.930731
+            },
+            "gpu_baseline_ms": {
+              "count": 50,
+              "median": 22.292619000000002,
+              "p10": 21.959308,
+              "p90": 22.7355258,
+              "min": 20.370682000000002,
+              "max": 23.207876
+            },
+            "speedup": 1.1348918334347606,
+            "paired_speedup": {
+              "count": 50,
+              "median": 1.1413626171791607,
+              "p10": 1.061997199342276,
+              "p90": 1.1756869512989343,
+              "min": 0.9417718319049502,
+              "max": 1.1917916095429906
+            },
+            "paired_wins": 48,
+            "paired_count": 50,
+            "report": "jobs/m512_p1152_swiglu_ordinary.json",
+            "started_utc": "2026-10-19T02:02:50.939861+00:00"
+          },
+          "highest_matched_speedup": {
+            "npu_channels": 1152,
+            "npu_percent": 8.035714285714286,
+            "variant": "swiglu",
+            "concurrent_ms": {
+              "count": 50,
+              "median": 19.642946000000002,
+              "p10": 19.216053100000003,
+              "p90": 20.840068799999997,
+              "min": 19.059478,
+              "max": 21.930731
+            },
+            "gpu_baseline_ms": {
+              "count": 50,
+              "median": 22.292619000000002,
+              "p10": 21.959308,
+              "p90": 22.7355258,
+              "min": 20.370682000000002,
+              "max": 23.207876
+            },
+            "speedup": 1.1348918334347606,
+            "paired_speedup": {
+              "count": 50,
+              "median": 1.1413626171791607,
+              "p10": 1.061997199342276,
+              "p90": 1.1756869512989343,
+              "min": 0.9417718319049502,
+              "max": 1.1917916095429906
+            },
+            "paired_wins": 48,
+            "paired_count": 50,
+            "report": "jobs/m512_p1152_swiglu_ordinary.json",
+            "started_utc": "2026-10-19T02:02:50.939861+00:00"
+          }
+        }
+      },
+      "retuned_best_comparison": {
+        "fused_channels": 896,
+        "swiglu_channels": 1152,
+        "fused_over_swiglu": 1.0307885589055734,
+        "latency_reduction_percent": 2.986893736797258,
+        "interpretation": "separate configurations/runs at their sampled latency minima; not a controlled fixed-partition fusion effect"
+      },
+      "fixed_partition_comparison": [
+        {
+          "npu_channels": 896,
+          "fused_ms": 20.247723999999998,
+          "swiglu_ms": 19.981254,
+          "latency_saved_ms": 0.2664699999999982,
+          "fused_over_swiglu": 1.013335999832643,
+          "latency_reduction_percent": 1.3160491519935684
+        },
+        {
+          "npu_channels": 1024,
+          "fused_ms": 20.6707805,
+          "swiglu_ms": 19.676845,
+          "latency_saved_ms": 0.9939354999999992,
+          "fused_over_swiglu": 1.0505129506280098,
+          "latency_reduction_percent": 4.80840817791084
+        },
+        {
+          "npu_channels": 1152,
+          "fused_ms": 20.8161225,
+          "swiglu_ms": 19.642946000000002,
+          "latency_saved_ms": 1.1731764999999967,
+          "fused_over_swiglu": 1.0597250789163701,
+          "latency_reduction_percent": 5.6359031322956366
+        },
+        {
+          "npu_channels": 1280,
+          "fused_ms": 22.305319,
+          "swiglu_ms": 20.300719,
+          "latency_saved_ms": 2.0046,
+          "fused_over_swiglu": 1.098745271041878,
+          "latency_reduction_percent": 8.987094064873045
+        }
+      ],
+      "partition_order": [
+        1280,
+        1152,
+        1024,
+        896
+      ]
+    }
+  ],
+  "sweep_counts": {
+    "power_snapshots": 72,
+    "ordinary_reports": 22,
+    "timed_invocations": 2600,
+    "explicit_checks": 1176,
+    "completed_npu_dispatches": 5465,
+    "diagnostic_reports": 14
+  },
+  "source_files_verified": [
+    "experiments/ffn_partition/analyze_bottleneck.py",
+    "experiments/ffn_partition/check_gate_up.py",
+    "experiments/ffn_partition/check_swiglu.py",
+    "experiments/ffn_partition/contract.py",
+    "experiments/ffn_partition/diagnose.py",
+    "experiments/ffn_partition/gpu_backend.py",
+    "experiments/ffn_partition/gpu_bindings.cpp",
+    "experiments/ffn_partition/npu_backend.py",
+    "experiments/ffn_partition/plot_partition_sweep.py",
+    "experiments/ffn_partition/profile_contexts.py",
+    "experiments/ffn_partition/profile_timeline.py",
+    "experiments/ffn_partition/run.py",
+    "experiments/ffn_partition/sweep_partition.py",
+    "experiments/ffn_partition/test_analyze_bottleneck.py",
+    "experiments/ffn_partition/test_contract.py",
+    "experiments/ffn_partition/test_gpu_packing.py",
+    "experiments/ffn_partition/test_npu_backend.py",
+    "experiments/ffn_partition/test_plot_partition_sweep.py",
+    "experiments/ffn_partition/test_profile_timeline.py",
+    "experiments/ffn_partition/test_sweep_partition.py",
+    "experiments/ffn_partition/test_swiglu.py",
+    "include/hipkernels/w4a16_gemm_packed.hpp",
+    "npu/ffn/prefill_gate_up_schedule.py",
+    "npu/ffn/prefill_reference.py",
+    "npu/ffn/prefill_schedule.py",
+    "npu/ffn/prefill_swiglu_schedule.py",
+    "npu/ffn/reference.py",
+    "npu/ffn/run_silu_mul.py",
+    "npu/ffn/run_w4a16_linear.py",
+    "npu/ffn/run_w4a16_prefill.py",
+    "npu/ffn/silu_mul.cc",
+    "npu/ffn/silu_mul.py",
+    "npu/ffn/w4a16_gate_up.py",
+    "npu/ffn/w4a16_linear.cc",
+    "npu/ffn/w4a16_linear.py",
+    "npu/ffn/w4a16_prefill.cc",
+    "npu/ffn/w4a16_prefill.py",
+    "npu/ffn/w4a16_prefill_reuse.cc",
+    "npu/ffn/w4a16_prefill_reuse.py",
+    "npu/ffn/w4a16_swiglu.py",
+    "npu/ffn/xrt_runner.py",
+    "src/hipkernels/w4a16_gemm_packed.cu"
+  ],
+  "exact_correctness": {
+    "verification_sha256": "ed7664a6a8a723149d10f6f8291b1541e251aaa377bd74951f9003c2aef9fb53",
+    "checks": 180,
+    "completed_npu_dispatches": 60
+  },
+  "total_npu_dispatches_including_exact": 5525,
+  "last_run_two_lowest_latency_candidates": [
+    1152,
+    1024
+  ],
+  "last_run_two_lowest_latency_gap_ms": 0.033898999999998125,
+  "interpretation": [
+    "Independent main and reverse-order confirmation runs; no pooled samples or global optimum.",
+    "The last run has only 0.033899 ms between its two lowest sampled candidate medians; a unique optimum is not established.",
+    "Retuned-best comparisons are distinct from controlled fixed-partition fusion effects.",
+    "Default power mode at every boundary snapshot; results are isolated FFN latency, not whole-model prefill."
+  ],
+  "figures": [
+    "experiments/ffn_partition/results/swiglu_fusion/comparison_figures/repeat_candidates_m512_h4096_i14336.svg",
+    "experiments/ffn_partition/results/swiglu_fusion/comparison_figures/repeat_candidates_m512_h4096_i14336.png",
+    "experiments/ffn_partition/results/swiglu_fusion/comparison_figures/repeat_candidates_m512_h4096_i14336.pdf"
+  ]
+}

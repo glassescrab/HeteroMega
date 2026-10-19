@@ -1,0 +1,6 @@
+Building/verifying NPU artifacts: M=512 H=4096 P=1024
+[92mSuccessfully preprocessed all matching files.[0m
+Validating original GPU FFN against independent CPU reference
+Validating partition P=1024/14336
+{"P": 1024, "stats": {"serial": {"count": 30, "median_us": 38433.212, "p10_us": 37586.3672, "p90_us": 38883.4629, "min_us": 36949.74, "max_us": 39011.86}, "concurrent": {"count": 30, "median_us": 20068.889, "p10_us": 19745.4381, "p90_us": 20725.5534, "min_us": 19580.519, "max_us": 21725.627}, "baseline": {"count": 30, "median_us": 22378.874499999998, "p10_us": 22006.186999999998, "p90_us": 22859.8827, "min_us": 21925.603, "max_us": 23173.269}}, "speedup_vs_gpu_baseline": 1.1151028091290953}
+Saved /notebooks/HeteroMega/experiments/ffn_partition/results/swiglu_fusion/sweep_m512/jobs/m512_p1024_swiglu_ordinary.json

@@ -1,0 +1,9 @@
+Building/verifying NPU artifacts: M=128 H=128 P=128
+Building/verifying NPU artifacts: M=128 H=128 P=384
+[92mSuccessfully preprocessed all matching files.[0m
+Validating original GPU FFN against independent CPU reference
+Validating partition P=128/512
+{"P": 128, "stats": {"concurrent": {"count": 3, "median_us": 8113.891, "p10_us": 6746.0534, "p90_us": 8206.145400000001, "min_us": 6404.094, "max_us": 8229.209}, "baseline": {"count": 3, "median_us": 351.734, "p10_us": 176.5924, "p90_us": 376.8364, "min_us": 132.807, "max_us": 383.112}, "serial": {"count": 3, "median_us": 8536.373, "p10_us": 8468.3586, "p90_us": 8954.644199999999, "min_us": 8451.355, "max_us": 9059.212}}, "speedup_vs_gpu_baseline": 0.0433496087142408}
+Validating partition P=384/512
+{"P": 384, "stats": {"serial": {"count": 3, "median_us": 6618.521, "p10_us": 6496.3946000000005, "p90_us": 6662.7914, "min_us": 6465.863, "max_us": 6673.859}, "baseline": {"count": 3, "median_us": 392.243, "p10_us": 388.3942, "p90_us": 401.811, "min_us": 387.432, "max_us": 404.203}, "concurrent": {"count": 3, "median_us": 6540.782, "p10_us": 6525.798, "p90_us": 6591.8452, "min_us": 6522.052, "max_us": 6604.611}}, "speedup_vs_gpu_baseline": 0.059968823299721655}
+Saved experiments/ffn_partition/results/gate_up_sweep/fused_smoke.json

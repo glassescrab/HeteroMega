@@ -1,0 +1,39 @@
+{
+  "status": "preparing",
+  "evidence_kind": "NPU hardware correctness",
+  "scope": "on-chip SwiGLU packed Z and complete NPU FFN; not performance",
+  "timestamp_utc": "2026-10-19T01:46:49.337240+00:00",
+  "config": {
+    "m": 512,
+    "hidden": 4096,
+    "channels": [
+      384,
+      896
+    ],
+    "seed": 12832,
+    "input_seed": 12833,
+    "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+    "artifact_root": "experiments/ffn_partition/artifacts",
+    "no_build": false,
+    "output": "experiments/ffn_partition/results/swiglu_fusion/exact_m512.json"
+  },
+  "environment": {
+    "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+    "numpy": "1.26.4",
+    "platform": "Linux-6.17.0-42-generic-x86_64-with-glibc2.39"
+  },
+  "git": {
+    "head": "61714a3147f34857aa5dfef21a28e762777a2df0",
+    "status": "M README.md\n?? .ipynb_checkpoints/\n?? docs/\n?? experiments/\n?? include/unified_llm_w4a16_hetero/hipblasltSetup_hip.hpp\n?? npu/\n?? src/hipkernels/w4a16_gemm_packed.hip"
+  },
+  "cases": [],
+  "checks": {},
+  "source_sha256": {
+    "experiments/ffn_partition/check_swiglu.py": "1c00b80dad4d59e008bbb9472c1f089d846f1fb6eb8086b2da0425bba9031bff",
+    "experiments/ffn_partition/npu_backend.py": "ac1f7257169fc9a84a2e8f1258ce56b26557c1b6c008dd8790134b690757d9e0",
+    "experiments/ffn_partition/contract.py": "fccebc8a524216372fa77d8c289b98d50bf8616812d82ba615bbf50af33f88e5",
+    "npu/ffn/xrt_runner.py": "68115a215d1deeb5f9af620e7cff56bad0f977d1d20e69276bc9f73a4353d598",
+    "npu/ffn/reference.py": "351923dabc1ec03bc76f11d2d2c941960c5b7d3fb56233be59c66661c82ca631",
+    "npu/ffn/prefill_reference.py": "24f4218251fc08a0e8969601d477e65074887243035d161e27a38c8f84e52554"
+  }
+}

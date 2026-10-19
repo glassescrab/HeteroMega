@@ -1,0 +1,4 @@
+Starting m512_p512_unfused_ordinary
+{"id": "m512_p512_unfused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p512_unfused_diagnostic
+{"id": "m512_p512_unfused_diagnostic", "status": "passed", "error": null, "power_error": null}

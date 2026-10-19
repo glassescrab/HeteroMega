@@ -28,7 +28,32 @@ from .run import TimedFFN, cpu_values, provenance, save
 
 
 GPU_STAGES = ("gate", "up", "silu", "multiply", "down")
-NPU_STAGES = ("gate", "up", "silu_mul", "down")
+
+
+def npu_runners(npu):
+    """One entry per actual launch; composite graphs get one host probe."""
+    if getattr(npu, "fuse_swiglu", False):
+        return {"swiglu": npu.swiglu, "down": npu.down}
+    if npu.fuse_gate_up:
+        return {"gate_up": npu.gate_up, "silu_mul": npu.silu, "down": npu.down}
+    return {"gate": npu.gate, "up": npu.up, "silu_mul": npu.silu, "down": npu.down}
+
+
+def fixed_weight_upload_counts(npu):
+    # Both fusion variants use one concatenated gate/up weight BO. A swiglu
+    # runner returns only Z; a gate_up runner returns two projection outputs.
+    return {name: runner.input_write_counts[1]
+            for name, runner in npu_runners(npu).items() if name != "silu_mul"}
+
+
+def completion_counts(npu, expected_calls):
+    """Check every graph, so a repeated launch cannot hide a skipped graph."""
+    counts = {name: runner.completed_dispatches
+              for name, runner in npu_runners(npu).items()}
+    if any(count != expected_calls for count in counts.values()):
+        raise RuntimeError(
+            f"NPU per-stage completion counters differ from {expected_calls} calls: {counts}")
+    return counts
 
 
 def diagnostic_stats(samples):
@@ -145,7 +170,7 @@ class ProfiledFFN(TimedFFN):
                                   self.torch.cuda.Event(enable_timing=True))
                            for name in ("input_d2h", "output_h2d", "reduction")}
         self.probes = {}
-        for name, runner in zip(NPU_STAGES, (npu.gate, npu.up, npu.silu, npu.down)):
+        for name, runner in npu_runners(npu).items():
             probe = KernelSubmissionProbe(runner.kernel)
             self.probes[name] = probe
             runner.kernel = probe
@@ -225,6 +250,14 @@ class ProfiledFFN(TimedFFN):
 
 
 def summarize(samples):
+    if not samples:
+        raise ValueError("at least one diagnostic sample is required")
+    stages = tuple(samples[0]["npu_submit_wait_host"])
+    if stages not in (("gate", "up", "silu_mul", "down"),
+                      ("gate_up", "silu_mul", "down"), ("swiglu", "down")):
+        raise ValueError(f"unrecognized NPU stage sequence: {stages}")
+    if any(tuple(sample["npu_submit_wait_host"]) != stages for sample in samples):
+        raise ValueError("a diagnostic cannot mix NPU stage sequences")
     return {
         "instrumented_wall": diagnostic_stats([s["instrumented_wall_us"] for s in samples]),
         "gpu_event_us": {name: diagnostic_stats([s["gpu_event_intervals"][name]["duration_us"] for s in samples])
@@ -237,11 +270,11 @@ def summarize(samples):
             name: diagnostic_stats([s["transfer_reduction_submit_host"][name]["duration_us"] for s in samples])
             for name in ("input_d2h", "output_h2d", "reduction")},
         "npu_submit_host_us": {name: diagnostic_stats([s["npu_submit_wait_host"][name]["submit_host_us"] for s in samples])
-                               for name in NPU_STAGES},
+                               for name in stages},
         "npu_wait_host_us": {name: diagnostic_stats([s["npu_submit_wait_host"][name]["wait_host_us"] for s in samples])
-                             for name in NPU_STAGES},
+                             for name in stages},
         "npu_dispatch_wait_host_us": {name: diagnostic_stats([s["npu"]["dispatch_wait_us"][name] for s in samples])
-                                      for name in NPU_STAGES},
+                                      for name in stages},
         "npu_stage_host_us": {name: diagnostic_stats([s["npu"]["stages"][name] for s in samples])
                               for name in samples[0]["npu"]["stages"]},
     }
@@ -254,6 +287,10 @@ def main():
     parser.add_argument("--intermediate", type=int, default=14336)
     parser.add_argument("--npu-channels", type=int, default=512)
     parser.add_argument("--npu-design", choices=("array8", "legacy"), default="array8")
+    parser.add_argument("--fuse-gate-up", action="store_true",
+                        help="profile one two-output gate/up NPU launch; GPU path is unchanged")
+    parser.add_argument("--fuse-swiglu", action="store_true",
+                        help="profile on-chip gate/up + SiLU/multiply in one NPU launch; implies --fuse-gate-up")
     parser.add_argument("--columns", type=int, default=8)
     parser.add_argument("--warmup", type=int, default=3)
     parser.add_argument("--iterations", type=int, default=30)
@@ -263,11 +300,15 @@ def main():
     parser.add_argument("--verbose-build", action="store_true")
     parser.add_argument("--output", type=Path, default=Path("experiments/ffn_partition/results/timeline_profile.json"))
     args = parser.parse_args()
+    if args.fuse_swiglu:
+        args.fuse_gate_up = True
     validate_shape(args.m, args.hidden, args.intermediate, args.npu_channels)
     if not 0 < args.npu_channels < args.intermediate:
         parser.error("both GPU and NPU branches are required")
     if not 1 <= args.iterations <= 1000 or not 0 <= args.warmup <= 100:
         parser.error("iterations must be 1..1000 and warmup 0..100")
+    if args.fuse_gate_up and args.npu_design != "array8":
+        parser.error("gate/up fusion requires the array8 design")
     report = {
         "schema_version": 1, "status": "preparing",
         "started_utc": datetime.now(timezone.utc).isoformat(),
@@ -281,6 +322,7 @@ def main():
             "host_clock_origin": "perf_counter_ns at instrumented FFN boundary; not synchronized to the GPU event clock",
             "cross_device_alignment": "Do not overlay CPU/NPU-host offsets and GPU-event offsets as an exact physical timeline",
             "npu": "submit_host_us measures the Python/XRT kernel call; wait_host_us measures wait(10000), not NPU-only execution",
+            "composite_npu_stage": "swiglu is one gate/up + SiLU/multiply graph; its host probe does not separate the internal operations",
             "cpu_submit": "Python/C++ API call intervals; may include runtime work, not driver-only launch overhead",
             "synchronization": "preserves required D2H input wait and final reduction wait; no extra stage waits",
             "reduction": "GPU event start follows both dependency waits; reduction span excludes those waits",
@@ -299,13 +341,16 @@ def main():
 
     try:
         build_artifacts(args.m, args.hidden, args.npu_channels, args.artifact_root,
-                        args.columns, args.iron_python, npu_design=args.npu_design)
+                        args.columns, args.iron_python, npu_design=args.npu_design,
+                        fuse_gate_up=args.fuse_gate_up, fuse_swiglu=args.fuse_swiglu)
         import torch
         weights = random_weights(args.hidden, args.intermediate, args.seed)
         branches = split_weights(weights, args.npu_channels)
         g, n = branches["gpu"], branches["npu"]
         gpu = ProfiledGPUBranch(g.gate, g.up, g.down, args.m, verbose_build=args.verbose_build)
-        npu = NPUBranch(n.gate, n.up, n.down, args.m, args.artifact_root, args.columns, npu_design=args.npu_design)
+        npu = NPUBranch(n.gate, n.up, n.down, args.m, args.artifact_root, args.columns,
+                        npu_design=args.npu_design, fuse_gate_up=args.fuse_gate_up,
+                        fuse_swiglu=args.fuse_swiglu)
         runner = ProfiledFFN(gpu, npu, args.m, args.hidden, gpu.device)
         report["gpu_metadata"], report["npu_metadata"] = gpu.metadata, npu.metadata
         report["provenance"].update(torch=str(torch.__version__), hip=str(torch.version.hip),
@@ -345,9 +390,16 @@ def main():
             sample.update(iteration=iteration, input_index=index, correctness_passed=True)
             report["warmup_samples" if iteration < 0 else "samples"].append(sample)
         report["stats"] = summarize(report["samples"])
-        report["completed_npu_dispatches"] = sum(r.completed_dispatches for r in (npu.gate, npu.up, npu.silu, npu.down))
-        report["fixed_weight_upload_counts"] = {name: r.input_write_counts[1]
-                                                 for name, r in (("gate", npu.gate), ("up", npu.up), ("down", npu.down))}
+        report["npu_stage_sequence"] = list(npu_runners(npu))
+        expected_calls = 4 + args.warmup + args.iterations
+        report["completed_npu_dispatches_by_stage"] = completion_counts(npu, expected_calls)
+        report["expected_npu_dispatches_per_stage"] = expected_calls
+        report["completed_npu_dispatches"] = sum(report["completed_npu_dispatches_by_stage"].values())
+        expected_dispatches = expected_calls * len(npu_runners(npu))
+        report["expected_npu_dispatches"] = expected_dispatches
+        if report["completed_npu_dispatches"] != expected_dispatches:
+            raise RuntimeError("NPU completion counter does not match the executed diagnostic calls")
+        report["fixed_weight_upload_counts"] = fixed_weight_upload_counts(npu)
         if any(count != 1 for count in report["fixed_weight_upload_counts"].values()):
             raise RuntimeError("fixed projection weights were not uploaded exactly once")
         report["status"] = "passed"

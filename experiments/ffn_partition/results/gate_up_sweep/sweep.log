@@ -1,0 +1,96 @@
+Starting m512_p128_unfused_ordinary
+{"id": "m512_p128_unfused_ordinary", "status": "passed", "error": "measurement exited 1; see /notebooks/HeteroMega/experiments/ffn_partition/results/fusion_sweep_m512/logs/m512_p128_unfused_ordinary.log", "power_error": null}
+Starting m512_p128_fused_ordinary
+{"id": "m512_p128_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p256_fused_ordinary
+{"id": "m512_p256_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p256_unfused_ordinary
+{"id": "m512_p256_unfused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p384_unfused_ordinary
+{"id": "m512_p384_unfused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p384_fused_ordinary
+{"id": "m512_p384_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p512_fused_ordinary
+{"id": "m512_p512_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p512_unfused_ordinary
+{"id": "m512_p512_unfused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p640_unfused_ordinary
+{"id": "m512_p640_unfused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p640_fused_ordinary
+{"id": "m512_p640_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p768_fused_ordinary
+{"id": "m512_p768_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p768_unfused_ordinary
+{"id": "m512_p768_unfused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p896_unfused_ordinary
+{"id": "m512_p896_unfused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p896_fused_ordinary
+{"id": "m512_p896_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1024_fused_ordinary
+{"id": "m512_p1024_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1024_unfused_ordinary
+{"id": "m512_p1024_unfused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1536_unfused_ordinary
+{"id": "m512_p1536_unfused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1536_fused_ordinary
+{"id": "m512_p1536_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p2048_fused_ordinary
+{"id": "m512_p2048_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p2048_unfused_ordinary
+{"id": "m512_p2048_unfused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p4096_unfused_ordinary
+{"id": "m512_p4096_unfused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p4096_fused_ordinary
+{"id": "m512_p4096_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p7168_fused_ordinary
+{"id": "m512_p7168_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p7168_unfused_ordinary
+{"id": "m512_p7168_unfused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p128_unfused_diagnostic
+{"id": "m512_p128_unfused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p128_fused_diagnostic
+{"id": "m512_p128_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p256_fused_diagnostic
+{"id": "m512_p256_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p256_unfused_diagnostic
+{"id": "m512_p256_unfused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p384_unfused_diagnostic
+{"id": "m512_p384_unfused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p384_fused_diagnostic
+{"id": "m512_p384_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p512_fused_diagnostic
+{"id": "m512_p512_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p512_unfused_diagnostic
+{"id": "m512_p512_unfused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p640_unfused_diagnostic
+{"id": "m512_p640_unfused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p640_fused_diagnostic
+{"id": "m512_p640_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p768_fused_diagnostic
+{"id": "m512_p768_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p768_unfused_diagnostic
+{"id": "m512_p768_unfused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p896_unfused_diagnostic
+{"id": "m512_p896_unfused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p896_fused_diagnostic
+{"id": "m512_p896_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1024_fused_diagnostic
+{"id": "m512_p1024_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1024_unfused_diagnostic
+{"id": "m512_p1024_unfused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1536_unfused_diagnostic
+{"id": "m512_p1536_unfused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1536_fused_diagnostic
+{"id": "m512_p1536_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p2048_fused_diagnostic
+{"id": "m512_p2048_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p2048_unfused_diagnostic
+{"id": "m512_p2048_unfused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p4096_unfused_diagnostic
+{"id": "m512_p4096_unfused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p4096_fused_diagnostic
+{"id": "m512_p4096_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p7168_fused_diagnostic
+{"id": "m512_p7168_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p7168_unfused_diagnostic
+{"id": "m512_p7168_unfused_diagnostic", "status": "passed", "error": null, "power_error": null}

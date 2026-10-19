@@ -1,0 +1,3 @@
+{"channels": 384, "checks_so_far": 60, "passed_so_far": true}
+{"channels": 896, "checks_so_far": 120, "passed_so_far": true}
+{"status": "passed", "checks": 120, "output": "experiments/ffn_partition/results/swiglu_fusion/exact_m512.json"}

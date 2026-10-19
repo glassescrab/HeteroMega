@@ -1,0 +1,396 @@
+# Lowered artifact excerpts
+Source: final.prj/input_with_addresses.mlir
+SHA256: 3920115ffc9ab1848bb328c94f7c7dc48afa9829d30a6f27b329eff2d3b4bbca
+578:     %swiglu_gate_0_0_buff_0 = aie.buffer(%tile_0_2) {address = 35008 : i32, sym_name = "swiglu_gate_0_0_buff_0"} : memref<1024xbf16>  loc(#loc53)
+579:     %swiglu_gate_0_0_buff_1 = aie.buffer(%tile_0_2) {address = 37056 : i32, sym_name = "swiglu_gate_0_0_buff_1"} : memref<1024xbf16>  loc(#loc53)
+811:     aie.flow(%tile_1_2, DMA : 0, %mem_tile_1_1, DMA : 2) loc(#loc22)
+812:     aie.flow(%tile_1_3, DMA : 0, %mem_tile_1_1, DMA : 3) loc(#loc20)
+813:     aie.flow(%tile_1_4, DMA : 0, %mem_tile_1_1, DMA : 4) loc(#loc19)
+814:     aie.flow(%tile_1_5, DMA : 0, %mem_tile_1_1, DMA : 5) loc(#loc17)
+816:     aie.flow(%tile_3_2, DMA : 0, %mem_tile_3_1, DMA : 2) loc(#loc15)
+817:     aie.flow(%tile_3_3, DMA : 0, %mem_tile_3_1, DMA : 3) loc(#loc14)
+818:     aie.flow(%tile_3_4, DMA : 0, %mem_tile_3_1, DMA : 4) loc(#loc13)
+819:     aie.flow(%tile_3_5, DMA : 0, %mem_tile_3_1, DMA : 5) loc(#loc12)
+821:     aie.flow(%tile_5_2, DMA : 0, %mem_tile_5_1, DMA : 1) loc(#loc10)
+822:     aie.flow(%tile_5_3, DMA : 0, %mem_tile_5_1, DMA : 2) loc(#loc9)
+823:     aie.flow(%tile_5_4, DMA : 0, %mem_tile_5_1, DMA : 3) loc(#loc8)
+824:     aie.flow(%tile_5_5, DMA : 0, %mem_tile_5_1, DMA : 4) loc(#loc7)
+826:     aie.flow(%tile_7_2, DMA : 0, %mem_tile_7_1, DMA : 1) loc(#loc5)
+827:     aie.flow(%tile_7_3, DMA : 0, %mem_tile_7_1, DMA : 2) loc(#loc4)
+828:     aie.flow(%tile_7_4, DMA : 0, %mem_tile_7_1, DMA : 3) loc(#loc3)
+829:     aie.flow(%tile_7_5, DMA : 0, %mem_tile_7_1, DMA : 4) loc(#loc2)
+975:       cf.br ^bb14(%swiglu_gate_0_0_buff_0 : memref<1024xbf16>) loc(#loc159)
+977:       cf.br ^bb14(%swiglu_gate_0_0_buff_1 : memref<1024xbf16>) loc(#loc159)
+979:       cf.br ^bb14(%swiglu_gate_0_0_buff_0 : memref<1024xbf16>) loc(#loc159)
+1284:       cf.br ^bb14(%swiglu_gate_0_0_buff_0 : memref<1024xbf16>) loc(#loc224)
+1286:       cf.br ^bb14(%swiglu_gate_0_0_buff_1 : memref<1024xbf16>) loc(#loc224)
+1288:       cf.br ^bb14(%swiglu_gate_0_0_buff_0 : memref<1024xbf16>) loc(#loc224)
+1305:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_1_0, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc227)
+1402:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_1_1, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc247)
+1499:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_1_2, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc267)
+1596:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_1_3, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc287)
+2001:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_3_0, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc371)
+2098:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_3_1, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc391)
+2195:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_3_2, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc411)
+2292:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_3_3, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc431)
+2697:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_5_0, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc515)
+2794:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_5_1, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc535)
+2891:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_5_2, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc555)
+2988:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_5_3, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc575)
+3393:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_7_0, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc659)
+3490:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_7_1, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc679)
+3587:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_7_2, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc699)
+3684:       func.call @silu_mul_bf16(%20, %swiglu_up_bf16_7_3, %23) : (memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) -> () loc(#loc719)
+5580:     aie.shim_dma_allocation @swiglu_z_host_1_shim_alloc(%shim_noc_tile_1_0, S2MM, 0) loc(#loc23)
+5581:     aie.shim_dma_allocation @swiglu_z_host_3_shim_alloc(%shim_noc_tile_3_0, S2MM, 0) loc(#loc16)
+5582:     aie.shim_dma_allocation @swiglu_z_host_5_shim_alloc(%shim_noc_tile_5_0, S2MM, 0) loc(#loc11)
+5583:     aie.shim_dma_allocation @swiglu_z_host_7_shim_alloc(%shim_noc_tile_7_0, S2MM, 0) loc(#loc6)
+
+# Compute tile 0_2 DMA region
+      %c1_i32 = arith.constant 1 : i32 loc(#loc147)
+      %0 = aie.dma_start(S2MM, 0, ^bb1, ^bb3) loc(#loc61)
+    ^bb1:  // 2 preds: ^bb0, ^bb2
+      aie.use_lock(%swiglu_a_broadcast_0_0_cons_prod_lock_0, AcquireGreaterEqual, %c1_i32) loc(#loc61)
+      aie.dma_bd(%swiglu_a_broadcast_0_0_cons_buff_0 : memref<4096xbf16> offset = 0 len = 4096) {bd_id = 0 : i32, next_bd_id = 1 : i32} loc(#loc61)
+      aie.use_lock(%swiglu_a_broadcast_0_0_cons_cons_lock_0, Release, %c1_i32) loc(#loc61)
+      aie.next_bd ^bb2 loc(#loc61)
+    ^bb2:  // pred: ^bb1
+      aie.use_lock(%swiglu_a_broadcast_0_0_cons_prod_lock_0, AcquireGreaterEqual, %c1_i32) loc(#loc61)
+      aie.dma_bd(%swiglu_a_broadcast_0_0_cons_buff_1 : memref<4096xbf16> offset = 0 len = 4096) {bd_id = 1 : i32, next_bd_id = 0 : i32} loc(#loc61)
+      aie.use_lock(%swiglu_a_broadcast_0_0_cons_cons_lock_0, Release, %c1_i32) loc(#loc61)
+      aie.next_bd ^bb1 loc(#loc61)
+    ^bb3:  // pred: ^bb0
+      %1 = aie.dma_start(S2MM, 1, ^bb4, ^bb6) loc(#loc37)
+    ^bb4:  // 2 preds: ^bb3, ^bb5
+      aie.use_lock(%swiglu_w_broadcast_0_0_cons_prod_lock_0, AcquireGreaterEqual, %c1_i32) loc(#loc37)
+      aie.dma_bd(%swiglu_w_broadcast_0_0_cons_buff_0 : memref<2144xui8> offset = 0 len = 2144) {bd_id = 2 : i32, next_bd_id = 3 : i32} loc(#loc37)
+      aie.use_lock(%swiglu_w_broadcast_0_0_cons_cons_lock_0, Release, %c1_i32) loc(#loc37)
+      aie.next_bd ^bb5 loc(#loc37)
+    ^bb5:  // pred: ^bb4
+      aie.use_lock(%swiglu_w_broadcast_0_0_cons_prod_lock_0, AcquireGreaterEqual, %c1_i32) loc(#loc37)
+      aie.dma_bd(%swiglu_w_broadcast_0_0_cons_buff_1 : memref<2144xui8> offset = 0 len = 2144) {bd_id = 3 : i32, next_bd_id = 2 : i32} loc(#loc37)
+      aie.use_lock(%swiglu_w_broadcast_0_0_cons_cons_lock_0, Release, %c1_i32) loc(#loc37)
+      aie.next_bd ^bb4 loc(#loc37)
+    ^bb6:  // pred: ^bb3
+      aie.end loc(#loc61)
+
+
+# Core 0_2 ELF sections (readelf -SW)
+There are 7 section headers, starting at offset 0x1a74:
+
+Section Headers:
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+  [ 1] .text             PROGBITS        00000000 000080 001210 00  AX  0   0 16
+  [ 2] .comment          PROGBITS        00000000 001290 0000c5 01  MS  0   0  1
+  [ 3] .symtab           SYMTAB          00000000 001358 000340 10      5  21  4
+  [ 4] .shstrtab         STRTAB          00000000 001698 000037 00      0   0  1
+  [ 5] .strtab           STRTAB          00000000 0016cf 00039e 00      0   0  1
+  [ 6] .stack_sizes      PROGBITS        00000000 001a6d 000005 00   L  1   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  D (mbind), p (processor specific)
+
+
+# Core 0_2 linker script
+
+MEMORY
+{
+   program (RX) : ORIGIN = 0, LENGTH = 0x0020000
+   data (!RX) : ORIGIN = 0x798C0, LENGTH = 0x6740
+}
+ENTRY(__start)
+SECTIONS
+{
+  . = 0x0;
+  .text : {
+     /* the __start symbol has to come at address zero. */
+     *crt0.o(.text*)
+     _ctors_start = .;
+     _init_array_start = .;
+     KEEP(SORT(*.init_array))
+     _ctors_end = .;
+     _init_array_end = .;
+     _dtors_start = .;
+     _dtors_end = .;
+     *(.text*)
+  } > program
+  .data : {
+     *(.data*)
+     *(.rodata*)
+  } > data
+  .comment : {
+     *(.comment*)
+  }
+  .symtab : {
+     *(.symtab)
+  }
+  .shstrtab : {
+     *(.shstrtab)
+  }
+  .strtab : {
+     *(.strtab)
+  }
+  .stack_sizes : {
+     *(.stack_sizes)
+  }
+
+. = 0x70000;
+_sp_start_value_DM_stack = .;
+. += 0x800; /* stack */
+/* No tile with memory exists to the south. */
+. = 0x40000;
+. += 0x10000;
+/* No tile with memory exists to the west. */
+. = 0x50000;
+. += 0x10000;
+. = 0x67800;
+swiglu_w_broadcast_0_1_cons_buff_0 = .;
+. += 0x860;
+. = 0x68060;
+swiglu_w_broadcast_0_1_cons_buff_1 = .;
+. += 0x860;
+. = 0x688C0;
+swiglu_gate_0_1_buff_0 = .;
+. += 0x800;
+. = 0x690C0;
+swiglu_gate_0_1_buff_1 = .;
+. += 0x800;
+. = 0x60800;
+swiglu_a_broadcast_1_0_cons_buff_0 = .;
+. += 0x2000;
+. = 0x62800;
+swiglu_a_broadcast_1_0_cons_buff_1 = .;
+. += 0x2000;
+. = 0x66800;
+swiglu_acc_0_1 = .;
+. += 0x1000;
+. = 0x64800;
+swiglu_dequant_0_1 = .;
+. += 0x2000;
+. = 0x77800;
+swiglu_w_broadcast_0_0_cons_buff_0 = .;
+. += 0x860;
+. = 0x78060;
+swiglu_w_broadcast_0_0_cons_buff_1 = .;
+. += 0x860;
+. = 0x788C0;
+swiglu_gate_0_0_buff_0 = .;
+. += 0x800;
+. = 0x790C0;
+swiglu_gate_0_0_buff_1 = .;
+. += 0x800;
+. = 0x70800;
+swiglu_a_broadcast_0_0_cons_buff_0 = .;
+. += 0x2000;
+. = 0x72800;
+swiglu_a_broadcast_0_0_cons_buff_1 = .;
+. += 0x2000;
+. = 0x76800;
+swiglu_acc_0_0 = .;
+. += 0x1000;
+. = 0x74800;
+swiglu_dequant_0_0 = .;
+. += 0x2000;
+  .bss : { *(.bss*) } > data
+}
+INPUT(/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_swiglu_array8_m128_k128_p128_6975d0ccfe57/final.prj/w4a16_prefill_reuse_4aceceb605b57b4ca224dee4b1c4b4ec8d5013225262cf8232ffbb3dc0c33ee7_r2.o)
+PROVIDE(main = core_0_2);
+
+
+# Compute tile 1_2 DMA region
+      %c1_i32 = arith.constant 1 : i32 loc(#loc147)
+      %0 = aie.dma_start(S2MM, 0, ^bb1, ^bb3) loc(#loc61)
+    ^bb1:  // 2 preds: ^bb0, ^bb2
+      aie.use_lock(%swiglu_a_broadcast_0_1_cons_prod_lock_0, AcquireGreaterEqual, %c1_i32) loc(#loc61)
+      aie.dma_bd(%swiglu_a_broadcast_0_1_cons_buff_0 : memref<4096xbf16> offset = 0 len = 4096) {bd_id = 0 : i32, next_bd_id = 1 : i32} loc(#loc61)
+      aie.use_lock(%swiglu_a_broadcast_0_1_cons_cons_lock_0, Release, %c1_i32) loc(#loc61)
+      aie.next_bd ^bb2 loc(#loc61)
+    ^bb2:  // pred: ^bb1
+      aie.use_lock(%swiglu_a_broadcast_0_1_cons_prod_lock_0, AcquireGreaterEqual, %c1_i32) loc(#loc61)
+      aie.dma_bd(%swiglu_a_broadcast_0_1_cons_buff_1 : memref<4096xbf16> offset = 0 len = 4096) {bd_id = 1 : i32, next_bd_id = 0 : i32} loc(#loc61)
+      aie.use_lock(%swiglu_a_broadcast_0_1_cons_cons_lock_0, Release, %c1_i32) loc(#loc61)
+      aie.next_bd ^bb1 loc(#loc61)
+    ^bb3:  // pred: ^bb0
+      %1 = aie.dma_start(S2MM, 1, ^bb4, ^bb6) loc(#loc36)
+    ^bb4:  // 2 preds: ^bb3, ^bb5
+      aie.use_lock(%swiglu_w_broadcast_1_0_cons_prod_lock_0, AcquireGreaterEqual, %c1_i32) loc(#loc36)
+      aie.dma_bd(%swiglu_w_broadcast_1_0_cons_buff_0 : memref<2144xui8> offset = 0 len = 2144) {bd_id = 2 : i32, next_bd_id = 3 : i32} loc(#loc36)
+      aie.use_lock(%swiglu_w_broadcast_1_0_cons_cons_lock_0, Release, %c1_i32) loc(#loc36)
+      aie.next_bd ^bb5 loc(#loc36)
+    ^bb5:  // pred: ^bb4
+      aie.use_lock(%swiglu_w_broadcast_1_0_cons_prod_lock_0, AcquireGreaterEqual, %c1_i32) loc(#loc36)
+      aie.dma_bd(%swiglu_w_broadcast_1_0_cons_buff_1 : memref<2144xui8> offset = 0 len = 2144) {bd_id = 3 : i32, next_bd_id = 2 : i32} loc(#loc36)
+      aie.use_lock(%swiglu_w_broadcast_1_0_cons_cons_lock_0, Release, %c1_i32) loc(#loc36)
+      aie.next_bd ^bb4 loc(#loc36)
+    ^bb6:  // pred: ^bb3
+      %2 = aie.dma_start(MM2S, 0, ^bb7, ^bb9) loc(#loc22)
+    ^bb7:  // 2 preds: ^bb6, ^bb8
+      aie.use_lock(%swiglu_z_worker_1_0_cons_lock_0, AcquireGreaterEqual, %c1_i32) loc(#loc22)
+      aie.dma_bd(%swiglu_z_worker_1_0_buff_0 : memref<1024xbf16> offset = 0 len = 1024) {bd_id = 4 : i32, next_bd_id = 5 : i32} loc(#loc22)
+      aie.use_lock(%swiglu_z_worker_1_0_prod_lock_0, Release, %c1_i32) loc(#loc22)
+      aie.next_bd ^bb8 loc(#loc22)
+    ^bb8:  // pred: ^bb7
+      aie.use_lock(%swiglu_z_worker_1_0_cons_lock_0, AcquireGreaterEqual, %c1_i32) loc(#loc22)
+      aie.dma_bd(%swiglu_z_worker_1_0_buff_1 : memref<1024xbf16> offset = 0 len = 1024) {bd_id = 5 : i32, next_bd_id = 4 : i32} loc(#loc22)
+      aie.use_lock(%swiglu_z_worker_1_0_prod_lock_0, Release, %c1_i32) loc(#loc22)
+      aie.next_bd ^bb7 loc(#loc22)
+    ^bb9:  // pred: ^bb6
+      aie.end loc(#loc61)
+
+
+# Core 1_2 ELF sections (readelf -SW)
+There are 8 section headers, starting at offset 0x2fcc:
+
+Section Headers:
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+  [ 1] .text             PROGBITS        00000000 0000a0 0014c0 00  AX  0   0 16
+  [ 2] .data             PROGBITS        0007a0c0 001580 001000 00  WA  0   0 64
+  [ 3] .comment          PROGBITS        00000000 002580 0000c5 01  MS  0   0  1
+  [ 4] .symtab           SYMTAB          00000000 002648 000440 10      6  26  4
+  [ 5] .shstrtab         STRTAB          00000000 002a88 00003d 00      0   0  1
+  [ 6] .strtab           STRTAB          00000000 002ac5 000500 00      0   0  1
+  [ 7] .stack_sizes      PROGBITS        00000000 002fc5 000005 00   L  1   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  D (mbind), p (processor specific)
+
+
+# Core 1_2 linker script
+
+MEMORY
+{
+   program (RX) : ORIGIN = 0, LENGTH = 0x0020000
+   data (!RX) : ORIGIN = 0x7A0C0, LENGTH = 0x5F40
+}
+ENTRY(__start)
+SECTIONS
+{
+  . = 0x0;
+  .text : {
+     /* the __start symbol has to come at address zero. */
+     *crt0.o(.text*)
+     _ctors_start = .;
+     _init_array_start = .;
+     KEEP(SORT(*.init_array))
+     _ctors_end = .;
+     _init_array_end = .;
+     _dtors_start = .;
+     _dtors_end = .;
+     *(.text*)
+  } > program
+  .data : {
+     *(.data*)
+     *(.rodata*)
+  } > data
+  .comment : {
+     *(.comment*)
+  }
+  .symtab : {
+     *(.symtab)
+  }
+  .shstrtab : {
+     *(.shstrtab)
+  }
+  .strtab : {
+     *(.strtab)
+  }
+  .stack_sizes : {
+     *(.stack_sizes)
+  }
+
+. = 0x70000;
+_sp_start_value_DM_stack = .;
+. += 0x800; /* stack */
+/* No tile with memory exists to the south. */
+. = 0x40000;
+. += 0x10000;
+. = 0x57800;
+swiglu_w_broadcast_0_0_cons_buff_0 = .;
+. += 0x860;
+. = 0x58060;
+swiglu_w_broadcast_0_0_cons_buff_1 = .;
+. += 0x860;
+. = 0x588C0;
+swiglu_gate_0_0_buff_0 = .;
+. += 0x800;
+. = 0x590C0;
+swiglu_gate_0_0_buff_1 = .;
+. += 0x800;
+. = 0x50800;
+swiglu_a_broadcast_0_0_cons_buff_0 = .;
+. += 0x2000;
+. = 0x52800;
+swiglu_a_broadcast_0_0_cons_buff_1 = .;
+. += 0x2000;
+. = 0x56800;
+swiglu_acc_0_0 = .;
+. += 0x1000;
+. = 0x54800;
+swiglu_dequant_0_0 = .;
+. += 0x2000;
+. = 0x688C0;
+swiglu_z_worker_1_1_buff_0 = .;
+. += 0x800;
+. = 0x690C0;
+swiglu_z_worker_1_1_buff_1 = .;
+. += 0x800;
+. = 0x67800;
+swiglu_w_broadcast_1_1_cons_buff_0 = .;
+. += 0x860;
+. = 0x68060;
+swiglu_w_broadcast_1_1_cons_buff_1 = .;
+. += 0x860;
+. = 0x60800;
+swiglu_a_broadcast_1_1_cons_buff_0 = .;
+. += 0x2000;
+. = 0x62800;
+swiglu_a_broadcast_1_1_cons_buff_1 = .;
+. += 0x2000;
+. = 0x66800;
+swiglu_acc_1_1 = .;
+. += 0x1000;
+. = 0x64800;
+swiglu_dequant_1_1 = .;
+. += 0x2000;
+. = 0x698C0;
+swiglu_up_bf16_1_1 = .;
+. += 0x800;
+. = 0x788C0;
+swiglu_z_worker_1_0_buff_0 = .;
+. += 0x800;
+. = 0x790C0;
+swiglu_z_worker_1_0_buff_1 = .;
+. += 0x800;
+. = 0x77800;
+swiglu_w_broadcast_1_0_cons_buff_0 = .;
+. += 0x860;
+. = 0x78060;
+swiglu_w_broadcast_1_0_cons_buff_1 = .;
+. += 0x860;
+. = 0x70800;
+swiglu_a_broadcast_0_1_cons_buff_0 = .;
+. += 0x2000;
+. = 0x72800;
+swiglu_a_broadcast_0_1_cons_buff_1 = .;
+. += 0x2000;
+. = 0x76800;
+swiglu_acc_1_0 = .;
+. += 0x1000;
+. = 0x74800;
+swiglu_dequant_1_0 = .;
+. += 0x2000;
+. = 0x798C0;
+swiglu_up_bf16_1_0 = .;
+. += 0x800;
+  .bss : { *(.bss*) } > data
+}
+INPUT(/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_swiglu_array8_m128_k128_p128_6975d0ccfe57/final.prj/w4a16_prefill_reuse_4aceceb605b57b4ca224dee4b1c4b4ec8d5013225262cf8232ffbb3dc0c33ee7_r2.o)
+INPUT(/notebooks/HeteroMega/experiments/ffn_partition/artifacts/build_swiglu_array8_m128_k128_p128_6975d0ccfe57/final.prj/silu_mul_1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc_t1024.o)
+PROVIDE(main = core_1_2);
+

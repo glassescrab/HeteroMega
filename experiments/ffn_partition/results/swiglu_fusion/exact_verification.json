@@ -1,0 +1,341 @@
+{
+  "status": "passed",
+  "verification_kind": "independent offline audit of saved hardware reports",
+  "verified_at_utc": "2026-10-19T02:00:42.689231+00:00",
+  "auditor_script": "verify_exact.py",
+  "script_sha256": "7fc3714e542801f9bef87718cdf24b6c4758f3f8d9996e09465cf91aa8105a13",
+  "verification_numpy": "2.5.4",
+  "total_completed_report_checks": 180,
+  "cross_variant_exact_bit_comparisons": 24,
+  "completed_npu_dispatches": 60,
+  "reports": [
+    {
+      "file": "exact_smoke.json",
+      "sha256": "57f71117fc55e9601dc885e6ca71a2c4dd613acb220e734e5aed6e8568dcc587",
+      "recorded_status": "passed",
+      "checks": 60,
+      "recorded_all_passed": true,
+      "source_hashes_match_current_tree": {
+        "experiments/ffn_partition/check_swiglu.py": true,
+        "experiments/ffn_partition/npu_backend.py": true,
+        "experiments/ffn_partition/contract.py": true,
+        "npu/ffn/xrt_runner.py": true,
+        "npu/ffn/reference.py": true,
+        "npu/ffn/prefill_reference.py": true
+      },
+      "cross_variant_exact_bit_comparisons": 8,
+      "completed_npu_dispatches": 20,
+      "max_cpu_errors": {
+        "z": {
+          "relative_l2_error": 0.0028586879760813593,
+          "max_abs_error": 0.125
+        },
+        "ffn": {
+          "relative_l2_error": 0.003318029883364732,
+          "max_abs_error": 0.0625
+        }
+      },
+      "cases": [
+        {
+          "m": 128,
+          "hidden": 128,
+          "channels": 128,
+          "checks": 60,
+          "input_and_weight_hashes_regenerated": true,
+          "cross_variant_bit_comparisons": 8,
+          "variants": {
+            "gate_up_then_silu": {
+              "launches_per_invocation": 3,
+              "completed_dispatches": 12,
+              "weight_uploads": {
+                "gate_up": 1,
+                "down": 1
+              },
+              "artifact_contracts": [
+                {
+                  "stage": "gate_up",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "094db57e2a65b8cee551606270637207123a338fbeecad44915613ec8435ac99",
+                  "insts_sha256": "d7f5dba2a9359fb256d507c3c1b292db8e7905d348f6781c1c27fd1123d85dc6"
+                },
+                {
+                  "stage": "down",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "8a311ba5aef30bf89f43cf9b290ee93d58483a38f2688776ae066e2c9fa794ee",
+                  "insts_sha256": "c62cb1c60f0197792e14af6dcd9262e91c382e97b44b87e07aea681668bb6e92"
+                },
+                {
+                  "stage": "silu_mul",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "cba9f87f08a1e9dbcfaab232aec475c65ce8467f9e71f9260cc296fd2e92f8c6",
+                  "insts_sha256": "c34ac0e4e1c414ee5301f3e9fb53b0e399d0e9625d1d82bdce316bd4bd18811c"
+                }
+              ]
+            },
+            "onchip_swiglu": {
+              "launches_per_invocation": 2,
+              "completed_dispatches": 8,
+              "weight_uploads": {
+                "swiglu": 1,
+                "down": 1
+              },
+              "artifact_contracts": [
+                {
+                  "stage": "swiglu",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "654a6888b90dbc602fec23cb960e5702b8bf9b41c0157f2c6fccb048ecb84dab",
+                  "insts_sha256": "69eb4cac350c42e3d8640b648809936bcb8629d42bb11a3b15b4aaff2d2d9b9c"
+                },
+                {
+                  "stage": "down",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "8a311ba5aef30bf89f43cf9b290ee93d58483a38f2688776ae066e2c9fa794ee",
+                  "insts_sha256": "c62cb1c60f0197792e14af6dcd9262e91c382e97b44b87e07aea681668bb6e92"
+                }
+              ]
+            }
+          },
+          "artifact_source_files_verified": [
+            "npu/ffn/prefill_gate_up_schedule.py",
+            "npu/ffn/prefill_schedule.py",
+            "npu/ffn/prefill_swiglu_schedule.py",
+            "npu/ffn/silu_mul.cc",
+            "npu/ffn/silu_mul.py",
+            "npu/ffn/w4a16_gate_up.py",
+            "npu/ffn/w4a16_prefill_reuse.cc",
+            "npu/ffn/w4a16_prefill_reuse.py",
+            "npu/ffn/w4a16_swiglu.py"
+          ]
+        }
+      ],
+      "power_boundary_snapshots": [
+        {
+          "file": "power_before_smoke.json",
+          "sha256": "db8736e94b01f6b44a436d29613801d8eaa919a887447f7a1a1b0ea268beb680",
+          "device_id": "0000:66:00.1",
+          "mode": "default",
+          "timestamp_utc": "2026-10-19T01:45:57+00:00",
+          "electrical_measurement_available": false
+        },
+        {
+          "file": "power_after_smoke.json",
+          "sha256": "0a129167af5ba147132098390ee5437afcf4bf02e757f55481172ca7d3e56e7c",
+          "device_id": "0000:66:00.1",
+          "mode": "default",
+          "timestamp_utc": "2026-10-19T01:46:49+00:00",
+          "electrical_measurement_available": false
+        }
+      ]
+    },
+    {
+      "file": "exact_m512.json",
+      "sha256": "70e13e0329335cce9485815dd29accec939d985ef7c7fd299fa7ed1482c06ac6",
+      "recorded_status": "passed",
+      "checks": 120,
+      "recorded_all_passed": true,
+      "source_hashes_match_current_tree": {
+        "experiments/ffn_partition/check_swiglu.py": true,
+        "experiments/ffn_partition/npu_backend.py": true,
+        "experiments/ffn_partition/contract.py": true,
+        "npu/ffn/xrt_runner.py": true,
+        "npu/ffn/reference.py": true,
+        "npu/ffn/prefill_reference.py": true
+      },
+      "cross_variant_exact_bit_comparisons": 16,
+      "completed_npu_dispatches": 40,
+      "max_cpu_errors": {
+        "z": {
+          "relative_l2_error": 0.0028061076402225264,
+          "max_abs_error": 0.0625
+        },
+        "ffn": {
+          "relative_l2_error": 0.003556346075093289,
+          "max_abs_error": 0.03125
+        }
+      },
+      "cases": [
+        {
+          "m": 512,
+          "hidden": 4096,
+          "channels": 384,
+          "checks": 60,
+          "input_and_weight_hashes_regenerated": true,
+          "cross_variant_bit_comparisons": 8,
+          "variants": {
+            "gate_up_then_silu": {
+              "launches_per_invocation": 3,
+              "completed_dispatches": 12,
+              "weight_uploads": {
+                "gate_up": 1,
+                "down": 1
+              },
+              "artifact_contracts": [
+                {
+                  "stage": "gate_up",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "ccdaaa8ff76106f437aef149e7a103e12e7effcede17dfd5c0ce5d49f5164331",
+                  "insts_sha256": "57175ff2900e13d08a49869156d1f5daf3c63893c523c0797d4853b94b38d7d3"
+                },
+                {
+                  "stage": "down",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "31116645cc4c5bfa99a809c847d137e2e28b3b32d0332362ef90363adf965d0c",
+                  "insts_sha256": "63f98552d2cdcae209377f5017e184f90f9e25be876dc9f5f8b551add128ea44"
+                },
+                {
+                  "stage": "silu_mul",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "9a4b707639a9020c40c19b4516d3c8fbb219a82f5c9d20f299967bb69909e709",
+                  "insts_sha256": "82b75757ebefcbf6841595e048e444047ce547ae3bdf0df4720cc181f6d6e77e"
+                }
+              ]
+            },
+            "onchip_swiglu": {
+              "launches_per_invocation": 2,
+              "completed_dispatches": 8,
+              "weight_uploads": {
+                "swiglu": 1,
+                "down": 1
+              },
+              "artifact_contracts": [
+                {
+                  "stage": "swiglu",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "ca13f9c420d4a563c432edc69520d86f8e6a6ca8ec9ad7dcd4a8635cf8ea2b04",
+                  "insts_sha256": "7e567d342d015197187ad1f5921e4126576a043d1d7a3afeed7e1907e1c42fd2"
+                },
+                {
+                  "stage": "down",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "31116645cc4c5bfa99a809c847d137e2e28b3b32d0332362ef90363adf965d0c",
+                  "insts_sha256": "63f98552d2cdcae209377f5017e184f90f9e25be876dc9f5f8b551add128ea44"
+                }
+              ]
+            }
+          },
+          "artifact_source_files_verified": [
+            "npu/ffn/prefill_gate_up_schedule.py",
+            "npu/ffn/prefill_schedule.py",
+            "npu/ffn/prefill_swiglu_schedule.py",
+            "npu/ffn/silu_mul.cc",
+            "npu/ffn/silu_mul.py",
+            "npu/ffn/w4a16_gate_up.py",
+            "npu/ffn/w4a16_prefill_reuse.cc",
+            "npu/ffn/w4a16_prefill_reuse.py",
+            "npu/ffn/w4a16_swiglu.py"
+          ]
+        },
+        {
+          "m": 512,
+          "hidden": 4096,
+          "channels": 896,
+          "checks": 60,
+          "input_and_weight_hashes_regenerated": true,
+          "cross_variant_bit_comparisons": 8,
+          "variants": {
+            "gate_up_then_silu": {
+              "launches_per_invocation": 3,
+              "completed_dispatches": 12,
+              "weight_uploads": {
+                "gate_up": 1,
+                "down": 1
+              },
+              "artifact_contracts": [
+                {
+                  "stage": "gate_up",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "da5ec40e09964935807fe45ba37452f7bc1f5aa0a564ec61882299ca47f77dbf",
+                  "insts_sha256": "0f1303f12b94823d29c9aefc2f484f5288009c8547fb82b225517dbdca8bbc78"
+                },
+                {
+                  "stage": "down",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "f9e1b7902d128d2ecd4b205897a59e642723099159f453b844e3177fdc62e45c",
+                  "insts_sha256": "cee444e9b3971532c92946b2495ae1fe2e244de41437af50fc417f0132d89fd7"
+                },
+                {
+                  "stage": "silu_mul",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "023040b211a42564cfdbda7c041f27fd508fee3a5ecd44fd648bc888a2ef5320",
+                  "insts_sha256": "2043101cfa24dfcc3e1c8583d016bd8a8cfed8c0c309a16a6ac9f740e45ad011"
+                }
+              ]
+            },
+            "onchip_swiglu": {
+              "launches_per_invocation": 2,
+              "completed_dispatches": 8,
+              "weight_uploads": {
+                "swiglu": 1,
+                "down": 1
+              },
+              "artifact_contracts": [
+                {
+                  "stage": "swiglu",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "4524b6a300e20191807d031d57511edf94327d0f946e7619a9e8bd1334cf9b0a",
+                  "insts_sha256": "8873b623e871480531c3dec33766e49d3d892bd5b2d84d8546fa5171ae357a9d"
+                },
+                {
+                  "stage": "down",
+                  "source_and_build_contract_match": true,
+                  "xclbin_sha256": "f9e1b7902d128d2ecd4b205897a59e642723099159f453b844e3177fdc62e45c",
+                  "insts_sha256": "cee444e9b3971532c92946b2495ae1fe2e244de41437af50fc417f0132d89fd7"
+                }
+              ]
+            }
+          },
+          "artifact_source_files_verified": [
+            "npu/ffn/prefill_gate_up_schedule.py",
+            "npu/ffn/prefill_schedule.py",
+            "npu/ffn/prefill_swiglu_schedule.py",
+            "npu/ffn/silu_mul.cc",
+            "npu/ffn/silu_mul.py",
+            "npu/ffn/w4a16_gate_up.py",
+            "npu/ffn/w4a16_prefill_reuse.cc",
+            "npu/ffn/w4a16_prefill_reuse.py",
+            "npu/ffn/w4a16_swiglu.py"
+          ]
+        }
+      ],
+      "power_boundary_snapshots": [
+        {
+          "file": "power_before_exact_retry.json",
+          "sha256": "f2b5e9eb3e4c246ea4946845ec38efe8653126768653a75ecdf876518bb18b77",
+          "device_id": "0000:66:00.1",
+          "mode": "default",
+          "timestamp_utc": "2026-10-19T01:51:26+00:00",
+          "electrical_measurement_available": false
+        },
+        {
+          "file": "power_after_exact_retry.json",
+          "sha256": "ec2d462e6e10ef920b45941eea013c2d6a9358aa4454895f4212f6278058d994",
+          "device_id": "0000:66:00.1",
+          "mode": "default",
+          "timestamp_utc": "2026-10-19T01:52:31+00:00",
+          "electrical_measurement_available": false
+        }
+      ]
+    }
+  ],
+  "excluded_incomplete_report": {
+    "file": "exact_m512_interrupted.json",
+    "sha256": "652b86c76b38d11339c497a09883ae22fc359d5c2bc0d71109fe6e24b1914e88",
+    "status": "preparing",
+    "checks": 0,
+    "reason": "interrupted before case completion; excluded from successful check/launch totals"
+  },
+  "baseline_source_archive": {
+    "archive_sha256": "e7694d46ff21721e4eb8359f876eb6a76503d79ede75ee39c31a7bdbf5bc64a4",
+    "files_verified": 26,
+    "matches_manifest": true
+  },
+  "limitations": [
+    "Native output arrays and compiled binaries are not in this downloaded evidence set: exact-bit and numerical findings are cross-checked against saved metrics/hashes, not recomputed from device output bytes.",
+    "Inputs and canonical weights were independently regenerated from recorded seeds and matched saved hashes.",
+    "Artifact source/build contracts were recomputed against current source; binary hash strings were checked for format and recording, not independently rehashed from absent binaries.",
+    "Both before/after snapshots report default mode. They are not continuous power or clock monitoring; performance mode is not established.",
+    "Electrical telemetry reports unsupported operation; no measured watts or energy is available.",
+    "These are NPU-only correctness runs, not timing, whole-model accuracy, or end-to-end prefill measurements."
+  ],
+  "failures": []
+}

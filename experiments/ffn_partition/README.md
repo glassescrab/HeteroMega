@@ -14,6 +14,25 @@ after. Performance-mode configuration was rejected by the host. See
 [power checks and device/launch timing](POWER_TIMING.md); other prompt
 lengths and allocations have important limits.
 
+The opt-in combined gate/up projection and denser ratio sweep are documented
+in [fusion results and operation graphs](FUSION_RESULTS.md). The separate
+projection path remains available as the default comparison.
+
+`--fuse-swiglu` extends that fusion through SiLU and multiplication, keeping
+gate/up intermediates in adjacent NPU tile memory. It uses two NPU launches:
+SwiGLU, then down. See the [architecture](../../npu/ffn/SWIGLU.md) and
+[hardware validation and latency comparison](SWIGLU_RESULTS.md).
+
+For the measured `M512/H4096/I14336` workload, the three-launch
+`--fuse-gate-up` control has a competitive P768–896 region. The newer
+two-launch path's working candidate is `--fuse-swiglu --npu-channels 1152`;
+retain P1024 as a close alternative. A 50-sample confirmation measured
+19.643 ms versus 22.293 ms GPU-only (1.1349x) on HX370 in `default` mode.
+Fresh controls, stage graphs and the separate repeat are in
+[SWIGLU_RESULTS.md](SWIGLU_RESULTS.md). Other prompt lengths and the actual
+model schedule need retuning; these measurements do not establish a global
+optimum.
+
 This is **prefill only**. It does not execute attention, normalization, residual
 addition, an entire decoder layer, or model inference. FFN latency here is not
 end-to-end prefill latency or time to first token.
@@ -62,8 +81,8 @@ Compilation, one-time setup allocations, weight generation, initial
 packing/upload of fixed weights, input preparation, and correctness-reference
 evaluation are setup costs outside the timer. Device buffers and fixed weights
 are reused across invocations. CPU staging-buffer allocations performed during
-an invocation are inside its timer. The NPU branch uploads each of its three
-weights once during preparation.
+an invocation are inside its timer. The NPU branch uploads fixed weights once
+during preparation: three BOs normally, or two with combined gate/up.
 
 Report measured complete-invocation samples and their median, p10, p90, and
 range. A dispatch/wait interval is a host interval, not a hardware cycle count.
@@ -74,7 +93,7 @@ intervals must not be added together to reconstruct overlapping wall time.
 
 ## Current NPU path and its limits
 
-Each NPU FFN invocation performs four actual launches: gate, up, fused
+By default each NPU FFN invocation performs four actual launches: gate, up, fused
 SiLU/multiply, and down. It uses the source-built MLIR-AIE kernels under
 [`npu/ffn`](../../npu/ffn/PREFILL.md). There is no CPU arithmetic fallback.
 
@@ -88,8 +107,10 @@ projection input layout using an exact permutation of uint16 bits:
 The permutation groups four N32 tiles into one K128 tile. Pointwise SiLU and
 multiplication can operate directly in the packed projection-output order.
 
-Channel ownership persists logically through the branch, but intermediates
-do not stay in NPU on-chip memory. GPU and XRT buffers are separate allocations
+Channel ownership persists logically through the branch. The default path
+stages intermediates through host memory; `--fuse-swiglu` keeps gate/up outputs
+on-chip through pointwise work, but still stages Z before down.
+GPU and XRT buffers are separate allocations
 with explicit staging. Shared physical DRAM does not make this adapter zero-copy.
 Fixed backend-specific packed weights also occupy memory in addition to the
 canonical host representation; report that storage instead of claiming no
@@ -109,6 +130,64 @@ compiled artifact to its schedule.
 Use `--npu-design legacy --columns 8` to reproduce the original one-row graph.
 Only in legacy mode is `--columns` a maximum that may be reduced to a divisor
 of the output tile count. The old source and artifact directories are preserved.
+
+### Opt-in combined gate/up projection
+
+`--fuse-gate-up` combines the two NPU projections into one array8 graph with
+`N=2P`. It concatenates the existing packed gate/up weights once during setup;
+quantization metadata and BF16/FP32 arithmetic are unchanged. All eight columns
+and four compute rows remain active. Columns 0–3 compute gate and columns 4–7
+compute up; output DMA writes two separate compact `[Mb,P/32,512]` BOs directly.
+No CPU split/compaction of a wider output is needed.
+
+The complete NPU branch has three launches: combined gate/up, SiLU/multiply,
+and down. Two fixed weight BOs replace three (the total packed weight payload
+is unchanged). One redundant input BO upload is removed. Intermediates still
+pass through host buffers, and CPU down-input reordering remains. This is
+projection fusion, not on-chip fusion of the complete FFN or SiLU epilogue.
+
+The combined graph currently supports `128<=P<=8192`, aligned to128, with the
+other array8 limits unchanged. For P divisible256, internal activation DMA
+payload is unchanged versus two separate projections. For P=128 modulo256,
+the original graph uses two groups of four columns, while the combined graph
+uses one eight-column group: horizontal multicast also reduces logical input
+DMA payload. At M128 this can additionally change M reuse from1 to2. Treat
+these as mapping changes as well as launch changes; they are source-derived
+traffic counts, not hardware DRAM measurements.
+
+The original path remains the default. Run a matched ratio sweep with separate
+ordinary and instrumented measurements using the prepared notebook environment:
+
+```bash
+export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+python -m experiments.ffn_partition.sweep_partition \
+  --m 512 --npu-channels 128,256,384,512,640,768,896,1024,1536,2048,4096,7168 \
+  --iterations 30 --diagnostic-iterations 10 --warmup 3 \
+  --required-power-mode default \
+  --iron-python /home/mliraie/mlir-aie/ironenv/bin/python \
+  --output-dir experiments/ffn_partition/results/fusion_sweep_m512
+```
+
+Each ordinary job interleaves its own GPU-only, serialized and concurrent
+controls. Fused/unfused process order alternates between ratios. The driver
+checks unchanged correctness thresholds, actual NPU completion counts, fixed
+weight uploads, and power-mode snapshots before/after each job. It never changes
+power settings. Use a new directory for new measurements; `--resume` requires
+the same configuration and measurement source hashes. `--plan-only` writes a
+reviewable command manifest without running hardware.
+
+Generate static shareable figures from saved evidence with matplotlib:
+
+```bash
+python -m experiments.ffn_partition.plot_partition_sweep \
+  experiments/ffn_partition/results/fusion_sweep_m512 \
+  --m 512 --output experiments/ffn_partition/results/fusion_figures
+```
+
+The plotter preserves ordinary latency versus instrumented diagnostics, GPU
+event intervals versus NPU host waits, and separate repeated runs. Bands show
+sample p10–p90 ranges, not confidence intervals. The selected ratio is the best
+tested point for that workload; it is not an exhaustive or global optimum.
 
 ## Numerical contract and checks
 

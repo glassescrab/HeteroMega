@@ -1,0 +1,6 @@
+Building/verifying NPU artifacts: M=512 H=4096 P=384
+[92mSuccessfully preprocessed all matching files.[0m
+Validating original GPU FFN against independent CPU reference
+Validating partition P=384/14336
+{"P": 384, "stats": {"serial": {"count": 30, "median_us": 39814.052500000005, "p10_us": 38584.903600000005, "p90_us": 41124.044, "min_us": 38108.023, "max_us": 41289.237}, "baseline": {"count": 30, "median_us": 22339.218999999997, "p10_us": 22076.311, "p90_us": 22809.362, "min_us": 21986.011, "max_us": 23279.828}, "concurrent": {"count": 30, "median_us": 20599.538999999997, "p10_us": 20226.850300000002, "p90_us": 21509.8109, "min_us": 19498.724, "max_us": 22128.348}}, "speedup_vs_gpu_baseline": 1.0844523753662643}
+Saved /notebooks/HeteroMega/experiments/ffn_partition/results/fusion_sweep_m512/jobs/m512_p384_unfused_ordinary.json

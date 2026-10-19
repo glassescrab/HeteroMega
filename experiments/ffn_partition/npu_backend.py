@@ -1,9 +1,11 @@
 """Complete, explicitly host-staged NPU FFN branch for the partition experiment.
 
-The four launches are gate, up, fused SiLU/multiply, and down. All three
-quantized weights are packed and uploaded once. Intermediate activations return
-to host DRAM between launches; the down-input layout conversion runs on CPU.
-This preserves logical channel ownership, not NPU on-chip residency. There is
+The default four launches are gate, up, fused SiLU/multiply, and down.
+Opt-in gate/up fusion combines the first two into one wider projection with
+two compact output BOs. Opt-in SwiGLU fusion also keeps those outputs on-chip
+through SiLU/multiply, leaving only the gated Z buffer staged before down.
+All three quantized weights are packed and uploaded once. The down-input
+layout conversion runs on CPU. There is
 no CPU arithmetic fallback and no claim of shared GPU/XRT buffer zero-copy.
 
 Only NumPy is needed to import this module. Artifact compilation uses the
@@ -63,24 +65,85 @@ def effective_columns(n, maximum=4):
     raise ValueError(f"N={n} needs more columns than maximum={maximum}; at most 64 N tiles per column")
 
 
+def _kernel_source(stem):
+    return "w4a16_prefill_reuse" if stem in ("w4a16_gate_up", "w4a16_swiglu") else stem
+
+
 def _source_contract(stem):
-    paths = [KERNEL_ROOT / f"{stem}.py", KERNEL_ROOT / f"{stem}.cc"]
+    paths = [KERNEL_ROOT / f"{stem}.py", KERNEL_ROOT / f"{_kernel_source(stem)}.cc"]
     if stem == "w4a16_prefill_reuse":
         paths.append(KERNEL_ROOT / "prefill_schedule.py")
+    elif stem == "w4a16_gate_up":
+        paths.extend(KERNEL_ROOT / name for name in
+                     ("prefill_schedule.py", "prefill_gate_up_schedule.py"))
+    elif stem == "w4a16_swiglu":
+        paths.extend(KERNEL_ROOT / name for name in
+                     ("prefill_schedule.py", "prefill_gate_up_schedule.py",
+                      "prefill_swiglu_schedule.py", "silu_mul.cc"))
     return {str(path.relative_to(ROOT)): sha256(path.read_bytes()).hexdigest()
             for path in paths}
 
 
-def _artifact_specs(m, hidden, channels, root, columns=8, design="array8"):
+def _artifact_specs(m, hidden, channels, root, columns=8, design="array8", fuse_gate_up=False,
+                    fuse_swiglu=False):
     """CPU-only geometry/provenance description shared by build and load."""
     m, hidden, channels, columns = _geometry(m, hidden, channels, columns)
     if design not in ("array8", "legacy"):
         raise ValueError("NPU design must be 'array8' or 'legacy'")
     if design == "array8" and columns != 8:
         raise ValueError("array8 requires exactly eight columns; select legacy explicitly for another column count")
+    fuse_gate_up = bool(fuse_gate_up or fuse_swiglu)
+    if fuse_gate_up and design != "array8":
+        raise ValueError("gate/up fusion requires the eight-column array8 design")
     root = Path(root).resolve()
     specs = {}
     for label, k, n in (("gate_up", hidden, channels), ("down", channels, hidden)):
+        if label == "gate_up" and fuse_swiglu:
+            from prefill_swiglu_schedule import plan_swiglu, swiglu_plan_metadata
+            plan = plan_swiglu(m, hidden, channels, max_reuse=2)
+            source = _source_contract("w4a16_swiglu")
+            fingerprint = sha256(json.dumps(source, sort_keys=True).encode()).hexdigest()[:12]
+            specs["swiglu"] = {
+                "directory": root / f"build_swiglu_array8_m{m}_k{hidden}_p{channels}_{fingerprint}",
+                "stem": "w4a16_swiglu", "source_sha256": source,
+                "expected": {"kind": "w4a16_swiglu_bf16", "design": "array8_swiglu",
+                    "m": m, "k": hidden, "n": 2 * channels, "channels": channels,
+                    "cols": 8, "compute_rows": 4, "worker_count": 32, "output_count": 1,
+                    "output_order": ["silu_mul"], "m_reuse": plan.m_reuse,
+                    "m_column_groups": plan.m_column_groups, "n_columns": plan.n_columns,
+                    "schedule_sha256": source["npu/ffn/prefill_schedule.py"],
+                    "gate_up_schedule_sha256": source["npu/ffn/prefill_gate_up_schedule.py"],
+                    "swiglu_schedule_sha256": source["npu/ffn/prefill_swiglu_schedule.py"],
+                    "silu_source_sha256": source["npu/ffn/silu_mul.cc"],
+                    "tile_m": 16, "tile_k": 128, "tile_n": 32, "group_size": 128,
+                    "weight_tile_bytes": WEIGHT_TILE_BYTES},
+                "arguments": ["-M", str(m), "-K", str(hidden), "-P", str(channels),
+                              "-co", "8", "--max-reuse", "2"],
+                "plan": swiglu_plan_metadata(plan),
+            }
+            continue
+        if label == "gate_up" and fuse_gate_up:
+            from prefill_gate_up_schedule import plan_gate_up, gate_up_plan_metadata
+            plan = plan_gate_up(m, hidden, channels, max_reuse=2)
+            source = _source_contract("w4a16_gate_up")
+            fingerprint = sha256(json.dumps(source, sort_keys=True).encode()).hexdigest()[:12]
+            specs[label] = {
+                "directory": root / f"build_gate_up_array8_m{m}_k{hidden}_p{channels}_{fingerprint}",
+                "stem": "w4a16_gate_up", "source_sha256": source,
+                "expected": {"kind": "w4a16_gate_up_bf16", "design": "array8_gate_up",
+                    "m": m, "k": hidden, "n": 2 * channels, "channels": channels,
+                    "cols": 8, "compute_rows": 4, "worker_count": 32, "output_count": 2,
+                    "output_order": ["gate", "up"], "m_reuse": plan.m_reuse,
+                    "m_column_groups": plan.m_column_groups, "n_columns": plan.n_columns,
+                    "schedule_sha256": source["npu/ffn/prefill_schedule.py"],
+                    "gate_up_schedule_sha256": source["npu/ffn/prefill_gate_up_schedule.py"],
+                    "tile_m": 16, "tile_k": 128, "tile_n": 32, "group_size": 128,
+                    "weight_tile_bytes": WEIGHT_TILE_BYTES},
+                "arguments": ["-M", str(m), "-K", str(hidden), "-P", str(channels),
+                              "-co", "8", "--max-reuse", "2"],
+                "plan": gate_up_plan_metadata(plan),
+            }
+            continue
         if design == "legacy":
             cols, stem, plan = effective_columns(n, columns), "w4a16_prefill", None
         else:
@@ -111,6 +174,8 @@ def _artifact_specs(m, hidden, channels, root, columns=8, design="array8"):
             # Round-trip ensures tuples from dataclass implementations have
             # the same JSON-native representation when provenance is reloaded.
             specs[label]["plan"] = json.loads(json.dumps(plan.to_dict()))
+    if fuse_swiglu:
+        return specs
     size = m * channels
     # Array8 must also use all eight SiLU columns. The common M/P>=128
     # contract makes 1024-element tiles divisible across eight columns.
@@ -142,7 +207,7 @@ def _load_artifact(spec):
     xclbin, insts = directory / "final.xclbin", directory / "insts.bin"
     manifest = load_manifest(xclbin, insts, spec["expected"]["kind"])
     expected = dict(spec["expected"], target_mlir_aie_commit=TARGET_COMMIT,
-                    source_sha256=spec["source_sha256"][f"npu/ffn/{spec['stem']}.cc"])
+                    source_sha256=spec["source_sha256"][f"npu/ffn/{_kernel_source(spec['stem'])}.cc"])
     for key, value in expected.items():
         if manifest.get(key) != value:
             raise ValueError(f"{directory}: manifest {key}={manifest.get(key)!r}, expected {value!r}")
@@ -157,7 +222,7 @@ def _load_artifact(spec):
 
 
 def build_artifacts(m, hidden, channels, root, columns=8, python_executable=None,
-                    npu_design="array8"):
+                    npu_design="array8", fuse_gate_up=False, fuse_swiglu=False):
     """Compile missing/stale artifacts, otherwise verify and reuse them.
 
     ``python_executable`` must name the Python with the pinned MLIR-AIE IRON
@@ -167,7 +232,8 @@ def build_artifacts(m, hidden, channels, root, columns=8, python_executable=None
     Array8 additionally binds the CPU planner and requires exactly eight
     columns. Select ``npu_design='legacy'`` to reproduce the original graph.
     """
-    specs = _artifact_specs(m, hidden, channels, root, columns, npu_design)
+    specs = _artifact_specs(m, hidden, channels, root, columns, npu_design, fuse_gate_up,
+                            fuse_swiglu)
     python = str(python_executable or sys.executable)
     result = {}
     for label, spec in specs.items():
@@ -192,7 +258,7 @@ def build_artifacts(m, hidden, channels, root, columns=8, python_executable=None
             raise RuntimeError(f"{label} compilation failed ({process.returncode}); see {log}")
         # Validate binary hashes and current kernel before certifying the graph.
         manifest = load_manifest(directory / "final.xclbin", directory / "insts.bin", spec["expected"]["kind"])
-        if manifest.get("source_sha256") != spec["source_sha256"][f"npu/ffn/{spec['stem']}.cc"]:
+        if manifest.get("source_sha256") != spec["source_sha256"][f"npu/ffn/{_kernel_source(spec['stem'])}.cc"]:
             raise ValueError(f"{label} compiler produced a stale kernel manifest")
         temporary = directory / "build_contract.json.tmp"
         temporary.write_text(json.dumps(_build_contract(spec), indent=2) + "\n")
@@ -208,13 +274,16 @@ class PersistentXrtRunner(XrtRunner):
     Timing is host enqueue/wait time, not an NPU device-cycle measurement.
     """
 
-    def __init__(self, xclbin, insts, specs):
+    def __init__(self, xclbin, insts, specs, output_count=1):
+        if not isinstance(output_count, int) or not 1 <= output_count < len(specs):
+            raise ValueError("output_count must leave at least one input and output")
         super().__init__(xclbin, insts, specs)
-        self.input_write_counts = [0] * (len(self.buffers) - 1)
+        self.output_count = output_count
+        self.input_write_counts = [0] * (len(self.buffers) - output_count)
         self.completed_dispatches = 0
 
     def write_input(self, index, array):
-        if not 0 <= index < len(self.buffers) - 1:
+        if not 0 <= index < len(self.input_write_counts):
             raise ValueError("input index must refer to an input BO")
         shape, dtype = self.specs[index]
         array = np.asarray(array)
@@ -236,11 +305,15 @@ class PersistentXrtRunner(XrtRunner):
         self.completed_dispatches += 1
         return elapsed_us
 
-    def output_bits(self):
-        self.buffers[-1].sync(self.xrt.xclBOSyncDirection.XCL_BO_SYNC_BO_FROM_DEVICE)
-        shape, dtype = self.specs[-1]
+    def output_bits(self, index=0):
+        output_count = getattr(self, "output_count", 1)
+        if not 0 <= index < output_count:
+            raise ValueError("output index must refer to an output BO")
+        buffer_index = len(self.buffers) - output_count + index
+        self.buffers[buffer_index].sync(self.xrt.xclBOSyncDirection.XCL_BO_SYNC_BO_FROM_DEVICE)
+        shape, dtype = self.specs[buffer_index]
         nbytes = int(np.prod(shape)) * dtype.itemsize
-        raw = np.asarray(self.buffers[-1].read(nbytes, 0))
+        raw = np.asarray(self.buffers[buffer_index].read(nbytes, 0))
         # The notebook's prebuilt pyxrt under NumPy 2.5.4 produced a zero-
         # stride byte array: every element appeared to equal its first byte.
         # Making that array contiguous silently preserves corrupted values.
@@ -274,7 +347,7 @@ class NPUBranch:
     """One non-reentrant, reusable FFN channel partition with fixed weights.
 
     Constructor setup and weight transfers are excluded from inference timing.
-    ``run`` includes every host layout conversion, input BO write/sync, four
+    ``run`` includes every host layout conversion, input BO write/sync, all
     completed NPU launches and intermediate/output BO read/sync. It receives
     and returns CPU uint16 arrays encoding logical row-major BF16 matrices.
     The caller must include GPU-to-host/host-to-GPU transfers and output
@@ -282,14 +355,17 @@ class NPUBranch:
     """
 
     def __init__(self, gate, up, down, m, artifact_root, columns=8,
-                 npu_design="array8"):
+                 npu_design="array8", fuse_gate_up=False, fuse_swiglu=False):
+        self.fuse_swiglu = bool(fuse_swiglu)
+        self.fuse_gate_up = bool(fuse_gate_up or self.fuse_swiglu)
         self.channels, self.hidden = gate.shape
         self.m, self.hidden, self.channels, columns = _geometry(m, self.hidden, self.channels, columns)
         if up.shape != gate.shape or down.shape != (self.hidden, self.channels):
             raise ValueError("gate/up must match [I,H] and down must have shape [H,I]")
         if any(weight.group_size != 128 for weight in (gate, up, down)):
             raise ValueError("NPU branch requires quantization group_size=128")
-        specs = _artifact_specs(self.m, self.hidden, self.channels, artifact_root, columns, npu_design)
+        specs = _artifact_specs(self.m, self.hidden, self.channels, artifact_root, columns,
+                                npu_design, self.fuse_gate_up, self.fuse_swiglu)
         artifacts = {label: _load_artifact(spec) for label, spec in specs.items()}
         packed = [pack_weights(weight) for weight in (gate, up, down)]
 
@@ -300,22 +376,46 @@ class NPUBranch:
             runner.write_input(1, weight)
             return runner
 
-        self.gate = projection(artifacts["gate_up"], self.hidden, self.channels, packed[0])
-        self.up = projection(artifacts["gate_up"], self.hidden, self.channels, packed[1])
+        if self.fuse_swiglu:
+            combined = np.concatenate((packed[0], packed[1]))
+            self.swiglu = projection(artifacts["swiglu"], self.hidden, self.channels, combined)
+            self.projection_runners = {"swiglu": self.swiglu}
+        elif self.fuse_gate_up:
+            combined = np.concatenate((packed[0], packed[1]))
+            artifact = artifacts["gate_up"]
+            self.gate_up = PersistentXrtRunner(artifact["xclbin"], artifact["insts"],
+                [((self.m * self.hidden,), np.uint16), ((combined.size,), np.uint8),
+                 ((self.m * self.channels,), np.uint16),
+                 ((self.m * self.channels,), np.uint16)], output_count=2)
+            self.gate_up.write_input(1, combined)
+            self.projection_runners = {"gate_up": self.gate_up}
+        else:
+            self.gate = projection(artifacts["gate_up"], self.hidden, self.channels, packed[0])
+            self.up = projection(artifacts["gate_up"], self.hidden, self.channels, packed[1])
+            self.projection_runners = {"gate": self.gate, "up": self.up}
         self.down = projection(artifacts["down"], self.channels, self.hidden, packed[2])
-        pointwise = artifacts["silu_mul"]
-        self.silu = PersistentXrtRunner(pointwise["xclbin"], pointwise["insts"],
-            [((self.m * self.channels,), np.uint16)] * 3)
+        self.projection_runners["down"] = self.down
+        self.runners = dict(self.projection_runners)
+        if not self.fuse_swiglu:
+            pointwise = artifacts["silu_mul"]
+            self.silu = PersistentXrtRunner(pointwise["xclbin"], pointwise["insts"],
+                [((self.m * self.channels,), np.uint16)] * 3)
+            self.runners["silu_mul"] = self.silu
         self.last_diagnostics = {}
         self.metadata = {
             "backend": "mlir_aie_xrt_host_staged_ffn", "layout": LAYOUT_VERSION,
             "npu_design": npu_design,
+            "fuse_gate_up": self.fuse_gate_up,
+            "fuse_swiglu": self.fuse_swiglu,
             "m": self.m, "hidden": self.hidden, "channels": self.channels,
             "columns_requested": columns, "artifacts": artifacts,
-            "fixed_weight_uploads": 3, "fixed_weight_bytes": sum(int(w.nbytes) for w in packed),
-            "launches_per_run": 4, "cpu_activation_fallback": False,
-            "intermediates": "host-staged BF16; CPU layout conversion before down",
-            "host_bo_io_bytes_per_run_estimate": 6 * self.m * self.hidden + 12 * self.m * self.channels,
+            "fixed_weight_uploads": len(self.projection_runners),
+            "fixed_weight_bytes": sum(int(w.nbytes) for w in packed),
+            "launches_per_run": len(self.runners), "cpu_activation_fallback": False,
+            "intermediates": ("gate/up on-chip through SiLU/multiply; Z host-staged with CPU layout conversion before down"
+                              if self.fuse_swiglu else "host-staged BF16; CPU layout conversion before down"),
+            "host_bo_io_bytes_per_run_estimate": ((4 if self.fuse_gate_up else 6) * self.m * self.hidden
+                                                 + (4 if self.fuse_swiglu else 12) * self.m * self.channels),
             "host_bo_io_estimate_note": "BO write/read payload bytes, excludes layout copies, instruction reads and device DMA traffic",
             "timing_note": "dispatch/wait intervals are host times; whole-FFN timing must include GPU transfers and boundary sum",
         }
@@ -341,15 +441,21 @@ class NPUBranch:
             for index, value in inputs:
                 runner.write_input(index, value)
             waits[label] = runner.dispatch_wait()
-            result = runner.output_bits()
+            result = (tuple(runner.output_bits(i) for i in range(2))
+                      if label == "gate_up" else runner.output_bits())
             stages[f"{label}_with_host_io_us"] = (time.perf_counter_ns() - before) / 1000.0
             return result
 
-        gate = invoke("gate", self.gate, [(0, a)])
-        up = invoke("up", self.up, [(0, a)])
-        # Both projection buffers have identical packed layouts. Elementwise
-        # SiLU/multiply may operate directly on their flat physical ordering.
-        z = invoke("silu_mul", self.silu, [(0, gate), (1, up)])
+        if self.fuse_swiglu:
+            z = invoke("swiglu", self.swiglu, [(0, a)])
+        else:
+            if self.fuse_gate_up:
+                gate, up = invoke("gate_up", self.gate_up, [(0, a)])
+            else:
+                gate = invoke("gate", self.gate, [(0, a)])
+                up = invoke("up", self.up, [(0, a)])
+            # Both projection buffers have identical packed layouts.
+            z = invoke("silu_mul", self.silu, [(0, gate), (1, up)])
         before = time.perf_counter_ns()
         down_a = packed_output_to_activation(z, self.m, self.channels)
         stages["down_input_layout_us"] = (time.perf_counter_ns() - before) / 1000.0
@@ -360,8 +466,8 @@ class NPUBranch:
         self.last_diagnostics = {
             "branch_host_wall_us": (time.perf_counter_ns() - start) / 1000.0,
             "stages": stages, "dispatch_wait_us": waits,
-            "completed_dispatches_total": sum(r.completed_dispatches for r in (self.gate, self.up, self.silu, self.down)),
+            "completed_dispatches_total": sum(r.completed_dispatches for r in self.runners.values()),
             "weight_upload_counts": {label: runner.input_write_counts[1]
-                                     for label, runner in (("gate", self.gate), ("up", self.up), ("down", self.down))},
+                                     for label, runner in self.projection_runners.items()},
         }
         return output

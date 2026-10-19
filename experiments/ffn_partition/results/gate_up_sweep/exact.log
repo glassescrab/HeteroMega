@@ -1,0 +1,5 @@
+{"channels": 128, "checks_so_far": 40, "passed_so_far": true}
+{"channels": 384, "checks_so_far": 80, "passed_so_far": true}
+{"channels": 512, "checks_so_far": 120, "passed_so_far": true}
+{"channels": 896, "checks_so_far": 160, "passed_so_far": true}
+{"status": "passed", "checks": 160, "output": "experiments/ffn_partition/results/gate_up_sweep/gate_up_exact_m512.json"}

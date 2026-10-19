@@ -1,0 +1,2303 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p1024_fused_diagnostic.json",
+      "sha256": "13ff6430b338bd647ee5376f1853d61717e66d2160c5b73c24a7fbc260e82cd9"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p1024_fused_ordinary.json",
+      "sha256": "1b8da37dce2d71c4b6614cfddb38259c4ceb801985f9177591100f3be6e27801"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p1152_fused_diagnostic.json",
+      "sha256": "5d9a827369baa41fddf1277b62fca267887bdf554afd99574afce2e3798a9fc5"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p1152_fused_ordinary.json",
+      "sha256": "c006d3c0567a9fa027556432751289e00c663994a7e8ceaea26fbbaa93a95604"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p768_fused_diagnostic.json",
+      "sha256": "11e20e395b139b4949d5e9a37ffc54559c59fa0d73eefd94fac747c9da158803"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p768_fused_ordinary.json",
+      "sha256": "6178c1c918b930788fc186a413d68bab7c659f2fc3a1c57b7326a0996af4fe8e"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p896_fused_diagnostic.json",
+      "sha256": "fa3807e9cf07121cda497aa7bbbd0bf08a079c4cb081c66cd579c25ec2944840"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p896_fused_ordinary.json",
+      "sha256": "9c7c87186d66d17fcdd7bea20ef1733dd14b7b74c4138b8ea7947d6a6d8ff4b7"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_unfused_confirmation/jobs/m512_p512_unfused_diagnostic.json",
+      "sha256": "375b3d96c6fa0e8146616343dbb44c5e472c5486a89c480488c55fa1989effe1"
+    },
+    {
+      "file": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_unfused_confirmation/jobs/m512_p512_unfused_ordinary.json",
+      "sha256": "33c7c0297135a4812f54ebfb3790f792e27a4f52aa50dcf47456d1a2d045272b"
+    }
+  ],
+  "ordinary": [
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p1024_fused_ordinary.json",
+      "series": "fusion_confirmation",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p1024_fused_ordinary_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p1024_fused_ordinary_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T00:44:58.516806+00:00",
+      "npu_channels": 1024,
+      "npu_percent": 7.142857142857143,
+      "timing_ms": {
+        "baseline": {
+          "count": 50,
+          "median": 22.247774,
+          "p10": 21.99875,
+          "p90": 22.635946,
+          "min": 21.883166000000003,
+          "max": 22.793309
+        },
+        "concurrent": {
+          "count": 50,
+          "median": 21.1929435,
+          "p10": 19.9683152,
+          "p90": 21.8744194,
+          "min": 19.436352,
+          "max": 23.148932000000002
+        },
+        "serial": {
+          "count": 50,
+          "median": 41.563227999999995,
+          "p10": 39.672303199999995,
+          "p90": 42.586026,
+          "min": 37.706557000000004,
+          "max": 46.885572
+        }
+      },
+      "speedup": 1.0497727226989493,
+      "paired_speedup": {
+        "count": 50,
+        "median": 1.0543048690103918,
+        "p10": 1.009399276376262,
+        "p90": 1.1135636045530888,
+        "min": 0.9512526539021324,
+        "max": 1.1411360012413854
+      },
+      "paired_wins": 46,
+      "paired_count": 50
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p1152_fused_ordinary.json",
+      "series": "fusion_confirmation",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p1152_fused_ordinary_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p1152_fused_ordinary_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T00:45:56.860374+00:00",
+      "npu_channels": 1152,
+      "npu_percent": 8.035714285714286,
+      "timing_ms": {
+        "baseline": {
+          "count": 50,
+          "median": 22.254482,
+          "p10": 22.053428,
+          "p90": 22.6658899,
+          "min": 21.962283,
+          "max": 22.918365
+        },
+        "concurrent": {
+          "count": 50,
+          "median": 21.837315500000003,
+          "p10": 20.967780100000002,
+          "p90": 23.0291188,
+          "min": 19.920351999999998,
+          "max": 23.742949
+        },
+        "serial": {
+          "count": 50,
+          "median": 41.803906,
+          "p10": 40.5329,
+          "p90": 42.8490659,
+          "min": 40.084279,
+          "max": 44.150422
+        }
+      },
+      "speedup": 1.019103378343368,
+      "paired_speedup": {
+        "count": 50,
+        "median": 1.0149177467182895,
+        "p10": 0.9662853940902539,
+        "p90": 1.0642557416500371,
+        "min": 0.9367617729373044,
+        "max": 1.117399523814083
+      },
+      "paired_wins": 32,
+      "paired_count": 50
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p768_fused_ordinary.json",
+      "series": "fusion_confirmation",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p768_fused_ordinary_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p768_fused_ordinary_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T00:45:18.097643+00:00",
+      "npu_channels": 768,
+      "npu_percent": 5.357142857142857,
+      "timing_ms": {
+        "baseline": {
+          "count": 50,
+          "median": 22.2598185,
+          "p10": 21.992839099999998,
+          "p90": 22.688243999999997,
+          "min": 21.809776999999997,
+          "max": 23.21697
+        },
+        "concurrent": {
+          "count": 50,
+          "median": 19.7835105,
+          "p10": 19.193421100000002,
+          "p90": 20.5791359,
+          "min": 19.070559,
+          "max": 24.837040000000002
+        },
+        "serial": {
+          "count": 50,
+          "median": 39.819236000000004,
+          "p10": 38.4929441,
+          "p90": 40.5716711,
+          "min": 37.738705,
+          "max": 41.763339
+        }
+      },
+      "speedup": 1.1251703028135478,
+      "paired_speedup": {
+        "count": 50,
+        "median": 1.1238293087432518,
+        "p10": 1.084721544618617,
+        "p90": 1.1708640431790998,
+        "min": 0.9011349983733972,
+        "max": 1.1857741242678792
+      },
+      "paired_wins": 49,
+      "paired_count": 50
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p896_fused_ordinary.json",
+      "series": "fusion_confirmation",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p896_fused_ordinary_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p896_fused_ordinary_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T00:45:37.592822+00:00",
+      "npu_channels": 896,
+      "npu_percent": 6.25,
+      "timing_ms": {
+        "baseline": {
+          "count": 50,
+          "median": 22.301127,
+          "p10": 22.096209,
+          "p90": 22.553172899999996,
+          "min": 21.918305,
+          "max": 22.700868999999997
+        },
+        "concurrent": {
+          "count": 50,
+          "median": 20.108044,
+          "p10": 19.738353000000004,
+          "p90": 20.807485899999996,
+          "min": 19.652957999999998,
+          "max": 21.750728
+        },
+        "serial": {
+          "count": 50,
+          "median": 40.3617495,
+          "p10": 39.002497299999995,
+          "p90": 41.25304199999999,
+          "min": 38.512349,
+          "max": 41.871345999999996
+        }
+      },
+      "speedup": 1.109064959276994,
+      "paired_speedup": {
+        "count": 50,
+        "median": 1.1024026243654494,
+        "p10": 1.0699978943839623,
+        "p90": 1.132639426220687,
+        "min": 1.0160933923682922,
+        "max": 1.149264121645688
+      },
+      "paired_wins": 50,
+      "paired_count": 50
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_unfused_confirmation/jobs/m512_p512_unfused_ordinary.json",
+      "series": "fusion_unfused_confirmation",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": false,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_unfused_confirmation/power/m512_p512_unfused_ordinary_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_unfused_confirmation/power/m512_p512_unfused_ordinary_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T00:47:22.193090+00:00",
+      "npu_channels": 512,
+      "npu_percent": 3.5714285714285716,
+      "timing_ms": {
+        "baseline": {
+          "count": 50,
+          "median": 22.3776935,
+          "p10": 22.165511000000002,
+          "p90": 22.75309,
+          "min": 22.018461,
+          "max": 23.310886999999997
+        },
+        "concurrent": {
+          "count": 50,
+          "median": 20.7642745,
+          "p10": 20.3268101,
+          "p90": 22.0228629,
+          "min": 19.987059000000002,
+          "max": 22.244317
+        },
+        "serial": {
+          "count": 50,
+          "median": 40.098332,
+          "p10": 38.9980732,
+          "p90": 41.705379900000004,
+          "min": 38.423819,
+          "max": 43.494552000000006
+        }
+      },
+      "speedup": 1.0777016793916878,
+      "paired_speedup": {
+        "count": 50,
+        "median": 1.0811452951040654,
+        "p10": 1.0287894336662493,
+        "p90": 1.1040317723112258,
+        "min": 0.9898465751949138,
+        "max": 1.1330012955996995
+      },
+      "paired_wins": 48,
+      "paired_count": 50
+    }
+  ],
+  "diagnostic": [
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p1024_fused_diagnostic.json",
+      "series": "fusion_confirmation",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p1024_fused_diagnostic_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p1024_fused_diagnostic_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T00:46:29.196595+00:00",
+      "npu_channels": 1024,
+      "npu_percent": 7.142857142857143,
+      "metrics_ms": {
+        "gpu_event": {
+          "gate": {
+            "count": 20,
+            "median": 6.703152656555176,
+            "p10": 6.427377986907959,
+            "p90": 6.937399816513062,
+            "min": 6.312359809875488,
+            "max": 7.061144828796387
+          },
+          "up": {
+            "count": 20,
+            "median": 5.953306436538696,
+            "p10": 5.880100059509277,
+            "p90": 6.148150920867921,
+            "min": 5.851048946380615,
+            "max": 6.592394828796387
+          },
+          "silu": {
+            "count": 20,
+            "median": 0.29779401421546936,
+            "p10": 0.2828909903764725,
+            "p90": 0.3267660021781921,
+            "min": 0.27955400943756104,
+            "max": 0.3414739966392517
+          },
+          "multiply": {
+            "count": 20,
+            "median": 0.43417198956012726,
+            "p10": 0.41852801144123075,
+            "p90": 0.4789950102567673,
+            "min": 0.415912002325058,
+            "max": 0.5011500120162964
+          },
+          "down": {
+            "count": 20,
+            "median": 6.129984140396118,
+            "p10": 5.937804126739502,
+            "p90": 6.267832660675049,
+            "min": 5.884888172149658,
+            "max": 6.655913829803467
+          },
+          "branch": {
+            "count": 20,
+            "median": 19.554567337036133,
+            "p10": 19.231372261047365,
+            "p90": 19.939221954345705,
+            "min": 18.87984275817871,
+            "max": 20.753164291381836
+          },
+          "input_d2h": {
+            "count": 20,
+            "median": 0.24183600395917892,
+            "p10": 0.23991910219192505,
+            "p90": 0.24389989525079725,
+            "min": 0.23779499530792236,
+            "max": 0.2504749894142151
+          },
+          "output_h2d": {
+            "count": 20,
+            "median": 0.17114700376987457,
+            "p10": 0.1278819940984249,
+            "p90": 0.21457989811897282,
+            "min": 0.08811800181865692,
+            "max": 0.3623630106449127
+          },
+          "reduction": {
+            "count": 20,
+            "median": 0.146246999502182,
+            "p10": 0.1331179991364479,
+            "p90": 0.16959490329027177,
+            "min": 0.1317169964313507,
+            "max": 0.17776699364185333
+          }
+        },
+        "gpu_submit": {
+          "gate": {
+            "count": 20,
+            "median": 0.026815,
+            "p10": 0.025645,
+            "p90": 0.028833,
+            "min": 0.024319,
+            "max": 0.029599
+          },
+          "up": {
+            "count": 20,
+            "median": 0.00304,
+            "p10": 0.0027470000000000003,
+            "p90": 0.003241,
+            "min": 0.0025099999999999996,
+            "max": 0.0033799999999999998
+          },
+          "silu": {
+            "count": 20,
+            "median": 0.042544,
+            "p10": 0.041309,
+            "p90": 0.056856,
+            "min": 0.040449,
+            "max": 0.057489
+          },
+          "multiply": {
+            "count": 20,
+            "median": 0.018934,
+            "p10": 0.018223,
+            "p90": 0.0197989,
+            "min": 0.01783,
+            "max": 0.0215
+          },
+          "down": {
+            "count": 20,
+            "median": 0.00251,
+            "p10": 0.002369,
+            "p90": 0.003025,
+            "min": 0.00227,
+            "max": 0.0035
+          }
+        },
+        "npu_submit": {
+          "gate_up": {
+            "count": 20,
+            "median": 0.0967235,
+            "p10": 0.094654,
+            "p90": 0.10193800000000001,
+            "min": 0.09296800000000001,
+            "max": 0.105328
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 0.1468475,
+            "p10": 0.140924,
+            "p90": 0.159223,
+            "min": 0.052689,
+            "max": 0.186856
+          },
+          "down": {
+            "count": 20,
+            "median": 0.08638850000000001,
+            "p10": 0.0237719,
+            "p90": 0.260411,
+            "min": 0.02229,
+            "max": 0.281805
+          }
+        },
+        "npu_wait": {
+          "gate_up": {
+            "count": 20,
+            "median": 8.163730000000001,
+            "p10": 7.714957500000001,
+            "p90": 8.5084458,
+            "min": 6.977777,
+            "max": 8.593266999999999
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.475962,
+            "p10": 1.086171,
+            "p90": 1.9062809,
+            "min": 1.0649600000000001,
+            "max": 2.1001399999999997
+          },
+          "down": {
+            "count": 20,
+            "median": 5.2394155,
+            "p10": 5.0283611,
+            "p90": 5.5941979,
+            "min": 4.881127,
+            "max": 5.870209
+          }
+        },
+        "npu_stage_host_io": {
+          "gate_up": {
+            "count": 20,
+            "median": 9.0808675,
+            "p10": 8.635374599999999,
+            "p90": 9.4596681,
+            "min": 7.665874,
+            "max": 9.48955
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 2.047761,
+            "p10": 1.5259269,
+            "p90": 2.6105370000000003,
+            "min": 1.494142,
+            "max": 2.681569
+          },
+          "down": {
+            "count": 20,
+            "median": 6.242376,
+            "p10": 5.8282661,
+            "p90": 6.4576876,
+            "min": 5.660482,
+            "max": 6.6699530000000005
+          }
+        },
+        "npu_bo_outside_dispatch": {
+          "gate_up": {
+            "count": 20,
+            "median": 0.7856004999999995,
+            "p10": 0.7570058999999997,
+            "p90": 0.8155159000000015,
+            "min": 0.585299,
+            "max": 0.8605439999999999
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 0.4167719999999999,
+            "p10": 0.2958811,
+            "p90": 0.5213879,
+            "min": 0.2571859999999999,
+            "max": 0.6919059999999997
+          },
+          "down": {
+            "count": 20,
+            "median": 0.7983100000000004,
+            "p10": 0.7495740999999996,
+            "p90": 0.8564080000000002,
+            "min": 0.5778490000000002,
+            "max": 0.8955020000000004
+          }
+        },
+        "npu_comparable_stage_host_io": {
+          "gate_up": {
+            "count": 20,
+            "median": 9.0808675,
+            "p10": 8.635374599999999,
+            "p90": 9.4596681,
+            "min": 7.665874,
+            "max": 9.48955
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 2.047761,
+            "p10": 1.5259269,
+            "p90": 2.6105370000000003,
+            "min": 1.494142,
+            "max": 2.681569
+          },
+          "down": {
+            "count": 20,
+            "median": 6.242376,
+            "p10": 5.8282661,
+            "p90": 6.4576876,
+            "min": 5.660482,
+            "max": 6.6699530000000005
+          }
+        },
+        "npu_comparable_wait": {
+          "gate_up": {
+            "count": 20,
+            "median": 8.163730000000001,
+            "p10": 7.714957500000001,
+            "p90": 8.5084458,
+            "min": 6.977777,
+            "max": 8.593266999999999
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.475962,
+            "p10": 1.086171,
+            "p90": 1.9062809,
+            "min": 1.0649600000000001,
+            "max": 2.1001399999999997
+          },
+          "down": {
+            "count": 20,
+            "median": 5.2394155,
+            "p10": 5.0283611,
+            "p90": 5.5941979,
+            "min": 4.881127,
+            "max": 5.870209
+          }
+        },
+        "npu_layout": {
+          "input_layout": {
+            "count": 20,
+            "median": 0.8463590000000001,
+            "p10": 0.804632,
+            "p90": 0.9119520000000001,
+            "min": 0.7863150000000001,
+            "max": 0.925943
+          },
+          "down_input_layout": {
+            "count": 20,
+            "median": 0.0908785,
+            "p10": 0.044033,
+            "p90": 0.108972,
+            "min": 0.043509,
+            "max": 0.11284699999999999
+          },
+          "output_layout": {
+            "count": 20,
+            "median": 0.896153,
+            "p10": 0.8151271,
+            "p90": 1.4096279,
+            "min": 0.764675,
+            "max": 1.559081
+          }
+        },
+        "npu_components": {
+          "BO I/O + wrapper outside dispatch": {
+            "count": 20,
+            "median": 2.012491499999999,
+            "p10": 1.7781450000000005,
+            "p90": 2.1859230000000003,
+            "min": 1.722918,
+            "max": 2.3201059999999987
+          },
+          "CPU layouts": {
+            "count": 20,
+            "median": 1.8339545,
+            "p10": 1.7447661,
+            "p90": 2.3815149000000004,
+            "min": 1.6184090000000002,
+            "max": 2.479074
+          },
+          "XRT submission calls": {
+            "count": 20,
+            "median": 0.34090349999999997,
+            "p10": 0.2618721,
+            "p90": 0.5041720000000001,
+            "min": 0.200017,
+            "max": 0.5172920000000001
+          },
+          "XRT host waits": {
+            "count": 20,
+            "median": 14.834118,
+            "p10": 13.9968423,
+            "p90": 15.4062687,
+            "min": 13.6568,
+            "max": 15.620033
+          }
+        },
+        "wall": {
+          "instrumented": {
+            "count": 20,
+            "median": 20.881453,
+            "p10": 20.0428951,
+            "p90": 21.5783819,
+            "min": 19.872302,
+            "max": 21.988322
+          },
+          "npu_branch": {
+            "count": 20,
+            "median": 19.360207000000003,
+            "p10": 18.335344300000003,
+            "p90": 19.9612827,
+            "min": 17.38914,
+            "max": 20.328684000000003
+          }
+        }
+      }
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p1152_fused_diagnostic.json",
+      "series": "fusion_confirmation",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p1152_fused_diagnostic_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p1152_fused_diagnostic_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T00:47:09.033364+00:00",
+      "npu_channels": 1152,
+      "npu_percent": 8.035714285714286,
+      "metrics_ms": {
+        "gpu_event": {
+          "gate": {
+            "count": 20,
+            "median": 6.640154123306274,
+            "p10": 6.354579210281372,
+            "p90": 6.893785858154297,
+            "min": 6.274560928344727,
+            "max": 6.9649481773376465
+          },
+          "up": {
+            "count": 20,
+            "median": 5.983866930007935,
+            "p10": 5.894271898269653,
+            "p90": 6.269389057159424,
+            "min": 5.865248203277588,
+            "max": 6.362278938293457
+          },
+          "silu": {
+            "count": 20,
+            "median": 0.29157499969005585,
+            "p10": 0.2882948935031891,
+            "p90": 0.32706590592861173,
+            "min": 0.27715399861335754,
+            "max": 0.3290340006351471
+          },
+          "multiply": {
+            "count": 20,
+            "median": 0.4251915067434311,
+            "p10": 0.4104288905858993,
+            "p90": 0.4644510120153427,
+            "min": 0.4086720049381256,
+            "max": 0.47151100635528564
+          },
+          "down": {
+            "count": 20,
+            "median": 5.833269357681274,
+            "p10": 5.592306089401245,
+            "p90": 6.039548063278199,
+            "min": 5.533854961395264,
+            "max": 6.070565223693848
+          },
+          "branch": {
+            "count": 20,
+            "median": 19.220314979553223,
+            "p10": 19.061056327819824,
+            "p90": 19.42244415283203,
+            "min": 18.851163864135742,
+            "max": 19.458709716796875
+          },
+          "input_d2h": {
+            "count": 20,
+            "median": 0.24265550076961517,
+            "p10": 0.2410831034183502,
+            "p90": 0.24619099497795105,
+            "min": 0.2403150051832199,
+            "max": 0.24867500364780426
+          },
+          "output_h2d": {
+            "count": 20,
+            "median": 0.1944964975118637,
+            "p10": 0.12113299891352654,
+            "p90": 0.2839877963066102,
+            "min": 0.08623900264501572,
+            "max": 0.37973299622535706
+          },
+          "reduction": {
+            "count": 20,
+            "median": 0.15253600478172302,
+            "p10": 0.13340909779071808,
+            "p90": 0.16263879984617233,
+            "min": 0.13211700320243835,
+            "max": 0.17572499811649323
+          }
+        },
+        "gpu_submit": {
+          "gate": {
+            "count": 20,
+            "median": 0.025759,
+            "p10": 0.025065900000000002,
+            "p90": 0.026643,
+            "min": 0.024829,
+            "max": 0.040549999999999996
+          },
+          "up": {
+            "count": 20,
+            "median": 0.0029395000000000003,
+            "p10": 0.0027140000000000003,
+            "p90": 0.0032629,
+            "min": 0.0025800000000000003,
+            "max": 0.00361
+          },
+          "silu": {
+            "count": 20,
+            "median": 0.0430195,
+            "p10": 0.0410399,
+            "p90": 0.056528,
+            "min": 0.040589,
+            "max": 0.062499
+          },
+          "multiply": {
+            "count": 20,
+            "median": 0.019085,
+            "p10": 0.017953999999999998,
+            "p90": 0.0195111,
+            "min": 0.01734,
+            "max": 0.021669
+          },
+          "down": {
+            "count": 20,
+            "median": 0.0026550000000000002,
+            "p10": 0.0025199999999999997,
+            "p90": 0.0038740000000000016,
+            "min": 0.00239,
+            "max": 0.00646
+          }
+        },
+        "npu_submit": {
+          "gate_up": {
+            "count": 20,
+            "median": 0.0978485,
+            "p10": 0.089698,
+            "p90": 0.1021109,
+            "min": 0.084399,
+            "max": 0.10572799999999999
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 0.150112,
+            "p10": 0.11098310000000002,
+            "p90": 0.19320500000000002,
+            "min": 0.05309899999999999,
+            "max": 0.203196
+          },
+          "down": {
+            "count": 20,
+            "median": 0.058164,
+            "p10": 0.0233759,
+            "p90": 0.16600690000000004,
+            "min": 0.022539,
+            "max": 0.238475
+          }
+        },
+        "npu_wait": {
+          "gate_up": {
+            "count": 20,
+            "median": 8.1340705,
+            "p10": 7.6591351,
+            "p90": 8.860127700000001,
+            "min": 7.582036,
+            "max": 9.042718
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.5087964999999999,
+            "p10": 1.0700340000000002,
+            "p90": 1.900261,
+            "min": 1.06609,
+            "max": 2.3863339999999997
+          },
+          "down": {
+            "count": 20,
+            "median": 5.4574165,
+            "p10": 5.1516991,
+            "p90": 5.916449,
+            "min": 5.091334,
+            "max": 5.990625
+          }
+        },
+        "npu_stage_host_io": {
+          "gate_up": {
+            "count": 20,
+            "median": 9.011899,
+            "p10": 8.583590000000001,
+            "p90": 9.8753897,
+            "min": 8.484669,
+            "max": 10.0049
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 2.127539,
+            "p10": 1.5443860999999999,
+            "p90": 2.6810019,
+            "min": 1.5239010000000002,
+            "max": 2.937794
+          },
+          "down": {
+            "count": 20,
+            "median": 6.362609,
+            "p10": 5.8943161,
+            "p90": 6.748340000000001,
+            "min": 5.739941,
+            "max": 6.773741
+          }
+        },
+        "npu_bo_outside_dispatch": {
+          "gate_up": {
+            "count": 20,
+            "median": 0.8498194999999996,
+            "p10": 0.793211,
+            "p90": 0.9087287000000004,
+            "min": 0.7311660000000011,
+            "max": 1.0753099999999995
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 0.37722749999999994,
+            "p10": 0.2917200000000001,
+            "p90": 0.6518749000000001,
+            "min": 0.288415,
+            "max": 0.7306759999999997
+          },
+          "down": {
+            "count": 20,
+            "median": 0.7372559999999995,
+            "p10": 0.5887291000000003,
+            "p90": 0.8469879000000005,
+            "min": 0.5444800000000005,
+            "max": 1.00795
+          }
+        },
+        "npu_comparable_stage_host_io": {
+          "gate_up": {
+            "count": 20,
+            "median": 9.011899,
+            "p10": 8.583590000000001,
+            "p90": 9.8753897,
+            "min": 8.484669,
+            "max": 10.0049
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 2.127539,
+            "p10": 1.5443860999999999,
+            "p90": 2.6810019,
+            "min": 1.5239010000000002,
+            "max": 2.937794
+          },
+          "down": {
+            "count": 20,
+            "median": 6.362609,
+            "p10": 5.8943161,
+            "p90": 6.748340000000001,
+            "min": 5.739941,
+            "max": 6.773741
+          }
+        },
+        "npu_comparable_wait": {
+          "gate_up": {
+            "count": 20,
+            "median": 8.1340705,
+            "p10": 7.6591351,
+            "p90": 8.860127700000001,
+            "min": 7.582036,
+            "max": 9.042718
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.5087964999999999,
+            "p10": 1.0700340000000002,
+            "p90": 1.900261,
+            "min": 1.06609,
+            "max": 2.3863339999999997
+          },
+          "down": {
+            "count": 20,
+            "median": 5.4574165,
+            "p10": 5.1516991,
+            "p90": 5.916449,
+            "min": 5.091334,
+            "max": 5.990625
+          }
+        },
+        "npu_layout": {
+          "input_layout": {
+            "count": 20,
+            "median": 0.9518070000000001,
+            "p10": 0.842893,
+            "p90": 1.0682567,
+            "min": 0.837924,
+            "max": 1.183028
+          },
+          "down_input_layout": {
+            "count": 20,
+            "median": 0.093108,
+            "p10": 0.047548099999999996,
+            "p90": 0.13936800000000005,
+            "min": 0.045979,
+            "max": 0.305124
+          },
+          "output_layout": {
+            "count": 20,
+            "median": 1.132968,
+            "p10": 0.8213741999999999,
+            "p90": 1.5482817000000002,
+            "min": 0.759096,
+            "max": 1.779466
+          }
+        },
+        "npu_components": {
+          "BO I/O + wrapper outside dispatch": {
+            "count": 20,
+            "median": 1.9230425000000007,
+            "p10": 1.7298269999999993,
+            "p90": 2.3873537000000002,
+            "min": 1.7164569999999997,
+            "max": 2.5455409999999983
+          },
+          "CPU layouts": {
+            "count": 20,
+            "median": 2.163284,
+            "p10": 1.8375491,
+            "p90": 2.6803988,
+            "min": 1.797595,
+            "max": 2.9290540000000003
+          },
+          "XRT submission calls": {
+            "count": 20,
+            "median": 0.336483,
+            "p10": 0.26742889999999997,
+            "p90": 0.4498179,
+            "min": 0.193446,
+            "max": 0.48571000000000003
+          },
+          "XRT host waits": {
+            "count": 20,
+            "median": 15.012274999999999,
+            "p10": 14.257596000000001,
+            "p90": 15.929334600000002,
+            "min": 14.091222,
+            "max": 16.794851
+          }
+        },
+        "wall": {
+          "instrumented": {
+            "count": 20,
+            "median": 21.272585499999998,
+            "p10": 20.3060953,
+            "p90": 22.528570300000002,
+            "min": 19.681355,
+            "max": 23.122169999999997
+          },
+          "npu_branch": {
+            "count": 20,
+            "median": 19.751649,
+            "p10": 18.834074100000002,
+            "p90": 20.8320444,
+            "min": 18.100595000000002,
+            "max": 21.506841
+          }
+        }
+      }
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p768_fused_diagnostic.json",
+      "series": "fusion_confirmation",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p768_fused_diagnostic_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p768_fused_diagnostic_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T00:46:42.364488+00:00",
+      "npu_channels": 768,
+      "npu_percent": 5.357142857142857,
+      "metrics_ms": {
+        "gpu_event": {
+          "gate": {
+            "count": 20,
+            "median": 6.728131532669067,
+            "p10": 6.550594997406005,
+            "p90": 6.961542081832886,
+            "min": 6.497476100921631,
+            "max": 7.033706188201904
+          },
+          "up": {
+            "count": 20,
+            "median": 6.080284118652344,
+            "p10": 6.0228901386260985,
+            "p90": 6.3225360870361325,
+            "min": 5.973045825958252,
+            "max": 7.0177459716796875
+          },
+          "silu": {
+            "count": 20,
+            "median": 0.2905544936656952,
+            "p10": 0.2877070069313049,
+            "p90": 0.3350450962781906,
+            "min": 0.28583401441574097,
+            "max": 0.34187400341033936
+          },
+          "multiply": {
+            "count": 20,
+            "median": 0.4433320015668869,
+            "p10": 0.43661190271377565,
+            "p90": 0.5040180146694183,
+            "min": 0.43487098813056946,
+            "max": 0.530430018901825
+          },
+          "down": {
+            "count": 20,
+            "median": 6.23496150970459,
+            "p10": 5.9985900878906255,
+            "p90": 6.674972867965698,
+            "min": 5.934086799621582,
+            "max": 6.874589920043945
+          },
+          "branch": {
+            "count": 20,
+            "median": 19.85854148864746,
+            "p10": 19.556592750549317,
+            "p90": 20.39062728881836,
+            "min": 19.455310821533203,
+            "max": 21.72802734375
+          },
+          "input_d2h": {
+            "count": 20,
+            "median": 0.24235500395298004,
+            "p10": 0.2399600014090538,
+            "p90": 0.24585100710391997,
+            "min": 0.238755002617836,
+            "max": 0.2485159933567047
+          },
+          "output_h2d": {
+            "count": 20,
+            "median": 0.2086159959435463,
+            "p10": 0.19150010496377945,
+            "p90": 0.23019589930772788,
+            "min": 0.1717970073223114,
+            "max": 0.2772339880466461
+          },
+          "reduction": {
+            "count": 20,
+            "median": 0.14255750179290771,
+            "p10": 0.14127309620380402,
+            "p90": 0.14449390321969985,
+            "min": 0.14067700505256653,
+            "max": 0.1460379958152771
+          }
+        },
+        "gpu_submit": {
+          "gate": {
+            "count": 20,
+            "median": 0.02624,
+            "p10": 0.0247971,
+            "p90": 0.028496900000000016,
+            "min": 0.024638999999999998,
+            "max": 0.036689
+          },
+          "up": {
+            "count": 20,
+            "median": 0.0029245,
+            "p10": 0.0027259999999999997,
+            "p90": 0.0033799999999999998,
+            "min": 0.00266,
+            "max": 0.0037099999999999998
+          },
+          "silu": {
+            "count": 20,
+            "median": 0.056214,
+            "p10": 0.041422999999999995,
+            "p90": 0.057573,
+            "min": 0.040098999999999996,
+            "max": 0.060078000000000006
+          },
+          "multiply": {
+            "count": 20,
+            "median": 0.0187045,
+            "p10": 0.0178659,
+            "p90": 0.020581000000000006,
+            "min": 0.016640000000000002,
+            "max": 0.024369
+          },
+          "down": {
+            "count": 20,
+            "median": 0.0028,
+            "p10": 0.002497,
+            "p90": 0.0033829000000000003,
+            "min": 0.00231,
+            "max": 0.00385
+          }
+        },
+        "npu_submit": {
+          "gate_up": {
+            "count": 20,
+            "median": 0.0960985,
+            "p10": 0.091091,
+            "p90": 0.10246,
+            "min": 0.087839,
+            "max": 0.112528
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 0.146672,
+            "p10": 0.1343841,
+            "p90": 0.1575029,
+            "min": 0.058859,
+            "max": 0.18490700000000002
+          },
+          "down": {
+            "count": 20,
+            "median": 0.047949,
+            "p10": 0.024576999999999998,
+            "p90": 0.16257490000000002,
+            "min": 0.023829999999999997,
+            "max": 0.193977
+          }
+        },
+        "npu_wait": {
+          "gate_up": {
+            "count": 20,
+            "median": 6.621539,
+            "p10": 6.262992199999999,
+            "p90": 6.8476338,
+            "min": 5.8597280000000005,
+            "max": 7.038036
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.2493465000000001,
+            "p10": 0.998793,
+            "p90": 1.6631354000000005,
+            "min": 0.9731620000000001,
+            "max": 2.1974180000000003
+          },
+          "down": {
+            "count": 20,
+            "median": 4.5268835,
+            "p10": 4.3115321,
+            "p90": 4.8896835,
+            "min": 4.273758,
+            "max": 5.305229000000001
+          }
+        },
+        "npu_stage_host_io": {
+          "gate_up": {
+            "count": 20,
+            "median": 7.479543,
+            "p10": 7.1105092,
+            "p90": 7.7682459,
+            "min": 6.561205,
+            "max": 7.88847
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.7129020000000001,
+            "p10": 1.370796,
+            "p90": 2.1006224000000007,
+            "min": 1.278316,
+            "max": 2.5995100000000004
+          },
+          "down": {
+            "count": 20,
+            "median": 5.1203330000000005,
+            "p10": 4.960315999999999,
+            "p90": 5.720094200000002,
+            "min": 4.909696,
+            "max": 6.126843
+          }
+        },
+        "npu_bo_outside_dispatch": {
+          "gate_up": {
+            "count": 20,
+            "median": 0.748821,
+            "p10": 0.7038422000000006,
+            "p90": 0.7710647999999996,
+            "min": 0.5700689999999995,
+            "max": 0.844634
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 0.2509699999999999,
+            "p10": 0.21313499999999994,
+            "p90": 0.4153430999999999,
+            "min": 0.20891599999999994,
+            "max": 0.41797199999999995
+          },
+          "down": {
+            "count": 20,
+            "median": 0.6104685,
+            "p10": 0.5325521000000002,
+            "p90": 0.7914070000000002,
+            "min": 0.527991,
+            "max": 0.9837310000000007
+          }
+        },
+        "npu_comparable_stage_host_io": {
+          "gate_up": {
+            "count": 20,
+            "median": 7.479543,
+            "p10": 7.1105092,
+            "p90": 7.7682459,
+            "min": 6.561205,
+            "max": 7.88847
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.7129020000000001,
+            "p10": 1.370796,
+            "p90": 2.1006224000000007,
+            "min": 1.278316,
+            "max": 2.5995100000000004
+          },
+          "down": {
+            "count": 20,
+            "median": 5.1203330000000005,
+            "p10": 4.960315999999999,
+            "p90": 5.720094200000002,
+            "min": 4.909696,
+            "max": 6.126843
+          }
+        },
+        "npu_comparable_wait": {
+          "gate_up": {
+            "count": 20,
+            "median": 6.621539,
+            "p10": 6.262992199999999,
+            "p90": 6.8476338,
+            "min": 5.8597280000000005,
+            "max": 7.038036
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.2493465000000001,
+            "p10": 0.998793,
+            "p90": 1.6631354000000005,
+            "min": 0.9731620000000001,
+            "max": 2.1974180000000003
+          },
+          "down": {
+            "count": 20,
+            "median": 4.5268835,
+            "p10": 4.3115321,
+            "p90": 4.8896835,
+            "min": 4.273758,
+            "max": 5.305229000000001
+          }
+        },
+        "npu_layout": {
+          "input_layout": {
+            "count": 20,
+            "median": 0.9156820000000001,
+            "p10": 0.851812,
+            "p90": 1.052191,
+            "min": 0.836904,
+            "max": 1.1202290000000001
+          },
+          "down_input_layout": {
+            "count": 20,
+            "median": 0.120143,
+            "p10": 0.090756,
+            "p90": 0.1356509,
+            "min": 0.086658,
+            "max": 0.150147
+          },
+          "output_layout": {
+            "count": 20,
+            "median": 1.235786,
+            "p10": 0.8805561,
+            "p90": 1.4231257000000002,
+            "min": 0.794205,
+            "max": 1.549491
+          }
+        },
+        "npu_components": {
+          "BO I/O + wrapper outside dispatch": {
+            "count": 20,
+            "median": 1.6236245,
+            "p10": 1.4795180999999997,
+            "p90": 1.9508340999999998,
+            "min": 1.4326130000000001,
+            "max": 2.126790000000001
+          },
+          "CPU layouts": {
+            "count": 20,
+            "median": 2.2977755,
+            "p10": 1.9801400999999998,
+            "p90": 2.5324389,
+            "min": 1.8419539999999999,
+            "max": 2.59234
+          },
+          "XRT submission calls": {
+            "count": 20,
+            "median": 0.29478950000000004,
+            "p10": 0.2532992,
+            "p90": 0.42050090000000007,
+            "min": 0.193786,
+            "max": 0.439063
+          },
+          "XRT host waits": {
+            "count": 20,
+            "median": 12.4660425,
+            "p10": 11.910555899999999,
+            "p90": 13.1880188,
+            "min": 11.146848,
+            "max": 13.519374
+          }
+        },
+        "wall": {
+          "instrumented": {
+            "count": 20,
+            "median": 20.198681,
+            "p10": 19.8915031,
+            "p90": 20.7246356,
+            "min": 19.791124,
+            "max": 22.067471
+          },
+          "npu_branch": {
+            "count": 20,
+            "median": 16.848999499999998,
+            "p10": 15.953657900000001,
+            "p90": 17.528903200000002,
+            "min": 14.852818,
+            "max": 17.978308000000002
+          }
+        }
+      }
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p896_fused_diagnostic.json",
+      "series": "fusion_confirmation",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": true,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p896_fused_diagnostic_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p896_fused_diagnostic_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T00:46:55.693228+00:00",
+      "npu_channels": 896,
+      "npu_percent": 6.25,
+      "metrics_ms": {
+        "gpu_event": {
+          "gate": {
+            "count": 20,
+            "median": 6.89824914932251,
+            "p10": 6.579606294631958,
+            "p90": 7.047606039047241,
+            "min": 6.474196910858154,
+            "max": 7.078664779663086
+          },
+          "up": {
+            "count": 20,
+            "median": 6.0400450229644775,
+            "p10": 5.947254991531372,
+            "p90": 6.2960566043853765,
+            "min": 5.884768009185791,
+            "max": 7.015387058258057
+          },
+          "silu": {
+            "count": 20,
+            "median": 0.29199449717998505,
+            "p10": 0.28813410401344297,
+            "p90": 0.3057029128074646,
+            "min": 0.2879140079021454,
+            "max": 0.34107398986816406
+          },
+          "multiply": {
+            "count": 20,
+            "median": 0.4435714930295944,
+            "p10": 0.44090800285339354,
+            "p90": 0.4874908983707428,
+            "min": 0.43939098715782166,
+            "max": 0.5172709822654724
+          },
+          "down": {
+            "count": 20,
+            "median": 5.867868423461914,
+            "p10": 5.744551134109496,
+            "p90": 6.126706743240357,
+            "min": 5.645293235778809,
+            "max": 6.645153999328613
+          },
+          "branch": {
+            "count": 20,
+            "median": 19.559127807617188,
+            "p10": 19.33544845581055,
+            "p90": 20.026143074035645,
+            "min": 19.19275665283203,
+            "max": 21.429271697998047
+          },
+          "input_d2h": {
+            "count": 20,
+            "median": 0.241395503282547,
+            "p10": 0.24019500613212585,
+            "p90": 0.24285909682512283,
+            "min": 0.2397949993610382,
+            "max": 0.24503499269485474
+          },
+          "output_h2d": {
+            "count": 20,
+            "median": 0.1925560012459755,
+            "p10": 0.1709889978170395,
+            "p90": 0.20353290140628816,
+            "min": 0.16615700721740723,
+            "max": 0.24283599853515625
+          },
+          "reduction": {
+            "count": 20,
+            "median": 0.13997749984264374,
+            "p10": 0.13957309424877168,
+            "p90": 0.1444219037890434,
+            "min": 0.13899700343608856,
+            "max": 0.17299699783325195
+          }
+        },
+        "gpu_submit": {
+          "gate": {
+            "count": 20,
+            "median": 0.025689500000000004,
+            "p10": 0.025168999999999997,
+            "p90": 0.026549100000000003,
+            "min": 0.02426,
+            "max": 0.02702
+          },
+          "up": {
+            "count": 20,
+            "median": 0.003005,
+            "p10": 0.002629,
+            "p90": 0.0033049999999999998,
+            "min": 0.00259,
+            "max": 0.00357
+          },
+          "silu": {
+            "count": 20,
+            "median": 0.056494,
+            "p10": 0.042892900000000005,
+            "p90": 0.057571,
+            "min": 0.041169,
+            "max": 0.057798999999999996
+          },
+          "multiply": {
+            "count": 20,
+            "median": 0.01811,
+            "p10": 0.017564100000000003,
+            "p90": 0.0184601,
+            "min": 0.01729,
+            "max": 0.01875
+          },
+          "down": {
+            "count": 20,
+            "median": 0.0023,
+            "p10": 0.002142,
+            "p90": 0.0026119999999999997,
+            "min": 0.00207,
+            "max": 0.0027400000000000002
+          }
+        },
+        "npu_submit": {
+          "gate_up": {
+            "count": 20,
+            "median": 0.093803,
+            "p10": 0.090307,
+            "p90": 0.097469,
+            "min": 0.087908,
+            "max": 0.098568
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 0.138577,
+            "p10": 0.130547,
+            "p90": 0.16472100000000003,
+            "min": 0.030139,
+            "max": 0.193296
+          },
+          "down": {
+            "count": 20,
+            "median": 0.049589,
+            "p10": 0.023878899999999998,
+            "p90": 0.14803590000000003,
+            "min": 0.02352,
+            "max": 0.167126
+          }
+        },
+        "npu_wait": {
+          "gate_up": {
+            "count": 20,
+            "median": 6.706802,
+            "p10": 6.4862661,
+            "p90": 6.983344000000001,
+            "min": 6.33941,
+            "max": 7.105795
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.5426505,
+            "p10": 1.0650591,
+            "p90": 1.7743036000000003,
+            "min": 0.9793419999999999,
+            "max": 2.061191
+          },
+          "down": {
+            "count": 20,
+            "median": 5.1854165,
+            "p10": 4.944873299999999,
+            "p90": 5.3252736,
+            "min": 4.773219,
+            "max": 5.825759
+          }
+        },
+        "npu_stage_host_io": {
+          "gate_up": {
+            "count": 20,
+            "median": 7.554486499999999,
+            "p10": 7.3767471,
+            "p90": 7.823344,
+            "min": 6.947868000000001,
+            "max": 7.966939
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.9800425000000001,
+            "p10": 1.5983273000000002,
+            "p90": 2.4173239,
+            "min": 1.206907,
+            "max": 2.6874290000000003
+          },
+          "down": {
+            "count": 20,
+            "median": 5.879638,
+            "p10": 5.6191773000000005,
+            "p90": 6.230869600000001,
+            "min": 5.335478,
+            "max": 6.581335
+          }
+        },
+        "npu_bo_outside_dispatch": {
+          "gate_up": {
+            "count": 20,
+            "median": 0.7435909999999999,
+            "p10": 0.7191339000000002,
+            "p90": 0.8118041000000004,
+            "min": 0.509,
+            "max": 0.837094
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 0.2746845000000001,
+            "p10": 0.24341289999999988,
+            "p90": 0.4850800000000001,
+            "min": 0.1937059999999999,
+            "max": 0.5024000000000001
+          },
+          "down": {
+            "count": 20,
+            "median": 0.5780884999999998,
+            "p10": 0.5479420000000003,
+            "p90": 0.7723700999999995,
+            "min": 0.5349890000000005,
+            "max": 0.7891350000000003
+          }
+        },
+        "npu_comparable_stage_host_io": {
+          "gate_up": {
+            "count": 20,
+            "median": 7.554486499999999,
+            "p10": 7.3767471,
+            "p90": 7.823344,
+            "min": 6.947868000000001,
+            "max": 7.966939
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.9800425000000001,
+            "p10": 1.5983273000000002,
+            "p90": 2.4173239,
+            "min": 1.206907,
+            "max": 2.6874290000000003
+          },
+          "down": {
+            "count": 20,
+            "median": 5.879638,
+            "p10": 5.6191773000000005,
+            "p90": 6.230869600000001,
+            "min": 5.335478,
+            "max": 6.581335
+          }
+        },
+        "npu_comparable_wait": {
+          "gate_up": {
+            "count": 20,
+            "median": 6.706802,
+            "p10": 6.4862661,
+            "p90": 6.983344000000001,
+            "min": 6.33941,
+            "max": 7.105795
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.5426505,
+            "p10": 1.0650591,
+            "p90": 1.7743036000000003,
+            "min": 0.9793419999999999,
+            "max": 2.061191
+          },
+          "down": {
+            "count": 20,
+            "median": 5.1854165,
+            "p10": 4.944873299999999,
+            "p90": 5.3252736,
+            "min": 4.773219,
+            "max": 5.825759
+          }
+        },
+        "npu_layout": {
+          "input_layout": {
+            "count": 20,
+            "median": 0.8613835,
+            "p10": 0.825094,
+            "p90": 0.9155007000000003,
+            "min": 0.806175,
+            "max": 1.0548
+          },
+          "down_input_layout": {
+            "count": 20,
+            "median": 0.1327275,
+            "p10": 0.096337,
+            "p90": 0.14016690000000004,
+            "min": 0.092268,
+            "max": 0.148287
+          },
+          "output_layout": {
+            "count": 20,
+            "median": 1.1055635000000001,
+            "p10": 0.9043619999999999,
+            "p90": 1.4416148000000002,
+            "min": 0.807365,
+            "max": 1.6438679999999999
+          }
+        },
+        "npu_components": {
+          "BO I/O + wrapper outside dispatch": {
+            "count": 20,
+            "median": 1.698833,
+            "p10": 1.515376,
+            "p90": 1.9811568000000006,
+            "min": 1.240505,
+            "max": 2.0061729999999995
+          },
+          "CPU layouts": {
+            "count": 20,
+            "median": 2.0740049999999997,
+            "p10": 1.9019661,
+            "p90": 2.4848176000000004,
+            "min": 1.745097,
+            "max": 2.696568
+          },
+          "XRT submission calls": {
+            "count": 20,
+            "median": 0.285835,
+            "p10": 0.2470471,
+            "p90": 0.38058500000000006,
+            "min": 0.16895600000000002,
+            "max": 0.398721
+          },
+          "XRT host waits": {
+            "count": 20,
+            "median": 13.371566,
+            "p10": 12.8899487,
+            "p90": 13.9229939,
+            "min": 12.1908,
+            "max": 14.239439
+          }
+        },
+        "wall": {
+          "instrumented": {
+            "count": 20,
+            "median": 19.8750615,
+            "p10": 19.582302000000002,
+            "p90": 20.367714799999998,
+            "min": 19.537439,
+            "max": 21.772066
+          },
+          "npu_branch": {
+            "count": 20,
+            "median": 17.6963785,
+            "p10": 16.726192599999997,
+            "p90": 18.3219298,
+            "min": 15.371048,
+            "max": 18.560817
+          }
+        }
+      }
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_unfused_confirmation/jobs/m512_p512_unfused_diagnostic.json",
+      "series": "fusion_unfused_confirmation",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "design": "array8",
+      "fused": false,
+      "seed": 12832,
+      "power": {
+        "mode": "default",
+        "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_unfused_confirmation/power/m512_p512_unfused_diagnostic_before.json",
+        "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_unfused_confirmation/power/m512_p512_unfused_diagnostic_after.json",
+        "note": "boundary snapshots, not continuous power/clock monitoring"
+      },
+      "device": "AMD Radeon 890M",
+      "started_utc": "2026-10-19T00:47:41.354223+00:00",
+      "npu_channels": 512,
+      "npu_percent": 3.5714285714285716,
+      "metrics_ms": {
+        "gpu_event": {
+          "gate": {
+            "count": 20,
+            "median": 7.0517051219940186,
+            "p10": 6.882136106491089,
+            "p90": 7.306580877304077,
+            "min": 6.873908996582031,
+            "max": 7.4652581214904785
+          },
+          "up": {
+            "count": 20,
+            "median": 6.315839767456055,
+            "p10": 6.168435096740723,
+            "p90": 6.5376954078674325,
+            "min": 5.957927227020264,
+            "max": 6.803989887237549
+          },
+          "silu": {
+            "count": 20,
+            "median": 0.29853449761867523,
+            "p10": 0.29306209087371826,
+            "p90": 0.31319001019001014,
+            "min": 0.28959399461746216,
+            "max": 0.3380739986896515
+          },
+          "multiply": {
+            "count": 20,
+            "median": 0.45277200639247894,
+            "p10": 0.44725101292133335,
+            "p90": 0.4664669990539551,
+            "min": 0.4429109990596771,
+            "max": 0.49226999282836914
+          },
+          "down": {
+            "count": 20,
+            "median": 6.234500885009766,
+            "p10": 6.025154161453247,
+            "p90": 6.4577006816864015,
+            "min": 5.993966102600098,
+            "max": 6.724552154541016
+          },
+          "branch": {
+            "count": 20,
+            "median": 20.371292114257812,
+            "p10": 20.044040489196778,
+            "p90": 20.93746452331543,
+            "min": 19.998619079589844,
+            "max": 21.34599494934082
+          },
+          "input_d2h": {
+            "count": 20,
+            "median": 0.24189600348472595,
+            "p10": 0.23993109315633776,
+            "p90": 0.24522309750318527,
+            "min": 0.23963600397109985,
+            "max": 0.24875499308109283
+          },
+          "output_h2d": {
+            "count": 20,
+            "median": 0.20783600211143494,
+            "p10": 0.18497510403394699,
+            "p90": 0.24037500619888308,
+            "min": 0.16898700594902039,
+            "max": 0.2721950113773346
+          },
+          "reduction": {
+            "count": 20,
+            "median": 0.13095750659704208,
+            "p10": 0.1292540043592453,
+            "p90": 0.13486100137233736,
+            "min": 0.12887699902057648,
+            "max": 0.14931699633598328
+          }
+        },
+        "gpu_submit": {
+          "gate": {
+            "count": 20,
+            "median": 0.0252545,
+            "p10": 0.024356000000000003,
+            "p90": 0.027296000000000015,
+            "min": 0.02281,
+            "max": 0.040429
+          },
+          "up": {
+            "count": 20,
+            "median": 0.0028699999999999997,
+            "p10": 0.0026298999999999997,
+            "p90": 0.0033220000000000003,
+            "min": 0.0024700000000000004,
+            "max": 0.00344
+          },
+          "silu": {
+            "count": 20,
+            "median": 0.056409,
+            "p10": 0.040424999999999996,
+            "p90": 0.057247,
+            "min": 0.038269,
+            "max": 0.059179
+          },
+          "multiply": {
+            "count": 20,
+            "median": 0.0183,
+            "p10": 0.017659100000000004,
+            "p90": 0.019383,
+            "min": 0.015899,
+            "max": 0.02
+          },
+          "down": {
+            "count": 20,
+            "median": 0.002595,
+            "p10": 0.0023160000000000004,
+            "p90": 0.002801,
+            "min": 0.0022400000000000002,
+            "max": 0.00316
+          }
+        },
+        "npu_submit": {
+          "gate": {
+            "count": 20,
+            "median": 0.0943485,
+            "p10": 0.0861061,
+            "p90": 0.09840399999999999,
+            "min": 0.083919,
+            "max": 0.100608
+          },
+          "up": {
+            "count": 20,
+            "median": 0.1368725,
+            "p10": 0.0498121,
+            "p90": 0.16093700000000002,
+            "min": 0.02137,
+            "max": 0.187597
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 0.13832250000000001,
+            "p10": 0.045133000000000006,
+            "p90": 0.1468749,
+            "min": 0.041789,
+            "max": 0.159977
+          },
+          "down": {
+            "count": 20,
+            "median": 0.0502595,
+            "p10": 0.021705,
+            "p90": 0.14685980000000007,
+            "min": 0.021239,
+            "max": 0.21267599999999998
+          }
+        },
+        "npu_wait": {
+          "gate": {
+            "count": 20,
+            "median": 3.95147,
+            "p10": 3.6573678999999997,
+            "p90": 4.4183848,
+            "min": 3.624361,
+            "max": 4.579002999999999
+          },
+          "up": {
+            "count": 20,
+            "median": 4.094607,
+            "p10": 3.9796681,
+            "p90": 4.651087899999999,
+            "min": 3.940496,
+            "max": 4.75785
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.3522195,
+            "p10": 1.222157,
+            "p90": 1.8354057000000001,
+            "min": 1.01428,
+            "max": 1.969493
+          },
+          "down": {
+            "count": 20,
+            "median": 4.1876305,
+            "p10": 4.0584582000000005,
+            "p90": 4.577491,
+            "min": 3.948315,
+            "max": 4.73644
+          }
+        },
+        "npu_stage_host_io": {
+          "gate": {
+            "count": 20,
+            "median": 4.6756265,
+            "p10": 4.2376301000000005,
+            "p90": 5.128472900000001,
+            "min": 4.1347309999999995,
+            "max": 5.2929189999999995
+          },
+          "up": {
+            "count": 20,
+            "median": 4.778294,
+            "p10": 4.5323291999999995,
+            "p90": 5.2557176000000005,
+            "min": 4.377437,
+            "max": 5.528115
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.6553179999999998,
+            "p10": 1.4561321,
+            "p90": 2.314461,
+            "min": 1.215867,
+            "max": 2.4730920000000003
+          },
+          "down": {
+            "count": 20,
+            "median": 5.0022649999999995,
+            "p10": 4.6871022,
+            "p90": 5.3088448,
+            "min": 4.5423540000000004,
+            "max": 5.582154
+          }
+        },
+        "npu_bo_outside_dispatch": {
+          "gate": {
+            "count": 20,
+            "median": 0.5653339999999998,
+            "p10": 0.44648989999999944,
+            "p90": 0.6199539000000002,
+            "min": 0.4185809999999997,
+            "max": 0.6323589999999999
+          },
+          "up": {
+            "count": 20,
+            "median": 0.5359300000000002,
+            "p10": 0.3796261000000001,
+            "p90": 0.6351649,
+            "min": 0.32838300000000026,
+            "max": 0.6469579999999996
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 0.19881650000000012,
+            "p10": 0.13671900000000006,
+            "p90": 0.4110818,
+            "min": 0.13526700000000005,
+            "max": 0.5165109999999997
+          },
+          "down": {
+            "count": 20,
+            "median": 0.6440425000000005,
+            "p10": 0.5348099999999997,
+            "p90": 0.7668989999999994,
+            "min": 0.5205009999999993,
+            "max": 0.8395439999999998
+          }
+        },
+        "npu_comparable_stage_host_io": {
+          "gate_up": {
+            "count": 20,
+            "median": 9.608982000000001,
+            "p10": 8.737193199999998,
+            "p90": 10.034147699999998,
+            "min": 8.546237000000001,
+            "max": 10.615768
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.6553179999999998,
+            "p10": 1.4561321,
+            "p90": 2.314461,
+            "min": 1.215867,
+            "max": 2.4730920000000003
+          },
+          "down": {
+            "count": 20,
+            "median": 5.0022649999999995,
+            "p10": 4.6871022,
+            "p90": 5.3088448,
+            "min": 4.5423540000000004,
+            "max": 5.582154
+          }
+        },
+        "npu_comparable_wait": {
+          "gate_up": {
+            "count": 20,
+            "median": 8.293056999999997,
+            "p10": 7.746570200000001,
+            "p90": 8.5921828,
+            "min": 7.597836,
+            "max": 9.146826
+          },
+          "silu_mul": {
+            "count": 20,
+            "median": 1.3522195,
+            "p10": 1.222157,
+            "p90": 1.8354057000000001,
+            "min": 1.01428,
+            "max": 1.969493
+          },
+          "down": {
+            "count": 20,
+            "median": 4.1876305,
+            "p10": 4.0584582000000005,
+            "p90": 4.577491,
+            "min": 3.948315,
+            "max": 4.73644
+          }
+        },
+        "npu_layout": {
+          "input_layout": {
+            "count": 20,
+            "median": 0.9825615,
+            "p10": 0.8883021,
+            "p90": 1.028641,
+            "min": 0.829414,
+            "max": 1.202337
+          },
+          "down_input_layout": {
+            "count": 20,
+            "median": 0.089003,
+            "p10": 0.060364,
+            "p90": 0.14074799999999998,
+            "min": 0.058159,
+            "max": 0.182097
+          },
+          "output_layout": {
+            "count": 20,
+            "median": 1.2833649999999999,
+            "p10": 1.0161083,
+            "p90": 1.5983929999999997,
+            "min": 0.732506,
+            "max": 1.7013969999999998
+          }
+        },
+        "npu_components": {
+          "BO I/O + wrapper outside dispatch": {
+            "count": 20,
+            "median": 1.9050249999999997,
+            "p10": 1.6839648999999999,
+            "p90": 2.4591809999999996,
+            "min": 1.509859,
+            "max": 2.4976029999999994
+          },
+          "CPU layouts": {
+            "count": 20,
+            "median": 2.37124,
+            "p10": 2.0896535000000003,
+            "p90": 2.6829509,
+            "min": 1.810485,
+            "max": 2.768587
+          },
+          "XRT submission calls": {
+            "count": 20,
+            "median": 0.399023,
+            "p10": 0.23411910000000002,
+            "p90": 0.4777879000000001,
+            "min": 0.183998,
+            "max": 0.593868
+          },
+          "XRT host waits": {
+            "count": 20,
+            "median": 13.879161,
+            "p10": 13.3186424,
+            "p90": 14.5100908,
+            "min": 13.110999,
+            "max": 15.042513000000001
+          }
+        },
+        "wall": {
+          "instrumented": {
+            "count": 20,
+            "median": 20.888197,
+            "p10": 20.375989999999998,
+            "p90": 21.4693395,
+            "min": 20.215294999999998,
+            "max": 21.733366
+          },
+          "npu_branch": {
+            "count": 20,
+            "median": 18.582721,
+            "p10": 17.6658612,
+            "p90": 19.6714276,
+            "min": 17.289931,
+            "max": 20.258034
+          }
+        }
+      }
+    }
+  ],
+  "ignored_inputs": [],
+  "interpretation": {
+    "variability": "p10-p90 sample ranges, not confidence intervals",
+    "speedup": "matched per-report GPU baseline median / concurrent median",
+    "selection": "best sampled median among plotted configurations, not a global optimum",
+    "pooling": "independent reports are not pooled",
+    "clocks": "GPU HIP event and NPU CPU host clocks are not aligned",
+    "stages": "independent stage medians are not additive; diagnostics can perturb scheduling",
+    "power": "only recorded before/after snapshots establish the reported mode"
+  },
+  "rendering_provenance": {
+    "plotter_sha256": "7c928e52a0d5415f09c73f28dfa014e2b0caa2267670ec1220c961df81c594c2",
+    "matplotlib": "3.11.2",
+    "formats": [
+      "svg",
+      "png",
+      "pdf"
+    ]
+  },
+  "sampled_best": [
+    {
+      "shape": [
+        512,
+        4096,
+        14336
+      ],
+      "series": "fusion_confirmation",
+      "fused": true,
+      "npu_channels": 768,
+      "npu_percent": 5.357142857142857,
+      "median_ms": 19.7835105,
+      "speedup": 1.1251703028135478,
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p768_fused_ordinary.json",
+      "criterion": "lowest sampled concurrent median in this series",
+      "highest_matched_speedup": {
+        "npu_channels": 768,
+        "speedup": 1.1251703028135478,
+        "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p768_fused_ordinary.json",
+        "criterion": "highest sampled matched-baseline median ratio; distinct from minimum latency"
+      }
+    },
+    {
+      "shape": [
+        512,
+        4096,
+        14336
+      ],
+      "series": "fusion_unfused_confirmation",
+      "fused": false,
+      "npu_channels": 512,
+      "npu_percent": 3.5714285714285716,
+      "median_ms": 20.7642745,
+      "speedup": 1.0777016793916878,
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_unfused_confirmation/jobs/m512_p512_unfused_ordinary.json",
+      "criterion": "lowest sampled concurrent median in this series",
+      "highest_matched_speedup": {
+        "npu_channels": 512,
+        "speedup": 1.0777016793916878,
+        "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_unfused_confirmation/jobs/m512_p512_unfused_ordinary.json",
+        "criterion": "highest sampled matched-baseline median ratio; distinct from minimum latency"
+      }
+    }
+  ],
+  "figures": [
+    "experiments/ffn_partition/results/fusion_refinement_figures/total_ffn_m512_h4096_i14336.svg",
+    "experiments/ffn_partition/results/fusion_refinement_figures/total_ffn_m512_h4096_i14336.png",
+    "experiments/ffn_partition/results/fusion_refinement_figures/total_ffn_m512_h4096_i14336.pdf",
+    "experiments/ffn_partition/results/fusion_refinement_figures/stages_m512_h4096_i14336.svg",
+    "experiments/ffn_partition/results/fusion_refinement_figures/stages_m512_h4096_i14336.png",
+    "experiments/ffn_partition/results/fusion_refinement_figures/stages_m512_h4096_i14336.pdf",
+    "experiments/ffn_partition/results/fusion_refinement_figures/npu_host_m512_h4096_i14336.svg",
+    "experiments/ffn_partition/results/fusion_refinement_figures/npu_host_m512_h4096_i14336.png",
+    "experiments/ffn_partition/results/fusion_refinement_figures/npu_host_m512_h4096_i14336.pdf",
+    "experiments/ffn_partition/results/fusion_refinement_figures/submission_m512_h4096_i14336.svg",
+    "experiments/ffn_partition/results/fusion_refinement_figures/submission_m512_h4096_i14336.png",
+    "experiments/ffn_partition/results/fusion_refinement_figures/submission_m512_h4096_i14336.pdf"
+  ]
+}

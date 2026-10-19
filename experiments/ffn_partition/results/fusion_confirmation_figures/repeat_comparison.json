@@ -1,0 +1,542 @@
+{
+  "channels": [
+    768,
+    896
+  ],
+  "runs": [
+    {
+      "shape": [
+        512,
+        4096,
+        14336
+      ],
+      "series": "fusion_sweep_m512",
+      "design": "array8",
+      "started_utc": "2026-10-19T00:33:29.742736+00:00",
+      "candidate_order": [
+        768,
+        896
+      ],
+      "candidates": [
+        {
+          "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_sweep_m512/jobs/m512_p768_fused_ordinary.json",
+          "series": "fusion_sweep_m512",
+          "m": 512,
+          "hidden": 4096,
+          "intermediate": 14336,
+          "design": "array8",
+          "fused": true,
+          "seed": 12832,
+          "power": {
+            "mode": "default",
+            "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_sweep_m512/power/m512_p768_fused_ordinary_before.json",
+            "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_sweep_m512/power/m512_p768_fused_ordinary_after.json",
+            "note": "boundary snapshots, not continuous power/clock monitoring"
+          },
+          "device": "AMD Radeon 890M",
+          "started_utc": "2026-10-19T00:33:29.742736+00:00",
+          "npu_channels": 768,
+          "npu_percent": 5.357142857142857,
+          "timing_ms": {
+            "baseline": {
+              "count": 30,
+              "median": 22.269379,
+              "p10": 21.990810099999997,
+              "p90": 22.649455999999997,
+              "min": 21.902661,
+              "max": 22.704197
+            },
+            "concurrent": {
+              "count": 30,
+              "median": 20.2278255,
+              "p10": 19.772297999999996,
+              "p90": 21.5036709,
+              "min": 19.610232,
+              "max": 21.685644
+            },
+            "serial": {
+              "count": 30,
+              "median": 39.220523,
+              "p10": 38.2199394,
+              "p90": 39.793197,
+              "min": 36.676788,
+              "max": 40.94123200000001
+            }
+          },
+          "speedup": 1.1009279766626423,
+          "paired_speedup": {
+            "count": 30,
+            "median": 1.095421698806237,
+            "p10": 1.043722706149354,
+            "p90": 1.1264161081217738,
+            "min": 1.0187854661281062,
+            "max": 1.1390076105634899
+          },
+          "paired_wins": 30,
+          "paired_count": 30
+        },
+        {
+          "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_sweep_m512/jobs/m512_p896_fused_ordinary.json",
+          "series": "fusion_sweep_m512",
+          "m": 512,
+          "hidden": 4096,
+          "intermediate": 14336,
+          "design": "array8",
+          "fused": true,
+          "seed": 12832,
+          "power": {
+            "mode": "default",
+            "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_sweep_m512/power/m512_p896_fused_ordinary_before.json",
+            "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_sweep_m512/power/m512_p896_fused_ordinary_after.json",
+            "note": "boundary snapshots, not continuous power/clock monitoring"
+          },
+          "device": "AMD Radeon 890M",
+          "started_utc": "2026-10-19T00:34:51.756386+00:00",
+          "npu_channels": 896,
+          "npu_percent": 6.25,
+          "timing_ms": {
+            "baseline": {
+              "count": 30,
+              "median": 22.27185,
+              "p10": 22.0507752,
+              "p90": 22.583413,
+              "min": 21.866156,
+              "max": 22.620493
+            },
+            "concurrent": {
+              "count": 30,
+              "median": 19.9475215,
+              "p10": 19.4274171,
+              "p90": 20.617132599999998,
+              "min": 19.236054,
+              "max": 21.900166000000002
+            },
+            "serial": {
+              "count": 30,
+              "median": 39.8246385,
+              "p10": 38.933034299999996,
+              "p90": 40.8281698,
+              "min": 38.506357,
+              "max": 41.751579
+            }
+          },
+          "speedup": 1.1165221704360615,
+          "paired_speedup": {
+            "count": 30,
+            "median": 1.1134668471776659,
+            "p10": 1.078770055051811,
+            "p90": 1.151875172917697,
+            "min": 1.0088317138783331,
+            "max": 1.1740002913279408
+          },
+          "paired_wins": 30,
+          "paired_count": 30
+        }
+      ],
+      "lowest_median_candidates": [
+        896
+      ]
+    },
+    {
+      "shape": [
+        512,
+        4096,
+        14336
+      ],
+      "series": "fusion_confirmation",
+      "design": "array8",
+      "started_utc": "2026-10-19T00:45:18.097643+00:00",
+      "candidate_order": [
+        768,
+        896
+      ],
+      "candidates": [
+        {
+          "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p768_fused_ordinary.json",
+          "series": "fusion_confirmation",
+          "m": 512,
+          "hidden": 4096,
+          "intermediate": 14336,
+          "design": "array8",
+          "fused": true,
+          "seed": 12832,
+          "power": {
+            "mode": "default",
+            "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p768_fused_ordinary_before.json",
+            "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p768_fused_ordinary_after.json",
+            "note": "boundary snapshots, not continuous power/clock monitoring"
+          },
+          "device": "AMD Radeon 890M",
+          "started_utc": "2026-10-19T00:45:18.097643+00:00",
+          "npu_channels": 768,
+          "npu_percent": 5.357142857142857,
+          "timing_ms": {
+            "baseline": {
+              "count": 50,
+              "median": 22.2598185,
+              "p10": 21.992839099999998,
+              "p90": 22.688243999999997,
+              "min": 21.809776999999997,
+              "max": 23.21697
+            },
+            "concurrent": {
+              "count": 50,
+              "median": 19.7835105,
+              "p10": 19.193421100000002,
+              "p90": 20.5791359,
+              "min": 19.070559,
+              "max": 24.837040000000002
+            },
+            "serial": {
+              "count": 50,
+              "median": 39.819236000000004,
+              "p10": 38.4929441,
+              "p90": 40.5716711,
+              "min": 37.738705,
+              "max": 41.763339
+            }
+          },
+          "speedup": 1.1251703028135478,
+          "paired_speedup": {
+            "count": 50,
+            "median": 1.1238293087432518,
+            "p10": 1.084721544618617,
+            "p90": 1.1708640431790998,
+            "min": 0.9011349983733972,
+            "max": 1.1857741242678792
+          },
+          "paired_wins": 49,
+          "paired_count": 50
+        },
+        {
+          "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/jobs/m512_p896_fused_ordinary.json",
+          "series": "fusion_confirmation",
+          "m": 512,
+          "hidden": 4096,
+          "intermediate": 14336,
+          "design": "array8",
+          "fused": true,
+          "seed": 12832,
+          "power": {
+            "mode": "default",
+            "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p896_fused_ordinary_before.json",
+            "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_confirmation/power/m512_p896_fused_ordinary_after.json",
+            "note": "boundary snapshots, not continuous power/clock monitoring"
+          },
+          "device": "AMD Radeon 890M",
+          "started_utc": "2026-10-19T00:45:37.592822+00:00",
+          "npu_channels": 896,
+          "npu_percent": 6.25,
+          "timing_ms": {
+            "baseline": {
+              "count": 50,
+              "median": 22.301127,
+              "p10": 22.096209,
+              "p90": 22.553172899999996,
+              "min": 21.918305,
+              "max": 22.700868999999997
+            },
+            "concurrent": {
+              "count": 50,
+              "median": 20.108044,
+              "p10": 19.738353000000004,
+              "p90": 20.807485899999996,
+              "min": 19.652957999999998,
+              "max": 21.750728
+            },
+            "serial": {
+              "count": 50,
+              "median": 40.3617495,
+              "p10": 39.002497299999995,
+              "p90": 41.25304199999999,
+              "min": 38.512349,
+              "max": 41.871345999999996
+            }
+          },
+          "speedup": 1.109064959276994,
+          "paired_speedup": {
+            "count": 50,
+            "median": 1.1024026243654494,
+            "p10": 1.0699978943839623,
+            "p90": 1.132639426220687,
+            "min": 1.0160933923682922,
+            "max": 1.149264121645688
+          },
+          "paired_wins": 50,
+          "paired_count": 50
+        }
+      ],
+      "lowest_median_candidates": [
+        768
+      ]
+    },
+    {
+      "shape": [
+        512,
+        4096,
+        14336
+      ],
+      "series": "fusion_order_ab",
+      "design": "array8",
+      "started_utc": "2026-10-19T00:49:00.536622+00:00",
+      "candidate_order": [
+        768,
+        896
+      ],
+      "candidates": [
+        {
+          "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_order_ab/jobs/m512_p768_fused_ordinary.json",
+          "series": "fusion_order_ab",
+          "m": 512,
+          "hidden": 4096,
+          "intermediate": 14336,
+          "design": "array8",
+          "fused": true,
+          "seed": 12832,
+          "power": {
+            "mode": "default",
+            "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_order_ab/power/m512_p768_fused_ordinary_before.json",
+            "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_order_ab/power/m512_p768_fused_ordinary_after.json",
+            "note": "boundary snapshots, not continuous power/clock monitoring"
+          },
+          "device": "AMD Radeon 890M",
+          "started_utc": "2026-10-19T00:49:00.536622+00:00",
+          "npu_channels": 768,
+          "npu_percent": 5.357142857142857,
+          "timing_ms": {
+            "baseline": {
+              "count": 50,
+              "median": 22.2705,
+              "p10": 21.9728491,
+              "p90": 22.697692900000003,
+              "min": 21.848133,
+              "max": 24.61064
+            },
+            "concurrent": {
+              "count": 50,
+              "median": 19.996583,
+              "p10": 19.426008,
+              "p90": 20.544043900000002,
+              "min": 19.184924,
+              "max": 21.96806
+            },
+            "serial": {
+              "count": 50,
+              "median": 39.6183685,
+              "p10": 38.157315000000004,
+              "p90": 40.5470909,
+              "min": 37.245919,
+              "max": 41.346421
+            }
+          },
+          "speedup": 1.1137152782552897,
+          "paired_speedup": {
+            "count": 50,
+            "median": 1.1103417522783348,
+            "p10": 1.089626718741058,
+            "p90": 1.14703248655411,
+            "min": 1.014346510342743,
+            "max": 1.2410723655469722
+          },
+          "paired_wins": 50,
+          "paired_count": 50
+        },
+        {
+          "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_order_ab/jobs/m512_p896_fused_ordinary.json",
+          "series": "fusion_order_ab",
+          "m": 512,
+          "hidden": 4096,
+          "intermediate": 14336,
+          "design": "array8",
+          "fused": true,
+          "seed": 12832,
+          "power": {
+            "mode": "default",
+            "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_order_ab/power/m512_p896_fused_ordinary_before.json",
+            "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_order_ab/power/m512_p896_fused_ordinary_after.json",
+            "note": "boundary snapshots, not continuous power/clock monitoring"
+          },
+          "device": "AMD Radeon 890M",
+          "started_utc": "2026-10-19T00:49:19.784494+00:00",
+          "npu_channels": 896,
+          "npu_percent": 6.25,
+          "timing_ms": {
+            "baseline": {
+              "count": 50,
+              "median": 22.3434685,
+              "p10": 22.1261649,
+              "p90": 22.7201798,
+              "min": 19.685054,
+              "max": 23.03371
+            },
+            "concurrent": {
+              "count": 50,
+              "median": 19.9438945,
+              "p10": 19.5387672,
+              "p90": 21.156964000000002,
+              "min": 19.36095,
+              "max": 22.157236
+            },
+            "serial": {
+              "count": 50,
+              "median": 39.933897,
+              "p10": 38.754454100000004,
+              "p90": 41.665081,
+              "min": 37.557462,
+              "max": 41.843479
+            }
+          },
+          "speedup": 1.120316220084297,
+          "paired_speedup": {
+            "count": 50,
+            "median": 1.1220588841052384,
+            "p10": 1.049354958910132,
+            "p90": 1.1540917757997105,
+            "min": 0.9897278746022999,
+            "max": 1.1773372258283594
+          },
+          "paired_wins": 49,
+          "paired_count": 50
+        }
+      ],
+      "lowest_median_candidates": [
+        896
+      ]
+    },
+    {
+      "shape": [
+        512,
+        4096,
+        14336
+      ],
+      "series": "fusion_order_ba",
+      "design": "array8",
+      "started_utc": "2026-10-19T00:49:39.214946+00:00",
+      "candidate_order": [
+        896,
+        768
+      ],
+      "candidates": [
+        {
+          "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_order_ba/jobs/m512_p768_fused_ordinary.json",
+          "series": "fusion_order_ba",
+          "m": 512,
+          "hidden": 4096,
+          "intermediate": 14336,
+          "design": "array8",
+          "fused": true,
+          "seed": 12832,
+          "power": {
+            "mode": "default",
+            "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_order_ba/power/m512_p768_fused_ordinary_before.json",
+            "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_order_ba/power/m512_p768_fused_ordinary_after.json",
+            "note": "boundary snapshots, not continuous power/clock monitoring"
+          },
+          "device": "AMD Radeon 890M",
+          "started_utc": "2026-10-19T00:49:58.393451+00:00",
+          "npu_channels": 768,
+          "npu_percent": 5.357142857142857,
+          "timing_ms": {
+            "baseline": {
+              "count": 50,
+              "median": 22.433471,
+              "p10": 22.179076000000002,
+              "p90": 22.69189,
+              "min": 20.465479,
+              "max": 23.101288
+            },
+            "concurrent": {
+              "count": 50,
+              "median": 20.022637000000003,
+              "p10": 19.5452481,
+              "p90": 20.7621198,
+              "min": 19.075405999999997,
+              "max": 21.902171
+            },
+            "serial": {
+              "count": 50,
+              "median": 39.525934500000005,
+              "p10": 37.9992961,
+              "p90": 40.80888899999999,
+              "min": 36.639219,
+              "max": 41.551736
+            }
+          },
+          "speedup": 1.1204054191263617,
+          "paired_speedup": {
+            "count": 50,
+            "median": 1.1159396332139462,
+            "p10": 1.045352358560394,
+            "p90": 1.1559606064390235,
+            "min": 1.0030589346576335,
+            "max": 1.1739709236070783
+          },
+          "paired_wins": 50,
+          "paired_count": 50
+        },
+        {
+          "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_order_ba/jobs/m512_p896_fused_ordinary.json",
+          "series": "fusion_order_ba",
+          "m": 512,
+          "hidden": 4096,
+          "intermediate": 14336,
+          "design": "array8",
+          "fused": true,
+          "seed": 12832,
+          "power": {
+            "mode": "default",
+            "before": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_order_ba/power/m512_p896_fused_ordinary_before.json",
+            "after": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/fusion_order_ba/power/m512_p896_fused_ordinary_after.json",
+            "note": "boundary snapshots, not continuous power/clock monitoring"
+          },
+          "device": "AMD Radeon 890M",
+          "started_utc": "2026-10-19T00:49:39.214946+00:00",
+          "npu_channels": 896,
+          "npu_percent": 6.25,
+          "timing_ms": {
+            "baseline": {
+              "count": 50,
+              "median": 22.375387500000002,
+              "p10": 22.092829,
+              "p90": 22.6773089,
+              "min": 21.657906,
+              "max": 23.131698
+            },
+            "concurrent": {
+              "count": 50,
+              "median": 20.002678000000003,
+              "p10": 19.5305572,
+              "p90": 20.9727119,
+              "min": 19.301941,
+              "max": 21.485758999999998
+            },
+            "serial": {
+              "count": 50,
+              "median": 39.750164999999996,
+              "p10": 38.5745326,
+              "p90": 40.916179,
+              "min": 37.602681,
+              "max": 42.449748
+            }
+          },
+          "speedup": 1.118619591836653,
+          "paired_speedup": {
+            "count": 50,
+            "median": 1.1181775445120872,
+            "p10": 1.0624420784326678,
+            "p90": 1.149910522240651,
+            "min": 1.0468831257807572,
+            "max": 1.1667739443439236
+          },
+          "paired_wins": 50,
+          "paired_count": 50
+        }
+      ],
+      "lowest_median_candidates": [
+        896
+      ]
+    }
+  ],
+  "excluded_runs": [],
+  "interpretation": "independent ordinary runs; no pooling; sample p10-p90 is not a confidence interval"
+}

@@ -1,0 +1,13 @@
+
+---------------------------
+[0000:66:00.1] : NPU Strix
+---------------------------
+Platform
+  Name                   : NPU Strix 
+  Power Mode             : default 
+  Total Columns          : 8 
+
+Estimated Power          : N/A
+Temperature (C)          : N/A
+
+Successfully wrote the JSON file: /notebooks/HeteroMega/experiments/ffn_partition/results/fusion_sweep_m512/power/m512_p2048_unfused_diagnostic_after.json

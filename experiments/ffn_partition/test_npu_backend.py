@@ -23,9 +23,9 @@ from reference import silu_multiply
 
 
 def _write_mock_artifacts(root, m=128, hidden=128, channels=256,
-                          columns=4, design="legacy"):
+                          columns=4, design="legacy", fuse_gate_up=False):
     """Valid manifests with unmistakably fake binaries, never sent to XRT."""
-    specs = backend._artifact_specs(m, hidden, channels, root, columns, design)
+    specs = backend._artifact_specs(m, hidden, channels, root, columns, design, fuse_gate_up)
     for spec in specs.values():
         directory = spec["directory"]
         directory.mkdir(parents=True, exist_ok=True)
@@ -35,7 +35,7 @@ def _write_mock_artifacts(root, m=128, hidden=128, channels=256,
         (directory / "insts.bin").write_bytes(instructions)
         manifest = dict(
             spec["expected"], target_mlir_aie_commit=backend.TARGET_COMMIT,
-            source_sha256=spec["source_sha256"][f"npu/ffn/{spec['stem']}.cc"],
+            source_sha256=spec["source_sha256"][f"npu/ffn/{backend._kernel_source(spec['stem'])}.cc"],
             xclbin_sha256=sha256(xclbin).hexdigest(),
             insts_sha256=sha256(instructions).hexdigest(),
         )
@@ -47,12 +47,13 @@ def _write_mock_artifacts(root, m=128, hidden=128, channels=256,
 class _OracleRunner:
     """Observe exact uploaded bytes and independently compute fake outputs."""
 
-    def __init__(self, xclbin, insts, specs):
+    def __init__(self, xclbin, insts, specs, output_count=1):
         self.manifest = json.loads(Path(str(xclbin) + ".json").read_text())
         self.specs = specs
         self.inputs = {}
         self.input_write_counts = [0, 0]
         self.completed_dispatches = 0
+        self.output_count = output_count
 
     def write_input(self, index, data):
         shape, dtype = self.specs[index]
@@ -72,15 +73,37 @@ class _OracleRunner:
         else:
             x = unpack_activations(self.inputs[0], manifest["m"], manifest["k"])
             weight = unpack_weights(self.inputs[1], manifest["k"], manifest["n"])
-            self.result = pack_output(projection_reference(x, weight))
+            projected = projection_reference(x, weight)
+            if self.output_count == 2:
+                p = manifest["channels"]
+                self.result = (pack_output(projected[:, :p]), pack_output(projected[:, p:]))
+            else:
+                self.result = pack_output(projected)
         self.completed_dispatches += 1
         return 1.0  # Synthetic placeholder, never a latency measurement.
 
-    def output_bits(self):
-        return self.result.copy()
+    def output_bits(self, index=0):
+        return (self.result[index] if self.output_count == 2 else self.result).copy()
 
 
 class NPUBackendTests(unittest.TestCase):
+    def test_two_output_readbacks_select_distinct_buffers(self):
+        runner = backend.PersistentXrtRunner.__new__(backend.PersistentXrtRunner)
+        runner.output_count = 2
+        runner.xrt = SimpleNamespace(xclBOSyncDirection=SimpleNamespace(
+            XCL_BO_SYNC_BO_FROM_DEVICE=1))
+        first = np.array([0x3F80, 0xBF80], np.uint16)
+        second = np.array([0x4000, 0xC000], np.uint16)
+        runner.specs = [((2,), np.dtype(np.uint16))] * 4
+        runner.buffers = [None, None] + [
+            SimpleNamespace(sync=lambda direction: None,
+                            read=lambda nbytes, offset, data=data: data.view(np.int8))
+            for data in (first, second)]
+        np.testing.assert_array_equal(runner.output_bits(0), first)
+        np.testing.assert_array_equal(runner.output_bits(1), second)
+        with self.assertRaisesRegex(ValueError, "output index"):
+            runner.output_bits(2)
+
     def test_strided_byte_readback_preserves_bf16_bits_and_ownership(self):
         expected = np.array([0x0000, 0x8000, 0x3F80, 0xBF80, 0x7FC1, 0x0080], np.uint16)
         storage = np.zeros(expected.nbytes * 2, dtype=np.uint8)
@@ -157,6 +180,45 @@ class NPUBackendTests(unittest.TestCase):
         for design, columns in (("legacy", 4), ("array8", 8)):
             with self.subTest(design=design):
                 self._check_weights_upload_once(design, columns)
+
+    def test_fused_gate_up_preserves_outputs_metadata_and_weight_reuse(self):
+        # P384 exercises an odd number of N32 tiles per physical column in
+        # the combined graph, as well as the compact two-output host ABI.
+        weights = random_weights(128, 384, seed=121)
+        x = np.random.default_rng(122).normal(0, 0.5, (128, 128)).astype(np.float32)
+        with tempfile.TemporaryDirectory() as root:
+            _write_mock_artifacts(root, channels=384, columns=8, design="array8", fuse_gate_up=True)
+            with patch.object(backend, "PersistentXrtRunner", _OracleRunner):
+                branch = backend.NPUBranch(weights.gate, weights.up, weights.down, 128, root,
+                                           fuse_gate_up=True)
+                self.assertEqual(branch.metadata["launches_per_run"], 3)
+                self.assertEqual(branch.metadata["fixed_weight_uploads"], 2)
+                self.assertEqual(branch.metadata["host_bo_io_bytes_per_run_estimate"],
+                                 4 * 128 * 128 + 12 * 128 * 384)
+                for index, value in enumerate((x, -x, np.zeros_like(x), x)):
+                    output = branch.run(bf16_bits(value))
+                    np.testing.assert_array_equal(output, bf16_bits(reference_full(value, weights)))
+                    self.assertEqual(branch.gate_up.input_write_counts, [index + 1, 1])
+                    self.assertEqual(branch.down.input_write_counts, [index + 1, 1])
+                    self.assertEqual(branch.last_diagnostics["completed_dispatches_total"], 3 * (index + 1))
+                    self.assertEqual(branch.last_diagnostics["weight_upload_counts"], {"gate_up": 1, "down": 1})
+                    self.assertEqual(set(branch.last_diagnostics["dispatch_wait_us"]),
+                                     {"gate_up", "silu_mul", "down"})
+
+    def test_fused_artifacts_reject_unsupported_geometry_and_stale_split_layout(self):
+        with tempfile.TemporaryDirectory() as root:
+            with self.assertRaisesRegex(ValueError, "array8"):
+                backend._artifact_specs(128, 128, 256, root, 8, "legacy", True)
+            with self.assertRaisesRegex(ValueError, "8192"):
+                backend._artifact_specs(128, 128, 8320, root, fuse_gate_up=True)
+            spec = _write_mock_artifacts(root, columns=8, design="array8", fuse_gate_up=True)["gate_up"]
+            backend._load_artifact(spec)
+            path = spec["directory"] / "final.xclbin.json"
+            manifest = json.loads(path.read_text())
+            manifest["output_order"] = ["up", "gate"]
+            path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, "output_order"):
+                backend._load_artifact(spec)
 
     def _check_weights_upload_once(self, design, columns):
         weights = random_weights(128, 256, seed=111)

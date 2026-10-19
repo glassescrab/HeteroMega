@@ -3,3 +3,5 @@ artifacts/
 build_*/
 *.log
 !results/logs/*.log
+# Retain sweep, correctness and power-query logs alongside measured evidence.
+!results/**/*.log

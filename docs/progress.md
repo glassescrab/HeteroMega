@@ -1,5 +1,116 @@
 # HeteroMega progress
 
+## 2026-10-18: fusion checkpoint and cleanup
+
+- User authorized a local checkpoint of the validated gate/up and on-chip
+  SwiGLU work. Source, tests, raw results, power snapshots, compiler audit,
+  plots and nested benchmark logs are included; no new hardware run or
+  implementation change is part of checkpointing. Push/PR remain paused.
+- Removed the completed upload's transport-only checksum manifest and
+  redundant local transfer/scratch copies. Preserved scientific provenance,
+  the source-only baseline archive, interrupted-run evidence, compiled
+  kernels and reusable environments.
+- Resume from [the checkpoint guide](checkpoint-2026-10-18-ffn-fusion.md).
+  The next model experiment is actual prefill integration and attention
+  interference; direct Z layout/shared-BO handoff remains a separate proposal.
+
+## 2026-10-18: on-chip gate/up and SwiGLU fusion
+
+- **Implemented and hardware-validated:** opt-in `--fuse-swiglu` computes
+  gate/up projections plus SiLU/multiply in one eight-column/four-row graph,
+  followed by the existing down graph. This reduces NPU launches from three
+  to two. Adjacent gate/up column pairs retain gate intermediates on-chip;
+  all 32 workers perform projections and 16 also perform pointwise work.
+  Existing BF16 boundaries and arithmetic kernels are unchanged. Z still
+  passes through host memory and CPU layout conversion before down. GPU
+  kernels and the final GPU partial-output reduction are unchanged.
+- **Measured correctness:** small M128/H128/P128 and model-shaped
+  M512/H4096/P384,P896 checks pass all 180 checks, including 24 exact
+  cross-variant BF16 Z/full-branch comparisons. Every runner and fixed-weight
+  upload count matches; 60 NPU launches complete. Maximum explicit relative-L2
+  error is 0.003556 under unchanged tolerance. The interrupted first full-size
+  attempt remains separately recorded with zero checks; the notebook server
+  stopped for an unknown reason. The retry and fresh controls use the restarted
+  container, with NPU mode `default` verified before/after.
+- **Compiled-artifact confirmed:** 661 checks of the small build verify shared
+  gate buffers in adjacent tile memory, no gate DMA, and A/W on the two inbound
+  DMA channels. Static data plus reserved stack occupies 39,104 bytes per gate
+  core and 45,248 bytes per up/pointwise core. This is not a runtime memory or
+  bank-contention measurement. Local validation passes 102 CPU tests.
+- **Measured complete FFN:** a fresh seven-allocation comparison at
+  M512/H4096/I14336, followed by a reversed-order four-allocation repeat,
+  places the two-launch path's best sampled point at P1152 (8.04% NPU).
+  It takes 19.657 ms versus its 22.474 ms GPU-only control in the main sweep
+  (1.1433x), and 19.643 versus 22.293 ms in the 50-sample confirmation
+  (1.1349x). This is 1.86%/2.99% lower latency than each round's retuned
+  three-launch minimum at P896. P1024 is only 0.17% slower in confirmation;
+  retain the 1024–1152 region, not a claim of a unique or global optimum.
+- **Measured diagnostic:** at P1152, NPU host branch time falls from 20.802
+  to 18.830 ms; the new GPU branch HIP duration is 18.941 ms and final GPU
+  reduction is 0.149 ms. Fusion mainly improves the projection/pointwise
+  frontend. Larger shares remain NPU-limited; small shares can remain
+  GPU-limited and do not consistently benefit. Host waits are not pure DMA
+  or device compute time, and diagnostic medians must not be added to infer
+  ordinary concurrent latency. The 36 jobs pass all 2,600 timed checks;
+  5,525 NPU completions include these jobs, warmups and exact-only checks.
+- The previous 26 measurement sources are archived with matching hashes;
+  separate-projection and combined gate/up controls remain available.
+  Architecture, raw evidence and fresh comparison results are recorded in
+  [SWIGLU_RESULTS.md](../experiments/ffn_partition/SWIGLU_RESULTS.md) and
+  [SWIGLU.md](../npu/ffn/SWIGLU.md). HX370/default mode and synthetic FFN
+  remain the limits; no whole-model prefill, attention-interference or
+  Max+395 result is established. Next integrate the candidate region into
+  the real prefill schedule. Direct Z layout emission/shared-BO handoff is
+  a separate proposed optimization. No commit, push or PR in this turn.
+
+## 2026-10-18: combined gate/up and partition sweep
+
+- **Implemented and hardware-validated:** `w4a16_gate_up.py` computes matching
+  gate/up slices in one wider GEMM on eight columns and four rows. Columns 0–3
+  produce gate and 4–7 produce up, with compact output buffers written directly
+  by DMA. The unchanged BF16/FP32 compute kernel is reused. `--fuse-gate-up`
+  reduces NPU FFN launches from four to three; the separate-projection control
+  remains available. Weights upload once, and input uploads drop from two to
+  one. Intermediates still pass through host DRAM; this is not on-chip full-FFN
+  fusion. GPU performs the final partial-output reduction.
+- **Measured:** expanded the earlier coarse split coverage to 12 NPU channel
+  counts from 128 through 7168, with fused/unfused comparisons, then added
+  P1152 and repeated the best region. M512/H4096/I14336 is fixed, with original
+  HeteroMosaic GPU kernels, canonical weights/inputs, randomized execution order
+  and a matched GPU-only control in each process. Ordinary latency (30 samples
+  in the main sweep, 50 in confirmations) is separate from instrumented stages.
+- **Measured:** the initial best fused P896 takes 19.948 ms versus 22.272 ms
+  GPU-only (1.1165×), while the initial best unfused P512 takes 20.537 ms
+  (1.0897×). Longer confirmation favors P768 (19.783 ms) over P896 (20.108 ms).
+  Two final blocks with candidate order reversed put P768/P896 at
+  19.997/19.944 ms and 20.023/20.003 ms. These results support a competitive
+  768–896 region (5.36–6.25% NPU), not a unique or exhaustive optimum. P896 is
+  a practical candidate; retain P768 for subsequent prefill integration.
+- **Measured diagnostic:** at fused P896 the GPU branch is 19.779 ms, with
+  projections accounting for 96.2% of its HIP event duration. The NPU host
+  call is 18.324 ms and GPU reduction is 0.142 ms. Larger NPU shares become
+  completion/staging limited. At some fixed splits, fusion shortens NPU work
+  but increases complete-FFN latency; scheduling interaction is plausible,
+  not isolated causal proof. Host waits include runtime/DMA/compute/stalls;
+  they are not pure data-movement or kernel execution measurements.
+- Validation: 77 CPU tests pass. All 62 main/confirmation jobs pass, with 3,850
+  timed calls and 2,046 explicit numerical checks. The independent M512 exact
+  comparison at P128/384/512/896 passes another 160 checks, including bit-exact
+  fused versus separate gate, up and complete NPU outputs for alternating,
+  zero and repeated inputs. These runs total 11,380 successful NPU completions
+  including warmups and correctness-only calls. All report/power/source hashes
+  match; the report records counts and retained evidence in detail.
+- **Limits:** HX370/Radeon 890M, verified NPU `default` throughout; the host
+  rejected the previously authorized performance-mode change. This is a
+  synthetic complete-FFN microbenchmark, not whole-model prefill/TTFT or
+  Max+395 validation. Teammate GPU PR kernels remain outside this controlled
+  comparison. All-NPU and every legal intermediate split were not measured.
+- Evidence, reproduction, latency curves, per-stage graphs and independent-run
+  comparison: [FUSION_RESULTS.md](../experiments/ffn_partition/FUSION_RESULTS.md).
+  Next: integrate the candidate region into the actual prefill schedule and
+  measure attention interference and end-to-end prefill against the unchanged
+  baseline. PR creation remains paused; no commit or push in this turn.
+
 ## 2026-10-18: NPU power verification and device/launch timing
 
 - **Measured:** XRT reports NPU mode `default`, eight columns, at PCI address

@@ -1,0 +1,16 @@
+Starting m512_p1280_fused_ordinary
+{"id": "m512_p1280_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1280_swiglu_ordinary
+{"id": "m512_p1280_swiglu_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1152_swiglu_ordinary
+{"id": "m512_p1152_swiglu_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1152_fused_ordinary
+{"id": "m512_p1152_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1024_fused_ordinary
+{"id": "m512_p1024_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1024_swiglu_ordinary
+{"id": "m512_p1024_swiglu_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p896_swiglu_ordinary
+{"id": "m512_p896_swiglu_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p896_fused_ordinary
+{"id": "m512_p896_fused_ordinary", "status": "passed", "error": null, "power_error": null}

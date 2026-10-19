@@ -1,0 +1,56 @@
+Starting m512_p512_fused_ordinary
+{"id": "m512_p512_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p512_swiglu_ordinary
+{"id": "m512_p512_swiglu_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p768_swiglu_ordinary
+{"id": "m512_p768_swiglu_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p768_fused_ordinary
+{"id": "m512_p768_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p896_fused_ordinary
+{"id": "m512_p896_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p896_swiglu_ordinary
+{"id": "m512_p896_swiglu_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1024_swiglu_ordinary
+{"id": "m512_p1024_swiglu_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1024_fused_ordinary
+{"id": "m512_p1024_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1152_fused_ordinary
+{"id": "m512_p1152_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1152_swiglu_ordinary
+{"id": "m512_p1152_swiglu_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1280_swiglu_ordinary
+{"id": "m512_p1280_swiglu_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1280_fused_ordinary
+{"id": "m512_p1280_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1536_fused_ordinary
+{"id": "m512_p1536_fused_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1536_swiglu_ordinary
+{"id": "m512_p1536_swiglu_ordinary", "status": "passed", "error": null, "power_error": null}
+Starting m512_p512_fused_diagnostic
+{"id": "m512_p512_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p512_swiglu_diagnostic
+{"id": "m512_p512_swiglu_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p768_swiglu_diagnostic
+{"id": "m512_p768_swiglu_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p768_fused_diagnostic
+{"id": "m512_p768_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p896_fused_diagnostic
+{"id": "m512_p896_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p896_swiglu_diagnostic
+{"id": "m512_p896_swiglu_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1024_swiglu_diagnostic
+{"id": "m512_p1024_swiglu_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1024_fused_diagnostic
+{"id": "m512_p1024_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1152_fused_diagnostic
+{"id": "m512_p1152_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1152_swiglu_diagnostic
+{"id": "m512_p1152_swiglu_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1280_swiglu_diagnostic
+{"id": "m512_p1280_swiglu_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1280_fused_diagnostic
+{"id": "m512_p1280_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1536_fused_diagnostic
+{"id": "m512_p1536_fused_diagnostic", "status": "passed", "error": null, "power_error": null}
+Starting m512_p1536_swiglu_diagnostic
+{"id": "m512_p1536_swiglu_diagnostic", "status": "passed", "error": null, "power_error": null}

@@ -1,0 +1,2 @@
+{"channels": 128, "checks_so_far": 60, "passed_so_far": true}
+{"status": "passed", "checks": 60, "output": "experiments/ffn_partition/results/swiglu_fusion/exact_smoke.json"}

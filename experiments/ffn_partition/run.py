@@ -140,6 +140,10 @@ def main():
     parser.add_argument("--columns", type=int, default=8)
     parser.add_argument("--npu-design", choices=("array8", "legacy"), default="array8",
                         help="array8 uses all 8 columns/32 workers; legacy preserves the measured old graph")
+    parser.add_argument("--fuse-gate-up", action="store_true",
+                        help="array8 gate/up in one wider projection with two compact output BOs")
+    parser.add_argument("--fuse-swiglu", action="store_true",
+                        help="array8 gate/up plus on-chip SiLU/multiply in one launch; implies --fuse-gate-up")
     parser.add_argument("--warmup", type=int, default=2)
     parser.add_argument("--iterations", type=int, default=20)
     parser.add_argument("--seed", type=int, default=12832)
@@ -149,6 +153,7 @@ def main():
     parser.add_argument("--build-only", action="store_true")
     parser.add_argument("--verbose-build", action="store_true")
     args = parser.parse_args()
+    args.fuse_gate_up = args.fuse_gate_up or args.fuse_swiglu
     channels = list(dict.fromkeys(int(value) for value in args.npu_channels.split(",")))
     for p in channels:
         validate_shape(args.m, args.hidden, args.intermediate, p)
@@ -167,7 +172,8 @@ def main():
             if p:
                 print(f"Building/verifying NPU artifacts: M={args.m} H={args.hidden} P={p}", flush=True)
                 build_artifacts(args.m, args.hidden, p, args.artifact_root, args.columns,
-                                args.iron_python, npu_design=args.npu_design)
+                                args.iron_python, npu_design=args.npu_design, fuse_gate_up=args.fuse_gate_up,
+                                fuse_swiglu=args.fuse_swiglu)
         if args.build_only:
             report["status"] = "build_complete"
             save(report, args.output)
@@ -206,7 +212,8 @@ def main():
             g, n = branches["gpu"], branches["npu"]
             gpu = GPUBranch(g.gate, g.up, g.down, args.m) if g is not None else None
             npu = NPUBranch(n.gate, n.up, n.down, args.m, args.artifact_root, args.columns,
-                            npu_design=args.npu_design) if n is not None else None
+                            npu_design=args.npu_design, fuse_gate_up=args.fuse_gate_up,
+                            fuse_swiglu=args.fuse_swiglu) if n is not None else None
             candidate = TimedFFN(gpu, npu, args.m, args.hidden, device)
             entry["setup_seconds"] = time.perf_counter() - before
             entry["gpu"] = gpu.metadata if gpu is not None else None
