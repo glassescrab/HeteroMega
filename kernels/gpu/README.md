@@ -43,6 +43,7 @@ flowchart LR
 | `tools/aup_model_ffn.sh` | AUP: build the model with the switch, run it with and without (see [End-to-end runs](#end-to-end-runs-aup)) |
 | `tools/run_model_ffn.py` | One end-to-end process: prefill time, decode rate, tokens vs the reference |
 | `tools/summarize_model_runs.py` | ON vs OFF summary of `run_model_ffn.py` results |
+| `tools/evaluate_prefill.py` | Model-level length/method sweep and CSV comparison; see [evaluation](../../docs/evaluation.md) |
 | `tools/check_packing.py` | CPU check of the layout and the split math (numpy only) |
 
 ## GPU branch contract
