@@ -81,8 +81,9 @@ class _SwiGLUOracleRunner:
         self.completed_dispatches += 1
         return 1.0  # Synthetic interval, never a performance result.
 
-    def output_bits(self, index=0):
-        return (self.result[index] if self.output_count == 2 else self.result).copy()
+    def output_bits(self, index=0, *, copy=True):
+        result = self.result[index] if self.output_count == 2 else self.result
+        return result.copy() if copy else result
 
 
 class SwiGLUBackendOracleTests(unittest.TestCase):

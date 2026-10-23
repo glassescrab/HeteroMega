@@ -1,5 +1,112 @@
 # HeteroMega progress
 
+## 2026-10-22: NPU implementation bottleneck trace
+
+- **Reanalyzed measured evidence:** P1792's outer NPU call averages 17.831 ms:
+  74.3% in SwiGLU/down host waits, 13.3% CPU layouts, 8.7% BO/invoke-wrapper
+  residual and 1.3% submission. These are additive per-sample means, not a
+  sum of independent medians. On the shared GPU-event clock, the staged NPU
+  result arrives 0.423 ms later than the GPU branch at the median and is late
+  in 13/15 samples. Reduction is only 0.155 ms. Serial versus concurrent inner
+  NPU medians differ by 0.9%; large GPU-induced contention is not established.
+- **Code-confirmed:** all 32 compute tiles are assigned work, but activations
+  replay 14 times in gate/up and 16 times in down; weights replay across four
+  sequential M128 waves. Logical input DMA totals 127.969 MiB for 16.742 MiB
+  unique A/W data. The kernel executes 86,016 dequantize/MAC calls, serializing
+  preparation and computation. The BFP16 adaptation retains small tiles,
+  FP32 K-group feedback and the 4×8 external layout rather than adopting the
+  upstream larger-tile schedule. Logical traffic is not measured DRAM traffic.
+- **Analysis, not new hardware timing:** no separation of device compute,
+  dequantization, DMA and FIFO/lock stalls is claimed. Next split device event
+  regions, improve A/W reuse and wave overlap, then remove host layout/BO
+  staging and retune the partition. Raising fused reuse to four requires a
+  buffer redesign; raw SRAM bounds exceed capacity.
+- **Compiled-binary confirmed via notebook:** disassembled existing P1792
+  gate/up/down worker ELFs. Each dequantization contains 32 software
+  `__floatunsisf` calls: 2,752,512 calls per FFN implied by the schedule.
+  Rehashed xclbins match the recorded profile. Saved audit/disassembly for
+  reproducibility. First bounded ablation: replace scalar zero metadata
+  conversion with validated exact BF16 bit construction; runtime savings
+  remain unmeasured. Stack accesses alone do not establish a spill bottleneck.
+- Source-linked report and reproducible CPU analysis:
+  [NPU implementation trace](../experiments/ffn_partition/NPU_IMPLEMENTATION_TRACE.md).
+  Kernel behavior and prior evidence remain unchanged; no commit, push or PR.
+
+## 2026-10-22: TileFuse BFP16 FFN adaptation measured
+
+- **Implemented:** audited all seven heads of `glassescrab/mlir-aie` and selected
+  the corrected TileFuse W4A16 GEMM at `121dd54abc68f84d89a7074372ebf82be2db62d5`.
+  Added opt-in BFP16-backed 8×8×8 projections to the existing array8, fused gate/up
+  and fused SwiGLU graphs. Compact W4/BF16 ABI, FP32 K-group partials, eight
+  columns, GPU kernels and final GPU reduction remain intact. BFP16 stacks
+  are 4096 bytes; caches/manifests distinguish arithmetic and source revisions.
+  Upstream GEMV was inspected (vector accumulation); decode remains deferred.
+- **User-authorized numerical policy:** larger BFP16 deviations may be reported
+  while profiling proceeds. Existing tolerance pass/fail and errors remain
+  visible; finite output, zero/repeat/changed-input checks and successful NPU
+  completion remain required. GPU controls stay strict. Native BF16 remains
+  the default and its arithmetic source is unchanged.
+- **Measured on HX370/default:** eight NPU allocations at M512/H4096/I14336
+  place the best sampled point at P1792 (12.5%). Refinement measured 18.761 ms;
+  a 50-sample repeat measured **18.754 ms versus 22.349 ms GPU-only** (1.1917×,
+  16.1% lower latency). A fresh BF16 P1152 control measured 19.828 ms with an
+  almost identical GPU control; selected BFP16 is 5.4% lower. This is isolated
+  synthetic FFN latency, not full-model prefill/TTFT or native heterogeneous
+  HeteroMosaic speedup.
+- **Profiled:** at fixed P2048, SwiGLU host wait fell 12.625→8.516 ms and down
+  wait 7.481→5.833 ms. Submission costs remain around tenths of a millisecond.
+  At P1792 the GPU branch is 18.162 ms and outer NPU call 17.848 ms in separate
+  diagnostics. Host layouts/staging remain; waits are not pure DMA/compute.
+- **Verified:** ten successful reports, 2,764 completed NPU submissions and
+  1,694 timed invocations; every numerical check stays within original bounds.
+  M512 maximum recorded relative L2 is 0.0172392. All 147 CPU tests pass,
+  including rendering; 97 archived evidence hashes were verified. Failed
+  initial command/PATH setup attempts are preserved separately.
+- Browser access returned. Work ran in `/notebooks/HeteroMega-bfp16-20261022`,
+  preserving the earlier notebook checkout. Performance-mode configuration
+  again failed with permission error 13; all power snapshots report `default`.
+  The native baseline checkout/model library were absent at their recorded
+  paths, so that separate comparison still needs re-establishment.
+- Evidence and reproducible graphs: [BFP16 results](../experiments/ffn_partition/BFP16_RESULTS.md).
+  Source/ABI and branch audit: [adaptation](../npu/ffn/BFP16_ADAPTATION.md).
+  Next integrate the measured candidate with real prefill/attention scheduling
+  and restore the native heterogeneous baseline. No commit, push or PR.
+
+## 2026-10-22: continuation handoff
+
+- Added a current continuation guide at the top of `agent.md`, preserving the
+  original user-provided plan below it. It records the active native W4A16
+  profiling request, branch/checkpoint, uncommitted adapter files, prior measured
+  results, local-only validation, unresolved browser access, cloud locations,
+  run sequence, correctness gates, profiling caveats, and paused PR creation.
+- Updated `AGENTS.md` to point incoming agents to that handoff and distinguish
+  the current Linux environment from historical Windows onboarding. This is
+  documentation-only work; no new hardware measurement or commit was made.
+
+## 2026-10-21: native W4A16 FFN comparison prepared; hardware access blocked
+
+- User requested actual W4A16 profiling against native HeteroMosaic. Added a
+  bounded adapter that links the existing native model library and uses its
+  original shared-buffer M-split gate/up, GPU pointwise and GPU down for the
+  recorded M512/H4096/I14336 configuration. Original runtime and kernel sources
+  are unchanged. HeteroMega's prior GPU-only comparison remains separate.
+- Added matched canonical weights/inputs, stage and row-owner correctness
+  checks, refusal of GPU fallback, successful NPU completion counters, and
+  separate ordinary/diagnostic runs. The comparison driver schedules fresh
+  native and P1024/P1152 SwiGLU jobs with reversed ordering, GPU controls,
+  before/after power queries, and raw evidence validation.
+- **Locally verified only:** 21 CPU tests pass (ten new tests plus existing
+  packing/sweep checks) for configuration,
+  numerical reference/input contracts, failure reporting, job planning and
+  evidence checks. CPU preparation and the nine-job dry plan also pass. These
+  do not compile the C++ binding or execute hardware.
+- **Blocked:** the browser tool reports no available browser, preventing access
+  to the authorized AUP notebook. The local host has no AMD NPU or ROCm. No new
+  hardware profiling, native accuracy result or speedup is claimed. Reconnect
+  AUP, compile the thin adapter against the existing compatible library, pass
+  the numerical gate, then run the prepared comparison. Details and commands:
+  [native comparison](../experiments/ffn_partition/NATIVE_COMPARISON.md).
+
 ## 2026-10-18: fusion checkpoint and cleanup
 
 - User authorized a local checkpoint of the validated gate/up and on-chip

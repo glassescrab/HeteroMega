@@ -1,4 +1,303 @@
-# HeteroMega agent reference plan
+# HeteroMega agent continuation guide
+
+## Current authorization — 2026-10-22: optimization and PR
+
+The user explicitly requested **"make some optimizations and make a PR"**.
+This supersedes the PR pause in the historical entries below. The current
+branch is `codex/npu-bfp16-prefill-optimizations`. Preserve the prior native
+comparison preparation and teammate GPU/evaluation changes from main.
+
+The bounded optimizations are exact BF16 bit construction for W4 zero-point
+metadata, removing software integer-to-float conversions, and borrowed
+read-only BO readback views inside the non-reentrant NPU branch. XRT read/sync
+and layout staging remain. `--owned-npu-readback` reproduces the extra NumPy
+ownership copy. Native BF16 arithmetic remains the default control.
+
+Hardware verification runs in `/notebooks/HeteroMega-opt-20261022`, with the
+old kernel and owned-copy control in `/notebooks/HeteroMega-opt-control-20261022`.
+The original BFP16 overlay is preserved. Use source hashes rather than the
+copied remote Git HEAD to identify what ran. The notebook currently reports
+NPU power mode `default`, not `performance`.
+
+Historical BFP16 analysis must use its archived source: extract
+`initial-runtime.tar.gz` then `final-harness.tar.gz`, and pass `--source-root`
+to the analysis scripts. They deliberately reject the changed current kernel.
+
+## Latest analysis — 2026-10-22: NPU bottleneck trace
+
+Read [NPU_IMPLEMENTATION_TRACE.md](experiments/ffn_partition/NPU_IMPLEMENTATION_TRACE.md)
+before further tuning. Existing P1792 diagnostics attribute 74.3% of the
+outer NPU call to the two execution waits, 13.3% to CPU layouts and 8.7% to
+BO I/O/wrapper residual; submission is 1.3%. The staged NPU result is usually
+the last GPU-visible dependency. Source analysis finds 14×/16× activation
+replay, four sequential M waves and 86,016 dequantize/MAC calls per FFN.
+These logical counts do not establish memory bandwidth saturation. The next
+device trace must separate dequant, MMUL, FIFO/lock and DMA costs; current
+event markers combine dequant and MAC. Improve reuse/buffering before simply
+raising the NPU share. No kernels or recorded benchmark results changed in
+this analysis, and PR creation remains paused.
+
+The compiled gate/up/down ELFs additionally reveal 32 `__floatunsisf` software
+conversion calls per dequantization (2.75 million per FFN by the schedule).
+Inspect the saved compiler audit and try exact BF16 zero-metadata bit
+construction as the first bounded ablation. The conversion's actual time
+share is not yet measured; retain the old path as a control.
+
+## Latest update — 2026-10-22: TileFuse BFP16 adaptation
+
+The latest user request is to inspect all current branches of
+`glassescrab/mlir-aie`, adapt the optimized W4A16 kernels to the FFN, and
+accept the larger BFP16 arithmetic differences for this performance study.
+This takes priority over historical strict-tolerance blocking below. Prefill
+remains the scope; the upstream GEMV was inspected but decode is deferred.
+
+Read [BFP16_ADAPTATION.md](npu/ffn/BFP16_ADAPTATION.md) for all seven pinned
+branch heads, the selected corrected TileFuse source at `121dd54abc68f84d89a7074372ebf82be2db62d5`,
+ABI/stack/cache contracts, commands, and measurement evidence. The new
+`--npu-arithmetic bfp16` selector preserves the existing eight-column fusion
+schedule and uses 8×8×8 BFP16-backed matrix operations. Native BF16 is still
+the default. BFP16 defaults to reporting numerical deviations; original
+thresholds and their pass/fail status remain recorded. Nonfinite, zero,
+stale-output, repeatability and NPU-completion failures still stop the run.
+
+Browser access was restored in this session. The prepared AUP environment
+is usable again. Experiments run in an **isolated overlay** at
+`/notebooks/HeteroMega-bfp16-20261022`; the earlier remote checkout and
+baselines were preserved. The overlay retains the remote base Git history,
+not the local checkpoint history; use recorded source hashes to identify its
+actual code. Runtime PATH must include `/notebooks/heteromega-ffn-venv/bin`
+for Ninja; invoke experiment entry points using `python -m`.
+
+A fresh power switch attempt was denied with error 13; power is still
+`default`. Never label these runs `performance`. The small fused BFP16
+FFN and model-shaped runs now execute on hardware; current results and
+limitations are recorded in the adaptation document and `docs/progress.md`.
+The confirmed BFP16 candidate is P1792 (12.5%): 18.754 ms versus 22.349 ms
+GPU-only, and 5.4% lower than fresh BF16 P1152. All 147 CPU tests and all
+ten hardware reports pass the original bounds. Raw reports, build contracts,
+source snapshots and graphs are in
+[the BFP16 results](experiments/ffn_partition/BFP16_RESULTS.md).
+The native baseline checkout/library were absent at their previously recorded
+paths in this restarted notebook.
+
+The native HeteroMosaic heterogeneous comparison remains a separate task:
+the current FFN control uses its original **GPU-only** W4A16 kernels.
+
+All new work is uncommitted. Preserve earlier uncommitted comparison files.
+PR creation remains paused; this request does not authorize publishing.
+The handoff below records the preceding state and is historical wherever it
+conflicts with this update, especially its browser blocker and accuracy gate.
+
+## Resume here — 2026-10-22
+
+This handoff summarizes the user's latest requests and the verified state at
+the end of the session. The original user-provided research plan is preserved
+below. Its October 12 status statements are historical; use this handoff and
+`docs/progress.md` for current implementation/measurement status.
+
+### Active task and authorization
+
+The latest implementation request is: **"Use w4a16 kernels compare with
+HeteroMoasic, do the profilings."** Resume actual correctness and profiling
+against native HeteroMosaic's GPU–NPU FFN, rather than stopping at a source
+comparison or rerunning only its GPU kernels.
+
+- Scope is **prefill FFN only**, initially M512/H4096/I14336, W4A16 group128.
+  Keep attention unchanged; decode and attention partitioning are deferred.
+- The user requested an eight-column NPU design, fused gate/up, further
+  pointwise fusion, partition sweeps, and complete FFN latency. Those earlier
+  implementations and measurements are already checkpointed; reuse them.
+- Implementation, cloud experiments, necessary adapter fixes, and profiling
+  are authorized. Preserve baselines and teammate changes. Do not change the
+  shared host kernel/driver or publish credentials/model weights.
+- **PR creation remains paused** by the user's explicit request. The latest
+  checkpoint was local; do not assume permission to publish the new harness.
+  This handoff request itself does not request a commit or push.
+- Earlier slide requests are secondary to the outstanding profiling. Do not
+  update slides with results that have not been measured.
+
+### Git state to preserve
+
+Snapshot: branch `codex/ffn-partition-microbench`, HEAD
+`740c45516d4e5e4ea5f95032f254522af09a92c5`
+(`Checkpoint fused NPU FFN kernels and partition measurements`). Recheck Git
+status and HEAD before editing; this is not a guarantee about a future checkout.
+
+**The native comparison is uncommitted local work**, added after that checkpoint:
+
+| File under `experiments/ffn_partition/` | Purpose |
+| --- | --- |
+| `native_heteromosaic.py` | Native W4A16 baseline, canonical inputs/weights, references, correctness and profiling |
+| `native_heteromosaic_bindings.cpp` | Thin binding to an existing native HeteroMosaic shared library |
+| `compare_native.py` | Fresh native versus P1024/P1152 experiments, GPU controls, power queries and evidence validation |
+| `test_native_heteromosaic.py` | Six CPU contract/preparation checks |
+| `test_compare_native.py` | Four CPU orchestration/evidence checks |
+| `NATIVE_COMPARISON.md` | Full run instructions and measurement limitations |
+
+`docs/progress.md` also has an uncommitted October 21 entry. This handoff adds
+documentation changes to `agent.md`, `AGENTS.md`, and `docs/progress.md`.
+Do not discard untracked files, reset the checkout, or overwrite the notebook
+checkout wholesale. The remote Git history was not synchronized to the local
+checkpoint; inspect local and remote state independently before transferring.
+
+### What has actually been verified
+
+**Measured earlier on HX370/Radeon 890M, NPU power mode `default`:** our
+two-launch on-chip SwiGLU FFN at P1152 took **19.643 ms**, versus its matched
+**22.293 ms GPU-only control** (1.1349x, 11.9% lower latency) in the confirmation
+run. P1024 was nearly tied; retain both candidates. These are synthetic isolated
+FFN measurements, not full-model prefill, TTFT, or Ryzen AI Max+395 results.
+Evidence: [SWIGLU_RESULTS.md](experiments/ffn_partition/SWIGLU_RESULTS.md).
+
+**Critical baseline distinction:** the 22.293 ms control uses original
+HeteroMosaic GPU kernels, with all FFN channels on GPU. It is **not** native
+HeteroMosaic GPU–NPU execution. Our four-, three-, and two-launch NPU variants
+are all HeteroMega implementations; none is a native HeteroMosaic baseline.
+
+**Code-confirmed architecture:**
+
+| Path | Gate/up | SiLU × up | Down / final output |
+| --- | --- | --- | --- |
+| Recorded native M512 HeteroMosaic | 256 GPU + 256 NPU token rows, full intermediate width | GPU, full shared tensors | GPU down; disjoint row outputs need no concatenate or partial sum |
+| HeteroMega SwiGLU | Matching intermediate-channel partitions, all token rows on each device | Local to each branch; fused on-chip on NPU | Matching down K-slices on GPU/NPU; **GPU adds the partial outputs** |
+
+Native HeteroMosaic uses imported shared GPU allocations and direct XDNA.
+Our prototype uses XRT and host staging. Its gate/up→pointwise intermediates
+stay on-chip, but **Z is still read back, permuted on CPU, and uploaded to the
+separate down graph**. Shared physical memory does not imply shared BOs or
+on-chip residency. Larger native HeteroMosaic configurations also offload down;
+the GPU-only-down statement is specific to the recorded M512 configuration.
+
+**Locally verified for the new comparison:** 21 CPU tests pass; Python
+compilation, config preparation, and a nine-job dry plan pass. **The new C++
+binding has not been compiled or linked on ROCm, and no new native comparison
+has run on hardware.** Do not promote prepared status to measured status.
+
+### Last blocker and environment
+
+The last browser checks returned `{"apps":[],"browsers":[]}` and
+`No browser is available`. Asking the app to open AUP returned `queued`.
+This establishes only that **no browser was exposed to that session**; the
+underlying cause and notebook availability were not established. Recheck the
+available browser tools/surfaces in the next session before declaring a blocker.
+The user was asked to open the notebook in the desktop browser and use
+`@Browser`. No reconnection was verified before this handoff.
+
+The local workspace is `/home/adam/Documents/ChatGPT/HeteroMega` on Linux,
+with an Intel CPU/NVIDIA RTX4090 and no AMD NPU or ROCm. It can run CPU checks,
+not substitute for the requested AMD hardware measurements.
+
+Previously prepared cloud locations, **to verify after reconnecting**:
+
+| Resource | Location |
+| --- | --- |
+| AUP notebook | `https://dub.aupcloud.io/aipc-16` |
+| HeteroMega checkout | `/notebooks/HeteroMega` |
+| Native HeteroMosaic checkout | `/notebooks/HeteroMosaic-baseline` |
+| FFN runtime Python | `/notebooks/heteromega-ffn-venv/bin/python` |
+| Native baseline Python | `/notebooks/heteromosaic-venv/bin/python` |
+| MLIR-AIE compiler Python | `/home/mliraie/mlir-aie/ironenv/bin/python` |
+| ROCm | `/opt/rocm-7.2.0`, native `gfx1150` |
+| Pinned XDNA headers | `/notebooks/heteromosaic-libraries/xdna-driver-05-19-25/src/include/uapi/drm_local` |
+| Original model library directory | `/notebooks/HeteroMosaic-baseline/build/py/unified_llm_w4a16/` |
+
+The user's notebook credential is intentionally not copied into repository
+documentation. Use the authorized session/login flow. Keep the prepared
+environments and compiled artifacts; read the cloud runbooks before setup.
+
+### Next steps, in order
+
+1. Read `AGENTS.md`, this handoff, `docs/progress.md`, and
+   [NATIVE_COMPARISON.md](experiments/ffn_partition/NATIVE_COMPARISON.md).
+   Inspect Git status. For hardware work also read `docs/cloud-baseline.md`,
+   `docs/runtime-compatibility.md`, and `docs/profiling-2026-10-14.md`.
+2. Reconnect/discover the browser and open AUP. Inspect remote files, running
+   jobs, available GPU/NPU, software versions, and NPU power before launching.
+   Previous attempts to switch `default`→`performance` were authorized but
+   denied even as root; **performance mode was never established**. Do not
+   change the host driver or mislabel another default-mode run.
+3. Transfer the uncommitted comparison files to the HeteroMega notebook
+   checkout while preserving its changes. Locate the actual native model
+   `.so`, pinned headers, and original M256 gate/up artifacts. Set
+   `HETEROMOSAIC_NATIVE_LIBRARY` to the real library path. Check ABI/exports,
+   source/build provenance, and hashes; the adapter links that library rather
+   than compiling a replacement native runtime. Fix adapter build issues if
+   found, keeping kernel math and baseline partitioning unchanged.
+4. Run the bounded native correctness check first (M512/H4096/I14336,
+   NPU rows 256; a few iterations suffice initially). The adapter checks 84
+   combinations of gate/up/output, row ownership, random/zero/repeated inputs,
+   and GPU comparisons. It rejects fallback and failed futures, and requires
+   two successful NPU completions per native FFN call.
+5. **If native random-W4A16 checks fail, save and diagnose the failure.** This
+   problem was already present in the original runtime port. Matching packed
+   bytes, successful launches, or matching a few generated tokens does not
+   establish numerical correctness. Keep `rtol=0.03`, `atol=0.05`, and the
+   relative-L2 limit 0.02; do not widen them to produce a speedup claim.
+6. After the numerical gate passes, run the exact commands in
+   `NATIVE_COMPARISON.md`: native M-split, fused P1024/P1152, each with GPU
+   controls, 30 ordinary samples and separate 10-sample diagnostics after
+   three warmups. Two reversed-order ordinary blocks plus diagnostics make
+   nine jobs. Use a fresh output directory; the driver currently has no
+   resume flag and stops on the first failure. `--plan-only` also creates a
+   manifest, so use a different directory for the subsequent hardware run.
+7. Validate raw reports, counters, unchanged inputs/weights, source/binary
+   hashes and before/after power snapshots. Preserve logs/failed attempts.
+   Download results to the local repository. Produce a latency comparison
+   graph with variability and separate stage/device profiling figures;
+   plot generation for this new comparison is still outstanding.
+8. Report measured results and actual bottlenecks, including negative results.
+   Update `docs/progress.md` and this handoff. Full-model prefill integration
+   with unchanged attention/chunk scheduling follows the isolated comparison;
+   it has not been done. Keep PR creation paused.
+
+### Timing and correctness pitfalls
+
+- Ordinary complete FFN latency uses ready GPU input→completed GPU output,
+  including orchestration, staging, waits, layouts and final reduction where
+  present. Setup/packing/uploads and validation readback stay outside timing.
+- The native adapter records outer Python-call `wall_us` plus inner
+  `binding_wall_us`. Its separate diagnostics synchronize gate/up, pointwise,
+  and down. HeteroMega's diagnostic uses GPU HIP events and host probes without
+  those added stage barriers. Do not treat those stage columns as identical
+  timing semantics or substitute diagnostic totals for ordinary latency.
+- **NPU wait is not pure data movement:** it includes runtime, DMA, compute,
+  stalls and completion. Host/GPU clock origins are not calibrated; overlapping
+  intervals and independent stage medians cannot be added into an exact total.
+- The earlier full-model native profiles are provisional because original NPU
+  numerical validation remains open. Their real weights and synchronized
+  measurement context differ from the new isolated synthetic benchmark.
+- Native packing uses the existing independently tested byte packer. Native
+  C++ weight setters assume transposed metadata relative to canonical
+  `[N,K/128]`; do not replace direct packed-byte input casually.
+- The native runtime owns process-global configs, imports and contexts. Use a
+  fresh process per job and keep imported tensors alive. A library hash does
+  not prove source-to-binary correspondence; retain build evidence.
+- Do not assume the teammate GPU PR kernels are integrated: these controlled
+  experiments still use the original HeteroMosaic GPU kernels.
+
+### Local checks already run
+
+From the repository root, the following test invocation passed 21 tests. It preserves any
+existing `PYTHONPATH` while supporting the older packing tests' direct imports:
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+PYTHONPATH="$PWD/experiments/ffn_partition:$PWD${PYTHONPATH:+:$PYTHONPATH}" \
+python -m unittest \
+  experiments.ffn_partition.test_compare_native \
+  experiments.ffn_partition.test_native_heteromosaic \
+  experiments.ffn_partition.test_gpu_packing \
+  experiments.ffn_partition.test_sweep_partition -v
+```
+
+`native_heteromosaic --prepare-only` writes `prepared_not_executed` status;
+`compare_native --plan-only` writes planned jobs. Neither is hardware evidence.
+See the runbook for exact CLI commands. For concise background, also read
+`docs/checkpoint-2026-10-18-ffn-fusion.md` and `npu/ffn/SWIGLU.md`.
+
+---
+
+# Historical HeteroMega agent reference plan
 
 Saved 2026-10-12 at the user's request. The user-provided plan below is preserved
 verbatim. It is the current planning reference for the narrowed FFN-prefill

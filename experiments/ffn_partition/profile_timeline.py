@@ -20,8 +20,9 @@ import traceback
 
 import numpy as np
 
-from .contract import (bf16, error_metrics, random_weights, reference_full,
-                       reference_partitioned, split_weights, validate_shape)
+from .contract import (OutputIntegrity, accuracy_metrics, accuracy_summary, bf16,
+                       random_weights, reference_full, reference_partitioned,
+                       resolve_accuracy_policy, split_weights, validate_shape)
 from .gpu_backend import GPUBranch
 from .npu_backend import NPUBranch, build_artifacts
 from .run import TimedFFN, cpu_values, provenance, save
@@ -287,6 +288,12 @@ def main():
     parser.add_argument("--intermediate", type=int, default=14336)
     parser.add_argument("--npu-channels", type=int, default=512)
     parser.add_argument("--npu-design", choices=("array8", "legacy"), default="array8")
+    parser.add_argument("--npu-arithmetic", choices=("bf16", "bfp16"), default="bf16",
+                        help="projection arithmetic; BFP16 is experimental and may have larger numerical error")
+    parser.add_argument("--accuracy-policy", choices=("strict", "report"),
+                        help="default: strict for BF16, report deviations for BFP16; GPU partial remains strict")
+    parser.add_argument("--owned-npu-readback", action="store_true",
+                        help="retain the previous extra BO readback copy for controlled comparison")
     parser.add_argument("--fuse-gate-up", action="store_true",
                         help="profile one two-output gate/up NPU launch; GPU path is unchanged")
     parser.add_argument("--fuse-swiglu", action="store_true",
@@ -300,6 +307,7 @@ def main():
     parser.add_argument("--verbose-build", action="store_true")
     parser.add_argument("--output", type=Path, default=Path("experiments/ffn_partition/results/timeline_profile.json"))
     args = parser.parse_args()
+    args.accuracy_policy = resolve_accuracy_policy(args.npu_arithmetic, args.accuracy_policy)
     if args.fuse_swiglu:
         args.fuse_gate_up = True
     validate_shape(args.m, args.hidden, args.intermediate, args.npu_channels)
@@ -333,16 +341,18 @@ def main():
         "provenance": provenance(), "checks": {}, "warmup_samples": [], "samples": [],
     }
 
-    def check(actual, expected, label):
-        metrics = error_metrics(actual, expected)
+    def check(actual, expected, label, policy=None, integrity=None, input_id=None):
+        metrics = accuracy_metrics(actual, expected, policy or args.accuracy_policy, integrity, input_id)
         report["checks"][label] = metrics
-        if not metrics["passed"]:
-            raise RuntimeError(f"fixed correctness thresholds failed: {label}: {metrics}")
+        if not metrics["accepted"]:
+            raise RuntimeError(f"accuracy or output integrity failed: {label}: {metrics}")
+        return metrics
 
     try:
         build_artifacts(args.m, args.hidden, args.npu_channels, args.artifact_root,
                         args.columns, args.iron_python, npu_design=args.npu_design,
-                        fuse_gate_up=args.fuse_gate_up, fuse_swiglu=args.fuse_swiglu)
+                        fuse_gate_up=args.fuse_gate_up, fuse_swiglu=args.fuse_swiglu,
+                        npu_arithmetic=args.npu_arithmetic)
         import torch
         weights = random_weights(args.hidden, args.intermediate, args.seed)
         branches = split_weights(weights, args.npu_channels)
@@ -350,7 +360,8 @@ def main():
         gpu = ProfiledGPUBranch(g.gate, g.up, g.down, args.m, verbose_build=args.verbose_build)
         npu = NPUBranch(n.gate, n.up, n.down, args.m, args.artifact_root, args.columns,
                         npu_design=args.npu_design, fuse_gate_up=args.fuse_gate_up,
-                        fuse_swiglu=args.fuse_swiglu)
+                        fuse_swiglu=args.fuse_swiglu, npu_arithmetic=args.npu_arithmetic,
+                        copy_output_bits=args.owned_npu_readback)
         runner = ProfiledFFN(gpu, npu, args.m, args.hidden, gpu.device)
         report["gpu_metadata"], report["npu_metadata"] = gpu.metadata, npu.metadata
         report["provenance"].update(torch=str(torch.__version__), hip=str(torch.version.hip),
@@ -372,22 +383,38 @@ def main():
             refs.append(ref)
             partials.append(partial)
             full_refs.append(full)
-        # Changed input, zero, then reused input catches stale outputs/BOs.
+        integrity = {name: OutputIntegrity() for name in ("output", "gpu", "npu")}
+        # Changed input, zero, then reused input catches stale outputs/BOs,
+        # including when BFP16 numerical differences are only reported.
         for iteration, index in enumerate((0, 1, 2, 0)):
             output, _ = runner.run(gpu_inputs[index])
             actual = cpu_values(output)
             label = f"initial_{iteration}_input_{index}"
-            check(actual, refs[index], label + "_partition_reference")
+            check(actual, refs[index], label + "_partition_reference",
+                  integrity=integrity["output"], input_id=index)
             check(actual, full_refs[index], label + "_unpartitioned_reference")
-            check(cpu_values(gpu.output), partials[index]["gpu"], label + "_gpu_partial")
-            check(cpu_values(runner.npu_gpu_output), partials[index]["npu"], label + "_npu_partial")
+            check(cpu_values(gpu.output), partials[index]["gpu"], label + "_gpu_partial",
+                  policy="strict", integrity=integrity["gpu"], input_id=index)
+            check(cpu_values(runner.npu_gpu_output), partials[index]["npu"], label + "_npu_partial",
+                  integrity=integrity["npu"], input_id=index)
         save(report, args.output)
         print(f"Profiling {args.warmup} warmup + {args.iterations} concurrent invocations", flush=True)
         for iteration in range(-args.warmup, args.iterations):
             index = iteration % 2
             output, sample = runner.run(gpu_inputs[index])
-            check(cpu_values(output), refs[index], f"iteration_{iteration}_input_{index}")
-            sample.update(iteration=iteration, input_index=index, correctness_passed=True)
+            metrics = check(cpu_values(output), refs[index], f"iteration_{iteration}_input_{index}",
+                            integrity=integrity["output"], input_id=index)
+            # runner.run has already closed its instrumented time boundary.
+            # GPU arithmetic stays strict even in BFP16 report-only runs.
+            gpu_metrics = check(cpu_values(gpu.output), partials[index]["gpu"],
+                                f"iteration_{iteration}_input_{index}_gpu_partial",
+                                policy="strict", integrity=integrity["gpu"], input_id=index)
+            npu_metrics = check(cpu_values(runner.host_y), partials[index]["npu"],
+                                f"iteration_{iteration}_input_{index}_npu",
+                                integrity=integrity["npu"], input_id=index)
+            sample.update(iteration=iteration, input_index=index, correctness_passed=metrics["passed"],
+                          accuracy_accepted=metrics["accepted"], accuracy_status=metrics["accuracy_status"],
+                          accuracy=metrics, gpu_accuracy=gpu_metrics, npu_accuracy=npu_metrics)
             report["warmup_samples" if iteration < 0 else "samples"].append(sample)
         report["stats"] = summarize(report["samples"])
         report["npu_stage_sequence"] = list(npu_runners(npu))
@@ -402,7 +429,10 @@ def main():
         report["fixed_weight_upload_counts"] = fixed_weight_upload_counts(npu)
         if any(count != 1 for count in report["fixed_weight_upload_counts"].values()):
             raise RuntimeError("fixed projection weights were not uploaded exactly once")
-        report["status"] = "passed"
+        report["accuracy"] = accuracy_summary(report["checks"].values())
+        report["accuracy"]["accuracy_policy"] = args.accuracy_policy
+        report["status"] = ("passed" if report["accuracy"]["passed"]
+                            else "completed_with_accuracy_deviations")
     except Exception as error:
         report["status"], report["error"] = "failed", str(error)
         report["traceback"] = traceback.format_exc()

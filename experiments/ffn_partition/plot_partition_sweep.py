@@ -1,7 +1,9 @@
 """Plot saved FFN partition evidence; this script performs no hardware runs.
 
 Inputs can be ordinary/timeline JSON files, sweep manifests, or directories.
-Only passed reports with passing recorded samples are plotted. Repeated runs
+Passed reports with passing recorded samples are plotted by default. Explicit
+--allow-accuracy-deviations also admits validated experimental BFP16 reports,
+labeling their numerical deviations and latency ratios separately. Repeated runs
 are never pooled. Jobs belonging to one sweep manifest form one plotted series;
 standalone files remain separate series. SVG/PDF retain editable vector text.
 
@@ -22,6 +24,9 @@ import json
 import math
 from pathlib import Path
 from statistics import median
+from types import SimpleNamespace
+
+from experiments.ffn_partition.sweep_partition import validate_report_data
 
 
 GPU_OPERATIONS = ("gate", "up", "silu", "multiply", "down")
@@ -90,8 +95,9 @@ def _validate_swiglu_runs(records):
         raise ValueError("SwiGLU evidence lacks completed NPU samples")
 
 
-def _checked_samples(samples):
-    if not samples or any(sample.get("correctness_passed") is not True for sample in samples):
+def _checked_samples(samples, accepted_deviations=False):
+    if not samples or (not accepted_deviations and
+                       any(sample.get("correctness_passed") is not True for sample in samples)):
         raise ValueError("every plotted sample must have passed correctness")
 
 
@@ -99,16 +105,50 @@ def _stats_ms(samples, getter):
     return statistics(getter(sample) / 1000 for sample in samples)
 
 
-def extract_report(report, source, series=None, power=None):
+def _validate_accuracy(report, allow_accuracy_deviations):
+    status = report.get("status")
+    config = report["config"]
+    arithmetic = config.get("npu_arithmetic", "bf16")
+    if arithmetic not in ("bf16", "bfp16"):
+        raise ValueError("unknown NPU arithmetic")
+    deviates = status == "completed_with_accuracy_deviations"
+    if status != "passed" and not (deviates and allow_accuracy_deviations and arithmetic == "bfp16"):
+        raise ValueError("only passed reports are eligible; BFP16 deviations require explicit opt-in")
+    if arithmetic == "bfp16":
+        # Use the experiment driver's numerical and execution gates, including
+        # zero/repeat checks and strict GPU controls, rather than trusting the
+        # broad accepted flag. Old BF16 evidence keeps its historical parser.
+        args = SimpleNamespace(**{key: config[key] for key in
+                                  ("hidden", "intermediate", "seed", "warmup")},
+                               npu_arithmetic=arithmetic, accuracy_policy=config["accuracy_policy"])
+        entries = report.get("partitions", [None])
+        for entry in entries:
+            candidate = report
+            if len(entries) > 1:
+                accuracy = dict(entry["accuracy"], accuracy_policy=config["accuracy_policy"])
+                candidate = dict(report, partitions=[entry], accuracy=accuracy,
+                                 status="passed" if accuracy["passed"] else "completed_with_accuracy_deviations")
+            job = dict(m=config["m"], npu_channels=(entry["npu_channels"] if entry is not None else config["npu_channels"]),
+                       mode="ordinary" if entry is not None else "diagnostic",
+                       iterations=config["iterations"], fuse_gate_up=_fusion(config),
+                       fuse_swiglu=config.get("fuse_swiglu", False),
+                       npu_arithmetic=arithmetic, accuracy_policy=config["accuracy_policy"])
+            validate_report_data(candidate, job, args)
+    return arithmetic, deviates
+
+
+def extract_report(report, source, series=None, power=None, allow_accuracy_deviations=False):
     """Normalize ordinary/timeline evidence without trusting cached summaries."""
-    if report.get("status") != "passed":
-        raise ValueError("only passed reports are eligible")
+    arithmetic, deviates = _validate_accuracy(report, allow_accuracy_deviations)
     config = report["config"]
     m, hidden, intermediate = _shape(config)
     common = dict(report=str(source), series=series or Path(source).stem,
                   m=m, hidden=hidden, intermediate=intermediate,
                   design=config.get("npu_design", "legacy"), fused=_fusion(config),
                   fuse_swiglu=config.get("fuse_swiglu", False),
+                  npu_arithmetic=arithmetic, accuracy_policy=config.get("accuracy_policy", "strict"),
+                  accuracy_passed=not deviates,
+                  accuracy_status="reported_deviations" if deviates else "within_tolerance",
                   seed=config.get("seed"), power=power or {"mode": "unrecorded"},
                   device=report.get("provenance", {}).get("gpu_name", "unrecorded"),
                   started_utc=report.get("provenance", {}).get("started_at_utc"))
@@ -119,7 +159,7 @@ def extract_report(report, source, series=None, power=None):
             if type(p) is not int or not 0 <= p <= intermediate:
                 raise ValueError("invalid ordinary partition width")
             samples = part["samples"]
-            _checked_samples(samples)
+            _checked_samples(samples, accepted_deviations=deviates)
             if common["fuse_swiglu"]:
                 _validate_swiglu_metadata(part.get("npu", {}))
                 _validate_swiglu_runs([s.get("diagnostics", {}).get("npu", {})
@@ -143,15 +183,21 @@ def extract_report(report, source, series=None, power=None):
                 raise ValueError("baseline and concurrent samples must pair by iteration")
             if any(v["concurrent"] <= 0 for v in paired):
                 raise ValueError("ordinary concurrent sample must be positive")
+            ratio = times["baseline"]["median"]/times["concurrent"]["median"]
+            paired_ratio = statistics([v["baseline"]/v["concurrent"] for v in paired])
+            part_passed = part.get("accuracy", {}).get("passed", not deviates)
             ordinary.append(dict(common, npu_channels=p, npu_percent=100*p/intermediate,
+                                 accuracy_passed=part_passed,
+                                 accuracy_status="within_tolerance" if part_passed else "reported_deviations",
                                  timing_ms=times,
-                                 speedup=times["baseline"]["median"]/times["concurrent"]["median"],
-                                 paired_speedup=statistics([v["baseline"]/v["concurrent"] for v in paired]),
+                                 latency_ratio=ratio, paired_latency_ratio=paired_ratio,
+                                 speedup=ratio if part_passed else None,
+                                 paired_speedup=paired_ratio if part_passed else None,
                                  paired_wins=sum(v["concurrent"] < v["baseline"] for v in paired),
                                  paired_count=len(paired)))
     elif report.get("samples") and "gpu_event_intervals" in report["samples"][0]:
         samples = report["samples"]
-        _checked_samples(samples)
+        _checked_samples(samples, accepted_deviations=deviates)
         if common["fuse_swiglu"]:
             _validate_swiglu_metadata(report.get("npu_metadata", {}))
             _validate_swiglu_runs([sample["npu"] for sample in samples])
@@ -249,7 +295,7 @@ def _power_snapshot(path):
     return sorted(set(modes))
 
 
-def collect(inputs, m_filter=None, include_legacy=False):
+def collect(inputs, m_filter=None, include_legacy=False, allow_accuracy_deviations=False):
     files = set()
     for source in inputs:
         source = Path(source).resolve()
@@ -274,7 +320,10 @@ def collect(inputs, m_filter=None, include_legacy=False):
             if not isinstance(raw_path, str):
                 continue
             report_path = _resolve(path.parent, raw_path)
-            if job.get("status") != "passed":
+            accepted_deviation = (allow_accuracy_deviations and
+                                  job.get("status") == "completed_with_accuracy_deviations" and
+                                  job.get("npu_arithmetic") == "bfp16" and job.get("accuracy_policy") == "report")
+            if job.get("status") != "passed" and not accepted_deviation:
                 ineligible[report_path] = "sweep job did not pass all workload/power gates"
             expected_sha = job.get("report_sha256", job.get("evidence", {}).get("report_sha256"))
             if expected_sha and report_path.exists() and sha256(report_path.read_bytes()).hexdigest() != expected_sha:
@@ -315,7 +364,7 @@ def collect(inputs, m_filter=None, include_legacy=False):
             continue
         try:
             series, power = bindings.get(path, (path.stem, None))
-            rows, stages = extract_report(report, path, series, power)
+            rows, stages = extract_report(report, path, series, power, allow_accuracy_deviations)
         except (ValueError, KeyError, TypeError) as error:
             ignored.append({"file": str(path), "reason": str(error)})
             continue
@@ -329,7 +378,8 @@ def collect(inputs, m_filter=None, include_legacy=False):
     for records in (ordinary, diagnostic):
         seen = {}
         for row in records:
-            key = tuple(row[k] for k in ("series", "m", "hidden", "intermediate", "design", "fused", "fuse_swiglu", "npu_channels"))
+            key = tuple(row[k] for k in ("series", "m", "hidden", "intermediate", "design", "fused", "fuse_swiglu", "npu_channels",
+                                        "npu_arithmetic", "accuracy_status"))
             seen.setdefault(key, []).append(row)
         for group in seen.values():
             if len(group) > 1:
@@ -340,6 +390,7 @@ def collect(inputs, m_filter=None, include_legacy=False):
             "interpretation": {
                 "variability": "p10-p90 sample ranges, not confidence intervals",
                 "speedup": "matched per-report GPU baseline median / concurrent median",
+                "accuracy": "BFP16 deviations require explicit opt-in, remain labeled, and expose latency ratios with speedup=null",
                 "selection": "best sampled median among plotted configurations, not a global optimum",
                 "pooling": "independent reports are not pooled",
                 "clocks": "GPU HIP event and NPU CPU host clocks are not aligned",
@@ -348,7 +399,8 @@ def collect(inputs, m_filter=None, include_legacy=False):
 
 
 def _series_key(row):
-    return row["series"], row["design"], _variant(row)
+    return (row["series"], row["design"], _variant(row), row.get("npu_arithmetic", "bf16"),
+            row.get("accuracy_status", "within_tolerance"))
 
 
 def _groups(rows):
@@ -357,19 +409,34 @@ def _groups(rows):
         result.setdefault(_series_key(row), []).append(row)
     order = {"unfused": 0, "fused": 1, "swiglu": 2}
     return [(key, sorted(group, key=lambda row: row["npu_channels"]))
-            for key, group in sorted(result.items(), key=lambda item: (*item[0][:2], order[item[0][2]]))]
+            for key, group in sorted(result.items(), key=lambda item: (*item[0][:2], order[item[0][2]], *item[0][3:]))]
 
 
 def _label(key, short=False):
-    series, design, variant = key
+    series, design, variant, arithmetic, accuracy = key
     name = VARIANT_NAMES[variant]
+    if arithmetic != "bf16":
+        name += " · " + arithmetic.upper()
+    if accuracy != "within_tolerance":
+        name += " · numerical deviations"
     return name if short else f"{name} · {series}"
 
 
 def _environment_caption(rows):
     devices = sorted({row["device"] for row in rows})
     modes = sorted({row["power"]["mode"] for row in rows})
-    return "GPU: "+", ".join(devices)+"  |  NPU power snapshots: "+", ".join(modes)
+    caption = "GPU: "+", ".join(devices)+"  |  NPU power snapshots: "+", ".join(modes)
+    if any(row.get("accuracy_passed") is False for row in rows):
+        caption += "\nExperimental BFP16: numerical limits exceeded; latency ratios only"
+    return caption
+
+
+def _ratio(row):
+    return row.get("latency_ratio", row["speedup"])
+
+
+def _ratio_stats(row):
+    return dict(row.get("paired_latency_ratio", row["paired_speedup"]), median=_ratio(row))
 
 
 def _stage_legend(ax, names, groups, short_labels, *, ncol=2, loc="best", bbox_to_anchor=None):
@@ -386,8 +453,9 @@ def _stage_legend(ax, names, groups, short_labels, *, ncol=2, loc="best", bbox_t
                for i, name in enumerate(names)]
     handles += [Line2D([], [], color="#444444", linestyle=VARIANT_STYLES[key[2]],
                        marker=("o", "s", "^", "D")[i % 4], markersize=4,
-                       label={"fused": "fused NPU G/U", "unfused": "separate NPU G/U",
-                              "swiglu": "on-chip SwiGLU"}[key[2]])
+                       label=(_label(key, short=True) if key[3] != "bf16" or key[4] != "within_tolerance" else
+                              {"fused": "fused NPU G/U", "unfused": "separate NPU G/U",
+                               "swiglu": "on-chip SwiGLU"}[key[2]]))
                 for i, (key, _) in enumerate(groups)]
     ax.legend(handles=handles, loc=loc, bbox_to_anchor=bbox_to_anchor, ncol=ncol,
               frameon=True, framealpha=.95, edgecolor="#E0E0E0",
@@ -451,6 +519,7 @@ def render(summary, output, formats=("svg", "png", "pdf")):
         ordinary = [r for r in summary["ordinary"] if matching(r)]
         diagnostics = [r for r in summary["diagnostic"] if matching(r)]
         if ordinary:
+            has_deviations = any(row.get("accuracy_passed") is False for row in ordinary)
             fig, axes = plt.subplots(1, 2, figsize=(12, 4.6))
             for index, (key, rows) in enumerate(_groups(ordinary)):
                 color = PALETTE[index % len(PALETTE)]
@@ -461,25 +530,29 @@ def render(summary, output, formats=("svg", "png", "pdf")):
                            color, "--", "x")
                 # Paired ratios quantify sample variability separately from
                 # the ratio-of-medians point used in the reported speedup.
-                point_stats = lambda r: dict(r["paired_speedup"], median=r["speedup"])
+                point_stats = _ratio_stats
                 _errorline(axes[1], rows, point_stats, name, color)
                 best = min(rows, key=lambda r: r["timing_ms"]["concurrent"]["median"])
-                best_speedup = max(rows, key=lambda r: r["speedup"])
+                best_speedup = max(rows, key=_ratio)
                 selected.append({"shape": list(shape), "series": key[0], "fused": key[2] != "unfused",
                                  "fuse_swiglu": key[2] == "swiglu", "variant": key[2],
+                                 "npu_arithmetic": key[3], "accuracy_status": key[4],
+                                 "accuracy_passed": best["accuracy_passed"],
                                  "npu_channels": best["npu_channels"], "npu_percent": best["npu_percent"],
                                  "median_ms": best["timing_ms"]["concurrent"]["median"],
-                                 "speedup": best["speedup"], "report": best["report"],
+                                 "speedup": best["speedup"], "latency_ratio": _ratio(best), "report": best["report"],
                                  "criterion": "lowest sampled concurrent median in this series",
                                  "highest_matched_speedup": {"npu_channels": best_speedup["npu_channels"],
-                                     "speedup": best_speedup["speedup"], "report": best_speedup["report"],
+                                     "speedup": best_speedup["speedup"], "latency_ratio": _ratio(best_speedup),
+                                     "accuracy_status": best_speedup["accuracy_status"], "report": best_speedup["report"],
                                      "criterion": "highest sampled matched-baseline median ratio; distinct from minimum latency"}})
                 axes[0].scatter([best["npu_channels"]], [best["timing_ms"]["concurrent"]["median"]],
                                 s=90, facecolors="none", edgecolors=color, linewidths=1.3, zorder=5)
-                axes[1].scatter([best_speedup["npu_channels"]], [best_speedup["speedup"]],
+                axes[1].scatter([best_speedup["npu_channels"]], [_ratio(best_speedup)],
                                 s=90, marker="D", facecolors="none", edgecolors=color, linewidths=1.3, zorder=5)
             _axes(axes[0], intermediate, "Ordinary complete FFN latency (ms)")
-            _axes(axes[1], intermediate, "Speedup vs matched GPU-only control (×)")
+            _axes(axes[1], intermediate, ("Matched GPU-only / candidate latency (×)" if has_deviations else
+                                          "Speedup vs matched GPU-only control (×)"))
             axes[1].axhline(1, color="#5D6268", linestyle=":", linewidth=1)
             axes[0].set_title("Ready GPU input → synchronized GPU output", pad=48)
             axes[1].set_title("Paired control at each sampled partition", pad=48)
@@ -487,8 +560,12 @@ def render(summary, output, formats=("svg", "png", "pdf")):
                 ax.legend(loc="best", frameon=False)
             fig.suptitle(f"FFN partition sweep · M={m}, H={hidden}, I={intermediate}"+zoom_note, y=1.08, fontsize=14, weight="bold")
             fig.text(.5, 1.015, _environment_caption(ordinary), ha="center", va="top", fontsize=9, color="#555555")
-            fig.text(.01, -.03, "Bars: sample p10–p90, not confidence intervals. Open circle: sampled latency minimum; diamond: sampled speedup maximum.\n"
-                     "These choices may differ under baseline drift; neither is a global optimum. Speedup ranges use paired sample ratios; repeats are not pooled.", fontsize=8)
+            note = ("Bars: sample p10–p90, not confidence intervals. Open circle: sampled latency minimum; diamond: sampled ratio maximum.\n"
+                    "BFP16 deviations are reported, not accuracy-validated speedup. Ratios use matched controls; repeats are not pooled."
+                    if has_deviations else
+                    "Bars: sample p10–p90, not confidence intervals. Open circle: sampled latency minimum; diamond: sampled speedup maximum.\n"
+                    "These choices may differ under baseline drift; neither is a global optimum. Speedup ranges use paired sample ratios; repeats are not pooled.")
+            fig.text(.01, -.03, note, fontsize=8)
             fig.tight_layout()
             outputs += _save(fig, output/("total_ffn_"+suffix), formats)
             plt.close(fig)
@@ -591,16 +668,17 @@ def write_tables(summary, output):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     (output/"summary.json").write_text(json.dumps(summary, indent=2, allow_nan=False)+"\n")
-    common = ("series", "report", "m", "hidden", "intermediate", "npu_channels", "npu_percent", "design", "fused", "fuse_swiglu")
+    common = ("series", "report", "m", "hidden", "intermediate", "npu_channels", "npu_percent", "design", "fused", "fuse_swiglu",
+              "npu_arithmetic", "accuracy_policy", "accuracy_passed", "accuracy_status")
     with (output/"ordinary.csv").open("w", newline="") as stream:
-        fields = [*common, "power_mode", "mode", "count", "median_ms", "p10_ms", "p90_ms", "speedup", "paired_wins", "paired_count"]
+        fields = [*common, "power_mode", "mode", "count", "median_ms", "p10_ms", "p90_ms", "speedup", "latency_ratio", "paired_wins", "paired_count"]
         writer = csv.DictWriter(stream, fieldnames=fields)
         writer.writeheader()
         for row in summary["ordinary"]:
             for mode, stats in row["timing_ms"].items():
                 writer.writerow({**{k: row[k] for k in common}, "power_mode": row["power"]["mode"], "mode": mode,
                                  "count": stats["count"], **{k+"_ms": stats[k] for k in ("median", "p10", "p90")},
-                                 **{k: row[k] for k in ("speedup", "paired_wins", "paired_count")}})
+                                 **{k: row[k] for k in ("speedup", "latency_ratio", "paired_wins", "paired_count")}})
     with (output/"diagnostic.csv").open("w", newline="") as stream:
         fields = [*common, "power_mode", "category", "stage", "count", "median_ms", "p10_ms", "p90_ms"]
         writer = csv.DictWriter(stream, fieldnames=fields)
@@ -625,7 +703,8 @@ def repeat_comparison(summary, channels):
     groups, excluded = {}, []
     for row in summary["ordinary"]:
         if row["fused"] and not row.get("fuse_swiglu", False) and row["npu_channels"] in channels:
-            key = tuple(row[k] for k in ("m", "hidden", "intermediate", "series", "design"))
+            key = tuple(row[k] for k in ("m", "hidden", "intermediate", "series", "design",
+                                        "npu_arithmetic", "accuracy_status"))
             groups.setdefault(key, []).append(row)
     runs = []
     for key, rows in groups.items():
@@ -644,6 +723,7 @@ def repeat_comparison(summary, channels):
         candidates = sorted(rows, key=lambda r: channels.index(r["npu_channels"]))
         minimum = min(row["timing_ms"]["concurrent"]["median"] for row in candidates)
         runs.append({"shape": list(key[:3]), "series": key[3], "design": key[4],
+                     "npu_arithmetic": key[5], "accuracy_status": key[6],
                      "started_utc": min(times.values()).isoformat(),
                      "candidate_order": sorted(channels, key=times.get), "candidates": candidates,
                      "lowest_median_candidates": [row["npu_channels"] for row in candidates
@@ -673,7 +753,7 @@ def render_repeats(comparison, output, formats=("svg", "png", "pdf")):
             x = [index + .12*(ci-(len(channels)-1)/2) for index in range(len(runs))]
             for ax, mode in zip(axes, ("latency", "speedup")):
                 stats = [row["timing_ms"]["concurrent"] if mode == "latency"
-                         else dict(row["paired_speedup"], median=row["speedup"]) for row in rows]
+                         else _ratio_stats(row) for row in rows]
                 color = PALETTE[ci % len(PALETTE)]
                 ax.errorbar(x, [(s["p10"]+s["p90"])/2 for s in stats],
                             yerr=[(s["p90"]-s["p10"])/2 for s in stats], fmt="none",
@@ -686,7 +766,10 @@ def render_repeats(comparison, output, formats=("svg", "png", "pdf")):
             counts = sorted({r["timing_ms"]["concurrent"]["count"] for r in run["candidates"]})
             started = datetime.fromisoformat(run["started_utc"])
             order = "→".join(str(p) for p in run["candidate_order"])
-            tick_labels.append(f"Run {i+1} · n={'/'.join(map(str, counts))}\n{started:%m-%d %H:%M} UTC\norder {order}")
+            arithmetic_note = (" · "+run["npu_arithmetic"].upper() if run["npu_arithmetic"] != "bf16" else "")
+            if run["accuracy_status"] != "within_tolerance":
+                arithmetic_note += " · deviations"
+            tick_labels.append(f"Run {i+1}{arithmetic_note} · n={'/'.join(map(str, counts))}\n{started:%m-%d %H:%M} UTC\norder {order}")
         for ax in axes:
             ax.set_xticks(range(len(runs)), tick_labels)
             ax.set_xlim(-.5, len(runs)-.5)
@@ -697,15 +780,21 @@ def render_repeats(comparison, output, formats=("svg", "png", "pdf")):
             ax.legend(frameon=False, loc="best")
         axes[0].set_ylabel("Ordinary complete FFN latency (ms)")
         axes[0].set_title("Candidate medians and sample variability", weight="bold", pad=15)
-        axes[1].set_ylabel("Speedup vs each run's matched GPU baseline (×)")
+        deviates = any(run["accuracy_status"] != "within_tolerance" for run in runs)
+        axes[1].set_ylabel("Matched GPU-only / candidate latency (×)" if deviates else
+                           "Speedup vs each run's matched GPU baseline (×)")
         axes[1].set_title("Each point retains its own GPU-only control", weight="bold", pad=15)
         axes[1].axhline(1, color="#666666", linestyle=":", linewidth=1)
         fig.suptitle(f"Repeated fused-partition comparison · M={m}, H={hidden}, I={intermediate}",
                      y=1.07, fontsize=14, weight="bold")
         fig.text(.5, 1.005, _environment_caption([row for run in runs for row in run["candidates"]]),
                  ha="center", va="top", fontsize=9, color="#555555")
-        fig.text(.01, -.045, "Bars: sample p10–p90, not confidence intervals. Each run remains independent; no pooled winner or global optimum is inferred.\n"
-                 "Speedup points use matched median ratios; ranges use paired sample ratios. Only runs containing every requested candidate are shown.", fontsize=8)
+        note = ("Bars: sample p10–p90, not confidence intervals. Each run remains independent; no pooled winner or global optimum is inferred.\n"
+                "BFP16 deviations are reported, not accuracy-validated speedup. Only runs containing every requested candidate are shown."
+                if deviates else
+                "Bars: sample p10–p90, not confidence intervals. Each run remains independent; no pooled winner or global optimum is inferred.\n"
+                "Speedup points use matched median ratios; ranges use paired sample ratios. Only runs containing every requested candidate are shown.")
+        fig.text(.01, -.045, note, fontsize=8)
         fig.tight_layout()
         files += _save(fig, output/f"repeat_candidates_m{m}_h{hidden}_i{intermediate}", formats)
         plt.close(fig)
@@ -718,7 +807,8 @@ def write_repeat_table(comparison, output):
     (output/"repeat_comparison.json").write_text(json.dumps(comparison, indent=2, allow_nan=False)+"\n")
     with (output/"repeat_comparison.csv").open("w", newline="") as stream:
         fields = ("m", "hidden", "intermediate", "series", "run_start_utc", "candidate_order", "npu_channels",
-                  "samples", "median_ms", "p10_ms", "p90_ms", "gpu_baseline_median_ms", "matched_speedup", "report")
+                  "npu_arithmetic", "accuracy_status", "samples", "median_ms", "p10_ms", "p90_ms",
+                  "gpu_baseline_median_ms", "matched_speedup", "latency_ratio", "report")
         writer = csv.DictWriter(stream, fieldnames=fields)
         writer.writeheader()
         for run in comparison["runs"]:
@@ -726,8 +816,10 @@ def write_repeat_table(comparison, output):
                 stats = row["timing_ms"]["concurrent"]
                 writer.writerow({**{k: row[k] for k in ("m", "hidden", "intermediate", "series", "npu_channels", "report")},
                                  "run_start_utc": run["started_utc"], "candidate_order": " -> ".join(map(str, run["candidate_order"])),
+                                 "npu_arithmetic": row["npu_arithmetic"], "accuracy_status": row["accuracy_status"],
                                  "samples": stats["count"], **{k+"_ms": stats[k] for k in ("median", "p10", "p90")},
-                                 "gpu_baseline_median_ms": row["timing_ms"]["baseline"]["median"], "matched_speedup": row["speedup"]})
+                                 "gpu_baseline_median_ms": row["timing_ms"]["baseline"]["median"],
+                                 "matched_speedup": row["speedup"], "latency_ratio": _ratio(row)})
 
 
 def main():
@@ -736,6 +828,8 @@ def main():
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--m", type=int)
     parser.add_argument("--include-legacy", action="store_true")
+    parser.add_argument("--allow-accuracy-deviations", action="store_true",
+                        help="include structurally validated BFP16 report-only experiments, explicitly labeled as numerical deviations")
     parser.add_argument("--formats", nargs="+", choices=("svg", "png", "pdf"), default=["svg", "png", "pdf"])
     parser.add_argument("--tables-only", action="store_true", help="validate/export summaries without importing matplotlib")
     parser.add_argument("--repeat-channels", nargs="+", type=int,
@@ -745,7 +839,7 @@ def main():
     args = parser.parse_args()
     if args.repeat_only and not args.repeat_channels:
         parser.error("--repeat-only requires --repeat-channels")
-    summary = collect(args.inputs, args.m, args.include_legacy)
+    summary = collect(args.inputs, args.m, args.include_legacy, args.allow_accuracy_deviations)
     if not args.tables_only and not args.repeat_only:
         render(summary, args.output, args.formats)
     if args.repeat_channels:

@@ -28,6 +28,7 @@ KERNEL_ROOT = ROOT / "npu/ffn"
 if str(KERNEL_ROOT) not in sys.path:
     sys.path.insert(0, str(KERNEL_ROOT))
 from prefill_reference import LAYOUT_VERSION, WEIGHT_TILE_BYTES, pack_weights
+from projection_arithmetic import projection_arithmetic
 from xrt_runner import XrtRunner, load_manifest
 
 
@@ -65,12 +66,19 @@ def effective_columns(n, maximum=4):
     raise ValueError(f"N={n} needs more columns than maximum={maximum}; at most 64 N tiles per column")
 
 
-def _kernel_source(stem):
-    return "w4a16_prefill_reuse" if stem in ("w4a16_gate_up", "w4a16_swiglu") else stem
+ARRAY8_PROJECTION_STEMS = ("w4a16_prefill_reuse", "w4a16_gate_up", "w4a16_swiglu")
 
 
-def _source_contract(stem):
-    paths = [KERNEL_ROOT / f"{stem}.py", KERNEL_ROOT / f"{_kernel_source(stem)}.cc"]
+def _kernel_source(stem, arithmetic="bf16"):
+    if stem in ARRAY8_PROJECTION_STEMS:
+        return projection_arithmetic(arithmetic).source_path.stem
+    return stem
+
+
+def _source_contract(stem, arithmetic="bf16"):
+    paths = [KERNEL_ROOT / f"{stem}.py", KERNEL_ROOT / f"{_kernel_source(stem, arithmetic)}.cc"]
+    if stem in ARRAY8_PROJECTION_STEMS:
+        paths.append(KERNEL_ROOT / "projection_arithmetic.py")
     if stem == "w4a16_prefill_reuse":
         paths.append(KERNEL_ROOT / "prefill_schedule.py")
     elif stem == "w4a16_gate_up":
@@ -85,11 +93,14 @@ def _source_contract(stem):
 
 
 def _artifact_specs(m, hidden, channels, root, columns=8, design="array8", fuse_gate_up=False,
-                    fuse_swiglu=False):
+                    fuse_swiglu=False, arithmetic="bf16"):
     """CPU-only geometry/provenance description shared by build and load."""
     m, hidden, channels, columns = _geometry(m, hidden, channels, columns)
     if design not in ("array8", "legacy"):
         raise ValueError("NPU design must be 'array8' or 'legacy'")
+    projection = projection_arithmetic(arithmetic)
+    if design == "legacy" and arithmetic != "bf16":
+        raise ValueError("BFP16 projection arithmetic requires the array8 design")
     if design == "array8" and columns != 8:
         raise ValueError("array8 requires exactly eight columns; select legacy explicitly for another column count")
     fuse_gate_up = bool(fuse_gate_up or fuse_swiglu)
@@ -101,10 +112,10 @@ def _artifact_specs(m, hidden, channels, root, columns=8, design="array8", fuse_
         if label == "gate_up" and fuse_swiglu:
             from prefill_swiglu_schedule import plan_swiglu, swiglu_plan_metadata
             plan = plan_swiglu(m, hidden, channels, max_reuse=2)
-            source = _source_contract("w4a16_swiglu")
+            source = _source_contract("w4a16_swiglu", arithmetic)
             fingerprint = sha256(json.dumps(source, sort_keys=True).encode()).hexdigest()[:12]
             specs["swiglu"] = {
-                "directory": root / f"build_swiglu_array8_m{m}_k{hidden}_p{channels}_{fingerprint}",
+                "directory": root / f"build_swiglu_array8_{arithmetic}_m{m}_k{hidden}_p{channels}_{fingerprint}",
                 "stem": "w4a16_swiglu", "source_sha256": source,
                 "expected": {"kind": "w4a16_swiglu_bf16", "design": "array8_swiglu",
                     "m": m, "k": hidden, "n": 2 * channels, "channels": channels,
@@ -116,19 +127,19 @@ def _artifact_specs(m, hidden, channels, root, columns=8, design="array8", fuse_
                     "swiglu_schedule_sha256": source["npu/ffn/prefill_swiglu_schedule.py"],
                     "silu_source_sha256": source["npu/ffn/silu_mul.cc"],
                     "tile_m": 16, "tile_k": 128, "tile_n": 32, "group_size": 128,
-                    "weight_tile_bytes": WEIGHT_TILE_BYTES},
+                    "weight_tile_bytes": WEIGHT_TILE_BYTES, **projection.manifest_fields()},
                 "arguments": ["-M", str(m), "-K", str(hidden), "-P", str(channels),
-                              "-co", "8", "--max-reuse", "2"],
-                "plan": swiglu_plan_metadata(plan),
+                              "-co", "8", "--arithmetic", arithmetic, "--max-reuse", "2"],
+                "plan": swiglu_plan_metadata(plan, stack_size=projection.stack_size),
             }
             continue
         if label == "gate_up" and fuse_gate_up:
             from prefill_gate_up_schedule import plan_gate_up, gate_up_plan_metadata
             plan = plan_gate_up(m, hidden, channels, max_reuse=2)
-            source = _source_contract("w4a16_gate_up")
+            source = _source_contract("w4a16_gate_up", arithmetic)
             fingerprint = sha256(json.dumps(source, sort_keys=True).encode()).hexdigest()[:12]
             specs[label] = {
-                "directory": root / f"build_gate_up_array8_m{m}_k{hidden}_p{channels}_{fingerprint}",
+                "directory": root / f"build_gate_up_array8_{arithmetic}_m{m}_k{hidden}_p{channels}_{fingerprint}",
                 "stem": "w4a16_gate_up", "source_sha256": source,
                 "expected": {"kind": "w4a16_gate_up_bf16", "design": "array8_gate_up",
                     "m": m, "k": hidden, "n": 2 * channels, "channels": channels,
@@ -138,9 +149,9 @@ def _artifact_specs(m, hidden, channels, root, columns=8, design="array8", fuse_
                     "schedule_sha256": source["npu/ffn/prefill_schedule.py"],
                     "gate_up_schedule_sha256": source["npu/ffn/prefill_gate_up_schedule.py"],
                     "tile_m": 16, "tile_k": 128, "tile_n": 32, "group_size": 128,
-                    "weight_tile_bytes": WEIGHT_TILE_BYTES},
+                    "weight_tile_bytes": WEIGHT_TILE_BYTES, **projection.manifest_fields()},
                 "arguments": ["-M", str(m), "-K", str(hidden), "-P", str(channels),
-                              "-co", "8", "--max-reuse", "2"],
+                              "-co", "8", "--arithmetic", arithmetic, "--max-reuse", "2"],
                 "plan": gate_up_plan_metadata(plan),
             }
             continue
@@ -152,10 +163,10 @@ def _artifact_specs(m, hidden, channels, root, columns=8, design="array8", fuse_
             if plan.columns != 8 or plan.compute_rows != 4 or plan.worker_count != 32:
                 raise ValueError("array8 planner must assign all eight columns and 32 compute workers")
             cols, stem = 8, "w4a16_prefill_reuse"
-        source = _source_contract(stem)
+        source = _source_contract(stem, arithmetic)
         fingerprint = sha256(json.dumps(source, sort_keys=True).encode()).hexdigest()[:12]
         name = (f"build_prefill_m{m}_k{k}_n{n}_c{cols}_{fingerprint}" if plan is None else
-                f"build_prefill_array8_m{m}_k{k}_n{n}_c8_r{plan.m_reuse}_{fingerprint}")
+                f"build_prefill_array8_{arithmetic}_m{m}_k{k}_n{n}_c8_r{plan.m_reuse}_{fingerprint}")
         expected = {"kind": "w4a16_prefill_bf16", "m": m, "k": k, "n": n,
                     "cols": cols, "tile_m": 16, "tile_k": 128, "tile_n": 32,
                     "group_size": 128, "weight_tile_bytes": WEIGHT_TILE_BYTES}
@@ -164,8 +175,9 @@ def _artifact_specs(m, hidden, channels, root, columns=8, design="array8", fuse_
             expected.update(design="array8", compute_rows=4, m_reuse=plan.m_reuse,
                             worker_count=32, m_column_groups=plan.m_column_groups,
                             n_columns=plan.n_columns,
-                            schedule_sha256=source["npu/ffn/prefill_schedule.py"])
-            arguments.extend(["--max-reuse", "2"])
+                            schedule_sha256=source["npu/ffn/prefill_schedule.py"],
+                            **projection.manifest_fields())
+            arguments.extend(["--arithmetic", arithmetic, "--max-reuse", "2"])
         specs[label] = {
             "directory": root / name, "stem": stem, "source_sha256": source,
             "expected": expected, "arguments": arguments,
@@ -206,8 +218,9 @@ def _load_artifact(spec):
     directory = spec["directory"]
     xclbin, insts = directory / "final.xclbin", directory / "insts.bin"
     manifest = load_manifest(xclbin, insts, spec["expected"]["kind"])
+    kernel = _kernel_source(spec['stem'], spec['expected'].get('arithmetic', 'bf16'))
     expected = dict(spec["expected"], target_mlir_aie_commit=TARGET_COMMIT,
-                    source_sha256=spec["source_sha256"][f"npu/ffn/{_kernel_source(spec['stem'])}.cc"])
+                    source_sha256=spec["source_sha256"][f"npu/ffn/{kernel}.cc"])
     for key, value in expected.items():
         if manifest.get(key) != value:
             raise ValueError(f"{directory}: manifest {key}={manifest.get(key)!r}, expected {value!r}")
@@ -222,7 +235,8 @@ def _load_artifact(spec):
 
 
 def build_artifacts(m, hidden, channels, root, columns=8, python_executable=None,
-                    npu_design="array8", fuse_gate_up=False, fuse_swiglu=False):
+                    npu_design="array8", fuse_gate_up=False, fuse_swiglu=False,
+                    npu_arithmetic="bf16"):
     """Compile missing/stale artifacts, otherwise verify and reuse them.
 
     ``python_executable`` must name the Python with the pinned MLIR-AIE IRON
@@ -231,9 +245,11 @@ def build_artifacts(m, hidden, channels, root, columns=8, python_executable=None
     hashes include both the graph and kernel, preventing cross-version reuse.
     Array8 additionally binds the CPU planner and requires exactly eight
     columns. Select ``npu_design='legacy'`` to reproduce the original graph.
+    ``npu_arithmetic='bfp16'`` selects the opt-in array8 block-float projection
+    kernel without changing packed weights, host activation layouts or SiLU.
     """
     specs = _artifact_specs(m, hidden, channels, root, columns, npu_design, fuse_gate_up,
-                            fuse_swiglu)
+                            fuse_swiglu, npu_arithmetic)
     python = str(python_executable or sys.executable)
     result = {}
     for label, spec in specs.items():
@@ -258,8 +274,12 @@ def build_artifacts(m, hidden, channels, root, columns=8, python_executable=None
             raise RuntimeError(f"{label} compilation failed ({process.returncode}); see {log}")
         # Validate binary hashes and current kernel before certifying the graph.
         manifest = load_manifest(directory / "final.xclbin", directory / "insts.bin", spec["expected"]["kind"])
-        if manifest.get("source_sha256") != spec["source_sha256"][f"npu/ffn/{_kernel_source(spec['stem'])}.cc"]:
-            raise ValueError(f"{label} compiler produced a stale kernel manifest")
+        kernel = _kernel_source(spec['stem'], spec['expected'].get('arithmetic', 'bf16'))
+        expected = dict(spec["expected"], target_mlir_aie_commit=TARGET_COMMIT,
+                        source_sha256=spec["source_sha256"][f"npu/ffn/{kernel}.cc"])
+        for key, value in expected.items():
+            if manifest.get(key) != value:
+                raise ValueError(f"{label} compiler produced a stale {key} manifest")
         temporary = directory / "build_contract.json.tmp"
         temporary.write_text(json.dumps(_build_contract(spec), indent=2) + "\n")
         temporary.replace(directory / "build_contract.json")
@@ -305,7 +325,14 @@ class PersistentXrtRunner(XrtRunner):
         self.completed_dispatches += 1
         return elapsed_us
 
-    def output_bits(self, index=0):
+    def output_bits(self, index=0, *, copy=True):
+        """Read BF16 bits, owning the result unless ``copy=False`` is explicit.
+
+        A borrowed result is read-only and keeps the ``BO.read`` array alive,
+        but may alias runtime storage. Consume it before dispatching this
+        runner again. This removes only our extra host copy: XRT read/sync
+        and any copy needed for a positive-strided byte buffer still occur.
+        """
         output_count = getattr(self, "output_count", 1)
         if not 0 <= index < output_count:
             raise ValueError("output index must refer to an output BO")
@@ -326,9 +353,13 @@ class PersistentXrtRunner(XrtRunner):
                 "the notebook's prebuilt pyxrt requires compatible NumPy 1.26.4. "
                 "Install numpy==1.26.4 in the isolated runtime and restart Python."
             )
-        # A genuine positive-strided byte buffer is safe to copy. Host
-        # readback/layout costs remain inside complete FFN timing.
-        return np.ascontiguousarray(raw).view(np.uint8).view(dtype).reshape(shape).copy()
+        # A genuine positive-strided byte buffer is safe to normalize. Keep
+        # the returned array in the NumPy base chain when borrowing it.
+        result = np.ascontiguousarray(raw).view(np.uint8).view(dtype).reshape(shape)
+        if copy:
+            return result.copy()
+        result.flags.writeable = False
+        return result
 
 
 def _pack_activation_bits(bits):
@@ -352,10 +383,16 @@ class NPUBranch:
     and returns CPU uint16 arrays encoding logical row-major BF16 matrices.
     The caller must include GPU-to-host/host-to-GPU transfers and output
     reduction when timing a complete heterogeneous FFN.
+
+    Readbacks are borrowed only until the next staging/layout consumer. Set
+    ``copy_output_bits=True`` to reproduce the previous extra ownership copy.
+    The returned row-major array always survives subsequent branch runs.
     """
 
     def __init__(self, gate, up, down, m, artifact_root, columns=8,
-                 npu_design="array8", fuse_gate_up=False, fuse_swiglu=False):
+                 npu_design="array8", fuse_gate_up=False, fuse_swiglu=False,
+                 npu_arithmetic="bf16", copy_output_bits=False):
+        self.copy_output_bits = bool(copy_output_bits)
         self.fuse_swiglu = bool(fuse_swiglu)
         self.fuse_gate_up = bool(fuse_gate_up or self.fuse_swiglu)
         self.channels, self.hidden = gate.shape
@@ -365,7 +402,7 @@ class NPUBranch:
         if any(weight.group_size != 128 for weight in (gate, up, down)):
             raise ValueError("NPU branch requires quantization group_size=128")
         specs = _artifact_specs(self.m, self.hidden, self.channels, artifact_root, columns,
-                                npu_design, self.fuse_gate_up, self.fuse_swiglu)
+                                npu_design, self.fuse_gate_up, self.fuse_swiglu, npu_arithmetic)
         artifacts = {label: _load_artifact(spec) for label, spec in specs.items()}
         packed = [pack_weights(weight) for weight in (gate, up, down)]
 
@@ -404,7 +441,8 @@ class NPUBranch:
         self.last_diagnostics = {}
         self.metadata = {
             "backend": "mlir_aie_xrt_host_staged_ffn", "layout": LAYOUT_VERSION,
-            "npu_design": npu_design,
+            "npu_design": npu_design, "npu_arithmetic": npu_arithmetic,
+            **projection_arithmetic(npu_arithmetic).manifest_fields(),
             "fuse_gate_up": self.fuse_gate_up,
             "fuse_swiglu": self.fuse_swiglu,
             "m": self.m, "hidden": self.hidden, "channels": self.channels,
@@ -412,6 +450,9 @@ class NPUBranch:
             "fixed_weight_uploads": len(self.projection_runners),
             "fixed_weight_bytes": sum(int(w.nbytes) for w in packed),
             "launches_per_run": len(self.runners), "cpu_activation_fallback": False,
+            "host_output_readback": ("owned_copy" if self.copy_output_bits
+                                     else "borrowed_until_consumed"),
+            "host_output_readback_note": "XRT BO read/sync remain; borrowing removes only the extra NumPy ownership copy",
             "intermediates": ("gate/up on-chip through SiLU/multiply; Z host-staged with CPU layout conversion before down"
                               if self.fuse_swiglu else "host-staged BF16; CPU layout conversion before down"),
             "host_bo_io_bytes_per_run_estimate": ((4 if self.fuse_gate_up else 6) * self.m * self.hidden
@@ -441,8 +482,13 @@ class NPUBranch:
             for index, value in inputs:
                 runner.write_input(index, value)
             waits[label] = runner.dispatch_wait()
-            result = (tuple(runner.output_bits(i) for i in range(2))
-                      if label == "gate_up" else runner.output_bits())
+            # A runner is not dispatched again until its output has been
+            # consumed by the next BO write or CPU layout permutation. The
+            # branch is non-reentrant, and the final unpack owns its output;
+            # no borrowed BO storage escapes run(). The opt-in copy preserves
+            # the previous staging path for controlled comparisons.
+            result = (tuple(runner.output_bits(i, copy=self.copy_output_bits) for i in range(2))
+                      if label == "gate_up" else runner.output_bits(copy=self.copy_output_bits))
             stages[f"{label}_with_host_io_us"] = (time.perf_counter_ns() - before) / 1000.0
             return result
 

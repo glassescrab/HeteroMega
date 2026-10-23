@@ -1,0 +1,4617 @@
+{
+  "reports": [
+    {
+      "file": "raw/evidence/bfp16_20261022/bfp16_m512.json",
+      "sha256": "92ca935eca811f55ed3dbe7e32f7311e240f8b24e3623c3471078d53844f9ef3",
+      "status": "passed",
+      "mode": "ordinary",
+      "config": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336,
+        "npu_channels": "1024,1152,2048",
+        "columns": 8,
+        "npu_design": "array8",
+        "npu_arithmetic": "bfp16",
+        "accuracy_policy": "report",
+        "fuse_gate_up": true,
+        "fuse_swiglu": true,
+        "warmup": 3,
+        "iterations": 30,
+        "seed": 12832,
+        "artifact_root": "experiments/ffn_partition/artifacts",
+        "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+        "output": "evidence/bfp16_20261022/bfp16_m512.json",
+        "build_only": false,
+        "verbose_build": false
+      },
+      "partitions": [
+        {
+          "npu_channels": 1024,
+          "validation": {
+            "completed_npu_dispatches": 148,
+            "timed_invocations": 90,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "0ed7375bef5052247ef57c6fc305f44881a62686626574dfd83a758c7d9791ca",
+              "insts_sha256_recorded": "962c6f391e25d0f0b04ade5513e8f2a515a3a86bd47bfd2543572d5e3894d44a"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "8f1127c4edd2b208ef46dab4b19c0965aeab27991d5ff720cf93b05676944767",
+              "insts_sha256_recorded": "bf2f486be9e4ea6835e4bff4f942eb7858a72306c2e03f77d14aafbeaeb6dcfc"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 182,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.01717646679962122,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.017741935483870968,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.0037049842105180615,
+              "location": "/correctness/serial_run_1_input_1_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 30,
+              "median": 22.231317999999998,
+              "p10": 22.048170100000004,
+              "p90": 22.609133900000003,
+              "min": 21.910977,
+              "max": 22.948521
+            },
+            "serial": {
+              "count": 30,
+              "median": 34.713038,
+              "p10": 34.38377010000001,
+              "p90": 35.425111799999996,
+              "min": 33.769732000000005,
+              "max": 35.640572
+            },
+            "concurrent": {
+              "count": 30,
+              "median": 20.4578855,
+              "p10": 19.952232000000002,
+              "p90": 21.3722658,
+              "min": 19.703673,
+              "max": 21.845879
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 30,
+              "median": 13.224033499999999,
+              "p10": 12.4941731,
+              "p90": 14.2792548,
+              "min": 11.903324000000001,
+              "max": 14.939536
+            },
+            "cpu_layout_sum": {
+              "count": 30,
+              "median": 2.209849,
+              "p10": 1.8838798,
+              "p90": 2.6368580999999995,
+              "min": 1.7954919999999999,
+              "max": 2.722007
+            },
+            "input_layout": {
+              "count": 30,
+              "median": 0.908696,
+              "p10": 0.9000560000000001,
+              "p90": 0.962371,
+              "min": 0.891956,
+              "max": 0.9821449999999999
+            },
+            "swiglu_with_host_io": {
+              "count": 30,
+              "median": 5.944152,
+              "p10": 5.5459811000000006,
+              "p90": 6.3242368,
+              "min": 5.198589,
+              "max": 6.8331729999999995
+            },
+            "down_input_layout": {
+              "count": 30,
+              "median": 0.07832800000000001,
+              "p10": 0.0743349,
+              "p90": 0.08736189999999999,
+              "min": 0.03836,
+              "max": 0.124488
+            },
+            "down_with_host_io": {
+              "count": 30,
+              "median": 5.089395,
+              "p10": 4.769924100000001,
+              "p90": 5.797357,
+              "min": 4.634078000000001,
+              "max": 6.069694999999999
+            },
+            "output_layout": {
+              "count": 30,
+              "median": 1.1878710000000001,
+              "p10": 0.9414671,
+              "p90": 1.646951,
+              "min": 0.810847,
+              "max": 1.6750440000000002
+            },
+            "swiglu_dispatch_wait": {
+              "count": 30,
+              "median": 5.421875,
+              "p10": 5.0759983,
+              "p90": 5.7201376999999995,
+              "min": 4.846654,
+              "max": 6.240422
+            },
+            "down_dispatch_wait": {
+              "count": 30,
+              "median": 4.3581319999999995,
+              "p10": 4.087842,
+              "p90": 4.745994,
+              "min": 4.002128,
+              "max": 5.133329
+            },
+            "input_gpu_to_host": {
+              "count": 30,
+              "median": 0.25804099999999996,
+              "p10": 0.256002,
+              "p90": 0.263295,
+              "min": 0.253056,
+              "max": 0.266786
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 30,
+              "median": 6.5873314999999995,
+              "p10": 4.805647,
+              "p90": 7.8791843,
+              "min": 4.199375,
+              "max": 9.028429000000001
+            }
+          },
+          "speedup_vs_own_gpu": 1.0866869892296542
+        },
+        {
+          "npu_channels": 1152,
+          "validation": {
+            "completed_npu_dispatches": 148,
+            "timed_invocations": 90,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "ce6fc03efda5919d302d4da5bd5754c0246cd72835edea7d8382d0177246e043",
+              "insts_sha256_recorded": "d11d56f72ffb621e2e8b48bf13f5569367b69874f758042ea2dde6eb9512790b"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "83832273d09390a929ea9aff7710552c8613e9714c98fa33839640024dbf8137",
+              "insts_sha256_recorded": "22c3dbff563f1bd4a326f520cb40d57641fe8e20b9d7297655f98eef71e53b8c"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 182,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.017183418431948944,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.019230769230769232,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.0038667145006652643,
+              "location": "/correctness/serial_run_1_input_1_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 30,
+              "median": 22.3634445,
+              "p10": 21.9783991,
+              "p90": 22.657632800000002,
+              "min": 21.921227,
+              "max": 22.9943
+            },
+            "serial": {
+              "count": 30,
+              "median": 35.936431999999996,
+              "p10": 35.1589593,
+              "p90": 36.843581900000004,
+              "min": 34.616648,
+              "max": 37.192607
+            },
+            "concurrent": {
+              "count": 30,
+              "median": 19.7692805,
+              "p10": 19.2718402,
+              "p90": 20.711927799999998,
+              "min": 19.126099999999997,
+              "max": 21.632960999999998
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 30,
+              "median": 14.538151500000001,
+              "p10": 13.6620375,
+              "p90": 15.2747688,
+              "min": 12.200519,
+              "max": 15.516058000000001
+            },
+            "cpu_layout_sum": {
+              "count": 30,
+              "median": 2.287629,
+              "p10": 1.8690722,
+              "p90": 2.4390820000000004,
+              "min": 1.764162,
+              "max": 2.5890500000000003
+            },
+            "input_layout": {
+              "count": 30,
+              "median": 0.92014,
+              "p10": 0.901662,
+              "p90": 0.9657541,
+              "min": 0.8930159999999999,
+              "max": 0.9779249999999999
+            },
+            "swiglu_with_host_io": {
+              "count": 30,
+              "median": 6.7688595,
+              "p10": 6.2279214000000005,
+              "p90": 7.261518,
+              "min": 5.6788810000000005,
+              "max": 7.518063
+            },
+            "down_input_layout": {
+              "count": 30,
+              "median": 0.093694,
+              "p10": 0.08685999999999999,
+              "p90": 0.0958639,
+              "min": 0.054020000000000006,
+              "max": 0.100268
+            },
+            "down_with_host_io": {
+              "count": 30,
+              "median": 5.5366535,
+              "p10": 5.1964242,
+              "p90": 5.855452,
+              "min": 4.581509,
+              "max": 6.018376
+            },
+            "output_layout": {
+              "count": 30,
+              "median": 1.2750395,
+              "p10": 0.8468720000000001,
+              "p90": 1.4342700000000002,
+              "min": 0.744799,
+              "max": 1.574515
+            },
+            "swiglu_dispatch_wait": {
+              "count": 30,
+              "median": 6.1413885,
+              "p10": 5.628023,
+              "p90": 6.6694198,
+              "min": 5.177629,
+              "max": 6.916523
+            },
+            "down_dispatch_wait": {
+              "count": 30,
+              "median": 4.6826415,
+              "p10": 4.323475,
+              "p90": 4.9689679,
+              "min": 4.046967,
+              "max": 5.229718
+            },
+            "input_gpu_to_host": {
+              "count": 30,
+              "median": 0.25860099999999997,
+              "p10": 0.256412,
+              "p90": 0.262405,
+              "min": 0.255166,
+              "max": 0.265756
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 30,
+              "median": 4.205199,
+              "p10": 3.4152483,
+              "p90": 6.0030369,
+              "min": 2.890615,
+              "max": 7.506642
+            }
+          },
+          "speedup_vs_own_gpu": 1.1312219734046467
+        },
+        {
+          "npu_channels": 2048,
+          "validation": {
+            "completed_npu_dispatches": 148,
+            "timed_invocations": 90,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "64fddd6ca6a80a6a17fa841833498b63a50416f89df39a635e332ea5be33c5cc",
+              "insts_sha256_recorded": "d0f9a45f3a6777e84cf7f849b8c3dec31c0f7add8e6d732778e739803ae21f1b"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "762cf841aa0b6c7562e8dfcc78ebe30a5034f620ed87924c21ea72dd1ffc19af",
+              "insts_sha256_recorded": "9f88df44c0016b899e4f7de7f4712a8daee8ff7ff6c1e7c411bfae72f43d61bc"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 182,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.01718759646756716,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.017857142857142856,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.004841428903439915,
+              "location": "/correctness/serial_run_1_input_1_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 30,
+              "median": 22.371717500000003,
+              "p10": 22.0389921,
+              "p90": 22.745051,
+              "min": 21.103658,
+              "max": 22.90782
+            },
+            "serial": {
+              "count": 30,
+              "median": 38.3556115,
+              "p10": 36.9989661,
+              "p90": 39.4159808,
+              "min": 36.564915,
+              "max": 40.02172
+            },
+            "concurrent": {
+              "count": 30,
+              "median": 19.36827,
+              "p10": 19.056047999999997,
+              "p90": 20.1521677,
+              "min": 18.790694,
+              "max": 20.887621
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 30,
+              "median": 17.8286645,
+              "p10": 16.4825176,
+              "p90": 18.490029800000002,
+              "min": 15.972378,
+              "max": 19.121089
+            },
+            "cpu_layout_sum": {
+              "count": 30,
+              "median": 2.3477375,
+              "p10": 2.000461,
+              "p90": 2.8561139000000004,
+              "min": 1.94054,
+              "max": 3.1513599999999995
+            },
+            "input_layout": {
+              "count": 30,
+              "median": 0.9692045,
+              "p10": 0.922993,
+              "p90": 1.020353,
+              "min": 0.909646,
+              "max": 1.0502639999999999
+            },
+            "swiglu_with_host_io": {
+              "count": 30,
+              "median": 8.769527,
+              "p10": 8.1268622,
+              "p90": 9.089003000000002,
+              "min": 7.835137,
+              "max": 9.159896
+            },
+            "down_input_layout": {
+              "count": 30,
+              "median": 0.15505750000000001,
+              "p10": 0.1500461,
+              "p90": 0.2283861,
+              "min": 0.080578,
+              "max": 0.266126
+            },
+            "down_with_host_io": {
+              "count": 30,
+              "median": 6.717859499999999,
+              "p10": 6.1822695,
+              "p90": 7.027169100000001,
+              "min": 5.741680000000001,
+              "max": 7.350124
+            },
+            "output_layout": {
+              "count": 30,
+              "median": 1.2121415,
+              "p10": 0.866467,
+              "p90": 1.7331489000000002,
+              "min": 0.778098,
+              "max": 1.9618989999999998
+            },
+            "swiglu_dispatch_wait": {
+              "count": 30,
+              "median": 7.996563999999999,
+              "p10": 7.580468100000001,
+              "p90": 8.318419800000001,
+              "min": 7.333285,
+              "max": 8.424907
+            },
+            "down_dispatch_wait": {
+              "count": 30,
+              "median": 5.854228,
+              "p10": 5.481841800000001,
+              "p90": 6.1836149,
+              "min": 5.03262,
+              "max": 6.465128
+            },
+            "input_gpu_to_host": {
+              "count": 30,
+              "median": 0.259331,
+              "p10": 0.256659,
+              "p90": 0.26578,
+              "min": 0.254346,
+              "max": 0.27055599999999996
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 30,
+              "median": 0.578971,
+              "p10": 0.5546831,
+              "p90": 1.850317900000001,
+              "min": 0.547241,
+              "max": 3.219649
+            }
+          },
+          "speedup_vs_own_gpu": 1.1550705096531597
+        }
+      ],
+      "accuracy": {
+        "stored_metric_occurrences": 549,
+        "all_within_fixed_limits": true,
+        "relative_l2_error": {
+          "value": 0.01718759646756716,
+          "location": "/partitions/2/correctness/serial_run_1_input_1_npu_partial"
+        },
+        "max_abs_error": {
+          "value": 0.03125,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_partition_reference"
+        },
+        "normalized_max_error": {
+          "value": 0.019230769230769232,
+          "location": "/partitions/1/correctness/serial_run_0_input_0_npu_partial"
+        },
+        "rms_error": {
+          "value": 0.004841428903439915,
+          "location": "/partitions/2/correctness/serial_run_1_input_1_gpu_baseline"
+        }
+      },
+      "explicit_named_check_count": 99,
+      "declared_check_count_including_warmups": 591
+    },
+    {
+      "file": "raw/evidence/bfp16_20261022/bfp16_wider.json",
+      "sha256": "f35da8e11af7ac6b225496512243a51a6b05c6c64bc7c31872edd3b720ae2a85",
+      "status": "passed",
+      "mode": "ordinary",
+      "config": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336,
+        "npu_channels": "2560,3072,4096",
+        "columns": 8,
+        "npu_design": "array8",
+        "npu_arithmetic": "bfp16",
+        "accuracy_policy": "report",
+        "fuse_gate_up": true,
+        "fuse_swiglu": true,
+        "warmup": 3,
+        "iterations": 30,
+        "seed": 12832,
+        "artifact_root": "experiments/ffn_partition/artifacts",
+        "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+        "output": "evidence/bfp16_20261022/bfp16_wider.json",
+        "build_only": false,
+        "verbose_build": false
+      },
+      "partitions": [
+        {
+          "npu_channels": 2560,
+          "validation": {
+            "completed_npu_dispatches": 148,
+            "timed_invocations": 90,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "9971fa3a71439514fe36ffc1a9b6fd56fca0d465005600e78837502547204528",
+              "insts_sha256_recorded": "e86e5574d61db39839ff67f605b7fa784e98653962ce2b401b8999de32ab050f"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "02e59a732ca029add77576fb6931b66dbe20c40c8715bce4b33fc57606c35052",
+              "insts_sha256_recorded": "a8352bdc5aaac2b02da4bb1ef1b5d6882a9b630b83ac7326b96d70c1e0a2936b"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 182,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.017239155582516014,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.0390625,
+              "location": "/correctness/serial_run_0_input_0_gpu_baseline"
+            },
+            "normalized_max_error": {
+              "value": 0.017699115044247787,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.005329800885517117,
+              "location": "/correctness/serial_run_1_input_1_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 30,
+              "median": 22.2443475,
+              "p10": 21.962137100000003,
+              "p90": 22.520910999999998,
+              "min": 21.902338,
+              "max": 22.897292
+            },
+            "serial": {
+              "count": 30,
+              "median": 39.274786500000005,
+              "p10": 38.3097315,
+              "p90": 39.819538800000004,
+              "min": 37.883135,
+              "max": 40.418972000000004
+            },
+            "concurrent": {
+              "count": 30,
+              "median": 21.859934000000003,
+              "p10": 21.497888000000003,
+              "p90": 22.395841,
+              "min": 20.530811,
+              "max": 22.803834
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 30,
+              "median": 20.3165645,
+              "p10": 19.895457999999998,
+              "p90": 20.8106089,
+              "min": 18.972757,
+              "max": 21.128391999999998
+            },
+            "cpu_layout_sum": {
+              "count": 30,
+              "median": 2.556473,
+              "p10": 2.2707531,
+              "p90": 2.757884,
+              "min": 2.073296,
+              "max": 3.0124700000000004
+            },
+            "input_layout": {
+              "count": 30,
+              "median": 0.9329495,
+              "p10": 0.902175,
+              "p90": 0.9808370000000001,
+              "min": 0.8906860000000001,
+              "max": 1.003193
+            },
+            "swiglu_with_host_io": {
+              "count": 30,
+              "median": 10.368793,
+              "p10": 9.908219099999998,
+              "p90": 10.751858,
+              "min": 9.66658,
+              "max": 10.960968999999999
+            },
+            "down_input_layout": {
+              "count": 30,
+              "median": 0.1933015,
+              "p10": 0.182743,
+              "p90": 0.25855390000000006,
+              "min": 0.180197,
+              "max": 0.381724
+            },
+            "down_with_host_io": {
+              "count": 30,
+              "median": 7.234871,
+              "p10": 6.959454999999999,
+              "p90": 7.7166915000000005,
+              "min": 6.723589,
+              "max": 8.824944
+            },
+            "output_layout": {
+              "count": 30,
+              "median": 1.3820325,
+              "p10": 1.1236922,
+              "p90": 1.6103249,
+              "min": 0.930284,
+              "max": 1.869499
+            },
+            "swiglu_dispatch_wait": {
+              "count": 30,
+              "median": 9.4363885,
+              "p10": 9.2083781,
+              "p90": 9.8189706,
+              "min": 9.063321,
+              "max": 10.065734
+            },
+            "down_dispatch_wait": {
+              "count": 30,
+              "median": 6.380375000000001,
+              "p10": 6.134104,
+              "p90": 6.8303737,
+              "min": 5.8511940000000005,
+              "max": 7.801741
+            },
+            "input_gpu_to_host": {
+              "count": 30,
+              "median": 0.257996,
+              "p10": 0.25529199999999996,
+              "p90": 0.2598471,
+              "min": 0.253116,
+              "max": 0.27854500000000004
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 30,
+              "median": 0.765547,
+              "p10": 0.745695,
+              "p90": 0.8234940000000001,
+              "min": 0.7190979999999999,
+              "max": 0.896375
+            }
+          },
+          "speedup_vs_own_gpu": 1.0175853001203021
+        },
+        {
+          "npu_channels": 3072,
+          "validation": {
+            "completed_npu_dispatches": 148,
+            "timed_invocations": 90,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "3b34139ac1d2c657ec0d4d3c7a55a66f4815ca6c4161bbfcfbeec28b0b89a91a",
+              "insts_sha256_recorded": "2a711bfd4a4848acca7660cbfd34ebf502c6c5eb6057e230ff2ce3ed076d9166"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "a5c1fedf489cb8b6ba53f355ec866330a5fd607ab30971f520d402c0c947ebab",
+              "insts_sha256_recorded": "16aca0a82105afaaa41f9c42362516d0a247638dfa4b3e6694b607dfadb0f731"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 182,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.01710548337154128,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.0390625,
+              "location": "/correctness/serial_run_0_input_0_gpu_baseline"
+            },
+            "normalized_max_error": {
+              "value": 0.01550751879699248,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.005757951782014093,
+              "location": "/correctness/serial_run_1_input_1_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 30,
+              "median": 22.283616000000002,
+              "p10": 21.9029551,
+              "p90": 22.555169900000003,
+              "min": 19.673924,
+              "max": 22.711584
+            },
+            "serial": {
+              "count": 30,
+              "median": 40.2954935,
+              "p10": 39.7141073,
+              "p90": 41.2082939,
+              "min": 38.612612,
+              "max": 43.003158000000006
+            },
+            "concurrent": {
+              "count": 30,
+              "median": 22.9428,
+              "p10": 22.364953,
+              "p90": 23.941508,
+              "min": 22.065165,
+              "max": 26.021919999999998
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 30,
+              "median": 21.434115000000002,
+              "p10": 20.821951100000003,
+              "p90": 22.373773,
+              "min": 20.541169999999997,
+              "max": 24.253969
+            },
+            "cpu_layout_sum": {
+              "count": 30,
+              "median": 2.043171,
+              "p10": 1.9030891,
+              "p90": 2.5631220000000003,
+              "min": 1.845839,
+              "max": 3.845538
+            },
+            "input_layout": {
+              "count": 30,
+              "median": 0.910195,
+              "p10": 0.897852,
+              "p90": 0.961944,
+              "min": 0.888955,
+              "max": 1.321528
+            },
+            "swiglu_with_host_io": {
+              "count": 30,
+              "median": 11.6094975,
+              "p10": 11.278003899999998,
+              "p90": 11.9907409,
+              "min": 10.782461999999999,
+              "max": 12.283547
+            },
+            "down_input_layout": {
+              "count": 30,
+              "median": 0.2140515,
+              "p10": 0.21060189999999998,
+              "p90": 0.2557601,
+              "min": 0.15783699999999998,
+              "max": 0.5159819999999999
+            },
+            "down_with_host_io": {
+              "count": 30,
+              "median": 7.6952675,
+              "p10": 7.268332,
+              "p90": 7.9835468999999994,
+              "min": 7.029093,
+              "max": 8.402152
+            },
+            "output_layout": {
+              "count": 30,
+              "median": 0.90567,
+              "p10": 0.73603,
+              "p90": 1.4283309000000004,
+              "min": 0.714788,
+              "max": 2.410241
+            },
+            "swiglu_dispatch_wait": {
+              "count": 30,
+              "median": 10.828624999999999,
+              "p10": 10.473647799999998,
+              "p90": 11.178724899999999,
+              "min": 9.909156000000001,
+              "max": 11.390051999999999
+            },
+            "down_dispatch_wait": {
+              "count": 30,
+              "median": 6.834387,
+              "p10": 6.4101970999999995,
+              "p90": 7.130967999999999,
+              "min": 6.244356,
+              "max": 7.419617000000001
+            },
+            "input_gpu_to_host": {
+              "count": 30,
+              "median": 0.258201,
+              "p10": 0.255662,
+              "p90": 0.2626991,
+              "min": 0.254606,
+              "max": 0.265435
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 30,
+              "median": 0.714299,
+              "p10": 0.706369,
+              "p90": 0.7470509000000001,
+              "min": 0.704229,
+              "max": 0.930005
+            }
+          },
+          "speedup_vs_own_gpu": 0.9712683717767667
+        },
+        {
+          "npu_channels": 4096,
+          "validation": {
+            "completed_npu_dispatches": 148,
+            "timed_invocations": 90,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "eab3cff66e5eff5aa137baf9a5c361cfd91f579ad634cfd74f85e340d8402c83",
+              "insts_sha256_recorded": "dcbbf96c4229d3c952d0cba0a804d5510fc212d4bba654ce3be5f431225b79f3"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "79254b0f4f97309be23e4d70f329da398e88ad4433aa05b0b8609ee01c0b53f9",
+              "insts_sha256_recorded": "0c5f71f7f280bbf434ab9edb1667105558753147706dadd1fa5df0062c5a4cd2"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 182,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.017122927982732225,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.0390625,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.016359060402684564,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.006538412964161597,
+              "location": "/correctness/serial_run_1_input_1_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 30,
+              "median": 22.33868,
+              "p10": 22.048056000000003,
+              "p90": 22.573487899999996,
+              "min": 21.910097,
+              "max": 22.800572
+            },
+            "serial": {
+              "count": 30,
+              "median": 42.746956,
+              "p10": 42.2393031,
+              "p90": 43.16126969999999,
+              "min": 40.95797,
+              "max": 43.513949000000004
+            },
+            "concurrent": {
+              "count": 30,
+              "median": 27.3770855,
+              "p10": 26.855519400000002,
+              "p90": 28.0171878,
+              "min": 25.757531999999998,
+              "max": 28.185852999999998
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 30,
+              "median": 25.8450215,
+              "p10": 25.245370299999998,
+              "p90": 26.472611000000004,
+              "min": 24.209648,
+              "max": 26.637988
+            },
+            "cpu_layout_sum": {
+              "count": 30,
+              "median": 2.440944,
+              "p10": 2.0362978999999997,
+              "p90": 2.7130047,
+              "min": 1.9435479999999998,
+              "max": 2.9082619999999997
+            },
+            "input_layout": {
+              "count": 30,
+              "median": 0.913975,
+              "p10": 0.9044391,
+              "p90": 0.9643538999999999,
+              "min": 0.8939750000000001,
+              "max": 1.015773
+            },
+            "swiglu_with_host_io": {
+              "count": 30,
+              "median": 14.3589965,
+              "p10": 14.0653723,
+              "p90": 14.8868361,
+              "min": 13.25731,
+              "max": 14.997772000000001
+            },
+            "down_input_layout": {
+              "count": 30,
+              "median": 0.30117499999999997,
+              "p10": 0.270486,
+              "p90": 0.31106799999999996,
+              "min": 0.129758,
+              "max": 0.334825
+            },
+            "down_with_host_io": {
+              "count": 30,
+              "median": 8.9135775,
+              "p10": 8.670997000000002,
+              "p90": 9.6357949,
+              "min": 8.521419,
+              "max": 10.041643
+            },
+            "output_layout": {
+              "count": 30,
+              "median": 1.245899,
+              "p10": 0.8459981,
+              "p90": 1.4945519,
+              "min": 0.725348,
+              "max": 1.688992
+            },
+            "swiglu_dispatch_wait": {
+              "count": 30,
+              "median": 13.461652,
+              "p10": 13.111635300000003,
+              "p90": 13.989853899999998,
+              "min": 12.499943,
+              "max": 14.078787
+            },
+            "down_dispatch_wait": {
+              "count": 30,
+              "median": 7.984627,
+              "p10": 7.7964111,
+              "p90": 8.728917899999999,
+              "min": 7.601714,
+              "max": 9.120288
+            },
+            "input_gpu_to_host": {
+              "count": 30,
+              "median": 0.25815049999999995,
+              "p10": 0.25628,
+              "p90": 0.26175689999999996,
+              "min": 0.255466,
+              "max": 0.269256
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 30,
+              "median": 0.719948,
+              "p10": 0.712468,
+              "p90": 0.73937,
+              "min": 0.701708,
+              "max": 0.7782469999999999
+            }
+          },
+          "speedup_vs_own_gpu": 0.8159626779848425
+        }
+      ],
+      "accuracy": {
+        "stored_metric_occurrences": 549,
+        "all_within_fixed_limits": true,
+        "relative_l2_error": {
+          "value": 0.017239155582516014,
+          "location": "/partitions/0/correctness/serial_run_1_input_1_npu_partial"
+        },
+        "max_abs_error": {
+          "value": 0.0390625,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_gpu_baseline"
+        },
+        "normalized_max_error": {
+          "value": 0.017699115044247787,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_npu_partial"
+        },
+        "rms_error": {
+          "value": 0.006538412964161597,
+          "location": "/partitions/2/correctness/serial_run_1_input_1_gpu_baseline"
+        }
+      },
+      "explicit_named_check_count": 99,
+      "declared_check_count_including_warmups": 591
+    },
+    {
+      "file": "raw/evidence/bfp16_20261022/bf16_control.json",
+      "sha256": "aff122aa77f4f2c582b6bfad493d94d3b623ba780bbd4667bfc2b5ee097d2f6d",
+      "status": "passed",
+      "mode": "ordinary",
+      "config": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336,
+        "npu_channels": "1152,2048",
+        "columns": 8,
+        "npu_design": "array8",
+        "npu_arithmetic": "bf16",
+        "accuracy_policy": "strict",
+        "fuse_gate_up": true,
+        "fuse_swiglu": true,
+        "warmup": 3,
+        "iterations": 30,
+        "seed": 12832,
+        "artifact_root": "experiments/ffn_partition/artifacts",
+        "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+        "output": "evidence/bfp16_20261022/bf16_control.json",
+        "build_only": false,
+        "verbose_build": false
+      },
+      "partitions": [
+        {
+          "npu_channels": 1152,
+          "validation": {
+            "completed_npu_dispatches": 148,
+            "timed_invocations": 90,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bf16",
+            "accuracy_policy": "strict",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_reuse.cc": "4aceceb605b57b4ca224dee4b1c4b4ec8d5013225262cf8232ffbb3dc0c33ee7",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 2048,
+              "xclbin_sha256_recorded": "c6024ca95f2881b8b6891366c7bd9b9c9c2b31e7b161cfca3ead8540d7c434f2",
+              "insts_sha256_recorded": "d11d56f72ffb621e2e8b48bf13f5569367b69874f758042ea2dde6eb9512790b"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_reuse.cc": "4aceceb605b57b4ca224dee4b1c4b4ec8d5013225262cf8232ffbb3dc0c33ee7",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 2048,
+              "xclbin_sha256_recorded": "70d89b60725c8eb48a61cefdf9b51884a507c25b1d742981b6bf47959b825849",
+              "insts_sha256_recorded": "22c3dbff563f1bd4a326f520cb40d57641fe8e20b9d7297655f98eef71e53b8c"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 182,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.00350890565724017,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.008264462809917356,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "rms_error": {
+              "value": 0.0020196598671740717,
+              "location": "/correctness/serial_run_0_input_0_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 30,
+              "median": 22.338571,
+              "p10": 22.043548,
+              "p90": 22.659601,
+              "min": 21.984651999999997,
+              "max": 22.960586
+            },
+            "serial": {
+              "count": 30,
+              "median": 39.953571,
+              "p10": 39.0817617,
+              "p90": 40.4110738,
+              "min": 38.484066,
+              "max": 40.556250999999996
+            },
+            "concurrent": {
+              "count": 30,
+              "median": 19.716049499999997,
+              "p10": 19.4053411,
+              "p90": 20.451794800000002,
+              "min": 19.121429,
+              "max": 21.073636999999998
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 30,
+              "median": 18.1439455,
+              "p10": 17.652269099999998,
+              "p90": 19.0344418,
+              "min": 17.480786,
+              "max": 19.652271
+            },
+            "cpu_layout_sum": {
+              "count": 30,
+              "median": 1.9999865,
+              "p10": 1.8523698,
+              "p90": 2.443586,
+              "min": 1.81594,
+              "max": 2.594286
+            },
+            "input_layout": {
+              "count": 30,
+              "median": 0.9242695000000001,
+              "p10": 0.908582,
+              "p90": 0.953297,
+              "min": 0.898505,
+              "max": 0.964044
+            },
+            "swiglu_with_host_io": {
+              "count": 30,
+              "median": 9.105877499999998,
+              "p10": 8.8645921,
+              "p90": 9.46862,
+              "min": 8.658735,
+              "max": 9.659198
+            },
+            "down_input_layout": {
+              "count": 30,
+              "median": 0.101689,
+              "p10": 0.1002691,
+              "p90": 0.102681,
+              "min": 0.098439,
+              "max": 0.14090799999999998
+            },
+            "down_with_host_io": {
+              "count": 30,
+              "median": 6.943639,
+              "p10": 6.6968082,
+              "p90": 7.641005900000001,
+              "min": 6.374033000000001,
+              "max": 7.733531
+            },
+            "output_layout": {
+              "count": 30,
+              "median": 0.960153,
+              "p10": 0.8454482,
+              "p90": 1.415424,
+              "min": 0.753808,
+              "max": 1.5696430000000001
+            },
+            "swiglu_dispatch_wait": {
+              "count": 30,
+              "median": 8.5224325,
+              "p10": 8.264752999999999,
+              "p90": 8.859173100000001,
+              "min": 8.063475,
+              "max": 9.044549000000002
+            },
+            "down_dispatch_wait": {
+              "count": 30,
+              "median": 6.1513115,
+              "p10": 5.8651311999999995,
+              "p90": 6.773615900000001,
+              "min": 5.550387,
+              "max": 6.863416
+            },
+            "input_gpu_to_host": {
+              "count": 30,
+              "median": 0.2575455,
+              "p10": 0.2546659,
+              "p90": 0.260225,
+              "min": 0.25307599999999997,
+              "max": 0.270086
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 30,
+              "median": 0.6468740000000001,
+              "p10": 0.5948960000000001,
+              "p90": 1.0920358000000001,
+              "min": 0.58331,
+              "max": 1.264629
+            }
+          },
+          "speedup_vs_own_gpu": 1.1330145524335393
+        },
+        {
+          "npu_channels": 2048,
+          "validation": {
+            "completed_npu_dispatches": 148,
+            "timed_invocations": 90,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bf16",
+            "accuracy_policy": "strict",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_reuse.cc": "4aceceb605b57b4ca224dee4b1c4b4ec8d5013225262cf8232ffbb3dc0c33ee7",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 2048,
+              "xclbin_sha256_recorded": "452f5a5bea98e1f1266c8d5775b80f4ca1081c02a9e840276b806aee7ac3f0d3",
+              "insts_sha256_recorded": "d0f9a45f3a6777e84cf7f849b8c3dec31c0f7add8e6d732778e739803ae21f1b"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_reuse.cc": "4aceceb605b57b4ca224dee4b1c4b4ec8d5013225262cf8232ffbb3dc0c33ee7",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 2048,
+              "xclbin_sha256_recorded": "8d836084601b1660bad05bfce0e63f87efda49b87853f017ec1cd624c9526f4c",
+              "insts_sha256_recorded": "9f88df44c0016b899e4f7de7f4712a8daee8ff7ff6c1e7c411bfae72f43d61bc"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 182,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.003507142205650797,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.008298755186721992,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "rms_error": {
+              "value": 0.002081505986875888,
+              "location": "/correctness/serial_run_1_input_1_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 30,
+              "median": 22.31516,
+              "p10": 22.032054,
+              "p90": 22.583531999999998,
+              "min": 21.916773000000003,
+              "max": 22.66077
+            },
+            "serial": {
+              "count": 30,
+              "median": 44.3693455,
+              "p10": 43.4539282,
+              "p90": 45.0050879,
+              "min": 42.538696,
+              "max": 45.363609
+            },
+            "concurrent": {
+              "count": 30,
+              "median": 25.357194,
+              "p10": 24.3817012,
+              "p90": 26.0498809,
+              "min": 23.950658,
+              "max": 26.780141
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 30,
+              "median": 23.795256000000002,
+              "p10": 22.8238001,
+              "p90": 24.4858589,
+              "min": 22.377784,
+              "max": 25.05436
+            },
+            "cpu_layout_sum": {
+              "count": 30,
+              "median": 2.0827355,
+              "p10": 1.9778089999999997,
+              "p90": 2.4922878,
+              "min": 1.852589,
+              "max": 2.8782620000000003
+            },
+            "input_layout": {
+              "count": 30,
+              "median": 0.9347194999999999,
+              "p10": 0.9249101,
+              "p90": 0.9846659,
+              "min": 0.908704,
+              "max": 1.3991069999999999
+            },
+            "swiglu_with_host_io": {
+              "count": 30,
+              "median": 13.1562695,
+              "p10": 12.4088002,
+              "p90": 13.4968137,
+              "min": 12.256574,
+              "max": 13.731369
+            },
+            "down_input_layout": {
+              "count": 30,
+              "median": 0.18180200000000002,
+              "p10": 0.167883,
+              "p90": 0.214078,
+              "min": 0.16677699999999998,
+              "max": 0.22083699999999998
+            },
+            "down_with_host_io": {
+              "count": 30,
+              "median": 8.446018,
+              "p10": 7.809916100000001,
+              "p90": 9.0060219,
+              "min": 7.719371,
+              "max": 9.290404
+            },
+            "output_layout": {
+              "count": 30,
+              "median": 0.9571995,
+              "p10": 0.847154,
+              "p90": 1.344141,
+              "min": 0.759787,
+              "max": 1.6297329999999999
+            },
+            "swiglu_dispatch_wait": {
+              "count": 30,
+              "median": 12.416326999999999,
+              "p10": 11.6382603,
+              "p90": 12.7559247,
+              "min": 11.258151,
+              "max": 13.003041
+            },
+            "down_dispatch_wait": {
+              "count": 30,
+              "median": 7.604027499999999,
+              "p10": 7.176708100000001,
+              "p90": 8.1790508,
+              "min": 7.007543,
+              "max": 8.484998
+            },
+            "input_gpu_to_host": {
+              "count": 30,
+              "median": 0.25729,
+              "p10": 0.254895,
+              "p90": 0.2590601,
+              "min": 0.254425,
+              "max": 0.266256
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 30,
+              "median": 0.7522369999999999,
+              "p10": 0.7434141000000001,
+              "p90": 0.770809,
+              "min": 0.740678,
+              "max": 0.838186
+            }
+          },
+          "speedup_vs_own_gpu": 0.8800327039340393
+        }
+      ],
+      "accuracy": {
+        "stored_metric_occurrences": 367,
+        "all_within_fixed_limits": true,
+        "relative_l2_error": {
+          "value": 0.00350890565724017,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_npu_partial"
+        },
+        "max_abs_error": {
+          "value": 0.03125,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_partition_reference"
+        },
+        "normalized_max_error": {
+          "value": 0.008298755186721992,
+          "location": "/partitions/1/correctness/serial_run_0_input_0_partition_reference"
+        },
+        "rms_error": {
+          "value": 0.002081505986875888,
+          "location": "/partitions/1/correctness/serial_run_1_input_1_gpu_baseline"
+        }
+      },
+      "explicit_named_check_count": 67,
+      "declared_check_count_including_warmups": 394
+    },
+    {
+      "file": "raw/evidence/bfp16_20261022/bfp16_profile_p2048.json",
+      "sha256": "e340922f99d9022369b0d58bd35a46da70e7b7674cf6b9cb81e1cfc810d0e2c6",
+      "status": "passed",
+      "mode": "diagnostic",
+      "config": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336,
+        "npu_channels": 2048,
+        "npu_design": "array8",
+        "npu_arithmetic": "bfp16",
+        "accuracy_policy": "report",
+        "fuse_gate_up": true,
+        "fuse_swiglu": true,
+        "columns": 8,
+        "warmup": 3,
+        "iterations": 10,
+        "seed": 12832,
+        "artifact_root": "experiments/ffn_partition/artifacts",
+        "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+        "verbose_build": false,
+        "output": "evidence/bfp16_20261022/bfp16_profile_p2048.json"
+      },
+      "partitions": [
+        {
+          "npu_channels": 2048,
+          "validation": {
+            "completed_npu_dispatches": 34,
+            "timed_invocations": 10,
+            "explicit_checks": 42,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "64fddd6ca6a80a6a17fa841833498b63a50416f89df39a635e332ea5be33c5cc",
+              "insts_sha256_recorded": "d0f9a45f3a6777e84cf7f849b8c3dec31c0f7add8e6d732778e739803ae21f1b"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "762cf841aa0b6c7562e8dfcc78ebe30a5034f620ed87924c21ea72dd1ffc19af",
+              "insts_sha256_recorded": "9f88df44c0016b899e4f7de7f4712a8daee8ff7ff6c1e7c411bfae72f43d61bc"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 68,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.01718759646756716,
+              "location": "/checks/initial_1_input_1_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/checks/initial_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.017857142857142856,
+              "location": "/checks/initial_1_input_1_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.004844601603994032,
+              "location": "/checks/initial_1_input_1_unpartitioned_reference"
+            }
+          }
+        }
+      ],
+      "accuracy": {
+        "stored_metric_occurrences": 68,
+        "all_within_fixed_limits": true,
+        "relative_l2_error": {
+          "value": 0.01718759646756716,
+          "location": "/checks/initial_1_input_1_npu_partial"
+        },
+        "max_abs_error": {
+          "value": 0.03125,
+          "location": "/checks/initial_0_input_0_partition_reference"
+        },
+        "normalized_max_error": {
+          "value": 0.017857142857142856,
+          "location": "/checks/initial_1_input_1_npu_partial"
+        },
+        "rms_error": {
+          "value": 0.004844601603994032,
+          "location": "/checks/initial_1_input_1_unpartitioned_reference"
+        }
+      },
+      "explicit_named_check_count": 42,
+      "declared_check_count_including_warmups": 42
+    },
+    {
+      "file": "raw/evidence/bfp16_20261022/bf16_profile_p2048.json",
+      "sha256": "a47247a06ef00e5cdf7351ebc598d1af552bc7204f9e90cf82fff313bea6b92e",
+      "status": "passed",
+      "mode": "diagnostic",
+      "config": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336,
+        "npu_channels": 2048,
+        "npu_design": "array8",
+        "npu_arithmetic": "bf16",
+        "accuracy_policy": "strict",
+        "fuse_gate_up": true,
+        "fuse_swiglu": true,
+        "columns": 8,
+        "warmup": 3,
+        "iterations": 10,
+        "seed": 12832,
+        "artifact_root": "experiments/ffn_partition/artifacts",
+        "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+        "verbose_build": false,
+        "output": "evidence/bfp16_20261022/bf16_profile_p2048.json"
+      },
+      "partitions": [
+        {
+          "npu_channels": 2048,
+          "validation": {
+            "completed_npu_dispatches": 34,
+            "timed_invocations": 10,
+            "explicit_checks": 42,
+            "status": "passed",
+            "npu_arithmetic": "bf16",
+            "accuracy_policy": "strict",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_reuse.cc": "4aceceb605b57b4ca224dee4b1c4b4ec8d5013225262cf8232ffbb3dc0c33ee7",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 2048,
+              "xclbin_sha256_recorded": "452f5a5bea98e1f1266c8d5775b80f4ca1081c02a9e840276b806aee7ac3f0d3",
+              "insts_sha256_recorded": "d0f9a45f3a6777e84cf7f849b8c3dec31c0f7add8e6d732778e739803ae21f1b"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_reuse.cc": "4aceceb605b57b4ca224dee4b1c4b4ec8d5013225262cf8232ffbb3dc0c33ee7",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 2048,
+              "xclbin_sha256_recorded": "8d836084601b1660bad05bfce0e63f87efda49b87853f017ec1cd624c9526f4c",
+              "insts_sha256_recorded": "9f88df44c0016b899e4f7de7f4712a8daee8ff7ff6c1e7c411bfae72f43d61bc"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 68,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.003507142205650797,
+              "location": "/checks/initial_0_input_0_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/checks/initial_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.008298755186721992,
+              "location": "/checks/initial_0_input_0_partition_reference"
+            },
+            "rms_error": {
+              "value": 0.0020867381275265435,
+              "location": "/checks/initial_1_input_1_unpartitioned_reference"
+            }
+          }
+        }
+      ],
+      "accuracy": {
+        "stored_metric_occurrences": 68,
+        "all_within_fixed_limits": true,
+        "relative_l2_error": {
+          "value": 0.003507142205650797,
+          "location": "/checks/initial_0_input_0_npu_partial"
+        },
+        "max_abs_error": {
+          "value": 0.03125,
+          "location": "/checks/initial_0_input_0_partition_reference"
+        },
+        "normalized_max_error": {
+          "value": 0.008298755186721992,
+          "location": "/checks/initial_0_input_0_partition_reference"
+        },
+        "rms_error": {
+          "value": 0.0020867381275265435,
+          "location": "/checks/initial_1_input_1_unpartitioned_reference"
+        }
+      },
+      "explicit_named_check_count": 42,
+      "declared_check_count_including_warmups": 42
+    },
+    {
+      "file": "raw/evidence/bfp16_20261022/smoke.json",
+      "sha256": "ea19c2ef3c8ca9775ad8ff95fb0ddd2c9952c0304303597f478591fe57e30723",
+      "status": "passed",
+      "mode": "ordinary",
+      "config": {
+        "m": 128,
+        "hidden": 128,
+        "intermediate": 256,
+        "npu_channels": "128",
+        "columns": 8,
+        "npu_design": "array8",
+        "npu_arithmetic": "bfp16",
+        "accuracy_policy": "report",
+        "fuse_gate_up": true,
+        "fuse_swiglu": true,
+        "warmup": 1,
+        "iterations": 3,
+        "seed": 12832,
+        "artifact_root": "experiments/ffn_partition/artifacts",
+        "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+        "output": "evidence/bfp16_20261022/smoke.json",
+        "build_only": false,
+        "verbose_build": false
+      },
+      "partitions": [
+        {
+          "npu_channels": 128,
+          "validation": {
+            "completed_npu_dispatches": 32,
+            "timed_invocations": 9,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "bb08c094e2afa7271efe697992d7f0744e30bd9a23eac0bb57671ed53889dcc6",
+              "insts_sha256_recorded": "69eb4cac350c42e3d8640b648809936bcb8629d42bb11a3b15b4aaff2d2d9b9c"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "c1c18d1cbe610f152f9841bb9d48ea72d4631c9df82de845e99432db4e5fcd91",
+              "insts_sha256_recorded": "c62cb1c60f0197792e14af6dcd9262e91c382e97b44b87e07aea681668bb6e92"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 47,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.018097086330910932,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.125,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.01948051948051948,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.008829215626835132,
+              "location": "/correctness/serial_run_0_input_0_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 3,
+              "median": 0.148017,
+              "p10": 0.12106660000000001,
+              "p90": 0.2765994,
+              "min": 0.114329,
+              "max": 0.308745
+            },
+            "serial": {
+              "count": 3,
+              "median": 5.212561,
+              "p10": 5.203825,
+              "p90": 5.246824999999999,
+              "min": 5.2016409999999995,
+              "max": 5.2553909999999995
+            },
+            "concurrent": {
+              "count": 3,
+              "median": 5.330998999999999,
+              "p10": 5.1943286,
+              "p90": 5.333526999999999,
+              "min": 5.160161,
+              "max": 5.334159
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 3,
+              "median": 4.9492449999999995,
+              "p10": 4.885469799999999,
+              "p90": 4.9516442,
+              "min": 4.869526,
+              "max": 4.952243999999999
+            },
+            "cpu_layout_sum": {
+              "count": 3,
+              "median": 0.077228,
+              "p10": 0.06001360000000001,
+              "p90": 0.0818856,
+              "min": 0.05571,
+              "max": 0.08305
+            },
+            "input_layout": {
+              "count": 3,
+              "median": 0.02826,
+              "p10": 0.013292000000000002,
+              "p90": 0.028827200000000004,
+              "min": 0.009550000000000001,
+              "max": 0.028969
+            },
+            "swiglu_with_host_io": {
+              "count": 3,
+              "median": 2.290705,
+              "p10": 2.2413298,
+              "p90": 2.2957929999999998,
+              "min": 2.228986,
+              "max": 2.297065
+            },
+            "down_input_layout": {
+              "count": 3,
+              "median": 0.02035,
+              "p10": 0.020198,
+              "p90": 0.02135,
+              "min": 0.02016,
+              "max": 0.0216
+            },
+            "down_with_host_io": {
+              "count": 3,
+              "median": 2.569261,
+              "p10": 2.5670362,
+              "p90": 2.5758602,
+              "min": 2.56648,
+              "max": 2.57751
+            },
+            "output_layout": {
+              "count": 3,
+              "median": 0.026659,
+              "p10": 0.0261318,
+              "p90": 0.0328838,
+              "min": 0.026,
+              "max": 0.03444
+            },
+            "swiglu_dispatch_wait": {
+              "count": 3,
+              "median": 2.211927,
+              "p10": 2.1726710000000002,
+              "p90": 2.2179822,
+              "min": 2.162857,
+              "max": 2.219496
+            },
+            "down_dispatch_wait": {
+              "count": 3,
+              "median": 2.508192,
+              "p10": 2.50452,
+              "p90": 2.514984,
+              "min": 2.503602,
+              "max": 2.516682
+            },
+            "input_gpu_to_host": {
+              "count": 3,
+              "median": 0.046509,
+              "p10": 0.021765800000000002,
+              "p90": 0.055261000000000005,
+              "min": 0.01558,
+              "max": 0.057449
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 3,
+              "median": 0.172427,
+              "p10": 0.171691,
+              "p90": 0.17267580000000002,
+              "min": 0.171507,
+              "max": 0.172738
+            }
+          },
+          "speedup_vs_own_gpu": 0.027765340042269757
+        }
+      ],
+      "accuracy": {
+        "stored_metric_occurrences": 50,
+        "all_within_fixed_limits": true,
+        "relative_l2_error": {
+          "value": 0.018097086330910932,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_npu_partial"
+        },
+        "max_abs_error": {
+          "value": 0.125,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_partition_reference"
+        },
+        "normalized_max_error": {
+          "value": 0.01948051948051948,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_npu_partial"
+        },
+        "rms_error": {
+          "value": 0.008829215626835132,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_gpu_baseline"
+        }
+      },
+      "explicit_named_check_count": 35,
+      "declared_check_count_including_warmups": 52
+    },
+    {
+      "file": "raw/evidence/bfp16_20261022/bfp16_refine.json",
+      "sha256": "d116be12f66d945611980a597f46f2af8fe9c3a6a4034e35cace43ddf82c9aa1",
+      "status": "passed",
+      "mode": "ordinary",
+      "config": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336,
+        "npu_channels": "2048,1792,1536,1152",
+        "columns": 8,
+        "npu_design": "array8",
+        "npu_arithmetic": "bfp16",
+        "accuracy_policy": "report",
+        "fuse_gate_up": true,
+        "fuse_swiglu": true,
+        "warmup": 3,
+        "iterations": 40,
+        "seed": 12832,
+        "artifact_root": "experiments/ffn_partition/artifacts",
+        "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+        "output": "evidence/bfp16_20261022/bfp16_refine.json",
+        "build_only": false,
+        "verbose_build": false
+      },
+      "partitions": [
+        {
+          "npu_channels": 2048,
+          "validation": {
+            "completed_npu_dispatches": 188,
+            "timed_invocations": 120,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "64fddd6ca6a80a6a17fa841833498b63a50416f89df39a635e332ea5be33c5cc",
+              "insts_sha256_recorded": "d0f9a45f3a6777e84cf7f849b8c3dec31c0f7add8e6d732778e739803ae21f1b"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "762cf841aa0b6c7562e8dfcc78ebe30a5034f620ed87924c21ea72dd1ffc19af",
+              "insts_sha256_recorded": "9f88df44c0016b899e4f7de7f4712a8daee8ff7ff6c1e7c411bfae72f43d61bc"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 312,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.01718759646756716,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.017857142857142856,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.004841428903439915,
+              "location": "/correctness/serial_run_1_input_1_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 40,
+              "median": 22.333176,
+              "p10": 22.033531099999998,
+              "p90": 22.582913,
+              "min": 21.756566,
+              "max": 23.374958
+            },
+            "serial": {
+              "count": 40,
+              "median": 38.0704555,
+              "p10": 37.503632100000004,
+              "p90": 38.692380799999995,
+              "min": 36.225516999999996,
+              "max": 39.221546000000004
+            },
+            "concurrent": {
+              "count": 40,
+              "median": 19.5798085,
+              "p10": 19.024706000000002,
+              "p90": 20.5913231,
+              "min": 18.271905,
+              "max": 20.931919
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 40,
+              "median": 18.182067500000002,
+              "p10": 17.502800099999998,
+              "p90": 18.8003917,
+              "min": 16.726941999999998,
+              "max": 19.539544000000003
+            },
+            "cpu_layout_sum": {
+              "count": 40,
+              "median": 2.01829,
+              "p10": 1.8863889999999999,
+              "p90": 2.5934149,
+              "min": 1.794119,
+              "max": 3.5779970000000003
+            },
+            "input_layout": {
+              "count": 40,
+              "median": 0.9141645,
+              "p10": 0.900221,
+              "p90": 0.9603600000000001,
+              "min": 0.838426,
+              "max": 1.600832
+            },
+            "swiglu_with_host_io": {
+              "count": 40,
+              "median": 9.1449675,
+              "p10": 8.7453591,
+              "p90": 9.484989899999999,
+              "min": 8.483034,
+              "max": 9.651654
+            },
+            "down_input_layout": {
+              "count": 40,
+              "median": 0.1537775,
+              "p10": 0.15086499999999997,
+              "p90": 0.17806799999999998,
+              "min": 0.074849,
+              "max": 0.224947
+            },
+            "down_with_host_io": {
+              "count": 40,
+              "median": 6.8072835000000005,
+              "p10": 6.5392081,
+              "p90": 7.015664900000001,
+              "min": 6.011756,
+              "max": 7.355054
+            },
+            "output_layout": {
+              "count": 40,
+              "median": 0.901829,
+              "p10": 0.820336,
+              "p90": 1.4758187000000003,
+              "min": 0.7507469999999999,
+              "max": 1.760579
+            },
+            "swiglu_dispatch_wait": {
+              "count": 40,
+              "median": 8.457465000000001,
+              "p10": 8.1422575,
+              "p90": 8.745433100000001,
+              "min": 7.835855,
+              "max": 8.922527
+            },
+            "down_dispatch_wait": {
+              "count": 40,
+              "median": 5.957508000000001,
+              "p10": 5.623531100000001,
+              "p90": 6.166854799999999,
+              "min": 5.278649000000001,
+              "max": 6.555658
+            },
+            "input_gpu_to_host": {
+              "count": 40,
+              "median": 0.2580805,
+              "p10": 0.25595189999999995,
+              "p90": 0.26132410000000006,
+              "min": 0.254146,
+              "max": 0.265035
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 40,
+              "median": 0.56598,
+              "p10": 0.5575139,
+              "p90": 0.749826,
+              "min": 0.5398200000000001,
+              "max": 1.792449
+            }
+          },
+          "speedup_vs_own_gpu": 1.140622800268961
+        },
+        {
+          "npu_channels": 1792,
+          "validation": {
+            "completed_npu_dispatches": 188,
+            "timed_invocations": 120,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "d8c035daf7296301ce0f37010bba45f84bf7ace2796eedd5ffeb0e7c84eb0ca9",
+              "insts_sha256_recorded": "78fe13cdbd19adc4aa2a19a8e36f45a37dfa29fb5339d87673d2340991a10b6f"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "5fb0aeef2e64bf150beef5289249b71c1b7500f925ef732ef11cec807f753f59",
+              "insts_sha256_recorded": "49e5cb3ef0f488904d98f727e8bd95f97e6b6b83ccb87aabc84ae65863004d95"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 312,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.017156937132775642,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.01768867924528302,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.004584803750508159,
+              "location": "/correctness/serial_run_1_input_1_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 40,
+              "median": 22.407819,
+              "p10": 22.048979,
+              "p90": 22.6554071,
+              "min": 21.901851999999998,
+              "max": 22.937575000000002
+            },
+            "serial": {
+              "count": 40,
+              "median": 38.032475,
+              "p10": 37.312224300000004,
+              "p90": 38.5111049,
+              "min": 36.450942000000005,
+              "max": 39.036917
+            },
+            "concurrent": {
+              "count": 40,
+              "median": 18.7609315,
+              "p10": 18.3008301,
+              "p90": 19.303039899999998,
+              "min": 18.217456,
+              "max": 19.641772
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 40,
+              "median": 17.1978035,
+              "p10": 16.6632151,
+              "p90": 17.7521091,
+              "min": 16.305359,
+              "max": 18.095549
+            },
+            "cpu_layout_sum": {
+              "count": 40,
+              "median": 2.1245190000000003,
+              "p10": 1.8432913,
+              "p90": 2.5000891999999997,
+              "min": 1.772159,
+              "max": 2.6672849999999997
+            },
+            "input_layout": {
+              "count": 40,
+              "median": 0.9034945,
+              "p10": 0.8895939,
+              "p90": 0.925694,
+              "min": 0.886524,
+              "max": 0.986683
+            },
+            "swiglu_with_host_io": {
+              "count": 40,
+              "median": 8.5068725,
+              "p10": 8.260509,
+              "p90": 8.790631099999999,
+              "min": 7.930653,
+              "max": 9.015295
+            },
+            "down_input_layout": {
+              "count": 40,
+              "median": 0.13721299999999997,
+              "p10": 0.135846,
+              "p90": 0.172986,
+              "min": 0.12890700000000002,
+              "max": 0.25712599999999997
+            },
+            "down_with_host_io": {
+              "count": 40,
+              "median": 6.4840835,
+              "p10": 6.250332,
+              "p90": 6.8301518,
+              "min": 5.639143,
+              "max": 7.54324
+            },
+            "output_layout": {
+              "count": 40,
+              "median": 1.0812564999999998,
+              "p10": 0.7849781000000001,
+              "p90": 1.4576489000000001,
+              "min": 0.729548,
+              "max": 1.626082
+            },
+            "swiglu_dispatch_wait": {
+              "count": 40,
+              "median": 7.807015999999999,
+              "p10": 7.5628933,
+              "p90": 8.129523999999998,
+              "min": 7.391132,
+              "max": 8.340206
+            },
+            "down_dispatch_wait": {
+              "count": 40,
+              "median": 5.571199,
+              "p10": 5.396961000000001,
+              "p90": 5.9804777,
+              "min": 4.954635000000001,
+              "max": 6.668576
+            },
+            "input_gpu_to_host": {
+              "count": 40,
+              "median": 0.25825549999999997,
+              "p10": 0.256103,
+              "p90": 0.265811,
+              "min": 0.255666,
+              "max": 0.270756
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 40,
+              "median": 0.5767500000000001,
+              "p10": 0.5581621000000001,
+              "p90": 1.3034909000000008,
+              "min": 0.5499400000000001,
+              "max": 2.30794
+            }
+          },
+          "speedup_vs_own_gpu": 1.194387336257797
+        },
+        {
+          "npu_channels": 1536,
+          "validation": {
+            "completed_npu_dispatches": 188,
+            "timed_invocations": 120,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "763161d30a3d927aad0527754a01c2d4ecfcc25b8797ced7c037aaca43b6d307",
+              "insts_sha256_recorded": "d4928a92ed045db62740bf0c46cfb5e7f9f04adeef85b3be179df1236c535c1e"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "e79137e8806646e2a66f6df1bb50d13f09ae6708aa1c41eb3c2ad3222baac542",
+              "insts_sha256_recorded": "0f6be7458711863386c948f6ded919598ebcab67e601d06adfb775acb322271d"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 312,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.017192654162192643,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.01891891891891892,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.004318293235491945,
+              "location": "/correctness/serial_run_1_input_1_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 40,
+              "median": 22.3694485,
+              "p10": 22.059144099999997,
+              "p90": 22.659565900000004,
+              "min": 21.929042000000003,
+              "max": 22.814086
+            },
+            "serial": {
+              "count": 40,
+              "median": 37.3472905,
+              "p10": 36.461589100000005,
+              "p90": 37.870730900000005,
+              "min": 36.389802,
+              "max": 38.054763
+            },
+            "concurrent": {
+              "count": 40,
+              "median": 19.1938235,
+              "p10": 18.7175261,
+              "p90": 19.881575,
+              "min": 18.567569,
+              "max": 21.099606
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 40,
+              "median": 16.2916335,
+              "p10": 15.4174754,
+              "p90": 16.964074899999996,
+              "min": 14.426371,
+              "max": 17.254002
+            },
+            "cpu_layout_sum": {
+              "count": 40,
+              "median": 1.9375709999999997,
+              "p10": 1.785288,
+              "p90": 2.5573989,
+              "min": 1.754599,
+              "max": 2.627774
+            },
+            "input_layout": {
+              "count": 40,
+              "median": 0.9178790000000001,
+              "p10": 0.9017050999999999,
+              "p90": 0.9561729999999999,
+              "min": 0.894284,
+              "max": 0.962663
+            },
+            "swiglu_with_host_io": {
+              "count": 40,
+              "median": 7.9164674999999995,
+              "p10": 7.377422,
+              "p90": 8.2001401,
+              "min": 6.872191,
+              "max": 8.309447
+            },
+            "down_input_layout": {
+              "count": 40,
+              "median": 0.125093,
+              "p10": 0.12216599999999998,
+              "p90": 0.166504,
+              "min": 0.059899,
+              "max": 0.236286
+            },
+            "down_with_host_io": {
+              "count": 40,
+              "median": 6.263012,
+              "p10": 5.6606081,
+              "p90": 6.5493438,
+              "min": 5.512094,
+              "max": 7.036669
+            },
+            "output_layout": {
+              "count": 40,
+              "median": 0.8936200000000001,
+              "p10": 0.7263399,
+              "p90": 1.476451,
+              "min": 0.715958,
+              "max": 1.5873030000000001
+            },
+            "swiglu_dispatch_wait": {
+              "count": 40,
+              "median": 7.291888500000001,
+              "p10": 6.7801771,
+              "p90": 7.5423719,
+              "min": 6.204953000000001,
+              "max": 7.653849
+            },
+            "down_dispatch_wait": {
+              "count": 40,
+              "median": 5.4131065,
+              "p10": 4.859104100000001,
+              "p90": 5.7173918,
+              "min": 4.497953000000001,
+              "max": 6.188962999999999
+            },
+            "input_gpu_to_host": {
+              "count": 40,
+              "median": 0.257416,
+              "p10": 0.25506700000000004,
+              "p90": 0.2606121,
+              "min": 0.25386600000000004,
+              "max": 0.283555
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 40,
+              "median": 2.1120635,
+              "p10": 1.1242539999999999,
+              "p90": 3.6258029,
+              "min": 0.6356390000000001,
+              "max": 5.844989
+            }
+          },
+          "speedup_vs_own_gpu": 1.1654503595909382
+        },
+        {
+          "npu_channels": 1152,
+          "validation": {
+            "completed_npu_dispatches": 188,
+            "timed_invocations": 120,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "ce6fc03efda5919d302d4da5bd5754c0246cd72835edea7d8382d0177246e043",
+              "insts_sha256_recorded": "d11d56f72ffb621e2e8b48bf13f5569367b69874f758042ea2dde6eb9512790b"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "83832273d09390a929ea9aff7710552c8613e9714c98fa33839640024dbf8137",
+              "insts_sha256_recorded": "22c3dbff563f1bd4a326f520cb40d57641fe8e20b9d7297655f98eef71e53b8c"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 312,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.017183418431948944,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.019230769230769232,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.0038667145006652643,
+              "location": "/correctness/serial_run_1_input_1_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 40,
+              "median": 22.508991,
+              "p10": 22.119757,
+              "p90": 22.743301,
+              "min": 21.929201000000003,
+              "max": 22.976162
+            },
+            "serial": {
+              "count": 40,
+              "median": 35.9694375,
+              "p10": 35.2575632,
+              "p90": 36.692295900000005,
+              "min": 34.05125099999999,
+              "max": 37.024749
+            },
+            "concurrent": {
+              "count": 40,
+              "median": 19.754699000000002,
+              "p10": 19.2430889,
+              "p90": 20.4364348,
+              "min": 19.07676,
+              "max": 21.301622
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 40,
+              "median": 14.4791595,
+              "p10": 13.781041099999998,
+              "p90": 15.0606429,
+              "min": 12.677991,
+              "max": 15.339785
+            },
+            "cpu_layout_sum": {
+              "count": 40,
+              "median": 2.1381125,
+              "p10": 1.7710932000000001,
+              "p90": 2.536597,
+              "min": 1.72544,
+              "max": 2.687274
+            },
+            "input_layout": {
+              "count": 40,
+              "median": 0.9019094999999999,
+              "p10": 0.8919371,
+              "p90": 0.9559159,
+              "min": 0.880224,
+              "max": 1.101051
+            },
+            "swiglu_with_host_io": {
+              "count": 40,
+              "median": 6.889400999999999,
+              "p10": 6.0034,
+              "p90": 7.3069730999999996,
+              "min": 5.684171,
+              "max": 7.664837
+            },
+            "down_input_layout": {
+              "count": 40,
+              "median": 0.10157350000000001,
+              "p10": 0.09736500000000001,
+              "p90": 0.1109371,
+              "min": 0.090979,
+              "max": 0.145337
+            },
+            "down_with_host_io": {
+              "count": 40,
+              "median": 5.4498560000000005,
+              "p10": 5.066689199999999,
+              "p90": 5.9668346,
+              "min": 4.679569000000001,
+              "max": 6.371269
+            },
+            "output_layout": {
+              "count": 40,
+              "median": 1.1203750000000001,
+              "p10": 0.775467,
+              "p90": 1.4865898999999998,
+              "min": 0.722688,
+              "max": 1.690411
+            },
+            "swiglu_dispatch_wait": {
+              "count": 40,
+              "median": 6.276286499999999,
+              "p10": 5.5381231,
+              "p90": 6.6628739,
+              "min": 5.181439999999999,
+              "max": 7.051528
+            },
+            "down_dispatch_wait": {
+              "count": 40,
+              "median": 4.593326,
+              "p10": 4.2433561,
+              "p90": 5.1108751,
+              "min": 3.987451,
+              "max": 5.782659
+            },
+            "input_gpu_to_host": {
+              "count": 40,
+              "median": 0.2580055,
+              "p10": 0.25630610000000004,
+              "p90": 0.2626339,
+              "min": 0.253056,
+              "max": 0.290005
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 40,
+              "median": 4.3046205,
+              "p10": 3.4486961000000007,
+              "p90": 5.764932699999999,
+              "min": 3.279453,
+              "max": 7.7491959999999995
+            }
+          },
+          "speedup_vs_own_gpu": 1.139424650307251
+        }
+      ],
+      "accuracy": {
+        "stored_metric_occurrences": 1251,
+        "all_within_fixed_limits": true,
+        "relative_l2_error": {
+          "value": 0.017192654162192643,
+          "location": "/partitions/2/correctness/serial_run_1_input_1_npu_partial"
+        },
+        "max_abs_error": {
+          "value": 0.03125,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_partition_reference"
+        },
+        "normalized_max_error": {
+          "value": 0.019230769230769232,
+          "location": "/partitions/3/correctness/serial_run_0_input_0_npu_partial"
+        },
+        "rms_error": {
+          "value": 0.004841428903439915,
+          "location": "/partitions/0/correctness/serial_run_1_input_1_gpu_baseline"
+        }
+      },
+      "explicit_named_check_count": 131,
+      "declared_check_count_including_warmups": 1332
+    },
+    {
+      "file": "raw/evidence/bfp16_20261022/bfp16_confirm.json",
+      "sha256": "0fb03471f83d8d8cecf85efb2961605c355fcdd1555020bef0f3610eff0d90b6",
+      "status": "passed",
+      "mode": "ordinary",
+      "config": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336,
+        "npu_channels": "1536,1792",
+        "columns": 8,
+        "npu_design": "array8",
+        "npu_arithmetic": "bfp16",
+        "accuracy_policy": "report",
+        "fuse_gate_up": true,
+        "fuse_swiglu": true,
+        "warmup": 3,
+        "iterations": 50,
+        "seed": 12832,
+        "artifact_root": "experiments/ffn_partition/artifacts",
+        "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+        "output": "evidence/bfp16_20261022/bfp16_confirm.json",
+        "build_only": false,
+        "verbose_build": false
+      },
+      "partitions": [
+        {
+          "npu_channels": 1536,
+          "validation": {
+            "completed_npu_dispatches": 228,
+            "timed_invocations": 150,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "763161d30a3d927aad0527754a01c2d4ecfcc25b8797ced7c037aaca43b6d307",
+              "insts_sha256_recorded": "d4928a92ed045db62740bf0c46cfb5e7f9f04adeef85b3be179df1236c535c1e"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "e79137e8806646e2a66f6df1bb50d13f09ae6708aa1c41eb3c2ad3222baac542",
+              "insts_sha256_recorded": "0f6be7458711863386c948f6ded919598ebcab67e601d06adfb775acb322271d"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 382,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.017192654162192643,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.01891891891891892,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.004318293235491945,
+              "location": "/correctness/serial_run_1_input_1_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 50,
+              "median": 22.192628,
+              "p10": 21.978066000000002,
+              "p90": 22.5661019,
+              "min": 21.799109,
+              "max": 24.401824
+            },
+            "serial": {
+              "count": 50,
+              "median": 36.9546255,
+              "p10": 36.2268831,
+              "p90": 37.597426999999996,
+              "min": 35.425032,
+              "max": 37.859819
+            },
+            "concurrent": {
+              "count": 50,
+              "median": 19.19883,
+              "p10": 18.780625,
+              "p90": 19.7726308,
+              "min": 18.431939,
+              "max": 20.303006
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 50,
+              "median": 16.1548085,
+              "p10": 15.4799412,
+              "p90": 16.9391641,
+              "min": 15.074847,
+              "max": 17.748101
+            },
+            "cpu_layout_sum": {
+              "count": 50,
+              "median": 2.2893705,
+              "p10": 1.910793,
+              "p90": 2.5909950000000004,
+              "min": 1.78772,
+              "max": 2.805412
+            },
+            "input_layout": {
+              "count": 50,
+              "median": 0.9140739999999999,
+              "p10": 0.9009431,
+              "p90": 0.9541529999999999,
+              "min": 0.846836,
+              "max": 1.014183
+            },
+            "swiglu_with_host_io": {
+              "count": 50,
+              "median": 7.9055064999999995,
+              "p10": 7.3658035,
+              "p90": 8.155749,
+              "min": 6.9884070000000005,
+              "max": 8.352352999999999
+            },
+            "down_input_layout": {
+              "count": 50,
+              "median": 0.13816250000000002,
+              "p10": 0.115226,
+              "p90": 0.16303990000000002,
+              "min": 0.07182899999999999,
+              "max": 0.178307
+            },
+            "down_with_host_io": {
+              "count": 50,
+              "median": 6.124428,
+              "p10": 5.575161999999999,
+              "p90": 6.715407899999999,
+              "min": 5.202379,
+              "max": 7.034587
+            },
+            "output_layout": {
+              "count": 50,
+              "median": 1.2347739999999998,
+              "p10": 0.8411761,
+              "p90": 1.5479729,
+              "min": 0.746367,
+              "max": 1.825369
+            },
+            "swiglu_dispatch_wait": {
+              "count": 50,
+              "median": 7.2402239999999995,
+              "p10": 6.7444652,
+              "p90": 7.5141001,
+              "min": 6.4043280000000005,
+              "max": 7.697274999999999
+            },
+            "down_dispatch_wait": {
+              "count": 50,
+              "median": 5.283363,
+              "p10": 4.8432588999999995,
+              "p90": 5.9042639,
+              "min": 4.5260609999999994,
+              "max": 6.188992
+            },
+            "input_gpu_to_host": {
+              "count": 50,
+              "median": 0.25865,
+              "p10": 0.2571751,
+              "p90": 0.261637,
+              "min": 0.254205,
+              "max": 0.266156
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 50,
+              "median": 2.1477375,
+              "p10": 1.217461,
+              "p90": 3.2438298,
+              "min": 0.5965689999999999,
+              "max": 4.0079899999999995
+            }
+          },
+          "speedup_vs_own_gpu": 1.1559364815460107
+        },
+        {
+          "npu_channels": 1792,
+          "validation": {
+            "completed_npu_dispatches": 228,
+            "timed_invocations": 150,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "d8c035daf7296301ce0f37010bba45f84bf7ace2796eedd5ffeb0e7c84eb0ca9",
+              "insts_sha256_recorded": "78fe13cdbd19adc4aa2a19a8e36f45a37dfa29fb5339d87673d2340991a10b6f"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "5fb0aeef2e64bf150beef5289249b71c1b7500f925ef732ef11cec807f753f59",
+              "insts_sha256_recorded": "49e5cb3ef0f488904d98f727e8bd95f97e6b6b83ccb87aabc84ae65863004d95"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 382,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.017156937132775642,
+              "location": "/correctness/serial_run_1_input_1_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.01768867924528302,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.004584803750508159,
+              "location": "/correctness/serial_run_1_input_1_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 50,
+              "median": 22.348974,
+              "p10": 22.02277,
+              "p90": 22.599139899999997,
+              "min": 21.920187000000002,
+              "max": 22.810011
+            },
+            "serial": {
+              "count": 50,
+              "median": 37.893843000000004,
+              "p10": 36.786905000000004,
+              "p90": 38.716657,
+              "min": 35.911332,
+              "max": 39.227995
+            },
+            "concurrent": {
+              "count": 50,
+              "median": 18.754437,
+              "p10": 18.374697,
+              "p90": 19.224520899999995,
+              "min": 18.250681,
+              "max": 19.631057000000002
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 50,
+              "median": 17.192095000000002,
+              "p10": 16.862623,
+              "p90": 17.737141,
+              "min": 16.365394000000002,
+              "max": 18.172052
+            },
+            "cpu_layout_sum": {
+              "count": 50,
+              "median": 1.9541765,
+              "p10": 1.8887478,
+              "p90": 2.2994429000000003,
+              "min": 1.821088,
+              "max": 2.5607249999999997
+            },
+            "input_layout": {
+              "count": 50,
+              "median": 0.975128,
+              "p10": 0.9249339999999999,
+              "p90": 1.021245,
+              "min": 0.912344,
+              "max": 1.0573620000000001
+            },
+            "swiglu_with_host_io": {
+              "count": 50,
+              "median": 8.447467500000002,
+              "p10": 8.2190039,
+              "p90": 8.907254,
+              "min": 7.8642330000000005,
+              "max": 9.182869
+            },
+            "down_input_layout": {
+              "count": 50,
+              "median": 0.15293299999999999,
+              "p10": 0.14920999999999998,
+              "p90": 0.16844800000000001,
+              "min": 0.148027,
+              "max": 0.202557
+            },
+            "down_with_host_io": {
+              "count": 50,
+              "median": 6.6636435,
+              "p10": 6.344722999999999,
+              "p90": 7.0209639,
+              "min": 5.6603010000000005,
+              "max": 7.355430999999999
+            },
+            "output_layout": {
+              "count": 50,
+              "median": 0.823896,
+              "p10": 0.7690931,
+              "p90": 1.1447679,
+              "min": 0.712527,
+              "max": 1.429155
+            },
+            "swiglu_dispatch_wait": {
+              "count": 50,
+              "median": 7.751875,
+              "p10": 7.5201821,
+              "p90": 8.1771198,
+              "min": 7.154655,
+              "max": 8.484641
+            },
+            "down_dispatch_wait": {
+              "count": 50,
+              "median": 5.767694499999999,
+              "p10": 5.472288,
+              "p90": 6.1279218,
+              "min": 4.9201239999999995,
+              "max": 6.489466999999999
+            },
+            "input_gpu_to_host": {
+              "count": 50,
+              "median": 0.2579755,
+              "p10": 0.2558819,
+              "p90": 0.261993,
+              "min": 0.255436,
+              "max": 0.270825
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 50,
+              "median": 0.5725750000000001,
+              "p10": 0.554052,
+              "p90": 0.8519098000000002,
+              "min": 0.5389299999999999,
+              "max": 2.26203
+            }
+          },
+          "speedup_vs_own_gpu": 1.1916632848002848
+        }
+      ],
+      "accuracy": {
+        "stored_metric_occurrences": 767,
+        "all_within_fixed_limits": true,
+        "relative_l2_error": {
+          "value": 0.017192654162192643,
+          "location": "/partitions/0/correctness/serial_run_1_input_1_npu_partial"
+        },
+        "max_abs_error": {
+          "value": 0.03125,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_partition_reference"
+        },
+        "normalized_max_error": {
+          "value": 0.01891891891891892,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_npu_partial"
+        },
+        "rms_error": {
+          "value": 0.004584803750508159,
+          "location": "/partitions/1/correctness/serial_run_1_input_1_gpu_baseline"
+        }
+      },
+      "explicit_named_check_count": 67,
+      "declared_check_count_including_warmups": 806
+    },
+    {
+      "file": "raw/evidence/bfp16_20261022/bf16_confirm.json",
+      "sha256": "9bf8fcdd6760317ce1572e573d4ca3f50ba438754bc540ce9bfdca604eac3fe7",
+      "status": "passed",
+      "mode": "ordinary",
+      "config": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336,
+        "npu_channels": "1152",
+        "columns": 8,
+        "npu_design": "array8",
+        "npu_arithmetic": "bf16",
+        "accuracy_policy": "strict",
+        "fuse_gate_up": true,
+        "fuse_swiglu": true,
+        "warmup": 3,
+        "iterations": 50,
+        "seed": 12832,
+        "artifact_root": "experiments/ffn_partition/artifacts",
+        "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+        "output": "evidence/bfp16_20261022/bf16_confirm.json",
+        "build_only": false,
+        "verbose_build": false
+      },
+      "partitions": [
+        {
+          "npu_channels": 1152,
+          "validation": {
+            "completed_npu_dispatches": 228,
+            "timed_invocations": 150,
+            "explicit_checks": 35,
+            "status": "passed",
+            "npu_arithmetic": "bf16",
+            "accuracy_policy": "strict",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_reuse.cc": "4aceceb605b57b4ca224dee4b1c4b4ec8d5013225262cf8232ffbb3dc0c33ee7",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 2048,
+              "xclbin_sha256_recorded": "c6024ca95f2881b8b6891366c7bd9b9c9c2b31e7b161cfca3ead8540d7c434f2",
+              "insts_sha256_recorded": "d11d56f72ffb621e2e8b48bf13f5569367b69874f758042ea2dde6eb9512790b"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_reuse.cc": "4aceceb605b57b4ca224dee4b1c4b4ec8d5013225262cf8232ffbb3dc0c33ee7",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 2048,
+              "xclbin_sha256_recorded": "70d89b60725c8eb48a61cefdf9b51884a507c25b1d742981b6bf47959b825849",
+              "insts_sha256_recorded": "22c3dbff563f1bd4a326f520cb40d57641fe8e20b9d7297655f98eef71e53b8c"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 382,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.00350890565724017,
+              "location": "/correctness/serial_run_0_input_0_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.008264462809917356,
+              "location": "/correctness/serial_run_0_input_0_partition_reference"
+            },
+            "rms_error": {
+              "value": 0.0020196598671740717,
+              "location": "/correctness/serial_run_0_input_0_gpu_baseline"
+            }
+          },
+          "timing_ms": {
+            "baseline": {
+              "count": 50,
+              "median": 22.351288500000003,
+              "p10": 22.042093899999998,
+              "p90": 22.6672698,
+              "min": 19.995459,
+              "max": 23.387430000000002
+            },
+            "serial": {
+              "count": 50,
+              "median": 39.67825,
+              "p10": 38.4443671,
+              "p90": 40.3743209,
+              "min": 38.037174,
+              "max": 41.840997
+            },
+            "concurrent": {
+              "count": 50,
+              "median": 19.827702,
+              "p10": 19.531241100000003,
+              "p90": 20.931617000000003,
+              "min": 19.173444,
+              "max": 22.447447
+            }
+          },
+          "ordinary_concurrent_host_stages_ms": {
+            "npu_branch": {
+              "count": 50,
+              "median": 18.1955855,
+              "p10": 17.2779201,
+              "p90": 18.7942423,
+              "min": 15.812153,
+              "max": 20.120058
+            },
+            "cpu_layout_sum": {
+              "count": 50,
+              "median": 2.229606,
+              "p10": 1.8717279,
+              "p90": 2.5255189000000007,
+              "min": 1.777659,
+              "max": 4.133908
+            },
+            "input_layout": {
+              "count": 50,
+              "median": 0.9388585,
+              "p10": 0.913207,
+              "p90": 0.9969449,
+              "min": 0.879894,
+              "max": 1.850148
+            },
+            "swiglu_with_host_io": {
+              "count": 50,
+              "median": 9.083866,
+              "p10": 8.6097921,
+              "p90": 9.3174641,
+              "min": 7.882662,
+              "max": 9.656811
+            },
+            "down_input_layout": {
+              "count": 50,
+              "median": 0.09934799999999999,
+              "p10": 0.0974371,
+              "p90": 0.11307790000000004,
+              "min": 0.089629,
+              "max": 0.167347
+            },
+            "down_with_host_io": {
+              "count": 50,
+              "median": 6.8114615,
+              "p10": 6.368601,
+              "p90": 7.3005058,
+              "min": 5.871087,
+              "max": 8.533040000000002
+            },
+            "output_layout": {
+              "count": 50,
+              "median": 1.1764394999999999,
+              "p10": 0.838358,
+              "p90": 1.5076519,
+              "min": 0.755667,
+              "max": 2.116413
+            },
+            "swiglu_dispatch_wait": {
+              "count": 50,
+              "median": 8.4748705,
+              "p10": 7.907243299999999,
+              "p90": 8.6940578,
+              "min": 7.348901,
+              "max": 9.031991
+            },
+            "down_dispatch_wait": {
+              "count": 50,
+              "median": 5.9830749999999995,
+              "p10": 5.5564901,
+              "p90": 6.4223848,
+              "min": 5.063591000000001,
+              "max": 7.703225000000001
+            },
+            "input_gpu_to_host": {
+              "count": 50,
+              "median": 0.2584205,
+              "p10": 0.2565529,
+              "p90": 0.267884,
+              "min": 0.25432499999999997,
+              "max": 0.290785
+            },
+            "output_stage_and_boundary_wait": {
+              "count": 50,
+              "median": 0.693858,
+              "p10": 0.6033580999999999,
+              "p90": 2.1961267999999996,
+              "min": 0.58761,
+              "max": 5.7599089999999995
+            }
+          },
+          "speedup_vs_own_gpu": 1.1272757932311068
+        }
+      ],
+      "accuracy": {
+        "stored_metric_occurrences": 385,
+        "all_within_fixed_limits": true,
+        "relative_l2_error": {
+          "value": 0.00350890565724017,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_npu_partial"
+        },
+        "max_abs_error": {
+          "value": 0.03125,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_partition_reference"
+        },
+        "normalized_max_error": {
+          "value": 0.008264462809917356,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_partition_reference"
+        },
+        "rms_error": {
+          "value": 0.0020196598671740717,
+          "location": "/partitions/0/correctness/serial_run_0_input_0_gpu_baseline"
+        }
+      },
+      "explicit_named_check_count": 35,
+      "declared_check_count_including_warmups": 403
+    },
+    {
+      "file": "raw/evidence/bfp16_20261022/bfp16_profile_p1792.json",
+      "sha256": "a24bf836dd752b15586a988951b2d4a0576cda5cd011b6c53e3c70d365f52cbf",
+      "status": "passed",
+      "mode": "diagnostic",
+      "config": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336,
+        "npu_channels": 1792,
+        "npu_design": "array8",
+        "npu_arithmetic": "bfp16",
+        "accuracy_policy": "report",
+        "fuse_gate_up": true,
+        "fuse_swiglu": true,
+        "columns": 8,
+        "warmup": 3,
+        "iterations": 15,
+        "seed": 12832,
+        "artifact_root": "experiments/ffn_partition/artifacts",
+        "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+        "verbose_build": false,
+        "output": "evidence/bfp16_20261022/bfp16_profile_p1792.json"
+      },
+      "partitions": [
+        {
+          "npu_channels": 1792,
+          "validation": {
+            "completed_npu_dispatches": 44,
+            "timed_invocations": 15,
+            "explicit_checks": 70,
+            "status": "passed",
+            "npu_arithmetic": "bfp16",
+            "accuracy_policy": "report",
+            "accuracy_passed": true,
+            "accuracy_accepted": true,
+            "accuracy_status": "within_tolerance"
+          },
+          "source_validation": {
+            "swiglu": {
+              "source_sha256": {
+                "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "d8c035daf7296301ce0f37010bba45f84bf7ace2796eedd5ffeb0e7c84eb0ca9",
+              "insts_sha256_recorded": "78fe13cdbd19adc4aa2a19a8e36f45a37dfa29fb5339d87673d2340991a10b6f"
+            },
+            "down": {
+              "source_sha256": {
+                "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+                "npu/ffn/w4a16_prefill_bfp16.cc": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+                "npu/ffn/projection_arithmetic.py": "098924e50ecac8ea14ae20a6e2553417ef21b23bc0dd4bc0c933d5192e14e3d1",
+                "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011"
+              },
+              "worker_stack_size": 4096,
+              "xclbin_sha256_recorded": "5fb0aeef2e64bf150beef5289249b71c1b7500f925ef732ef11cec807f753f59",
+              "insts_sha256_recorded": "49e5cb3ef0f488904d98f727e8bd95f97e6b6b83ccb87aabc84ae65863004d95"
+            }
+          },
+          "accuracy": {
+            "stored_metric_occurrences": 124,
+            "all_within_fixed_limits": true,
+            "relative_l2_error": {
+              "value": 0.017156937132775642,
+              "location": "/checks/initial_1_input_1_npu_partial"
+            },
+            "max_abs_error": {
+              "value": 0.03125,
+              "location": "/checks/initial_0_input_0_partition_reference"
+            },
+            "normalized_max_error": {
+              "value": 0.01768867924528302,
+              "location": "/checks/initial_0_input_0_npu_partial"
+            },
+            "rms_error": {
+              "value": 0.004588671768375177,
+              "location": "/checks/initial_1_input_1_unpartitioned_reference"
+            }
+          }
+        }
+      ],
+      "accuracy": {
+        "stored_metric_occurrences": 124,
+        "all_within_fixed_limits": true,
+        "relative_l2_error": {
+          "value": 0.017156937132775642,
+          "location": "/checks/initial_1_input_1_npu_partial"
+        },
+        "max_abs_error": {
+          "value": 0.03125,
+          "location": "/checks/initial_0_input_0_partition_reference"
+        },
+        "normalized_max_error": {
+          "value": 0.01768867924528302,
+          "location": "/checks/initial_0_input_0_npu_partial"
+        },
+        "rms_error": {
+          "value": 0.004588671768375177,
+          "location": "/checks/initial_1_input_1_unpartitioned_reference"
+        }
+      },
+      "explicit_named_check_count": 70,
+      "declared_check_count_including_warmups": 70
+    }
+  ],
+  "diagnostic_stages": [
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/bfp16_20261022/raw/evidence/bfp16_20261022/bf16_profile_p2048.json",
+      "npu_arithmetic": "bf16",
+      "npu_channels": 2048,
+      "metrics_ms": {
+        "gpu_event": {
+          "gate": {
+            "count": 10,
+            "median": 6.1475160121917725,
+            "p10": 5.993950939178466,
+            "p90": 6.321444988250732,
+            "min": 5.963099956512451,
+            "max": 6.378252029418945
+          },
+          "up": {
+            "count": 10,
+            "median": 5.537506341934204,
+            "p10": 5.4693478584289545,
+            "p90": 5.91552848815918,
+            "min": 5.425787925720215,
+            "max": 6.2008957862854
+          },
+          "silu": {
+            "count": 10,
+            "median": 0.3017150014638901,
+            "p10": 0.3000709056854248,
+            "p90": 0.3047821044921875,
+            "min": 0.29679399728775024,
+            "max": 0.3061150014400482
+          },
+          "multiply": {
+            "count": 10,
+            "median": 0.46879249811172485,
+            "p10": 0.45818498730659485,
+            "p90": 0.4710880994796753,
+            "min": 0.4487529993057251,
+            "max": 0.47195300459861755
+          },
+          "down": {
+            "count": 10,
+            "median": 5.461967945098877,
+            "p10": 5.40765209197998,
+            "p90": 5.673740482330322,
+            "min": 5.404988765716553,
+            "max": 6.074738025665283
+          },
+          "branch": {
+            "count": 10,
+            "median": 18.015037536621094,
+            "p10": 17.883602714538576,
+            "p90": 18.539247512817383,
+            "min": 17.762500762939453,
+            "max": 18.789804458618164
+          },
+          "input_d2h": {
+            "count": 10,
+            "median": 0.2444159984588623,
+            "p10": 0.24161599725484847,
+            "p90": 0.2470239982008934,
+            "min": 0.24071599543094635,
+            "max": 0.2512359917163849
+          },
+          "output_h2d": {
+            "count": 10,
+            "median": 0.2684659957885742,
+            "p10": 0.2585449904203415,
+            "p90": 0.26909898817539213,
+            "min": 0.2581759989261627,
+            "max": 0.2691259980201721
+          },
+          "reduction": {
+            "count": 10,
+            "median": 0.16151750087738037,
+            "p10": 0.15962590277194977,
+            "p90": 0.16477300375699996,
+            "min": 0.15951700508594513,
+            "max": 0.16527700424194336
+          }
+        },
+        "gpu_submit": {
+          "gate": {
+            "count": 10,
+            "median": 0.0276545,
+            "p10": 0.0267051,
+            "p90": 0.0369329,
+            "min": 0.02604,
+            "max": 0.036959000000000006
+          },
+          "up": {
+            "count": 10,
+            "median": 0.00305,
+            "p10": 0.002897,
+            "p90": 0.0033581000000000006,
+            "min": 0.00287,
+            "max": 0.00344
+          },
+          "silu": {
+            "count": 10,
+            "median": 0.056604,
+            "p10": 0.0438611,
+            "p90": 0.058937,
+            "min": 0.04154,
+            "max": 0.062339
+          },
+          "multiply": {
+            "count": 10,
+            "median": 0.0183245,
+            "p10": 0.017479900000000003,
+            "p90": 0.019045999999999997,
+            "min": 0.017299,
+            "max": 0.01973
+          },
+          "down": {
+            "count": 10,
+            "median": 0.002885,
+            "p10": 0.0026100000000000003,
+            "p90": 0.00312,
+            "min": 0.0024300000000000003,
+            "max": 0.00312
+          }
+        },
+        "npu_submit": {
+          "swiglu": {
+            "count": 10,
+            "median": 0.090609,
+            "p10": 0.08942999999999998,
+            "p90": 0.0919899,
+            "min": 0.089178,
+            "max": 0.093258
+          },
+          "down": {
+            "count": 10,
+            "median": 0.1165935,
+            "p10": 0.10888,
+            "p90": 0.14380389999999998,
+            "min": 0.092068,
+            "max": 0.150787
+          }
+        },
+        "npu_wait": {
+          "swiglu": {
+            "count": 10,
+            "median": 12.625437,
+            "p10": 12.1334732,
+            "p90": 12.892827500000001,
+            "min": 12.097637,
+            "max": 13.113997999999999
+          },
+          "down": {
+            "count": 10,
+            "median": 7.480764000000001,
+            "p10": 7.315962,
+            "p90": 7.8127447000000005,
+            "min": 7.286307,
+            "max": 7.970485
+          }
+        },
+        "npu_stage_host_io": {
+          "swiglu": {
+            "count": 10,
+            "median": 13.429108500000002,
+            "p10": 12.9300323,
+            "p90": 13.6981266,
+            "min": 12.889994,
+            "max": 13.945245000000002
+          },
+          "down": {
+            "count": 10,
+            "median": 8.485162,
+            "p10": 8.272988,
+            "p90": 8.7519177,
+            "min": 8.272969999999999,
+            "max": 8.956989
+          }
+        },
+        "npu_bo_outside_dispatch": {
+          "swiglu": {
+            "count": 10,
+            "median": 0.6976780000000008,
+            "p10": 0.6919870999999995,
+            "p90": 0.7170910000000007,
+            "min": 0.6897290000000011,
+            "max": 0.7302580000000016
+          },
+          "down": {
+            "count": 10,
+            "median": 0.8307209999999996,
+            "p10": 0.7992531999999998,
+            "p90": 0.8536980000000007,
+            "min": 0.7608880000000008,
+            "max": 0.8581349999999993
+          }
+        },
+        "npu_comparable_stage_host_io": {
+          "swiglu": {
+            "count": 10,
+            "median": 13.429108500000002,
+            "p10": 12.9300323,
+            "p90": 13.6981266,
+            "min": 12.889994,
+            "max": 13.945245000000002
+          },
+          "down": {
+            "count": 10,
+            "median": 8.485162,
+            "p10": 8.272988,
+            "p90": 8.7519177,
+            "min": 8.272969999999999,
+            "max": 8.956989
+          }
+        },
+        "npu_comparable_wait": {
+          "swiglu": {
+            "count": 10,
+            "median": 12.625437,
+            "p10": 12.1334732,
+            "p90": 12.892827500000001,
+            "min": 12.097637,
+            "max": 13.113997999999999
+          },
+          "down": {
+            "count": 10,
+            "median": 7.480764000000001,
+            "p10": 7.315962,
+            "p90": 7.8127447000000005,
+            "min": 7.286307,
+            "max": 7.970485
+          }
+        },
+        "npu_frontend_stage_host_io": {
+          "swiglu": {
+            "count": 10,
+            "median": 13.429108500000002,
+            "p10": 12.9300323,
+            "p90": 13.6981266,
+            "min": 12.889994,
+            "max": 13.945245000000002
+          },
+          "down": {
+            "count": 10,
+            "median": 8.485162,
+            "p10": 8.272988,
+            "p90": 8.7519177,
+            "min": 8.272969999999999,
+            "max": 8.956989
+          }
+        },
+        "npu_frontend_wait": {
+          "swiglu": {
+            "count": 10,
+            "median": 12.625437,
+            "p10": 12.1334732,
+            "p90": 12.892827500000001,
+            "min": 12.097637,
+            "max": 13.113997999999999
+          },
+          "down": {
+            "count": 10,
+            "median": 7.480764000000001,
+            "p10": 7.315962,
+            "p90": 7.8127447000000005,
+            "min": 7.286307,
+            "max": 7.970485
+          }
+        },
+        "npu_layout": {
+          "input_layout": {
+            "count": 10,
+            "median": 0.8890695,
+            "p10": 0.8526109999999999,
+            "p90": 0.898647,
+            "min": 0.851306,
+            "max": 0.905145
+          },
+          "down_input_layout": {
+            "count": 10,
+            "median": 0.1694725,
+            "p10": 0.1472549,
+            "p90": 0.196043,
+            "min": 0.143897,
+            "max": 0.201317
+          },
+          "output_layout": {
+            "count": 10,
+            "median": 0.90127,
+            "p10": 0.8288499999999999,
+            "p90": 0.9962961999999999,
+            "min": 0.8204260000000001,
+            "max": 1.406266
+          }
+        },
+        "npu_components": {
+          "BO I/O + wrapper outside dispatch": {
+            "count": 10,
+            "median": 1.5326184999999994,
+            "p10": 1.500765200000001,
+            "p90": 1.5491340000000005,
+            "min": 1.4911460000000025,
+            "max": 1.5551729999999997
+          },
+          "CPU layouts": {
+            "count": 10,
+            "median": 1.9495915000000001,
+            "p10": 1.8687110999999998,
+            "p90": 2.0717603999999996,
+            "min": 1.842639,
+            "max": 2.454669
+          },
+          "XRT submission calls": {
+            "count": 10,
+            "median": 0.2083265,
+            "p10": 0.19883010000000004,
+            "p90": 0.23506090000000002,
+            "min": 0.182577,
+            "max": 0.239965
+          },
+          "XRT host waits": {
+            "count": 10,
+            "median": 20.150565,
+            "p10": 19.636595,
+            "p90": 20.636915799999997,
+            "min": 19.620719,
+            "max": 20.770609
+          }
+        },
+        "wall": {
+          "instrumented": {
+            "count": 10,
+            "median": 25.406291500000002,
+            "p10": 24.9908159,
+            "p90": 25.9547947,
+            "min": 24.981428,
+            "max": 26.170999
+          },
+          "npu_branch": {
+            "count": 10,
+            "median": 23.852042500000003,
+            "p10": 23.442923099999998,
+            "p90": 24.3776026,
+            "min": 23.433735000000002,
+            "max": 24.602815
+          }
+        }
+      }
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/bfp16_20261022/raw/evidence/bfp16_20261022/bfp16_profile_p1792.json",
+      "npu_arithmetic": "bfp16",
+      "npu_channels": 1792,
+      "metrics_ms": {
+        "gpu_event": {
+          "gate": {
+            "count": 15,
+            "median": 6.34752893447876,
+            "p10": 6.111772632598877,
+            "p90": 6.5361328125,
+            "min": 6.057571887969971,
+            "max": 6.736041069030762
+          },
+          "up": {
+            "count": 15,
+            "median": 5.733338832855225,
+            "p10": 5.527079105377197,
+            "p90": 6.026726531982422,
+            "min": 5.482062816619873,
+            "max": 6.083454132080078
+          },
+          "silu": {
+            "count": 15,
+            "median": 0.27363499999046326,
+            "p10": 0.2724350094795227,
+            "p90": 0.2773230016231537,
+            "min": 0.2698749899864197,
+            "max": 0.28163498640060425
+          },
+          "multiply": {
+            "count": 15,
+            "median": 0.3991129994392395,
+            "p10": 0.398209011554718,
+            "p90": 0.4094089925289154,
+            "min": 0.39691299200057983,
+            "max": 0.4129529893398285
+          },
+          "down": {
+            "count": 15,
+            "median": 5.456223964691162,
+            "p10": 5.341562080383301,
+            "p90": 5.582798004150391,
+            "min": 5.232748031616211,
+            "max": 5.63538122177124
+          },
+          "branch": {
+            "count": 15,
+            "median": 18.161882400512695,
+            "p10": 17.944491958618165,
+            "p90": 18.529059600830077,
+            "min": 17.67964744567871,
+            "max": 18.602352142333984
+          },
+          "input_d2h": {
+            "count": 15,
+            "median": 0.24367499351501465,
+            "p10": 0.24159559607505798,
+            "p90": 0.24777899980545043,
+            "min": 0.24067500233650208,
+            "max": 0.25235500931739807
+          },
+          "output_h2d": {
+            "count": 15,
+            "median": 0.17487700283527374,
+            "p10": 0.11402999907732009,
+            "p90": 0.2219460070133209,
+            "min": 0.08807799965143204,
+            "max": 0.24282599985599518
+          },
+          "reduction": {
+            "count": 15,
+            "median": 0.1549070030450821,
+            "p10": 0.14131760597229004,
+            "p90": 0.17944019436836242,
+            "min": 0.13851800560951233,
+            "max": 0.18055599927902222
+          }
+        },
+        "gpu_submit": {
+          "gate": {
+            "count": 15,
+            "median": 0.02678,
+            "p10": 0.025197400000000002,
+            "p90": 0.027403399999999998,
+            "min": 0.02495,
+            "max": 0.02828
+          },
+          "up": {
+            "count": 15,
+            "median": 0.00342,
+            "p10": 0.0031139999999999996,
+            "p90": 0.0035960000000000002,
+            "min": 0.0030299999999999997,
+            "max": 0.004
+          },
+          "silu": {
+            "count": 15,
+            "median": 0.056529,
+            "p10": 0.053491,
+            "p90": 0.057053000000000006,
+            "min": 0.052099,
+            "max": 0.058889000000000004
+          },
+          "multiply": {
+            "count": 15,
+            "median": 0.01943,
+            "p10": 0.019037600000000002,
+            "p90": 0.019991599999999998,
+            "min": 0.01865,
+            "max": 0.020300000000000002
+          },
+          "down": {
+            "count": 15,
+            "median": 0.00294,
+            "p10": 0.00267,
+            "p90": 0.00317,
+            "min": 0.002629,
+            "max": 0.00352
+          }
+        },
+        "npu_submit": {
+          "swiglu": {
+            "count": 15,
+            "median": 0.098378,
+            "p10": 0.096692,
+            "p90": 0.101804,
+            "min": 0.095628,
+            "max": 0.10553900000000001
+          },
+          "down": {
+            "count": 15,
+            "median": 0.142537,
+            "p10": 0.1350534,
+            "p90": 0.1491574,
+            "min": 0.061299,
+            "max": 0.163907
+          }
+        },
+        "npu_wait": {
+          "swiglu": {
+            "count": 15,
+            "median": 7.886461000000001,
+            "p10": 7.597865199999999,
+            "p90": 8.170656399999999,
+            "min": 7.521517,
+            "max": 8.379753000000001
+          },
+          "down": {
+            "count": 15,
+            "median": 5.327656,
+            "p10": 5.0945762000000006,
+            "p90": 5.5441904,
+            "min": 5.057112,
+            "max": 5.586162
+          }
+        },
+        "npu_stage_host_io": {
+          "swiglu": {
+            "count": 15,
+            "median": 8.680927,
+            "p10": 8.3890368,
+            "p90": 8.973838,
+            "min": 8.305315,
+            "max": 9.181809
+          },
+          "down": {
+            "count": 15,
+            "median": 6.298909,
+            "p10": 6.0964292,
+            "p90": 6.574798599999999,
+            "min": 6.044224,
+            "max": 6.629403
+          }
+        },
+        "npu_bo_outside_dispatch": {
+          "swiglu": {
+            "count": 15,
+            "median": 0.6929570000000004,
+            "p10": 0.6626785999999996,
+            "p90": 0.7106396000000001,
+            "min": 0.6345190000000003,
+            "max": 0.7682659999999997
+          },
+          "down": {
+            "count": 15,
+            "median": 0.8632060000000001,
+            "p10": 0.8269396000000001,
+            "p90": 0.9057779999999993,
+            "min": 0.6987380000000003,
+            "max": 0.9987920000000003
+          }
+        },
+        "npu_comparable_stage_host_io": {
+          "swiglu": {
+            "count": 15,
+            "median": 8.680927,
+            "p10": 8.3890368,
+            "p90": 8.973838,
+            "min": 8.305315,
+            "max": 9.181809
+          },
+          "down": {
+            "count": 15,
+            "median": 6.298909,
+            "p10": 6.0964292,
+            "p90": 6.574798599999999,
+            "min": 6.044224,
+            "max": 6.629403
+          }
+        },
+        "npu_comparable_wait": {
+          "swiglu": {
+            "count": 15,
+            "median": 7.886461000000001,
+            "p10": 7.597865199999999,
+            "p90": 8.170656399999999,
+            "min": 7.521517,
+            "max": 8.379753000000001
+          },
+          "down": {
+            "count": 15,
+            "median": 5.327656,
+            "p10": 5.0945762000000006,
+            "p90": 5.5441904,
+            "min": 5.057112,
+            "max": 5.586162
+          }
+        },
+        "npu_frontend_stage_host_io": {
+          "swiglu": {
+            "count": 15,
+            "median": 8.680927,
+            "p10": 8.3890368,
+            "p90": 8.973838,
+            "min": 8.305315,
+            "max": 9.181809
+          },
+          "down": {
+            "count": 15,
+            "median": 6.298909,
+            "p10": 6.0964292,
+            "p90": 6.574798599999999,
+            "min": 6.044224,
+            "max": 6.629403
+          }
+        },
+        "npu_frontend_wait": {
+          "swiglu": {
+            "count": 15,
+            "median": 7.886461000000001,
+            "p10": 7.597865199999999,
+            "p90": 8.170656399999999,
+            "min": 7.521517,
+            "max": 8.379753000000001
+          },
+          "down": {
+            "count": 15,
+            "median": 5.327656,
+            "p10": 5.0945762000000006,
+            "p90": 5.5441904,
+            "min": 5.057112,
+            "max": 5.586162
+          }
+        },
+        "npu_layout": {
+          "input_layout": {
+            "count": 15,
+            "median": 0.966313,
+            "p10": 0.927767,
+            "p90": 1.052218,
+            "min": 0.919874,
+            "max": 1.056681
+          },
+          "down_input_layout": {
+            "count": 15,
+            "median": 0.135648,
+            "p10": 0.1345354,
+            "p90": 0.14742539999999998,
+            "min": 0.132378,
+            "max": 0.290765
+          },
+          "output_layout": {
+            "count": 15,
+            "median": 1.354846,
+            "p10": 0.836015,
+            "p90": 1.5516381999999997,
+            "min": 0.800296,
+            "max": 1.786959
+          }
+        },
+        "npu_components": {
+          "BO I/O + wrapper outside dispatch": {
+            "count": 15,
+            "median": 1.5494930000000005,
+            "p10": 1.4921406,
+            "p90": 1.5953822,
+            "min": 1.391365999999999,
+            "max": 1.767058
+          },
+          "CPU layouts": {
+            "count": 15,
+            "median": 2.453697,
+            "p10": 1.9555214,
+            "p90": 2.7192954,
+            "min": 1.8659260000000002,
+            "max": 2.978828
+          },
+          "XRT submission calls": {
+            "count": 15,
+            "median": 0.240677,
+            "p10": 0.23552380000000003,
+            "p90": 0.25159999999999993,
+            "min": 0.15859700000000002,
+            "max": 0.26228500000000005
+          },
+          "XRT host waits": {
+            "count": 15,
+            "median": 13.182069,
+            "p10": 12.935161399999998,
+            "p90": 13.694845399999998,
+            "min": 12.578629000000001,
+            "max": 13.828888000000001
+          }
+        },
+        "wall": {
+          "instrumented": {
+            "count": 15,
+            "median": 18.990727,
+            "p10": 18.747489,
+            "p90": 19.2409084,
+            "min": 18.531814999999998,
+            "max": 19.539227
+          },
+          "npu_branch": {
+            "count": 15,
+            "median": 17.469352999999998,
+            "p10": 17.1135358,
+            "p90": 17.719324399999998,
+            "min": 17.015111,
+            "max": 18.040443
+          }
+        }
+      }
+    },
+    {
+      "report": "/home/adam/Documents/ChatGPT/HeteroMega/experiments/ffn_partition/results/bfp16_20261022/raw/evidence/bfp16_20261022/bfp16_profile_p2048.json",
+      "npu_arithmetic": "bfp16",
+      "npu_channels": 2048,
+      "metrics_ms": {
+        "gpu_event": {
+          "gate": {
+            "count": 10,
+            "median": 6.179095506668091,
+            "p10": 6.05226616859436,
+            "p90": 6.30014214515686,
+            "min": 5.929580211639404,
+            "max": 6.322534084320068
+          },
+          "up": {
+            "count": 10,
+            "median": 5.420669078826904,
+            "p10": 5.382825231552125,
+            "p90": 5.818774080276489,
+            "min": 5.376669883728027,
+            "max": 6.238454818725586
+          },
+          "silu": {
+            "count": 10,
+            "median": 0.27235500514507294,
+            "p10": 0.26811190843582156,
+            "p90": 0.2892279118299484,
+            "min": 0.264835000038147,
+            "max": 0.33415499329566956
+          },
+          "multiply": {
+            "count": 10,
+            "median": 0.385793000459671,
+            "p10": 0.37837709784507756,
+            "p90": 0.45128010809421537,
+            "min": 0.37643399834632874,
+            "max": 0.45927301049232483
+          },
+          "down": {
+            "count": 10,
+            "median": 5.418509006500244,
+            "p10": 5.339862203598022,
+            "p90": 5.623233795166016,
+            "min": 5.269230842590332,
+            "max": 6.1337761878967285
+          },
+          "branch": {
+            "count": 10,
+            "median": 17.79434108734131,
+            "p10": 17.507472419738768,
+            "p90": 18.39242992401123,
+            "min": 17.415748596191406,
+            "max": 19.19395637512207
+          },
+          "input_d2h": {
+            "count": 10,
+            "median": 0.24433600157499313,
+            "p10": 0.24373589605093005,
+            "p90": 0.2472278952598572,
+            "min": 0.2435549944639206,
+            "max": 0.25003498792648315
+          },
+          "output_h2d": {
+            "count": 10,
+            "median": 0.1705770045518875,
+            "p10": 0.12159899845719337,
+            "p90": 0.2021288976073265,
+            "min": 0.0865980014204979,
+            "max": 0.2702760100364685
+          },
+          "reduction": {
+            "count": 10,
+            "median": 0.15744200348854065,
+            "p10": 0.14565299898386,
+            "p90": 0.17957090288400648,
+            "min": 0.14327700436115265,
+            "max": 0.18635599315166473
+          }
+        },
+        "gpu_submit": {
+          "gate": {
+            "count": 10,
+            "median": 0.027534999999999997,
+            "p10": 0.026594,
+            "p90": 0.041347,
+            "min": 0.026549,
+            "max": 0.042229
+          },
+          "up": {
+            "count": 10,
+            "median": 0.0036249999999999998,
+            "p10": 0.003226,
+            "p90": 0.004025999999999999,
+            "min": 0.0031,
+            "max": 0.00408
+          },
+          "silu": {
+            "count": 10,
+            "median": 0.057059,
+            "p10": 0.052228,
+            "p90": 0.061745,
+            "min": 0.048348999999999996,
+            "max": 0.064139
+          },
+          "multiply": {
+            "count": 10,
+            "median": 0.018849499999999998,
+            "p10": 0.017737999999999997,
+            "p90": 0.019233,
+            "min": 0.01691,
+            "max": 0.02007
+          },
+          "down": {
+            "count": 10,
+            "median": 0.0029744999999999997,
+            "p10": 0.002634,
+            "p90": 0.0032270000000000003,
+            "min": 0.00249,
+            "max": 0.00329
+          }
+        },
+        "npu_submit": {
+          "swiglu": {
+            "count": 10,
+            "median": 0.0958285,
+            "p10": 0.0921431,
+            "p90": 0.10117509999999999,
+            "min": 0.088589,
+            "max": 0.10132899999999999
+          },
+          "down": {
+            "count": 10,
+            "median": 0.1440775,
+            "p10": 0.0943442,
+            "p90": 0.16898879999999994,
+            "min": 0.03779,
+            "max": 0.27475499999999997
+          }
+        },
+        "npu_wait": {
+          "swiglu": {
+            "count": 10,
+            "median": 8.516487000000001,
+            "p10": 8.0063028,
+            "p90": 8.817075599999999,
+            "min": 7.568982,
+            "max": 9.004038000000001
+          },
+          "down": {
+            "count": 10,
+            "median": 5.8330015,
+            "p10": 5.6978709,
+            "p90": 6.2634679,
+            "min": 5.189982,
+            "max": 6.269434
+          }
+        },
+        "npu_stage_host_io": {
+          "swiglu": {
+            "count": 10,
+            "median": 9.3525025,
+            "p10": 8.815114,
+            "p90": 9.668314599999999,
+            "min": 8.263081,
+            "max": 9.827314
+          },
+          "down": {
+            "count": 10,
+            "median": 6.863065000000001,
+            "p10": 6.718025300000001,
+            "p90": 7.236245900000001,
+            "min": 6.0177380000000005,
+            "max": 7.246397
+          }
+        },
+        "npu_bo_outside_dispatch": {
+          "swiglu": {
+            "count": 10,
+            "median": 0.7248124999999992,
+            "p10": 0.6875533999999998,
+            "p90": 0.7476778999999987,
+            "min": 0.5926610000000001,
+            "max": 0.7549670000000005
+          },
+          "down": {
+            "count": 10,
+            "median": 0.833362,
+            "p10": 0.8117870000000004,
+            "p90": 0.8590449000000002,
+            "min": 0.7850660000000007,
+            "max": 0.8593950000000005
+          }
+        },
+        "npu_comparable_stage_host_io": {
+          "swiglu": {
+            "count": 10,
+            "median": 9.3525025,
+            "p10": 8.815114,
+            "p90": 9.668314599999999,
+            "min": 8.263081,
+            "max": 9.827314
+          },
+          "down": {
+            "count": 10,
+            "median": 6.863065000000001,
+            "p10": 6.718025300000001,
+            "p90": 7.236245900000001,
+            "min": 6.0177380000000005,
+            "max": 7.246397
+          }
+        },
+        "npu_comparable_wait": {
+          "swiglu": {
+            "count": 10,
+            "median": 8.516487000000001,
+            "p10": 8.0063028,
+            "p90": 8.817075599999999,
+            "min": 7.568982,
+            "max": 9.004038000000001
+          },
+          "down": {
+            "count": 10,
+            "median": 5.8330015,
+            "p10": 5.6978709,
+            "p90": 6.2634679,
+            "min": 5.189982,
+            "max": 6.269434
+          }
+        },
+        "npu_frontend_stage_host_io": {
+          "swiglu": {
+            "count": 10,
+            "median": 9.3525025,
+            "p10": 8.815114,
+            "p90": 9.668314599999999,
+            "min": 8.263081,
+            "max": 9.827314
+          },
+          "down": {
+            "count": 10,
+            "median": 6.863065000000001,
+            "p10": 6.718025300000001,
+            "p90": 7.236245900000001,
+            "min": 6.0177380000000005,
+            "max": 7.246397
+          }
+        },
+        "npu_frontend_wait": {
+          "swiglu": {
+            "count": 10,
+            "median": 8.516487000000001,
+            "p10": 8.0063028,
+            "p90": 8.817075599999999,
+            "min": 7.568982,
+            "max": 9.004038000000001
+          },
+          "down": {
+            "count": 10,
+            "median": 5.8330015,
+            "p10": 5.6978709,
+            "p90": 6.2634679,
+            "min": 5.189982,
+            "max": 6.269434
+          }
+        },
+        "npu_layout": {
+          "input_layout": {
+            "count": 10,
+            "median": 0.878155,
+            "p10": 0.858033,
+            "p90": 0.9324540000000001,
+            "min": 0.854676,
+            "max": 0.9343440000000001
+          },
+          "down_input_layout": {
+            "count": 10,
+            "median": 0.146802,
+            "p10": 0.1457281,
+            "p90": 0.177967,
+            "min": 0.14537799999999998,
+            "max": 0.185077
+          },
+          "output_layout": {
+            "count": 10,
+            "median": 1.1435805,
+            "p10": 0.9040681,
+            "p90": 1.4661286,
+            "min": 0.8627859999999999,
+            "max": 1.664152
+          }
+        },
+        "npu_components": {
+          "BO I/O + wrapper outside dispatch": {
+            "count": 10,
+            "median": 1.5568584999999993,
+            "p10": 1.5084934000000003,
+            "p90": 1.5975218999999987,
+            "min": 1.3777270000000008,
+            "max": 1.6035330000000012
+          },
+          "CPU layouts": {
+            "count": 10,
+            "median": 2.164988,
+            "p10": 1.9533941000000001,
+            "p90": 2.5243276999999997,
+            "min": 1.941308,
+            "max": 2.699735
+          },
+          "XRT submission calls": {
+            "count": 10,
+            "median": 0.24187599999999998,
+            "p10": 0.18880010000000003,
+            "p90": 0.26440379999999997,
+            "min": 0.130328,
+            "max": 0.373923
+          },
+          "XRT host waits": {
+            "count": 10,
+            "median": 14.537510000000001,
+            "p10": 13.8060978,
+            "p90": 14.7856556,
+            "min": 12.758964,
+            "max": 15.031487
+          }
+        },
+        "wall": {
+          "instrumented": {
+            "count": 10,
+            "median": 19.849065500000002,
+            "p10": 19.530876400000004,
+            "p90": 20.469966399999997,
+            "min": 19.313125,
+            "max": 20.80702
+          },
+          "npu_branch": {
+            "count": 10,
+            "median": 18.4293545,
+            "p10": 17.7793705,
+            "p90": 19.0355694,
+            "min": 16.994044000000002,
+            "max": 19.382424
+          }
+        }
+      }
+    }
+  ],
+  "power_snapshots": {
+    "power_before.txt": {
+      "mode": "default",
+      "sha256": "a014f61134cf1533f644850f63afe27237d75d6c552c0048ca17a6361f28f033"
+    },
+    "power_after.txt": {
+      "mode": "default",
+      "sha256": "a014f61134cf1533f644850f63afe27237d75d6c552c0048ca17a6361f28f033"
+    },
+    "power_final.txt": {
+      "mode": "default",
+      "sha256": "a014f61134cf1533f644850f63afe27237d75d6c552c0048ca17a6361f28f033"
+    }
+  },
+  "archive_sha256": "1128e38b1e12b3f668d732f558e697d3b4d827d944572622983330246eb1c115",
+  "all_reports_passed": true,
+  "successful_npu_completions": 2764,
+  "timed_invocations": 1694,
+  "explicit_named_check_count": 687,
+  "declared_check_count_including_warmups": 4323,
+  "accuracy": {
+    "stored_metric_occurrences": 4178,
+    "all_within_fixed_limits": true,
+    "relative_l2_error": {
+      "value": 0.018097086330910932,
+      "location": "/smoke.json/partitions/0/correctness/serial_run_0_input_0_npu_partial"
+    },
+    "max_abs_error": {
+      "value": 0.125,
+      "location": "/smoke.json/partitions/0/correctness/serial_run_0_input_0_partition_reference"
+    },
+    "normalized_max_error": {
+      "value": 0.01948051948051948,
+      "location": "/smoke.json/partitions/0/correctness/serial_run_0_input_0_npu_partial"
+    },
+    "rms_error": {
+      "value": 0.008829215626835132,
+      "location": "/smoke.json/partitions/0/correctness/serial_run_0_input_0_gpu_baseline"
+    }
+  },
+  "limits": [
+    "Synthetic isolated FFN, not full-model prefill or TTFT.",
+    "GPU-only HeteroMosaic kernels; native heterogeneous baseline is not measured here.",
+    "NPU waits include runtime/device execution and stalls, not pure DMA.",
+    "Stage diagnostics use separate instrumented runs; medians are not additive.",
+    "Source contracts matched current tree; remote binary digests are recorded, not rehashed here.",
+    "Stored metric occurrence count includes repeated serialized diagnostics, not distinct invocations."
+  ]
+}

@@ -3,7 +3,9 @@
 Weights use the canonical unsigned W4A16 format from ``npu/ffn/reference.py``.
 The FFN is bias-free and excludes normalization and residual addition. All three
 projections use BF16 inputs/dequantized weights, FP32 accumulation, and BF16
-outputs. SiLU is rounded before multiplication, which is rounded again. Each
+outputs in the strict reference. Experimental BFP16 projection arithmetic is
+compared with this same reference without changing its fixed error bounds.
+SiLU is rounded before multiplication, which is rounded again. Each
 device down-projection partial is rounded before the final BF16 boundary sum.
 
 These NumPy routines are correctness oracles, never benchmark implementations.
@@ -204,6 +206,84 @@ def error_metrics(actual, expected, rtol=0.03, atol=0.05, l2_limit=0.02):
                    reference_max_abs=max_ref, max_error_limit=max_limit,
                    elementwise_close_fraction=float(np.mean(np.isclose(actual, expected, rtol=rtol, atol=atol))))
     return metrics
+
+
+def resolve_accuracy_policy(npu_arithmetic="bf16", accuracy_policy=None):
+    """BFP16 may report finite numerical differences; BF16 stays strict by default."""
+    if npu_arithmetic not in ("bf16", "bfp16"):
+        raise ValueError("npu_arithmetic must be bf16 or bfp16")
+    policy = accuracy_policy or ("report" if npu_arithmetic == "bfp16" else "strict")
+    if policy not in ("strict", "report"):
+        raise ValueError("accuracy_policy must be strict or report")
+    return policy
+
+
+class OutputIntegrity:
+    """Detect broken execution independently of approximate arithmetic accuracy.
+
+    Each identity must name one fixed input/weight combination on one branch.
+    Snapshots are copied because device/host output storage is reused. Distinct
+    references producing identical outputs indicate stale or nonresponsive
+    execution; repeated inputs must reproduce the exact finite output.
+    These checks are necessary guards, not a proof of numerical correctness.
+    """
+
+    def __init__(self):
+        self.observations = {}
+
+    def observe(self, actual, expected, input_id):
+        actual, expected = np.asarray(actual), np.asarray(expected)
+        failures = []
+        previous = self.observations.get(input_id)
+        if previous is not None and not np.array_equal(actual, previous[0]):
+            failures.append("repeated_input_changed_output")
+        for identity, (output, reference) in self.observations.items():
+            if (identity != input_id and not np.array_equal(expected, reference)
+                    and np.array_equal(actual, output)):
+                failures.append("distinct_inputs_identical_output")
+                break
+        if previous is None and np.all(np.isfinite(actual)):
+            self.observations[input_id] = (actual.copy(), expected.copy())
+        return failures
+
+
+def accuracy_metrics(actual, expected, policy="strict", integrity=None, input_id=None):
+    """Keep numerical pass/fail separate from permission to time an experiment.
+
+    Report mode never changes ``passed`` or the fixed ``error_metrics`` limits.
+    It may accept finite, nonzero deviations, while nonfinite/zero/stale and
+    repeatability failures remain fatal. GPU callers always use strict mode.
+    """
+    if policy not in ("strict", "report"):
+        raise ValueError("accuracy_policy must be strict or report")
+    metrics = error_metrics(actual, expected)
+    failures = []
+    if not metrics["finite"]:
+        failures.append("nonfinite_output")
+    elif not np.any(expected) and np.any(actual):
+        failures.append("zero_reference_nonzero_output")
+    elif np.any(expected) and not np.any(actual):
+        failures.append("nonzero_reference_zero_output")
+    if integrity is not None:
+        failures.extend(integrity.observe(actual, expected, input_id))
+    accepted = not failures and (metrics["passed"] or policy == "report")
+    metrics.update(accuracy_policy=policy, accepted=bool(accepted),
+                   structural_failures=failures,
+                   accuracy_status=("structural_failure" if failures else
+                                    "within_tolerance" if metrics["passed"] else
+                                    "reported_deviation" if accepted else "outside_tolerance"))
+    return metrics
+
+
+def accuracy_summary(metrics):
+    """Summarize explicit numerical checks without promoting accepted differences."""
+    metrics = list(metrics)
+    passed = all(item["passed"] for item in metrics)
+    accepted = all(item["accepted"] for item in metrics)
+    return {"passed": passed, "accepted": accepted, "check_count": len(metrics),
+            "outside_tolerance_count": sum(not item["passed"] for item in metrics),
+            "accuracy_status": ("failed" if not accepted else
+                                "within_tolerance" if passed else "reported_deviations")}
 
 
 def benchmark_stats(samples_us):

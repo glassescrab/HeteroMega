@@ -14,6 +14,12 @@ and activation examples below preserve the earlier bring-up work.
 Hardware results for 128/512/2048/4096-token projections are recorded in
 [PREFILL_VALIDATION.md](PREFILL_VALIDATION.md).
 
+The optional `--npu-arithmetic bfp16` experiment adapts the corrected TileFuse
+W4A16 GEMM from the latest relevant `glassescrab/mlir-aie` branch. It retains
+the existing compact ABI, eight-column graphs and on-chip SwiGLU fusion.
+See [the branch audit, arithmetic contract and measurements](BFP16_ADAPTATION.md).
+Native BF16 remains the default; BFP16 reports numerical deviations explicitly.
+
 ## Environment
 
 Validated environment and measurements are recorded in [VALIDATION.md](VALIDATION.md).

@@ -2,8 +2,11 @@
 
 ## Start here
 
-- Read `agent.md` for the current user-provided FFN-prefill plan and separately
-  labeled review recommendations.
+- Read the **2026-10-22 optimization/PR update at the top of `agent.md` first**
+  and `npu/ffn/BFP16_ADAPTATION.md` for the latest upstream adaptation,
+  arithmetic policy, hardware evidence and remaining comparison work.
+  The original user-provided
+  FFN-prefill plan and separately labeled review recommendations follow it.
 - Read `docs/project-plan.md` for the baseline architecture and build/run notes;
   its earlier broad research scope and milestones are historical.
 - Read `docs/progress.md` for the latest verified state and open questions.
@@ -19,7 +22,9 @@
   Random packed-W4A16 numerical checks still fail; accuracy remains unvalidated.
   Evidence is in `docs/runs/2026-10-12-aup/` and `docs/runs/2026-10-13-compat/`.
 - Read the upstream `README.md` before any environment setup. Its instructions
-  target Linux/AMD hardware; this onboarding workspace is Windows/PowerShell.
+  target Linux/AMD hardware. The original onboarding used Windows/PowerShell;
+  the current local handoff uses Linux without an AMD NPU. Verify the actual
+  execution environment rather than assuming either has suitable hardware.
 - Initial baseline: `61714a3147f34857aa5dfef21a28e762777a2df0`
   (`updated readme (#3)`, 2026-09-04). Do not assume HEAD remains at this commit.
 
@@ -56,11 +61,22 @@ user's plan. Follow later explicit user scope changes.
   changes and never publish cloud credentials or model weights. This does not
   authorize changing the shared host kernel/driver.
 - Preserve existing work and upstream instructions. Inspect Git status first.
+- The latest 2026-10-22 request, "make some optimizations and make a PR",
+  authorizes implementation, cloud verification, commits, pushing the branch
+  and creating a PR. It supersedes the earlier PR pause. Preserve teammate
+  changes and the recorded baselines; shared host kernel/driver changes remain
+  outside scope.
 - Label findings **code-confirmed**, **documented but unverified**, **proposed**,
   or **measured**. Never describe a successful build, NPU launch, or speedup
   without an actual corresponding run and its evidence.
 - Keep GPU-only and original HeteroMosaic baselines reproducible. Hold weights,
   quantization, prompts, output lengths, and decoding settings fixed.
+- The 2026-10-22 user request accepts larger BFP16 numerical differences for
+  the experimental prefill performance study. Use explicit BFP16/report mode;
+  retain error magnitudes and original tolerance pass/fail. Structural execution
+  failures remain failures. Preserve native BF16 and strict GPU controls.
+  This supersedes historical instructions that block all BFP16 timing on the
+  previous error tolerance; it does not establish model accuracy.
 - Do not infer NPU execution from `--backend hetero`, a config entry, or a
   firmware directory. Check the selected runtime path and successful completion.
 - Distinguish logical partition ownership, shared DRAM buffers, and NPU on-chip

@@ -14,15 +14,32 @@ import argparse
 from datetime import datetime, timezone
 from hashlib import sha256
 import json
+import math
 import os
 from pathlib import Path
 import subprocess
 import sys
 
-from .contract import validate_shape
+from .contract import resolve_accuracy_policy, validate_shape
 
 
 ROOT = Path(__file__).resolve().parents[2]
+COMPLETED_STATUSES = ("passed", "completed_with_accuracy_deviations")
+
+
+def candidate_accuracy(args):
+    arithmetic = getattr(args, "npu_arithmetic", "bf16")
+    policy = resolve_accuracy_policy(arithmetic, getattr(args, "accuracy_policy", None))
+    if arithmetic != "bfp16" and policy == "report":
+        raise ValueError("orchestrated report-only accuracy requires experimental BFP16")
+    return arithmetic, policy
+
+
+def completed_status(jobs):
+    if not all(job["status"] in COMPLETED_STATUSES for job in jobs):
+        return "incomplete"
+    return ("completed_with_accuracy_deviations"
+            if any(job["status"] == "completed_with_accuracy_deviations" for job in jobs) else "passed")
 
 
 def utc_now():
@@ -63,6 +80,7 @@ def source_hashes():
 def build_jobs(args):
     """Keep paired variants adjacent and alternate their order across points."""
     jobs = []
+    arithmetic, policy = candidate_accuracy(args)
     variants = {"both": [(False, False), (True, False)],
                 "unfused": [(False, False)], "fused": [(True, False)],
                 "swiglu": [(True, True)],
@@ -75,7 +93,7 @@ def build_jobs(args):
                 order = variants[::-1] if (m_index + p_index) % 2 else variants
                 for fused, swiglu in order:
                     variant = "swiglu" if swiglu else "fused" if fused else "unfused"
-                    tag = f"m{m}_p{p}_{variant}_{mode}"
+                    tag = f"m{m}_p{p}_{variant}_{mode}" + ("_bfp16" if arithmetic == "bfp16" else "")
                     report_path = f"jobs/{tag}.json"
                     iterations = args.iterations if mode == "ordinary" else args.diagnostic_iterations
                     module = "run" if mode == "ordinary" else "profile_timeline"
@@ -83,6 +101,7 @@ def build_jobs(args):
                                "--m", str(m), "--hidden", str(args.hidden),
                                "--intermediate", str(args.intermediate), "--npu-channels", str(p),
                                "--npu-design", "array8", "--columns", "8",
+                               "--npu-arithmetic", arithmetic, "--accuracy-policy", policy,
                                "--seed", str(args.seed), "--warmup", str(args.warmup),
                                "--iterations", str(iterations), "--artifact-root", str(args.artifact_root),
                                "--output", str(args.output_dir / report_path)]
@@ -93,6 +112,7 @@ def build_jobs(args):
                     if swiglu:
                         command += ["--fuse-swiglu"]
                     jobs.append({"id": tag, "mode": mode, "m": m, "npu_channels": p,
+                                 "npu_arithmetic": arithmetic, "accuracy_policy": policy,
                                  "fuse_gate_up": fused, "fuse_swiglu": swiglu, "iterations": iterations,
                                  "command": command, "report_path": report_path,
                                  "log_path": f"logs/{tag}.log", "status": "planned",
@@ -134,10 +154,30 @@ def query_power(args, relative_path):
 
 
 def validate_report(path, job, args):
-    """Fail closed on incomplete/correctness-failed or mismatched evidence."""
     report = json.loads(path.read_text())
-    if report.get("status") != "passed":
-        raise ValueError(f"measurement report did not pass: {path}")
+    return {**validate_report_data(report, job, args),
+            "report_sha256": sha256(path.read_bytes()).hexdigest()}
+
+
+def validate_report_data(report, job, args):
+    """Require strict evidence, or explicitly planned BFP16 report-only evidence.
+
+    Report-only runs remain numerically failed where limits are exceeded. They
+    must also carry the new finite/zero/repeatability guards, complete input
+    sequences, strict GPU checks, and per-stage NPU completion evidence.
+    """
+    arithmetic, policy = candidate_accuracy(args)
+    relaxed = arithmetic == "bfp16" and policy == "report"
+    if (report.get("status") not in COMPLETED_STATUSES or
+            (report.get("status") != "passed" and not relaxed)):
+        raise ValueError("measurement report did not pass")
+    if (job.get("npu_arithmetic", arithmetic) != arithmetic or
+            job.get("accuracy_policy", policy) != policy):
+        raise ValueError("planned arithmetic/accuracy policy differs from the requested comparison")
+    config = report.get("config", {})
+    if (config.get("npu_arithmetic", "bf16") != arithmetic or
+            config.get("accuracy_policy", "strict") != policy):
+        raise ValueError("measurement arithmetic/accuracy policy differs from the planned comparison")
     expected = {"m": job["m"], "hidden": args.hidden, "intermediate": args.intermediate,
                 "seed": args.seed, "warmup": args.warmup, "iterations": job["iterations"],
                 "fuse_gate_up": job["fuse_gate_up"], "columns": 8, "npu_design": "array8"}
@@ -158,26 +198,99 @@ def validate_report(path, job, args):
             mode_samples = [sample for sample in samples if sample.get("mode") == mode]
             if len(mode_samples) != job["iterations"]:
                 raise ValueError(f"missing ordinary {mode} samples")
-        checks = [*report.get("correctness", {}).values(), *entry.get("correctness", {}).values()]
+        named_checks = {**report.get("correctness", {}), **entry.get("correctness", {})}
+        checks = list(named_checks.values())
         npu_samples = [sample["diagnostics"]["npu"] for sample in samples
                        if sample.get("mode") != "baseline"]
         count = max(sample["completed_dispatches_total"] for sample in npu_samples)
         expected_count = (8 + 2 * args.warmup + 2 * job["iterations"]) * launches
         uploads = npu_samples[-1]["weight_upload_counts"]
+        stage_counts = entry.get("completed_npu_dispatches_by_stage", {})
+        expected_calls = 8 + 2 * args.warmup + 2 * job["iterations"]
+        required_checks = {f"baseline_input_{index}" for index in range(3)}
+        required_checks.update(f"{mode}_run_{repetition}_input_{index}_{comparison}"
+                              for repetition, index in enumerate((0, 1, 2, 0))
+                              for mode in ("serial", "concurrent")
+                              for comparison in ("partition_reference", "gpu_baseline", "gpu_partial", "npu_partial"))
     else:
         if report.get("config", {}).get("npu_channels") != job["npu_channels"]:
             raise ValueError("diagnostic partition does not match the planned comparison")
         samples = report.get("samples", [])
         if len(samples) != job["iterations"]:
             raise ValueError("missing diagnostic samples")
-        checks = list(report.get("checks", {}).values())
+        named_checks = report.get("checks", {})
+        checks = list(named_checks.values())
         count = report.get("completed_npu_dispatches")
         expected_count = (4 + args.warmup + job["iterations"]) * launches
         uploads = report.get("fixed_weight_upload_counts", {})
-    if not checks or not all(check.get("passed") is True for check in checks):
-        raise ValueError("explicit correctness checks are missing or failed")
-    if not samples or not all(sample.get("correctness_passed") is True for sample in samples):
-        raise ValueError("timed correctness checks are missing or failed")
+        stage_counts = report.get("completed_npu_dispatches_by_stage", {})
+        expected_calls = 4 + args.warmup + job["iterations"]
+        required_checks = {f"initial_{repetition}_input_{index}_{comparison}"
+                           for repetition, index in enumerate((0, 1, 2, 0))
+                           for comparison in ("partition_reference", "unpartitioned_reference", "gpu_partial", "npu_partial")}
+    if not checks or not samples:
+        raise ValueError("explicit or timed correctness checks are missing")
+    if relaxed:
+        if not required_checks.issubset(named_checks):
+            raise ValueError("report-only accuracy requires complete zero/changed/repeated-input checks")
+
+        def validate_check(check, gpu=False):
+            passed = check.get("passed")
+            expected_policy = "strict" if gpu else "report"
+            expected_status = "within_tolerance" if passed is True else "reported_deviation"
+            if (not isinstance(passed, bool) or check.get("finite") is not True or
+                    check.get("accepted") is not True or check.get("structural_failures") != [] or
+                    check.get("accuracy_policy") != expected_policy or
+                    check.get("accuracy_status") != expected_status or
+                    check.get("correctness") != ("passed" if passed else "failed") or
+                    any(check.get(key) != value for key, value in
+                        (("rtol", 0.03), ("atol", 0.05), ("l2_limit", 0.02))) or
+                    (gpu and not passed)):
+                raise ValueError("invalid report-only numerical/structural evidence or non-strict GPU control")
+            for field in ("max_abs_error", "relative_l2_error", "normalized_max_error", "rms_error",
+                          "reference_max_abs", "max_error_limit"):
+                value = check.get(field)
+                if not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
+                    raise ValueError("report-only numerical metrics must be finite and complete")
+            if check["reference_max_abs"] == 0 and check["max_abs_error"] != 0:
+                raise ValueError("report-only accuracy cannot accept nonzero output for a zero reference")
+            limit = 0.05 + 0.03 * check["reference_max_abs"]
+            numeric_pass = (check["max_abs_error"] == 0 if check["reference_max_abs"] == 0 else
+                            check["relative_l2_error"] <= 0.02 and check["max_abs_error"] <= limit)
+            if passed != numeric_pass or not math.isclose(check["max_error_limit"], limit, rel_tol=1e-12):
+                raise ValueError("recorded pass/fail must agree with the unchanged numerical limits")
+            return passed
+
+        numerical_passes = [validate_check(check, name.startswith("baseline_input_") or name.endswith("_gpu_partial"))
+                            for name, check in named_checks.items()]
+        for sample in samples:
+            is_baseline = sample.get("mode") == "baseline"
+            metrics = sample.get("accuracy", {})
+            numerical_passes.append(validate_check(metrics, is_baseline))
+            if (sample.get("correctness_passed") is not metrics["passed"] or
+                    sample.get("accuracy_accepted") is not True or
+                    sample.get("accuracy_status") != metrics["accuracy_status"]):
+                raise ValueError("timed numerical status is missing or was relabeled")
+            if not is_baseline:
+                numerical_passes.append(validate_check(sample.get("npu_accuracy", {})))
+        expected_stages = ({"swiglu", "down"} if job.get("fuse_swiglu", False) else
+                           {"gate_up", "silu_mul", "down"} if job["fuse_gate_up"] else
+                           {"gate", "up", "silu_mul", "down"})
+        if set(stage_counts) != expected_stages or any(value != expected_calls for value in stage_counts.values()):
+            raise ValueError("report-only run requires successful completion of every NPU stage")
+        accuracy_passed = all(numerical_passes)
+        expected_status = "passed" if accuracy_passed else "completed_with_accuracy_deviations"
+        summary = report.get("accuracy", {})
+        if (report["status"] != expected_status or summary.get("passed") is not accuracy_passed or
+                summary.get("accepted") is not True or summary.get("accuracy_policy") != policy or
+                summary.get("accuracy_status") != ("within_tolerance" if accuracy_passed else "reported_deviations")):
+            raise ValueError("report-only summary must preserve numerical deviation status")
+    else:
+        if not all(check.get("passed") is True for check in checks):
+            raise ValueError("explicit correctness checks are missing or failed")
+        if not all(sample.get("correctness_passed") is True for sample in samples):
+            raise ValueError("timed correctness checks are missing or failed")
+        accuracy_passed = True
     if any(sample.get("input_index") != sample.get("iteration", -1) % 2 for sample in samples):
         raise ValueError("timed samples did not use the expected alternating inputs")
     if count != expected_count:
@@ -185,7 +298,10 @@ def validate_report(path, job, args):
     if len(uploads) != (2 if job["fuse_gate_up"] else 3) or any(value != 1 for value in uploads.values()):
         raise ValueError("fixed projection weights were not uploaded exactly once")
     return {"completed_npu_dispatches": count, "timed_invocations": len(samples),
-            "explicit_checks": len(checks), "report_sha256": sha256(path.read_bytes()).hexdigest()}
+            "explicit_checks": len(checks),
+            "status": report["status"], "npu_arithmetic": arithmetic, "accuracy_policy": policy,
+            "accuracy_passed": accuracy_passed, "accuracy_accepted": True,
+            "accuracy_status": "within_tolerance" if accuracy_passed else "reported_deviations"}
 
 
 def main():
@@ -197,6 +313,9 @@ def main():
     parser.add_argument("--variants", choices=("both", "unfused", "fused", "swiglu", "fusion-levels"), default="both",
                         help="fusion-levels compares combined gate/up against on-chip SwiGLU")
     parser.add_argument("--measurements", choices=("both", "ordinary", "diagnostic"), default="both")
+    parser.add_argument("--npu-arithmetic", choices=("bf16", "bfp16"), default="bf16")
+    parser.add_argument("--accuracy-policy", choices=("strict", "report"),
+                        help="candidate default: BF16 strict, experimental BFP16 report; GPU controls stay strict")
     parser.add_argument("--iterations", type=int, default=30)
     parser.add_argument("--diagnostic-iterations", type=int, default=10)
     parser.add_argument("--warmup", type=int, default=3)
@@ -211,6 +330,10 @@ def main():
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--keep-going", action="store_true", help="record failed points and continue; exit remains nonzero")
     args = parser.parse_args()
+    try:
+        args.npu_arithmetic, args.accuracy_policy = candidate_accuracy(args)
+    except ValueError as error:
+        parser.error(str(error))
     args.output_dir = args.output_dir.resolve()
     args.artifact_root = args.artifact_root.resolve()
     if not 1 <= args.iterations <= 1000 or not 1 <= args.diagnostic_iterations <= 1000 or not 0 <= args.warmup <= 100:
@@ -252,7 +375,7 @@ def main():
     manifest["status"] = "running"
     for job in manifest["jobs"]:
         report_path = args.output_dir / job["report_path"]
-        if job["status"] == "passed":
+        if job["status"] in COMPLETED_STATUSES:
             evidence = validate_report(report_path, job, args)
             if evidence["report_sha256"] != job["evidence"]["report_sha256"]:
                 raise RuntimeError("saved measurement changed after verification")
@@ -277,7 +400,7 @@ def main():
             if result.returncode != 0:
                 raise RuntimeError(f"measurement exited {result.returncode}; see {log_path}")
             job["evidence"] = validate_report(report_path, job, args)
-            job["status"] = "passed"
+            job["status"] = job["evidence"]["status"]
         except Exception as error:
             job["status"], job["error"] = "failed", str(error)
         finally:
@@ -294,12 +417,12 @@ def main():
             save_json(manifest_path, manifest)
         print(json.dumps({"id": job["id"], "status": job["status"], "error": job.get("error"),
                           "power_error": job.get("power_error")}), flush=True)
-        if job["status"] != "passed" and not args.keep_going:
+        if job["status"] not in COMPLETED_STATUSES and not args.keep_going:
             break
-    manifest["status"] = "passed" if all(job["status"] == "passed" for job in manifest["jobs"]) else "incomplete"
+    manifest["status"] = completed_status(manifest["jobs"])
     manifest["finished_at_utc"] = utc_now()
     save_json(manifest_path, manifest)
-    if manifest["status"] != "passed":
+    if manifest["status"] not in COMPLETED_STATUSES:
         raise SystemExit(1)
 
 

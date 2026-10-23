@@ -15,7 +15,7 @@ from unittest.mock import patch
 import numpy as np
 
 import npu_backend as backend
-from contract import random_weights, reference_full
+from contract import error_metrics, random_weights, reference_full
 from prefill_reference import (bf16_bits, bf16_from_bits, pack_output,
                                projection_reference, unpack_activations,
                                unpack_weights)
@@ -23,9 +23,11 @@ from reference import silu_multiply
 
 
 def _write_mock_artifacts(root, m=128, hidden=128, channels=256,
-                          columns=4, design="legacy", fuse_gate_up=False):
+                          columns=4, design="legacy", fuse_gate_up=False,
+                          fuse_swiglu=False, arithmetic="bf16"):
     """Valid manifests with unmistakably fake binaries, never sent to XRT."""
-    specs = backend._artifact_specs(m, hidden, channels, root, columns, design, fuse_gate_up)
+    specs = backend._artifact_specs(m, hidden, channels, root, columns, design, fuse_gate_up,
+                                    fuse_swiglu, arithmetic)
     for spec in specs.values():
         directory = spec["directory"]
         directory.mkdir(parents=True, exist_ok=True)
@@ -35,7 +37,7 @@ def _write_mock_artifacts(root, m=128, hidden=128, channels=256,
         (directory / "insts.bin").write_bytes(instructions)
         manifest = dict(
             spec["expected"], target_mlir_aie_commit=backend.TARGET_COMMIT,
-            source_sha256=spec["source_sha256"][f"npu/ffn/{backend._kernel_source(spec['stem'])}.cc"],
+            source_sha256=spec["source_sha256"][f"npu/ffn/{backend._kernel_source(spec['stem'], arithmetic)}.cc"],
             xclbin_sha256=sha256(xclbin).hexdigest(),
             insts_sha256=sha256(instructions).hexdigest(),
         )
@@ -82,11 +84,112 @@ class _OracleRunner:
         self.completed_dispatches += 1
         return 1.0  # Synthetic placeholder, never a latency measurement.
 
-    def output_bits(self, index=0):
-        return (self.result[index] if self.output_count == 2 else self.result).copy()
+    def output_bits(self, index=0, *, copy=True):
+        result = self.result[index] if self.output_count == 2 else self.result
+        return result.copy() if copy else result
 
 
 class NPUBackendTests(unittest.TestCase):
+    def test_arithmetic_separates_projection_cache_but_reuses_standalone_silu(self):
+        with tempfile.TemporaryDirectory() as root:
+            for fused, swiglu in ((False, False), (True, False), (True, True)):
+                with self.subTest(fused=fused, swiglu=swiglu):
+                    native = backend._artifact_specs(128, 128, 256, root,
+                        fuse_gate_up=fused, fuse_swiglu=swiglu)
+                    block = backend._artifact_specs(128, 128, 256, root,
+                        fuse_gate_up=fused, fuse_swiglu=swiglu, arithmetic="bfp16")
+                    self.assertEqual(set(native), set(block))
+                    for label in native:
+                        if label == "silu_mul":
+                            self.assertEqual(native[label], block[label])
+                            continue
+                        a, b = native[label], block[label]
+                        self.assertNotEqual(a["directory"], b["directory"])
+                        self.assertIn("_bfp16_", b["directory"].name)
+                        self.assertNotEqual(a["source_sha256"], b["source_sha256"])
+                        self.assertIn("npu/ffn/w4a16_prefill_bfp16.cc", b["source_sha256"])
+                        self.assertNotIn("npu/ffn/w4a16_prefill_reuse.cc", b["source_sha256"])
+                        self.assertIn("npu/ffn/projection_arithmetic.py", b["source_sha256"])
+                        self.assertEqual(b["expected"]["arithmetic"], "bfp16")
+                        self.assertEqual(b["expected"]["worker_stack_size"], 4096)
+                        self.assertEqual(a["expected"]["worker_stack_size"], 2048)
+                        arg = b["arguments"].index("--arithmetic")
+                        self.assertEqual(b["arguments"][arg + 1], "bfp16")
+                        self.assertEqual(a["expected"]["kind"], b["expected"]["kind"])
+                        a_plan, b_plan = dict(a.get("plan", {})), dict(b.get("plan", {}))
+                        if swiglu and label == "swiglu":
+                            a_memory = a_plan.pop("memory_estimate")
+                            b_memory = b_plan.pop("memory_estimate")
+                            for side in ("gate", "up"):
+                                self.assertEqual(b_memory[side + "_raw_bytes"],
+                                                 a_memory[side + "_raw_bytes"] + 2048)
+                                self.assertEqual(b_memory[side + "_components_bytes"]["stack"], 4096)
+                        self.assertEqual(a_plan, b_plan)
+
+    def test_bfp16_load_rejects_wrong_arithmetic_source_helper_or_stack(self):
+        with tempfile.TemporaryDirectory() as root:
+            spec = _write_mock_artifacts(root, columns=8, design="array8",
+                                         fuse_swiglu=True, arithmetic="bfp16")["swiglu"]
+            backend._load_artifact(spec)
+            path = spec["directory"] / "final.xclbin.json"
+            original = json.loads(path.read_text())
+            for key, replacement in (("arithmetic", "bf16"), ("compute_format", "bf16"),
+                    ("source_sha256", "wrong-source"), ("arithmetic_source_sha256", "wrong-helper"),
+                    ("upstream_kernel_commit", backend.TARGET_COMMIT), ("worker_stack_size", 2048)):
+                with self.subTest(key=key):
+                    path.write_text(json.dumps(dict(original, **{key: replacement})))
+                    with self.assertRaisesRegex(ValueError, f"manifest {key}"):
+                        backend._load_artifact(spec)
+
+    def test_bfp16_build_propagates_compiler_mode_and_reuses_certified_artifacts(self):
+        with tempfile.TemporaryDirectory() as root:
+            specs = backend._artifact_specs(128, 128, 256, root, fuse_swiglu=True,
+                                            arithmetic="bfp16")
+            by_directory = {str(spec["directory"]): spec for spec in specs.values()}
+
+            def fake_compile(command, **kwargs):
+                directory = str(Path(command[command.index("--xclbin-path") + 1]).parent)
+                spec = by_directory[directory]
+                self.assertEqual(command[command.index("--arithmetic") + 1], "bfp16")
+                xclbin, instructions = b"CPU TEST MOCK -- NOT AN NPU BINARY", b"MOCK"
+                (spec["directory"] / "final.xclbin").write_bytes(xclbin)
+                (spec["directory"] / "insts.bin").write_bytes(instructions)
+                kernel = backend._kernel_source(spec["stem"], "bfp16")
+                manifest = dict(spec["expected"], target_mlir_aie_commit=backend.TARGET_COMMIT,
+                    source_sha256=spec["source_sha256"][f"npu/ffn/{kernel}.cc"],
+                    xclbin_sha256=sha256(xclbin).hexdigest(),
+                    insts_sha256=sha256(instructions).hexdigest())
+                (spec["directory"] / "final.xclbin.json").write_text(json.dumps(manifest))
+                return SimpleNamespace(returncode=0)
+
+            with patch.object(backend.subprocess, "run", side_effect=fake_compile) as compile_call:
+                artifacts = backend.build_artifacts(128, 128, 256, root,
+                    python_executable="CPU_TEST_COMPILER_STUB", fuse_swiglu=True,
+                    npu_arithmetic="bfp16")
+                self.assertEqual(compile_call.call_count, 2)
+                self.assertEqual(set(artifacts), {"swiglu", "down"})
+                backend.build_artifacts(128, 128, 256, root, fuse_swiglu=True,
+                                        npu_arithmetic="bfp16")
+                self.assertEqual(compile_call.call_count, 2)
+
+    def test_bfp16_branch_records_selection_without_claiming_hardware_numerics(self):
+        weights = random_weights(128, 256, seed=124)
+        with tempfile.TemporaryDirectory() as root:
+            _write_mock_artifacts(root, columns=8, design="array8", arithmetic="bfp16")
+            with patch.object(backend, "PersistentXrtRunner", _OracleRunner):
+                branch = backend.NPUBranch(weights.gate, weights.up, weights.down,
+                                           128, root, npu_arithmetic="bfp16")
+            self.assertEqual(branch.metadata["npu_arithmetic"], "bfp16")
+            self.assertEqual(branch.metadata["compute_format"], "bfp16")
+            self.assertEqual(branch.metadata["worker_stack_size"], 4096)
+            self.assertEqual(branch.metadata["launches_per_run"], 4)
+            for label in ("gate_up", "down"):
+                self.assertEqual(branch.metadata["artifacts"][label]["manifest"]["arithmetic"], "bfp16")
+            with self.assertRaisesRegex(ValueError, "requires the array8"):
+                backend._artifact_specs(128, 128, 256, root, design="legacy", arithmetic="bfp16")
+            with self.assertRaisesRegex(ValueError, "unknown projection arithmetic"):
+                backend._artifact_specs(128, 128, 256, root, arithmetic="fp16")
+
     def test_two_output_readbacks_select_distinct_buffers(self):
         runner = backend.PersistentXrtRunner.__new__(backend.PersistentXrtRunner)
         runner.output_count = 2
@@ -133,6 +236,11 @@ class NPUBackendTests(unittest.TestCase):
         self.assertFalse(np.shares_memory(result, raw))
         result[:] = 0
         np.testing.assert_array_equal(raw, expected.view(np.uint8))
+        borrowed = runner.output_bits(copy=False)
+        np.testing.assert_array_equal(borrowed, expected.reshape(2, 3))
+        self.assertFalse(borrowed.flags.writeable)
+        # Positive-strided readback still needs a normalization copy.
+        self.assertFalse(np.shares_memory(borrowed, raw))
 
     def test_invalid_readback_abi_rejected_before_copy(self):
         # NumPy 2.5.4 with the notebook's prebuilt pyxrt returned exactly
@@ -151,8 +259,9 @@ class NPUBackendTests(unittest.TestCase):
         for name, raw in invalid.items():
             runner.buffers = [SimpleNamespace(sync=lambda direction: None,
                                               read=lambda nbytes, offset: raw)]
-            with self.subTest(case=name), self.assertRaisesRegex(RuntimeError, "NumPy 1.26.4"):
-                runner.output_bits()
+            for copy in (True, False):
+                with self.subTest(case=name, copy=copy), self.assertRaisesRegex(RuntimeError, "NumPy 1.26.4"):
+                    runner.output_bits(copy=copy)
         # Ordinary byte buffers still succeed with independent ownership.
         raw = np.arange(8, dtype=np.uint8)
         runner.buffers = [SimpleNamespace(sync=lambda direction: None,
@@ -176,6 +285,92 @@ class NPUBackendTests(unittest.TestCase):
                                           read=lambda nbytes, offset: raw)]
         np.testing.assert_array_equal(runner.output_bits(), expected)
 
+    def test_borrowed_readback_is_readonly_and_default_copy_stays_independent(self):
+        expected = np.array([0x0000, 0x8000, 0x3F80, 0xBF80, 0x7FC1, 0x0080], np.uint16)
+        raw = expected.view(np.int8).copy()
+        runner = backend.PersistentXrtRunner.__new__(backend.PersistentXrtRunner)
+        runner.xrt = SimpleNamespace(xclBOSyncDirection=SimpleNamespace(
+            XCL_BO_SYNC_BO_FROM_DEVICE=1))
+        runner.specs = [((2, 3), np.dtype(np.uint16))]
+        runner.buffers = [SimpleNamespace(sync=lambda direction: None,
+                                          read=lambda nbytes, offset: raw)]
+        borrowed = runner.output_bits(copy=False)
+        owned = runner.output_bits()
+        np.testing.assert_array_equal(borrowed, expected.reshape(2, 3))
+        self.assertTrue(np.shares_memory(borrowed, raw))
+        self.assertFalse(np.shares_memory(owned, raw))
+        self.assertFalse(borrowed.flags.writeable)
+        self.assertTrue(raw.flags.writeable)
+        self.assertTrue(owned.flags.writeable)
+        raw[:] = 0  # Model a later dispatch reusing output storage.
+        np.testing.assert_array_equal(borrowed, np.zeros((2, 3), np.uint16))
+        np.testing.assert_array_equal(owned, expected.reshape(2, 3))
+
+    def test_layout_consumers_detach_borrowed_output_for_supported_shapes(self):
+        from contract import packed_output_to_activation
+        # Include every BF16 bit pattern; this is a permutation, not a
+        # floating-point conversion. Small and model-sized shapes cover the
+        # nondegenerate dimensions enforced by NPUBranch's geometry contract.
+        for m, n in ((128, 128), (128, 384), (512, 1792), (512, 4096)):
+            with self.subTest(m=m, n=n):
+                storage = np.arange(m * n, dtype=np.uint16)
+                borrowed = storage.view()
+                borrowed.flags.writeable = False
+                output = backend._unpack_output_bits(borrowed, m, n)
+                down_input = packed_output_to_activation(borrowed, m, n)
+                expected_output, expected_down = output.copy(), down_input.copy()
+                self.assertFalse(np.shares_memory(output, storage))
+                self.assertFalse(np.shares_memory(down_input, storage))
+                storage[:] = 0
+                np.testing.assert_array_equal(output, expected_output)
+                np.testing.assert_array_equal(down_input, expected_down)
+
+    def test_borrowed_readback_keeps_transient_read_array_alive(self):
+        import gc
+        import weakref
+        observed = {}
+
+        def read(nbytes, offset):
+            raw = np.arange(nbytes, dtype=np.int8)
+            observed['raw'] = weakref.ref(raw)
+            return raw
+
+        runner = backend.PersistentXrtRunner.__new__(backend.PersistentXrtRunner)
+        runner.xrt = SimpleNamespace(xclBOSyncDirection=SimpleNamespace(
+            XCL_BO_SYNC_BO_FROM_DEVICE=1))
+        runner.specs = [((4,), np.dtype(np.uint16))]
+        runner.buffers = [SimpleNamespace(sync=lambda direction: None, read=read)]
+        result = runner.output_bits(copy=False)
+        gc.collect()
+        self.assertIsNotNone(observed['raw']())
+        np.testing.assert_array_equal(result, np.arange(8, dtype=np.int8).view(np.uint16))
+        del result
+        gc.collect()
+        self.assertIsNone(observed['raw']())
+
+    def test_branch_borrowed_results_survive_overwrite_and_match_owned_control(self):
+        from test_swiglu import _SwiGLUOracleRunner, _mock_artifacts
+        weights = random_weights(128, 128, seed=145)
+        x = np.random.default_rng(146).normal(0, .5, (128, 128)).astype(np.float32)
+        with tempfile.TemporaryDirectory() as root:
+            _mock_artifacts(root, 128, True)
+            for copy in (False, True):
+                with self.subTest(copy=copy), patch.object(backend, 'PersistentXrtRunner', _SwiGLUOracleRunner):
+                    branch = backend.NPUBranch(weights.gate, weights.up, weights.down,
+                        128, root, fuse_swiglu=True, copy_output_bits=copy)
+                    self.assertEqual(branch.metadata['host_output_readback'],
+                                     'owned_copy' if copy else 'borrowed_until_consumed')
+                    result = branch.run(bf16_bits(x))
+                    snapshot = result.copy()
+                    for runner in branch.runners.values():
+                        self.assertFalse(np.shares_memory(result, runner.result))
+                        runner.result[:] = 0  # Later dispatch may reuse BO storage.
+                    np.testing.assert_array_equal(result, snapshot)
+                    np.testing.assert_array_equal(result, bf16_bits(reference_full(x, weights)))
+                    repeated = branch.run(bf16_bits(-x))
+                    self.assertFalse(np.array_equal(repeated, result))
+                    np.testing.assert_array_equal(result, snapshot)
+
     def test_weights_upload_once_across_complete_ffn_and_alternating_inputs(self):
         for design, columns in (("legacy", 4), ("array8", 8)):
             with self.subTest(design=design):
@@ -197,7 +392,14 @@ class NPUBackendTests(unittest.TestCase):
                                  4 * 128 * 128 + 12 * 128 * 384)
                 for index, value in enumerate((x, -x, np.zeros_like(x), x)):
                     output = branch.run(bf16_bits(value))
-                    np.testing.assert_array_equal(output, bf16_bits(reference_full(value, weights)))
+                    # The fake combined [gate|up] NumPy GEMM has a different
+                    # output width from the separate reference GEMMs. BLAS
+                    # may round FP32 reductions differently across thread
+                    # configurations before BF16 rounding. Compare the same
+                    # fixed numerical contract used on hardware; exact packed
+                    # addresses and uploaded bytes are checked separately.
+                    metrics = error_metrics(bf16_from_bits(output), reference_full(value, weights))
+                    self.assertTrue(metrics['passed'], metrics)
                     self.assertEqual(branch.gate_up.input_write_counts, [index + 1, 1])
                     self.assertEqual(branch.down.input_write_counts, [index + 1, 1])
                     self.assertEqual(branch.last_diagnostics["completed_dispatches_total"], 3 * (index + 1))

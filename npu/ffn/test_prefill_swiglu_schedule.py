@@ -127,6 +127,19 @@ class SwigluScheduleTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 plan_swiglu(128, 256, p)
 
+    def test_bfp_stack_estimate_tracks_allocated_bytes_without_changing_ownership(self):
+        plan = plan_swiglu(512, 4096, 896)
+        native = swiglu_plan_metadata(plan)
+        block = swiglu_plan_metadata(plan, stack_size=4096)
+        self.assertEqual(native['workers'], block['workers'])
+        for side in ('gate', 'up'):
+            self.assertEqual(block['memory_estimate'][side + '_components_bytes']['stack'], 4096)
+            self.assertEqual(block['memory_estimate'][side + '_raw_bytes'],
+                             native['memory_estimate'][side + '_raw_bytes'] + 2048)
+        for stack in (0, -1024, 2049, True, 4096.0):
+            with self.subTest(stack=stack), self.assertRaisesRegex(ValueError, 'stack_size'):
+                swiglu_memory_estimate(plan, stack_size=stack)
+
 
 if __name__ == '__main__':
     unittest.main()

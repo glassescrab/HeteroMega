@@ -23,6 +23,15 @@ gate/up intermediates in adjacent NPU tile memory. It uses two NPU launches:
 SwiGLU, then down. See the [architecture](../../npu/ffn/SWIGLU.md) and
 [hardware validation and latency comparison](SWIGLU_RESULTS.md).
 
+`--npu-arithmetic bfp16` selects the TileFuse-derived BFP16 projection kernel
+in any array8 fusion mode. It keeps W4 weights and BF16 tensor storage. BFP16
+defaults to `--accuracy-policy report`: finite arithmetic deviations are
+recorded without widening the existing tolerances, while execution failures
+remain fatal. Native BF16 and GPU controls retain strict checking. See the
+[upstream audit and measured adaptation](../../npu/ffn/BFP16_ADAPTATION.md).
+Plots require `--allow-accuracy-deviations` to include such reports and label
+their latency ratios separately from numerically validated speedups.
+
 For the measured `M512/H4096/I14336` workload, the three-launch
 `--fuse-gate-up` control has a competitive P768–896 region. The newer
 two-launch path's working candidate is `--fuse-swiglu --npu-channels 1152`;

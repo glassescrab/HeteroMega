@@ -3,8 +3,9 @@
 Even physical columns compute gate; adjacent odd columns compute matching up
 and then SiLU(gate)*up. All 32 workers perform projections. Gate tiles travel
 through adjacent ObjectFifos; only compact Z is drained to a host BO. Down
-projection remains a separate graph/dispatch. Existing BF16 projection and
-SiLU rounding boundaries and arithmetic sources are retained unchanged.
+projection remains a separate graph/dispatch. Native BF16 projection is the
+default; --arithmetic bfp16 selects block-float matrix computation. Both modes
+retain BF16 projection outputs and the unchanged SiLU rounding boundaries.
 
 The projection FIFO topology follows AMD's pinned MLIR-AIE whole_array matmul
 example (7e00b57955e108fe9d8e9419f5828a0c7e650858,
@@ -26,6 +27,9 @@ from aie.utils import config
 from aie.utils.hostruntime.argparse import add_compile_args, device_from_args
 from aie.utils.hostruntime.cli import run_design_cli
 from ml_dtypes import bfloat16
+
+from projection_arithmetic import (ARITHMETIC_CHOICES, ARITHMETIC_SOURCE_SHA,
+                                   projection_arithmetic, validate_projection_identity)
 
 from prefill_swiglu_schedule import (plan_swiglu, swiglu_logical_column,
                                     swiglu_output_tap)
@@ -52,14 +56,18 @@ def w4a16_swiglu(
     m: CompileTime[int] = 512, k: CompileTime[int] = 4096,
     channels: CompileTime[int] = 512, cols: CompileTime[int] = 8,
     max_reuse: CompileTime[int] = 2,
+    arithmetic: CompileTime[str] = 'bf16',
+    arithmetic_source_sha256: CompileTime[str] = ARITHMETIC_SOURCE_SHA,
     source_sha256: CompileTime[str] = SOURCE_SHA,
     silu_source_sha256: CompileTime[str] = SILU_SOURCE_SHA,
     schedule_sha256: CompileTime[str] = SCHEDULE_SHA,
     gate_up_schedule_sha256: CompileTime[str] = GATE_UP_SCHEDULE_SHA,
     swiglu_schedule_sha256: CompileTime[str] = SWIGLU_SCHEDULE_SHA,
 ):
+    projection = projection_arithmetic(arithmetic)
+    validate_projection_identity(projection, source_sha256, arithmetic_source_sha256)
     plan = plan_swiglu(m, k, channels, columns=cols, rows=4, max_reuse=max_reuse)
-    if (source_sha256 != SOURCE_SHA or silu_source_sha256 != SILU_SOURCE_SHA
+    if (source_sha256 != projection.source_sha256 or silu_source_sha256 != SILU_SOURCE_SHA
             or schedule_sha256 != SCHEDULE_SHA
             or gate_up_schedule_sha256 != GATE_UP_SCHEDULE_SHA
             or swiglu_schedule_sha256 != SWIGLU_SCHEDULE_SHA):
@@ -79,11 +87,11 @@ def w4a16_swiglu(
     y_host = np.ndarray[(m * channels,), np.dtype[bfloat16]]
     include_dirs = [config.cxx_header_path(), str(Path(config.cxx_header_path()) / 'aie_kernels')]
 
-    obj = f'w4a16_prefill_reuse_{SOURCE_SHA}_r{reuse}.o'
+    obj = projection.object_name(reuse)
     accumulate = ExternalFunction('w4a16_prefill_reuse_accumulate',
-        object_file_name=obj, source_string=SOURCE,
+        object_file_name=obj, source_string=projection.source,
         arg_types=[a_tile, w_tile, c_tile, b_tile],
-        compile_flags=[f'-DHETEROMEGA_M_REUSE={reuse}'], include_dirs=include_dirs)
+        compile_flags=projection.compile_flags(reuse), include_dirs=include_dirs)
     init = Kernel('w4a16_prefill_reuse_init', obj, [c_tile])
     finish = Kernel('w4a16_prefill_reuse_finish', obj, [c_tile, y_tile])
     pointwise = ExternalFunction('silu_mul_bf16',
@@ -172,7 +180,7 @@ def w4a16_swiglu(
                         gates[pair][row].cons(), y_workers[pair][row].prod(),
                         c, b, up, init, accumulate, finish, pointwise]
             workers.append(Worker(fn, args, tile=Tile(col, row + 2),
-                                  stack_size=2048, dynamic_objfifo_lowering=True))
+                                  stack_size=projection.stack_size, dynamic_objfifo_lowering=True))
 
     def sequence(a, w, z, a_hs, w_hs, y_hs):
         for group_index in range(plan.groups_per_column):
@@ -203,12 +211,16 @@ def main():
     parser.add_argument('-P', '--channels', type=int, default=512)
     parser.add_argument('-co', '--columns', type=int, default=8)
     parser.add_argument('--max-reuse', type=int, choices=(1, 2), default=2)
+    parser.add_argument('--arithmetic', choices=ARITHMETIC_CHOICES, default='bf16')
     opts = parser.parse_args()
+    projection = projection_arithmetic(opts.arithmetic)
     plan = plan_swiglu(opts.M, opts.K, opts.channels, columns=opts.columns,
                        rows=4, max_reuse=opts.max_reuse)
     run_design_cli(w4a16_swiglu, opts,
         compile_kwargs=dict(m=opts.M, k=opts.K, channels=opts.channels, cols=opts.columns,
-                            max_reuse=opts.max_reuse, source_sha256=SOURCE_SHA,
+                            max_reuse=opts.max_reuse, arithmetic=opts.arithmetic,
+                            arithmetic_source_sha256=ARITHMETIC_SOURCE_SHA,
+                            source_sha256=projection.source_sha256,
                             silu_source_sha256=SILU_SOURCE_SHA,
                             schedule_sha256=SCHEDULE_SHA,
                             gate_up_schedule_sha256=GATE_UP_SCHEDULE_SHA,
@@ -224,12 +236,13 @@ def main():
             output_columns=[1, 3, 5, 7], gate_handoff='adjacent_compute_tile_object_fifo',
             tile_m=16, tile_k=128, tile_n=32, group_size=128, weight_tile_bytes=2144,
             silu_tile_size=plan.m_reuse * 512,
-            source_sha256=SOURCE_SHA, silu_source_sha256=SILU_SOURCE_SHA,
+            source_sha256=projection.source_sha256, silu_source_sha256=SILU_SOURCE_SHA,
             schedule_sha256=SCHEDULE_SHA, gate_up_schedule_sha256=GATE_UP_SCHEDULE_SHA,
             swiglu_schedule_sha256=SWIGLU_SCHEDULE_SHA,
             target_mlir_aie_commit=TARGET_COMMIT,
             xclbin_sha256=hashlib.sha256(Path(opts.xclbin_path).read_bytes()).hexdigest(),
             insts_sha256=hashlib.sha256(Path(opts.insts_path).read_bytes()).hexdigest())
+        manifest.update(projection.manifest_fields())
         Path(str(opts.xclbin_path) + '.json').write_text(json.dumps(manifest, indent=2) + '\n')
 
 

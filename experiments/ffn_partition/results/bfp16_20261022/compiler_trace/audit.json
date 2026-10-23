@@ -1,0 +1,45 @@
+{
+  "method": "llvm-objdump disassembly; no new execution or cycle attribution",
+  "tool": "/home/mliraie/mlir-aie/ironenv/lib/python3.12/site-packages/llvm-aie/bin/llvm-objdump",
+  "records": [
+    {
+      "role": "gate",
+      "core": "0_2",
+      "elf": "experiments/ffn_partition/artifacts/build_swiglu_array8_bfp16_m512_k4096_p1792_b95d5b04db40/final.prj/elfs_main_core_0_2/elfs_main_core_0_2.elf",
+      "elf_sha256": "08d8900646ef2a73bbd9442b5acf943e30990e1cc408362861891b18e65176a6",
+      "xclbin_sha256": "d8c035daf7296301ce0f37010bba45f84bf7ace2796eedd5ffeb0e7c84eb0ca9",
+      "kernel_source_sha256": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+      "dequant_floatunsisf_calls": 32,
+      "call_examples": [
+        "3e4: 3a 41 00 00 44 02 00 b0 87 f8\tst\t lr, [sp, #-60];\t\tjl\t#0x1220",
+        "438: 04 01 00 10 09 00    \tjl\t#0x1220"
+      ]
+    },
+    {
+      "role": "up",
+      "core": "1_2",
+      "elf": "experiments/ffn_partition/artifacts/build_swiglu_array8_bfp16_m512_k4096_p1792_b95d5b04db40/final.prj/elfs_main_core_1_2/elfs_main_core_1_2.elf",
+      "elf_sha256": "70ecf35387ce6562c819bd6a8043acf359f8e9335c03d61a09a6f01d36a4c93e",
+      "xclbin_sha256": "d8c035daf7296301ce0f37010bba45f84bf7ace2796eedd5ffeb0e7c84eb0ca9",
+      "kernel_source_sha256": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+      "dequant_floatunsisf_calls": 32,
+      "call_examples": [
+        "434: 3a 41 00 00 96 02 00 b0 87 f8\tst\t lr, [sp, #-60];\t\tjl\t#0x14b0",
+        "488: 04 01 00 58 0a 00    \tjl\t#0x14b0"
+      ]
+    },
+    {
+      "role": "down",
+      "core": "0_2",
+      "elf": "experiments/ffn_partition/artifacts/build_prefill_array8_bfp16_m512_k1792_n4096_c8_r2_102b06a21224/final.prj/elfs_main_core_0_2/elfs_main_core_0_2.elf",
+      "elf_sha256": "6314eb40eeb7c03bc92ca669a7577b5dfaf581e46e880122d66c83db4f25a3c4",
+      "xclbin_sha256": "5fb0aeef2e64bf150beef5289249b71c1b7500f925ef732ef11cec807f753f59",
+      "kernel_source_sha256": "676dd61b616abe8363d16b3b54aad726a96857332ee9ded03e520fb752c0ecfe",
+      "dequant_floatunsisf_calls": 32,
+      "call_examples": [
+        "534: 3a 41 00 00 6e 02 00 b0 87 f8\tst\t lr, [sp, #-60];\t\tjl\t#0x1370",
+        "588: 04 01 00 b8 09 00    \tjl\t#0x1370"
+      ]
+    }
+  ]
+}

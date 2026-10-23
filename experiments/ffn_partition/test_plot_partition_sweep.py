@@ -8,10 +8,10 @@ import unittest
 
 try:
     from .plot_partition_sweep import (_groups, _label, collect, extract_report,
-                                      repeat_comparison, statistics)
+                                      render, repeat_comparison, statistics, write_tables)
 except ImportError:
     from plot_partition_sweep import (_groups, _label, collect, extract_report,
-                                     repeat_comparison, statistics)
+                                     render, repeat_comparison, statistics, write_tables)
 
 
 RESULTS = Path(__file__).with_name("results")
@@ -19,6 +19,12 @@ RESULTS = Path(__file__).with_name("results")
 
 def ordinary():
     return json.loads((RESULTS/"array8_default_m512_p512_hx370.json").read_text())
+
+
+def bfp_fixture(mode="ordinary"):
+    # Shared synthetic validation schema; no modified fixture is hardware data.
+    from experiments.ffn_partition.test_sweep_partition import SweepTests
+    return SweepTests().bfp_report(mode)
 
 
 def swiglu_fixture():
@@ -46,6 +52,79 @@ def swiglu_fixture():
 
 
 class PlotEvidenceTests(unittest.TestCase):
+    def test_bfp_deviations_require_opt_in_and_keep_latency_ratios_separate(self):
+        for mode in ("ordinary", "diagnostic"):
+            fixture = bfp_fixture(mode)
+            with self.subTest(mode=mode), self.assertRaises(ValueError):
+                extract_report(fixture, "CPU_ONLY_BFP_FIXTURE.json")
+            ordinary_rows, diagnostic_rows = extract_report(
+                fixture, "CPU_ONLY_BFP_FIXTURE.json", allow_accuracy_deviations=True)
+            row = (ordinary_rows or diagnostic_rows)[0]
+            self.assertEqual(row["npu_arithmetic"], "bfp16")
+            self.assertFalse(row["accuracy_passed"])
+            self.assertEqual(row["accuracy_status"], "reported_deviations")
+            self.assertIn("BFP16", _label(_groups([row])[0][0]))
+            self.assertIn("numerical deviations", _label(_groups([row])[0][0]))
+            if mode == "ordinary":
+                self.assertIsNone(row["speedup"])
+                self.assertIsNone(row["paired_speedup"])
+                self.assertGreater(row["latency_ratio"], 1)
+
+    def test_bfp_opt_in_cannot_bypass_execution_or_strict_gpu_guards(self):
+        for mutate in (
+            lambda r: r["partitions"][0]["completed_npu_dispatches_by_stage"].update(down=0),
+            lambda r: r["partitions"][0]["samples"][0]["accuracy"].update(structural_failures=["distinct_inputs_identical_output"]),
+            lambda r: r["correctness"]["baseline_input_0"].update(accuracy_policy="report"),
+        ):
+            fixture = bfp_fixture()
+            mutate(fixture)
+            with self.subTest(mutate=mutate), self.assertRaises(ValueError):
+                extract_report(fixture, "CPU_ONLY_BFP_FIXTURE.json", allow_accuracy_deviations=True)
+
+    def test_arithmetic_and_accuracy_status_are_distinct_plot_series(self):
+        bf16 = extract_report(ordinary(), "observed.json", "same_run")[0][0]
+        bfp = extract_report(bfp_fixture(), "CPU_ONLY_BFP_FIXTURE.json", "same_run",
+                             allow_accuracy_deviations=True)[0][0]
+        within = dict(bfp, accuracy_passed=True, accuracy_status="within_tolerance")
+        groups = _groups([bf16, bfp, within])
+        self.assertEqual(len(groups), 3)
+        self.assertTrue(all(len(rows) == 1 for _, rows in groups))
+
+    def test_bfp_manifest_collection_and_export_do_not_relabel_deviations(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "report.json").write_text(json.dumps(bfp_fixture()))
+            manifest = {"jobs": [{"report_path": "report.json", "status": "completed_with_accuracy_deviations",
+                                  "npu_arithmetic": "bfp16", "accuracy_policy": "report"}]}
+            (root / "sweep_manifest.json").write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, "no eligible"):
+                collect([root])
+            summary = collect([root], allow_accuracy_deviations=True)
+            self.assertEqual(len(summary["ordinary"]), 1)
+            write_tables(summary, root / "tables")
+            exported = json.loads((root / "tables/summary.json").read_text())["ordinary"][0]
+            self.assertIsNone(exported["speedup"])
+            self.assertEqual(exported["accuracy_status"], "reported_deviations")
+            csv_text = (root / "tables/ordinary.csv").read_text()
+            self.assertIn("latency_ratio", csv_text)
+            self.assertIn("reported_deviations", csv_text)
+
+    def test_bfp_svg_labels_experimental_latency_and_preserves_null_speedup(self):
+        try:
+            import matplotlib  # noqa: F401
+        except ImportError:
+            self.skipTest("matplotlib unavailable")
+        rows, stages = extract_report(bfp_fixture(), "CPU_ONLY_BFP_FIXTURE.json",
+                                      allow_accuracy_deviations=True)
+        summary = {"ordinary": rows, "diagnostic": stages}
+        with tempfile.TemporaryDirectory() as directory:
+            paths = render(summary, directory, formats=("svg",))
+            svg = Path(paths[0]).read_text()
+            self.assertIn("BFP16", svg)
+            self.assertIn("numerical deviations", svg)
+            self.assertIn("Matched GPU-only / candidate latency", svg)
+            self.assertIsNone(summary["sampled_best"][0]["speedup"])
+
     def test_raw_sample_statistics_and_matched_pairing(self):
         report = ordinary()
         # Cached summaries must not override actual samples.
