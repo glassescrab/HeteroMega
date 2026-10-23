@@ -1,0 +1,19 @@
+MLIR-AIE / TileFuse adaptations
+
+The graph topology follows AMD's MLIR-AIE whole_array matmul example at
+7e00b57955e108fe9d8e9419f5828a0c7e650858.
+
+The BFP16 W4A16 projection strategy adapts aie_kernels/aie2p/mix_int4_ATB.cc
+and programming_examples/tilefuse/gemm_w4a16/makefile-common from
+https://github.com/glassescrab/mlir-aie at
+121dd54abc68f84d89a7074372ebf82be2db62d5.
+
+Copyright (C) 2025, Advanced Micro Devices, Inc.
+Copyright (C) 2025, University of Illinois Urbana-Champaign.
+License: Apache-2.0 WITH LLVM-exception.
+Full text: licenses/MLIR-AIE-LICENSE.txt.
+
+Local adaptations retain HeteroMega's compact W4A16 tensor layout, explicit
+invocation state, per-column dequantization, FP32 partial sums between K groups,
+eight-column FFN graph and fused SiLU/multiply. The optimized zero-point
+metadata uses exact BF16 bit construction for unsigned four-bit zeros.

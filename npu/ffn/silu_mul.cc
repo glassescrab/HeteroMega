@@ -1,0 +1,98 @@
+// Copyright (C) 2026 HeteroMega contributors.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+// AIE2P fused SiLU(gate) * up for already-projected BF16 inputs.
+// Uses the vector LUT API demonstrated by AMD MLIR-AIE's
+// aie_runtime_lib/AIE2P/lut_based_ops.h, revision
+// 7e00b57955e108fe9d8e9419f5828a0c7e650858.
+// Native AIE2P tanh is too coarse for this kernel's correctness tolerance.
+
+#include <aie_api/aie.hpp>
+#include "aie_kernel_utils.h"
+
+#ifndef HETEROMEGA_TILE_SIZE
+#define HETEROMEGA_TILE_SIZE 1024
+#endif
+
+static_assert(HETEROMEGA_TILE_SIZE > 0 && HETEROMEGA_TILE_SIZE % 16 == 0,
+              "tile size must be a positive multiple of 16 BF16 elements");
+
+// Direct sigmoid approximation avoids cancellation in (1 + tanh(x/2))/2.
+// Each of 128 segments has width 1/4 and midpoint m = -16 + (i+1/2)/4.
+// slope = round_bf16(sigmoid(m)*(1-sigmoid(m)));
+// intercept = round_f32(sigmoid(m)-slope*m).
+// A table entry is {BF16 slope stored in the high half of float, FP32
+// intercept}; four entries are duplicated for the four-bank gather layout.
+// Both LUT banks contain the same data (4 KiB total).
+#define LUT_ROW(...) __VA_ARGS__, __VA_ARGS__
+#define SIGMOID_TABLE { \
+  LUT_ROW(1.275911927e-7f, 0.000002153029300f, 1.639127731e-7f, 0.000002724874776f, 2.104789019e-7f, 0.000003446356459f, 2.700835466e-7f, 0.000004354971225f), \
+  LUT_ROW(3.464519978e-7f, 0.000005500105999f, 4.451721907e-7f, 0.000006955728168f, 5.699694157e-7f, 0.000008764810445f, 7.338821888e-7f, 0.00001109990717f), \
+  LUT_ROW(9.424984455e-7f, 0.00001401941063f, 0.000001206994057f, 0.00001765516026f, 0.000001557171345f, 0.00002238066372f, 0.000001996755600f, 0.00002820214650f), \
+  LUT_ROW(0.000002562999725f, 0.00003555990406f, 0.000003293156624f, 0.00004486484977f, 0.000004231929779f, 0.00005659296585f, 0.000005424022675f, 0.00007118849317f), \
+  LUT_ROW(0.000006973743439f, 0.00008977545804f, 0.000008940696716f, 0.0001128752992f, 0.00001150369644f, 0.0001423333160f, 0.00001472234726f, 0.0001785250934f), \
+  LUT_ROW(0.00001895427704f, 0.0002250529069f, 0.00002431869507f, 0.0002826863783f, 0.00003123283386f, 0.0003552425769f, 0.00004005432129f, 0.0004456136958f), \
+  LUT_ROW(0.00005149841309f, 0.0005599890719f, 0.00006628036499f, 0.0007040006458f, 0.00008487701416f, 0.0008805330726f, 0.0001087188721f, 0.001100956579f), \
+  LUT_ROW(0.0001401901245f, 0.001384009374f, 0.0001792907715f, 0.001725910930f, 0.0002307891846f, 0.002163366182f, 0.0002956390381f, 0.002698024269f), \
+  LUT_ROW(0.0003795623779f, 0.003369038226f, 0.0004882812500f, 0.004211001564f, 0.0006256103516f, 0.005240210332f, 0.0008049011230f, 0.006539006252f), \
+  LUT_ROW(0.001029968262f, 0.008113263175f, 0.001319885254f, 0.01006926224f, 0.001701354980f, 0.01254686061f, 0.002182006836f, 0.01554750837f), \
+  LUT_ROW(0.002792358398f, 0.01920603216f, 0.003585815430f, 0.02376381494f, 0.004577636719f, 0.02921436913f, 0.005889892578f, 0.03609676659f), \
+  LUT_ROW(0.007507324219f, 0.04417544603f, 0.009643554688f, 0.05430991575f, 0.01226806641f, 0.06610444188f, 0.01562500000f, 0.08035951853f), \
+  LUT_ROW(0.01989746094f, 0.09743501246f, 0.02526855469f, 0.1175558716f, 0.03198242188f, 0.1410266459f, 0.04028320313f, 0.1679727435f), \
+  LUT_ROW(0.05053710938f, 0.1986975223f, 0.06298828125f, 0.2328909338f, 0.07763671875f, 0.2694862485f, 0.09521484375f, 0.3090221286f), \
+  LUT_ROW(0.1152343750f, 0.3490287066f, 0.1376953125f, 0.3882713318f, 0.1611328125f, 0.4233708382f, 0.1845703125f, 0.4527266026f), \
+  LUT_ROW(0.2080078125f, 0.4762217999f, 0.2275390625f, 0.4908570349f, 0.2412109375f, 0.4977875054f, 0.2490234375f, 0.4999185503f), \
+  LUT_ROW(0.2490234375f, 0.5000814199f, 0.2412109375f, 0.5022125244f, 0.2275390625f, 0.5091429353f, 0.2080078125f, 0.5237782001f), \
+  LUT_ROW(0.1845703125f, 0.5472733974f, 0.1611328125f, 0.5766291618f, 0.1376953125f, 0.6117286682f, 0.1152343750f, 0.6509712934f), \
+  LUT_ROW(0.09521484375f, 0.6909778714f, 0.07763671875f, 0.7305137515f, 0.06298828125f, 0.7671090961f, 0.05053710938f, 0.8013024926f), \
+  LUT_ROW(0.04028320313f, 0.8320272565f, 0.03198242188f, 0.8589733243f, 0.02526855469f, 0.8824441433f, 0.01989746094f, 0.9025650024f), \
+  LUT_ROW(0.01562500000f, 0.9196404815f, 0.01226806641f, 0.9338955879f, 0.009643554688f, 0.9456900954f, 0.007507324219f, 0.9558245540f), \
+  LUT_ROW(0.005889892578f, 0.9639032483f, 0.004577636719f, 0.9707856178f, 0.003585815430f, 0.9762361646f, 0.002792358398f, 0.9807939529f), \
+  LUT_ROW(0.002182006836f, 0.9844524860f, 0.001701354980f, 0.9874531627f, 0.001319885254f, 0.9899307489f, 0.001029968262f, 0.9918867350f), \
+  LUT_ROW(0.0008049011230f, 0.9934610128f, 0.0006256103516f, 0.9947597980f, 0.0004882812500f, 0.9957889915f, 0.0003795623779f, 0.9966309667f), \
+  LUT_ROW(0.0002956390381f, 0.9973019958f, 0.0002307891846f, 0.9978366494f, 0.0001792907715f, 0.9982740879f, 0.0001401901245f, 0.9986159801f), \
+  LUT_ROW(0.0001087188721f, 0.9988990426f, 0.00008487701416f, 0.9991194606f, 0.00006628036499f, 0.9992960095f, 0.00005149841309f, 0.9994400144f), \
+  LUT_ROW(0.00004005432129f, 0.9995543957f, 0.00003123283386f, 0.9996447563f, 0.00002431869507f, 0.9997172952f, 0.00001895427704f, 0.9997749329f), \
+  LUT_ROW(0.00001472234726f, 0.9998214841f, 0.00001150369644f, 0.9998576641f, 0.000008940696716f, 0.9998871088f, 0.000006973743439f, 0.9999102354f), \
+  LUT_ROW(0.000005424022675f, 0.9999288321f, 0.000004231929779f, 0.9999434352f, 0.000003293156624f, 0.9999551177f, 0.000002562999725f, 0.9999644160f), \
+  LUT_ROW(0.000001996755600f, 0.9999718070f, 0.000001557171345f, 0.9999776483f, 0.000001206994057f, 0.9999823570f, 9.424984455e-7f, 0.9999859929f), \
+  LUT_ROW(7.338821888e-7f, 0.9999889135f, 5.699694157e-7f, 0.9999912381f, 4.451721907e-7f, 0.9999930263f, 3.464519978e-7f, 0.9999945164f), \
+  LUT_ROW(2.700835466e-7f, 0.9999956489f, 2.104789019e-7f, 0.9999965429f, 1.639127731e-7f, 0.9999972582f, 1.275911927e-7f, 0.9999978542f) \
+}
+alignas(aie::vector_decl_align) static float sigmoid_ab[512] = SIGMOID_TABLE;
+alignas(aie::vector_decl_align) static float sigmoid_cd[512] = SIGMOID_TABLE;
+#undef SIGMOID_TABLE
+#undef LUT_ROW
+
+extern "C" void silu_mul_bf16(bfloat16 *__restrict gate,
+                              bfloat16 *__restrict up,
+                              bfloat16 *__restrict out) {
+  auto gate_it = aie::begin_restrict_vector<16>(gate);
+  auto up_it = aie::begin_restrict_vector<16>(up);
+  auto out_it = aie::begin_restrict_vector<16>(out);
+  using lut_type = aie::lut<4, float, bfloat16>;
+  lut_type table(128, (bfloat16 *)sigmoid_ab, (bfloat16 *)sigmoid_cd);
+  aie::linear_approx<bfloat16, lut_type> sigmoid_fn(table, -2, 64, 0);
+
+  // BF16 narrowing must match the host's round-to-nearest-even behavior.
+  const auto saved_rounding = aie::swap_rounding(aie::rounding_mode::conv_even);
+  event0();
+  AIE_PREPARE_FOR_PIPELINING
+  for (int i = 0; i < HETEROMEGA_TILE_SIZE; i += 16) {
+    const aie::vector<bfloat16, 16> g = *gate_it++;
+    const aie::vector<bfloat16, 16> u = *up_it++;
+    const auto clamped = aie::min(aie::max(g, bfloat16(-16.0f)),
+                                 bfloat16(15.875f));
+    aie::vector<bfloat16, 16> sigmoid =
+        sigmoid_fn.compute(clamped).to_vector<bfloat16>();
+    sigmoid = aie::select(sigmoid, aie::zeros<bfloat16, 16>(),
+                          aie::lt(g, bfloat16(-16.0f)));
+    sigmoid = aie::select(sigmoid, aie::broadcast<bfloat16, 16>(1.0f),
+                          aie::ge(g, bfloat16(16.0f)));
+    // Match HeteroMosaic's BF16 SiLU intermediate before the multiply.
+    const aie::vector<bfloat16, 16> silu = aie::mul(g, sigmoid);
+    *out_it++ = aie::mul(silu, u).to_vector<bfloat16>();
+  }
+  event1();
+  aie::set_rounding(saved_rounding);
+}
