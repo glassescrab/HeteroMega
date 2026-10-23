@@ -19,6 +19,16 @@ The original BFP16 overlay is preserved. Use source hashes rather than the
 copied remote Git HEAD to identify what ran. The notebook currently reports
 NPU power mode `default`, not `performance`.
 
+Read [OPTIMIZATION_RESULTS.md](experiments/ffn_partition/OPTIMIZATION_RESULTS.md)
+for the final measured configurations and reproduction. P2560 with explicit
+`--borrow-npu-readback` confirms at 18.337/18.393 ms versus old-best 18.845 ms;
+owned P2560 is 18.800 ms. Borrowing is partition-dependent and remains opt-in.
+The old/new kernel outputs are bit-identical in the separate hardware check.
+All 13 reports pass original bounds. Latest main's GPU/evaluation work is
+merged. These remain isolated FFN results; no full-model acceleration is
+established. The historical uncommitted/PR-paused statements below no longer
+describe the current authorization or branch.
+
 Historical BFP16 analysis must use its archived source: extract
 `initial-runtime.tar.gz` then `final-harness.tar.gz`, and pass `--source-root`
 to the analysis scripts. They deliberately reject the changed current kernel.

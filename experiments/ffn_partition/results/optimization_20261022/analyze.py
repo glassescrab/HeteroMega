@@ -151,6 +151,13 @@ def ordinary_host(samples):
 def diagnostic_stages(samples):
     result = {'instrumented_wall': stats(sample['instrumented_wall_us'] for sample in samples),
               'npu_branch_host_wall': stats(sample['npu']['branch_host_wall_us'] for sample in samples)}
+    result['cpu_layout_sum'] = stats(sum(value for key, value in sample['npu']['stages'].items()
+                                        if key.endswith('_layout_us')) for sample in samples)
+    result['npu_submit_host_sum'] = stats(sum(row['submit_host_us'] for row in sample['npu_submit_wait_host'].values())
+                                         for sample in samples)
+    result['bo_io_and_wrapper_residual_sum'] = stats(sum(
+        sample['npu']['stages'][stage + '_with_host_io_us'] - value
+        for stage, value in sample['npu']['dispatch_wait_us'].items()) for sample in samples)
     for key in samples[0]['npu']['stages']:
         result['npu_' + key.removesuffix('_us')] = stats(sample['npu']['stages'][key] for sample in samples)
     for stage in samples[0]['npu_submit_wait_host']:
@@ -343,6 +350,65 @@ def plot(summary, output):
     return paths
 
 
+def plot_diagnostics(summary, output):
+    """Compare independent diagnostic durations; never stack overlapping spans."""
+    names = [('control_timeline_2048.json', 'Prior BFP16 · owned', '#D55E00'),
+             ('optimized_owned_timeline_2048.json', 'Optimized BFP16 · owned', '#009E73'),
+             ('optimized_timeline_2048.json', 'Optimized BFP16 · borrowed', '#0072B2')]
+    by_name = {audit['report']: audit for audit in summary['reports'] if audit['mode'] == 'diagnostic'}
+    if not all(name in by_name for name, _, _ in names):
+        return []
+    import matplotlib.pyplot as plt
+    panels = [
+        ('NPU execution waits', [('Gate/up + SwiGLU', 'swiglu_wait_host'), ('Down', 'down_wait_host')]),
+        ('Host staging and submission', [('CPU layouts', 'cpu_layout_sum'),
+                                         ('BO I/O + wrappers', 'bo_io_and_wrapper_residual_sum'),
+                                         ('Submission', 'npu_submit_host_sum')]),
+        ('Concurrent branch durations', [('NPU host call', 'npu_branch_host_wall'),
+                                          ('GPU events', 'gpu_event_intervals/branch'),
+                                          ('FFN boundary', 'instrumented_wall')]),
+    ]
+    fig, axes = plt.subplots(1, 3, figsize=(14.5, 5.8), width_ratios=(.85, 1.15, 1.15))
+    width = .23
+    for index, (name, label, color) in enumerate(names):
+        audit = by_name[name]
+        require(len(audit['partitions']) == 1 and audit['partitions'][0]['npu_channels'] == 2048,
+                'diagnostic chart requires P2048')
+        values = audit['partitions'][0]['instrumented_stages_us']
+        for axis, (title, fields) in zip(axes, panels):
+            ticks = np.arange(len(fields))
+            x = ticks + (index - 1) * width
+            items = [values[key] for _, key in fields]
+            medians = [value['median_us'] / 1000 for value in items]
+            errors = [[(v['median_us'] - v['p10_us']) / 1000 for v in items],
+                      [(v['p90_us'] - v['median_us']) / 1000 for v in items]]
+            axis.bar(x, medians, width=width, color=color, label=label,
+                     yerr=errors, capsize=2, error_kw={'linewidth': .8})
+            axis.set_xticks(ticks, [label for label, _ in fields])
+            axis.set(title=title, ylabel='Measured duration (ms)')
+            axis.grid(axis='y', color='#DFE3E7', linewidth=.6)
+            axis.set_axisbelow(True)
+            axis.spines[['top', 'right']].set_visible(False)
+    fig.suptitle('Instrumented P2048 FFN: NPU waits, host staging and branch durations',
+                 fontsize=14, weight='bold')
+    fig.text(.5, .905, 'M512 / H4096 / I14336 · three independent diagnostic runs · 15 samples each',
+             ha='center', color='#555555')
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc='lower center', bbox_to_anchor=(.5, .015), ncol=3, frameon=False)
+    fig.text(.01, -.055,
+        'Bars: sample medians; whiskers: p10–p90. Staging totals are summed per invocation before aggregation.\n'
+        'NPU host waits include compute, DMA and stalls. GPU event and host spans have different clocks and overlap. '
+        'These are diagnostics, not ordinary latency or full-model speedup.', fontsize=8)
+    fig.subplots_adjust(top=.80, bottom=.22, wspace=.28)
+    paths = []
+    for extension in ('png', 'pdf', 'svg'):
+        path = output / ('diagnostic_stages_p2048.' + extension)
+        fig.savefig(path, dpi=180, bbox_inches='tight')
+        paths.append(path.name)
+    plt.close(fig)
+    return paths
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--raw-root', type=Path, default=HERE / 'raw')
@@ -380,7 +446,8 @@ def main():
                'analysis_source_sha256': sha256(Path(__file__).read_bytes()).hexdigest(),
                'validator_source_sha256': sha256((ROOT / 'experiments/ffn_partition/sweep_partition.py').read_bytes()).hexdigest()}
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    summary['figures'] = [] if args.no_render else plot(summary, args.output_dir)
+    summary['figures'] = ([] if args.no_render else
+                          plot(summary, args.output_dir) + plot_diagnostics(summary, args.output_dir))
     destination = args.output_dir / 'summary.json'
     destination.write_text(json.dumps(summary, indent=2, allow_nan=False) + '\n')
     print(json.dumps({'summary': str(destination), 'reports': len(audits),

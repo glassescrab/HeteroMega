@@ -384,14 +384,16 @@ class NPUBranch:
     The caller must include GPU-to-host/host-to-GPU transfers and output
     reduction when timing a complete heterogeneous FFN.
 
-    Readbacks are borrowed only until the next staging/layout consumer. Set
-    ``copy_output_bits=True`` to reproduce the previous extra ownership copy.
+    Readbacks own their output by default, preserving the measured baseline
+    staging behavior. ``copy_output_bits=False`` is an experimental option
+    that borrows readbacks until the next staging/layout consumer; its
+    end-to-end latency benefit depends on the partition.
     The returned row-major array always survives subsequent branch runs.
     """
 
     def __init__(self, gate, up, down, m, artifact_root, columns=8,
                  npu_design="array8", fuse_gate_up=False, fuse_swiglu=False,
-                 npu_arithmetic="bf16", copy_output_bits=False):
+                 npu_arithmetic="bf16", copy_output_bits=True):
         self.copy_output_bits = bool(copy_output_bits)
         self.fuse_swiglu = bool(fuse_swiglu)
         self.fuse_gate_up = bool(fuse_gate_up or self.fuse_swiglu)
@@ -485,8 +487,8 @@ class NPUBranch:
             # A runner is not dispatched again until its output has been
             # consumed by the next BO write or CPU layout permutation. The
             # branch is non-reentrant, and the final unpack owns its output;
-            # no borrowed BO storage escapes run(). The opt-in copy preserves
-            # the previous staging path for controlled comparisons.
+            # no borrowed BO storage escapes run(). Borrowing is opt-in; the
+            # default copy preserves the previous measured staging path.
             result = (tuple(runner.output_bits(i, copy=self.copy_output_bits) for i in range(2))
                       if label == "gate_up" else runner.output_bits(copy=self.copy_output_bits))
             stages[f"{label}_with_host_io_us"] = (time.perf_counter_ns() - before) / 1000.0

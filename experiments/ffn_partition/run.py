@@ -157,8 +157,12 @@ def main():
                         help="projection arithmetic; BFP16 is experimental and may have larger numerical error")
     parser.add_argument("--accuracy-policy", choices=("strict", "report"),
                         help="default: strict for BF16, report deviations for BFP16; GPU controls remain strict")
-    parser.add_argument("--owned-npu-readback", action="store_true",
-                        help="retain the previous extra BO readback copy for controlled comparison")
+    readback = parser.add_mutually_exclusive_group()
+    readback.add_argument("--owned-npu-readback", dest="owned_npu_readback", action="store_true",
+                          help="use owned BO readback copies (default; preserves archived control commands)")
+    readback.add_argument("--borrow-npu-readback", dest="owned_npu_readback", action="store_false",
+                          help="experimental borrowed BO readback; latency benefit depends on the partition")
+    parser.set_defaults(owned_npu_readback=True)
     parser.add_argument("--fuse-gate-up", action="store_true",
                         help="array8 gate/up in one wider projection with two compact output BOs")
     parser.add_argument("--fuse-swiglu", action="store_true",

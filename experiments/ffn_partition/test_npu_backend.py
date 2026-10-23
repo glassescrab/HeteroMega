@@ -180,6 +180,8 @@ class NPUBackendTests(unittest.TestCase):
                 branch = backend.NPUBranch(weights.gate, weights.up, weights.down,
                                            128, root, npu_arithmetic="bfp16")
             self.assertEqual(branch.metadata["npu_arithmetic"], "bfp16")
+            self.assertTrue(branch.copy_output_bits)
+            self.assertEqual(branch.metadata["host_output_readback"], "owned_copy")
             self.assertEqual(branch.metadata["compute_format"], "bfp16")
             self.assertEqual(branch.metadata["worker_stack_size"], 4096)
             self.assertEqual(branch.metadata["launches_per_run"], 4)

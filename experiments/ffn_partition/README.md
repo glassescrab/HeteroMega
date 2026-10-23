@@ -334,3 +334,10 @@ inside the original causal micro-batch schedule, holding attention, weights,
 quantization, and chunk sizes fixed. Measure attention interference and actual
 complete-prefill latency with output/logit checks before claiming model-level
 acceleration or TTFT improvement.
+## Latest BFP16 optimization
+
+See [the October 22 optimization report](OPTIMIZATION_RESULTS.md) for measured
+zero-point conversion removal, partition retuning, readback ablations and
+reproducible evidence. Owned BO readback remains default; use
+`--borrow-npu-readback` for the experimental configuration whose benefit
+depends on the partition. Native BF16 arithmetic remains the default.

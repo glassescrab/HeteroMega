@@ -1,5 +1,34 @@
 # HeteroMega progress
 
+## 2026-10-22: BFP16 dequantization optimization and PR preparation
+
+- **Implemented and compiler-confirmed:** construct exact BF16 zero-point
+  metadata bits in place of scalar integer-to-float conversions. Gate/up/down
+  worker ELFs contain 32→0 `__floatunsisf` call sites per dequantizer. Compact
+  W4A16 ABI, eight columns, BFP16 MMUL and native BF16 control remain intact.
+- **Measured at fixed P2048 with owned readback:** ordinary FFN median
+  19.320→18.671 ms; diagnostic NPU call 18.634→15.965 ms. This exposes the GPU
+  as the later dependency. Waits still combine device execution, DMA and stalls.
+- **Measured selected configuration:** P2560 plus experimental borrowed
+  readback confirms at 18.337 and 18.393 ms (50 samples each), versus the old
+  P1792 confirmation at 18.845 ms and fresh GPU-only controls 22.450/22.304 ms.
+  The observed gain is 2.4–2.7% over the old best, with overlapping sample
+  distributions. Owned P2560 measures 18.800 ms. Borrowing has no universal
+  benefit, so owned readback stays default and `--borrow-npu-readback` opts in.
+- **Verified:** 13 reports pass original bounds, 2,468 NPU completions,
+  1,485 timed invocations; a separate 16-completion old/new comparison is
+  bit-identical on two random inputs, zero and repeat. 158 local CPU tests
+  pass across NPU, partition and teammate evaluation suites. All 101 archived
+  file hashes match. Both power snapshots remain `default`.
+- **Scope:** synthetic isolated FFN, not native heterogeneous HeteroMosaic or
+  full-model prefill/TTFT. Native adapter remains prepared but unmeasured.
+  Latest main (teammate GPU/evaluation PRs) is merged without source changes
+  to those components. Current request explicitly authorizes commit/push/PR,
+  superseding the historical pause. Branch: `codex/npu-bfp16-prefill-optimizations`.
+- [Optimization report and reproduction](../experiments/ffn_partition/OPTIMIZATION_RESULTS.md).
+  Next restore native comparison and test the selected FFN within actual
+  prefill/attention scheduling.
+
 ## 2026-10-22: NPU implementation bottleneck trace
 
 - **Reanalyzed measured evidence:** P1792's outer NPU call averages 17.831 ms:
