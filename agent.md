@@ -6,6 +6,8 @@ The user explicitly requested **"make some optimizations and make a PR"**.
 This supersedes the PR pause in the historical entries below. The current
 branch is `codex/npu-bfp16-prefill-optimizations`. Preserve the prior native
 comparison preparation and teammate GPU/evaluation changes from main.
+The branch is pushed and [PR #3](https://github.com/glassescrab/HeteroMega/pull/3)
+is open. Continue review or new experiments there; do not create a duplicate PR.
 
 The bounded optimizations are exact BF16 bit construction for W4 zero-point
 metadata, removing software integer-to-float conversions, and borrowed

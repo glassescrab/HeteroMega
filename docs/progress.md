@@ -1,6 +1,6 @@
 # HeteroMega progress
 
-## 2026-10-22: BFP16 dequantization optimization and PR preparation
+## 2026-10-22: BFP16 dequantization optimization published
 
 - **Implemented and compiler-confirmed:** construct exact BF16 zero-point
   metadata bits in place of scalar integer-to-float conversions. Gate/up/down
@@ -25,6 +25,7 @@
   Latest main (teammate GPU/evaluation PRs) is merged without source changes
   to those components. Current request explicitly authorizes commit/push/PR,
   superseding the historical pause. Branch: `codex/npu-bfp16-prefill-optimizations`.
+  Published as [PR #3](https://github.com/glassescrab/HeteroMega/pull/3).
 - [Optimization report and reproduction](../experiments/ffn_partition/OPTIMIZATION_RESULTS.md).
   Next restore native comparison and test the selected FFN within actual
   prefill/attention scheduling.
