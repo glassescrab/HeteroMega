@@ -1,5 +1,23 @@
 # HeteroMega agent continuation guide
 
+## Latest scope — final kernels only in PR #3
+
+The user asked to reduce the PR to final MLIR code and needed XCLBINs.
+PR #3 now has one commit, `8622dbee423ba8e13ee3e1f166799f6201d0bc28`,
+adding only 21 files under `npu/ffn`: unchanged build sources, two generated
+MLIR graphs, tested SwiGLU/down binaries and matching instructions for
+M512/H4096/P2560, manifests, checksums, licenses and a short ABI/build README.
+The clean package worktree is `../HeteroMega-kernels`, branch
+`codex/npu-ffn-final-package`, tracking the PR branch
+`origin/codex/npu-bfp16-prefill-optimizations`.
+
+This original workspace now uses local backup branch
+`codex/ffn-full-experiment-backup-20261022` and preserves the full experiment
+history. Do not push this backup into PR #3 or reintroduce its reports,
+benchmarks, plots and handoff files. Existing artifact hashes match and all
+48 NPU CPU tests pass against the packaged modules; packaging did not rerun
+hardware. Historical broader PR descriptions below are superseded.
+
 ## Current authorization — 2026-10-22: optimization and PR
 
 The user explicitly requested **"make some optimizations and make a PR"**.

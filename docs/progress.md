@@ -1,5 +1,21 @@
 # HeteroMega progress
 
+## 2026-10-22: PR narrowed to final kernels and required binaries
+
+- User requested final MLIR code and needed XCLBINs only. PR #3 was replaced
+  with one commit (`8622dbe`), 21 files entirely under `npu/ffn`.
+- Package includes nine unchanged source dependencies, two generated MLIRs,
+  SwiGLU/down XCLBINs and instruction pairs for M512/H4096/P2560, manifests,
+  SHA256SUMS, license/notice and a concise build/runtime contract.
+- **Verified:** both pairs match the measured artifact hashes; generated
+  graphs each contain 32 cores across eight columns; source identities match;
+  all 48 existing NPU CPU tests pass against packaged modules. No new device
+  execution or performance claim from repackaging.
+- Full research work remains on local backup branch
+  `codex/ffn-full-experiment-backup-20261022`. The minimal PR worktree is
+  `../HeteroMega-kernels`; continue package review there. GPU/model runtime
+  integration remains a separate next step.
+
 ## 2026-10-22: BFP16 dequantization optimization published
 
 - **Implemented and compiler-confirmed:** construct exact BF16 zero-point
