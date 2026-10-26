@@ -20,6 +20,45 @@ class WeightSegment:
 
 
 @dataclass(frozen=True)
+class SegmentPipelineAction:
+    kind: str
+    group: int
+    segment: int
+
+
+def validate_segment_pipeline_depth(depth):
+    if isinstance(depth, bool) or not isinstance(depth, int) or depth not in (1, 2):
+        raise ValueError('segment_pipeline_depth must be 1 or 2')
+    return depth
+
+
+def segment_pipeline_actions(schedule, segment_pipeline_depth=2):
+    """Submit at most two segments, finishing the oldest before the next.
+
+    Segment order stays identical on every A/W/Y channel, including the
+    transition between M waves. A segment is retired only after all of its
+    output drains complete, which also proves its A/W transfers completed.
+    The current graph has one transfer per channel per segment: depth two
+    therefore uses at most two queue entries per channel and six live shim
+    BDs (A, W, Y), below AIE2's four-entry queues and sixteen-BD shim limit.
+    Depth one retains the serial control. This is a logical schedule; the
+    MLIR compiler and device still have to verify/execute its lowering.
+    """
+    depth = validate_segment_pipeline_depth(segment_pipeline_depth)
+    pending, actions = [], []
+    for group in range(schedule.base.groups_per_column):
+        for segment in range(schedule.segment_count):
+            if len(pending) == depth:
+                old_group, old_segment = pending.pop(0)
+                actions.append(SegmentPipelineAction('finish', old_group, old_segment))
+            actions.append(SegmentPipelineAction('submit', group, segment))
+            pending.append((group, segment))
+    actions.extend(SegmentPipelineAction('finish', group, segment)
+                   for group, segment in pending)
+    return tuple(actions)
+
+
+@dataclass(frozen=True)
 class UpstreamSchedule:
     base: object
     mode: str

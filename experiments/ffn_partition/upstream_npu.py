@@ -27,7 +27,7 @@ except ImportError:
     from contract import packed_output_to_activation
 
 from upstream_weights import UpstreamWeightBuffer, UPSTREAM_LAYOUT_VERSION, WEIGHT_TILE_BYTES
-from upstream_schedule import plan_upstream
+from upstream_schedule import plan_upstream, validate_segment_pipeline_depth
 from projection_arithmetic import UPSTREAM_KERNEL_COMMIT
 from xrt_runner import load_manifest
 
@@ -45,11 +45,13 @@ def _source_contract():
             for name in DEPENDENCIES}
 
 
-def _artifact_spec(mode, m, k, n, weight, root, *, k_start=0, n_start=0):
+def _artifact_spec(mode, m, k, n, weight, root, *, k_start=0, n_start=0,
+                   segment_pipeline_depth=2):
     if mode not in ("projection", "swiglu"):
         raise ValueError("upstream graph mode must be projection or swiglu")
     if not isinstance(weight, UpstreamWeightBuffer):
         raise TypeError("weights must be an UpstreamWeightBuffer; implicit packing is unsupported")
+    segment_pipeline_depth = validate_segment_pipeline_depth(segment_pipeline_depth)
     weight.validate_slice(k_start, n_start, k, n)
     plan = plan_upstream(m, k, n, mode=mode, weight_k=weight.k, weight_n=weight.n,
                          k_start=k_start, n_start=n_start, columns=8, max_reuse=2)
@@ -58,6 +60,7 @@ def _artifact_spec(mode, m, k, n, weight, root, *, k_start=0, n_start=0):
         weight_k=weight.k, weight_n=weight.n, k_start=k_start, n_start=n_start,
         cols=8, compute_rows=4, worker_count=32,
         m_reuse=plan.base.m_reuse, worker_stack_size=2048,
+        segment_pipeline_depth=segment_pipeline_depth,
         weight_layout=UPSTREAM_LAYOUT_VERSION, weight_tile_bytes=WEIGHT_TILE_BYTES,
         arithmetic="bf16", compute_format="bf16",
         upstream_kernel_commit=UPSTREAM_KERNEL_COMMIT,
@@ -70,12 +73,14 @@ def _artifact_spec(mode, m, k, n, weight, root, *, k_start=0, n_start=0):
     arguments = ["--mode", mode, "-M", str(m), "-K", str(k), "-N", str(n),
                  "--weight-k", str(weight.k), "--weight-n", str(weight.n),
                  "--k-start", str(k_start), "--n-start", str(n_start),
-                 "-co", "8", "--max-reuse", "2"]
+                 "-co", "8", "--max-reuse", "2",
+                 "--segment-pipeline-depth", str(segment_pipeline_depth)]
     return {"directory": directory, "expected": expected,
             "source_sha256": dependency, "arguments": arguments}
 
 
-def _ffn_specs(m, hidden, channels, gate, up, down, root, channel_start=0):
+def _ffn_specs(m, hidden, channels, gate, up, down, root, channel_start=0,
+               *, segment_pipeline_depth=2):
     m, hidden, channels, _ = _geometry(m, hidden, channels, 8)
     if any(not isinstance(w, UpstreamWeightBuffer) for w in (gate, up, down)):
         raise TypeError("gate/up/down must be UpstreamWeightBuffer objects; implicit packing is unsupported")
@@ -88,9 +93,11 @@ def _ffn_specs(m, hidden, channels, gate, up, down, root, channel_start=0):
     down.validate_slice(channel_start, 0, channels, hidden)
     return {
         "swiglu": _artifact_spec("swiglu", m, hidden, channels, gate, root,
-                                 n_start=channel_start),
+                                 n_start=channel_start,
+                                 segment_pipeline_depth=segment_pipeline_depth),
         "down": _artifact_spec("projection", m, channels, hidden, down, root,
-                               k_start=channel_start),
+                               k_start=channel_start,
+                               segment_pipeline_depth=segment_pipeline_depth),
     }
 
 
@@ -123,13 +130,15 @@ def _load_artifact(spec):
 
 
 def build_upstream_artifacts(m, hidden, channels, gate, up, down, artifact_root,
-                             *, channel_start=0, python_executable=None):
+                             *, channel_start=0, python_executable=None,
+                             segment_pipeline_depth=2):
     """Compile missing/stale native-BF16 artifacts for unchanged full buffers.
 
     ``python_executable`` should name the configured IRON environment. This
     function never edits, slices, concatenates or repacks a weight buffer.
     """
-    specs = _ffn_specs(m, hidden, channels, gate, up, down, artifact_root, channel_start)
+    specs = _ffn_specs(m, hidden, channels, gate, up, down, artifact_root, channel_start,
+                       segment_pipeline_depth=segment_pipeline_depth)
     artifacts = {}
     for label, spec in specs.items():
         try:
@@ -168,8 +177,9 @@ class UpstreamNpuFFN:
     """
 
     def __init__(self, m, hidden, channels, gate, up, down, artifact_root, *,
-                 channel_start=0, copy_output_bits=True):
-        specs = _ffn_specs(m, hidden, channels, gate, up, down, artifact_root, channel_start)
+                 channel_start=0, copy_output_bits=True, segment_pipeline_depth=2):
+        specs = _ffn_specs(m, hidden, channels, gate, up, down, artifact_root, channel_start,
+                           segment_pipeline_depth=segment_pipeline_depth)
         artifacts = {label: _load_artifact(spec) for label, spec in specs.items()}
         self.m, self.hidden, self.channels, _ = _geometry(m, hidden, channels, 8)
         self.channel_start = int(channel_start)
@@ -197,6 +207,7 @@ class UpstreamNpuFFN:
             weight_layout=UPSTREAM_LAYOUT_VERSION, weight_tile_bytes=WEIGHT_TILE_BYTES,
             weight_repacking=False, full_weight_buffers=True, m=self.m, hidden=self.hidden,
             channels=self.channels, channel_start=self.channel_start,
+            segment_pipeline_depth=segment_pipeline_depth,
             full_intermediate=gate.n, columns_requested=8, worker_count=32,
             fuse_gate_up=True, fuse_swiglu=True, launches_per_run=2,
             fixed_weight_uploads=3, fixed_weight_bytes=sum(w.nbytes for w in self.weights),

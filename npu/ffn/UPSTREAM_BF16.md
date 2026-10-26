@@ -58,6 +58,22 @@ instruction length is bytes. Verify the manifest's BF16 arithmetic, upstream
 layout identifier, full source geometry, partition offsets and artifact hashes.
 Old compact or BFP16 binaries are not interchangeable with this graph.
 
+## Segment pipeline
+
+`--segment-pipeline-depth 2` keeps at most two successive N64 segments in
+flight. Every segment queues its output drains before its activation and
+weight fills. The runtime waits for and frees the oldest group before
+submitting a third; the window continues across M-wave boundaries. Existing
+FIFO depths, core buffers, arithmetic and transfer addresses are unchanged.
+Completion of a segment's output drains proves its input transfers are done
+before their descriptors are reused. All groups are drained before return.
+
+`--segment-pipeline-depth 1` reproduces the serial schedule for comparison.
+Depth is part of the artifact manifest and cache identity. Two in-flight
+segments require at most two tasks per DMA channel and six live shim buffer
+descriptors in this graph. This does not increase core-local weight reuse or
+overlap dequantization with MMUL inside an individual worker.
+
 The experimental host adapter is
 `experiments/ffn_partition/upstream_npu.py`. Wrap each existing flat contiguous
 uint8 buffer in `UpstreamWeightBuffer(data, full_k, full_n)`, call
@@ -77,5 +93,5 @@ completion counts, input/output hashes and unchanged-weight checks.
 
 Hardware results must be read from the corresponding saved report. A source
 change or successful compile alone does not establish device correctness,
-model accuracy or speedup. Per-segment runtime barriers differ from the old
-graph, so previous latency measurements do not transfer to this design.
+model accuracy or speedup. Compare pipeline depths on the same build and
+inputs; previous compact/BFP16 latency measurements do not transfer.

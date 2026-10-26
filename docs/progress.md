@@ -1,5 +1,44 @@
 # HeteroMega progress
 
+## 2026-10-25: bounded pipeline for original-weight BF16 segments
+
+- **Implemented:** keep two successive DMA task groups in flight, including
+  across M-wave boundaries. Queue each segment's output drains before fills;
+  wait for and free the oldest group before submitting a third. No change to
+  C++ arithmetic, core buffers, FIFO depths, weight bytes or DMA addresses.
+  `--segment-pipeline-depth 1` retains the serial control; depth 2 is the
+  selected default. Manifests and cache identities include the depth.
+- **Measured correctness:** all seven strict-reference cases pass (40 NPU
+  completions), covering model shape, uneven partitions and source offsets.
+  Full-shape outputs match the preceding package exactly. ABBA/BAAB timing
+  runs also require exact control outputs, finite data, successful completion
+  and one-time unchanged-weight uploads. Total: 736 completed dispatches.
+- **Measured performance:** HX370/default-power isolated NPU-branch median
+  24.796→24.024 ms in ABBA (50 samples per schedule), and 25.126→24.512 ms
+  in BAAB confirmation (100 per schedule): 3.1% and 2.4% lower latency.
+  Timings include activation layouts/BO I/O; setup, weight uploads, warmup,
+  hashing and comparisons are excluded. Each block uses a fresh subprocess.
+- **Verified locally:** 63 NPU tests pass; 114 experiment tests complete with
+  one skip (176 pass total). Tests cover output ownership, bounded in-flight
+  groups, drain-before-fill ordering, tail/wave transitions, cache separation
+  and detection of bitwise output regressions.
+- **Compiler/artifact verified:** compute/FIFO MLIR prefixes and DMA taps
+  match between depths; all 64 corresponding core ELF pairs are byte-identical.
+  The emitted runtime submits twice as many tasks before its first await,
+  stays within two live tasks/channel and six logical descriptors/shim, and
+  awaits output completion before freeing descriptors. All four binary pairs
+  and source identities match their recorded manifests.
+- **Published:** kernel-only [PR #3](https://github.com/glassescrab/HeteroMega/pull/3)
+  updated at `d628e48`; it still contains only 21 files under `npu/ffn`.
+  Full harness/evidence is checkpointed locally on
+  `codex/native-bf16-segment-pipeline` and is excluded from the PR.
+- **Limits/next step:** timing distributions overlap; do not generalize this
+  modest isolated-branch improvement to full GPU+NPU prefill. Dequantization
+  and MMUL remain serial inside each worker, and weight/activation replay
+  remains. Profile those phases next, then evaluate the selected schedule
+  under actual GPU/attention overlap and retune the partition.
+  [Evidence and reproduction](runs/2026-10-25-pipeline-bf16/README.md).
+
 ## 2026-10-25: native BF16 consuming original upstream weights
 
 - **User scope:** return to native BF16 and accept glassescrab's existing

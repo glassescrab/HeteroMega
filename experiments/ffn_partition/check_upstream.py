@@ -227,7 +227,8 @@ def run_check(args):
                 down = prepare_weights(intermediate, h, seed + 2)
                 fixtures = dict(gate=gate, up=up, down=down)
                 specs = _ffn_specs(m, h, p, gate.weight, up.weight, down.weight,
-                                   args.artifact_root, start)
+                                   args.artifact_root, start,
+                                   segment_pipeline_depth=args.segment_pipeline_depth)
             else:
                 m, k, n, wk, wn, ks, ns = (case[key] for key in
                     ('m', 'k', 'n', 'weight_k', 'weight_n', 'k_start', 'n_start'))
@@ -235,7 +236,8 @@ def run_check(args):
                 if case['mode'] == 'swiglu':
                     fixtures['up'] = prepare_weights(wk, wn, seed + 1)
                 specs = {'projection': _artifact_spec(case['mode'], m, k, n,
-                    fixtures['gate'].weight, args.artifact_root, k_start=ks, n_start=ns)}
+                    fixtures['gate'].weight, args.artifact_root, k_start=ks, n_start=ns,
+                    segment_pipeline_depth=args.segment_pipeline_depth)}
             original_hashes = {label: _hash(f.weight.data) for label, f in fixtures.items()}
             entry['original_weight_sha256'] = original_hashes
             entry['weight_bytes'] = {label: f.weight.nbytes for label, f in fixtures.items()}
@@ -253,7 +255,8 @@ def run_check(args):
                 dense_up = up.dense_slice(0, start, h, p)
                 dense_down = down.dense_slice(start, 0, p, h)
                 branch = UpstreamNpuFFN(m, h, p, gate.weight, up.weight, down.weight,
-                                        args.artifact_root, channel_start=start)
+                                        args.artifact_root, channel_start=start,
+                                        segment_pipeline_depth=args.segment_pipeline_depth)
 
                 def reference(x):
                     z = silu_multiply(bf16(x @ dense_gate), bf16(x @ dense_up), bf16_io=True)
@@ -325,6 +328,8 @@ def main():
     parser.add_argument('--cases', help='comma-separated case names; default runs the whole suite')
     parser.add_argument('--seed', type=int, default=251025)
     parser.add_argument('--compile-timeout', type=float, default=900)
+    parser.add_argument('--segment-pipeline-depth', type=int, choices=(1, 2), default=2,
+                        help='1: serial control; 2: queue two consecutive segments')
     builds = parser.add_mutually_exclusive_group()
     builds.add_argument('--build-only', action='store_true')
     builds.add_argument('--no-build', action='store_true')

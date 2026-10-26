@@ -1,5 +1,32 @@
 # HeteroMega agent continuation guide
 
+## Latest optimization — 2026-10-25: two-segment native BF16 pipeline
+
+The user authorized implementing the proposed segment pipeline. The selected
+graph now defaults to `--segment-pipeline-depth 2`; explicit depth 1 preserves
+the serial schedule. Both keep native BF16, original upstream weight buffers,
+identical compute/FIFO definitions and transfer addresses. At most two
+segments are outstanding, with the oldest retired before submitting a third.
+This pipelines DMA scheduling, not dequantization and MMUL within a worker.
+
+**Measured on HX370/default power:** NPU-branch median including host layouts
+and BO I/O improved 24.796→24.024 ms (ABBA, 50 samples/schedule) and
+25.126→24.512 ms (BAAB, 100 samples/schedule): 3.1% and 2.4% reductions.
+Outputs are bit-identical to the serial control. Seven correctness cases and
+both timing experiments completed 736 NPU dispatches. This is a modest
+isolated NPU-branch gain with overlapping timing distributions, not a
+GPU+NPU/full-model speedup or model-accuracy result.
+
+Read `docs/runs/2026-10-25-pipeline-bf16/README.md` for raw evidence and
+reproduction. The new timing entry point is
+`python -m experiments.ffn_partition.benchmark_upstream_pipeline`.
+Remote overlay: `/notebooks/HeteroMega-pipeline-bf16-20261025`; earlier
+overlays and serial package are preserved. The kernel-only PR remains in
+`../HeteroMega-kernels`; keep reports/harnesses in the local research branch.
+Published as `d628e482e00ae0dd044db0da513b4448f6c84f24` in
+[PR #3](https://github.com/glassescrab/HeteroMega/pull/3). Full experiment
+checkpoint: local branch `codex/native-bf16-segment-pipeline`.
+
 ## Latest direction — 2026-10-25: native BF16, original upstream weights
 
 The user requested **"we dont want repacking and go back to BF16"** and

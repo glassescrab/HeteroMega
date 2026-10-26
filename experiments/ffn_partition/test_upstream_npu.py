@@ -80,6 +80,31 @@ class _ObservedRunner:
 
 
 class UpstreamNpuTests(unittest.TestCase):
+    def test_pipeline_depth_is_strict_and_changes_both_artifact_identities(self):
+        with tempfile.TemporaryDirectory() as root:
+            weights = _weights()
+            serial = backend._ffn_specs(128, 256, 128, *weights, root, 128,
+                                        segment_pipeline_depth=1)
+            pipeline = backend._ffn_specs(128, 256, 128, *weights, root, 128,
+                                          segment_pipeline_depth=2)
+            for label in serial:
+                self.assertNotEqual(serial[label]['directory'], pipeline[label]['directory'])
+                self.assertEqual(serial[label]['expected']['segment_pipeline_depth'], 1)
+                self.assertEqual(pipeline[label]['expected']['segment_pipeline_depth'], 2)
+                self.assertEqual(serial[label]['arguments'][-2:], ['--segment-pipeline-depth', '1'])
+                _write_artifact(serial[label])
+                backend._load_artifact(serial[label])
+                manifest_path = serial[label]['directory'] / 'final.xclbin.json'
+                manifest = json.loads(manifest_path.read_text())
+                manifest['segment_pipeline_depth'] = 2
+                manifest_path.write_text(json.dumps(manifest))
+                with self.assertRaisesRegex(ValueError, 'segment_pipeline_depth'):
+                    backend._load_artifact(serial[label])
+            for invalid in (True, False, 0, 3, 1.0, 2.0, '2', None):
+                with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                    backend._ffn_specs(128, 256, 128, *weights, root,
+                                       segment_pipeline_depth=invalid)
+
     def test_real_graph_cli_manifest_matches_adapter_contract(self):
         # Execute the graph's actual CLI manifest writer, replacing only the
         # device compiler. This catches mismatches hidden by mock manifests.
@@ -142,6 +167,7 @@ class UpstreamNpuTests(unittest.TestCase):
             self.assertFalse(branch.metadata["weight_repacking"])
             self.assertTrue(branch.metadata["full_weight_buffers"])
             self.assertEqual(branch.metadata["compute_format"], "bf16")
+            self.assertEqual(branch.metadata["segment_pipeline_depth"], 2)
             self.assertEqual(branch.metadata["channel_start"], 128)
             self.assertEqual(first.shape, (128, 256))
             self.assertEqual(first.dtype, np.uint16)
@@ -233,6 +259,73 @@ class UpstreamNpuTests(unittest.TestCase):
             branch.run(np.zeros((128, 256), np.uint16))
             self.assertEqual(branch.swiglu.copies, [False])
             self.assertEqual(branch.down.copies, [False])
+
+
+class UpstreamPipelineBenchmarkTests(unittest.TestCase):
+    @staticmethod
+    def _module():
+        from experiments.ffn_partition import benchmark_upstream_pipeline
+        return benchmark_upstream_pipeline
+
+    def test_abba_and_baab_order_and_bitwise_regression_rejection(self):
+        benchmark = self._module()
+        self.assertEqual([d for _, _, d in benchmark.block_order(2)], [1, 2, 2, 1] * 2)
+        self.assertEqual([d for _, _, d in benchmark.block_order(1, 'BAAB')], [2, 1, 1, 2])
+        output = np.full((2, 2), 0x3F80, np.uint16)
+        entry = dict(segment_pipeline_depth=2, runs=[dict(input='signed_a')],
+            warmup=[dict(input='signed_a', output_sha256=benchmark._hash(output), finite=True)],
+            completed_dispatches=dict(swiglu=2, down=2),
+            fixed_weight_upload_counts=dict(gate=1, up=1, down=1))
+        candidate = output.copy()
+        candidate[0, 0] += 1  # Numerically close, but schedule changes must be exact.
+        benchmark._compare_outputs(entry, [candidate], {'signed_a': output})
+        self.assertEqual(entry['status'], 'failed')
+        self.assertTrue(entry['checks']['original_tolerances_vs_serial_control'])
+        self.assertFalse(entry['checks']['all_identical_to_serial_control'])
+
+    def test_isolated_worker_fixture_transport_counts_and_outputs(self):
+        benchmark = self._module()
+
+        class FakeBranch:
+            def __init__(self, m, hidden, channels, *weights_and_root, **kwargs):
+                self.metadata = {'synthetic_cpu_test': True}
+                self.swiglu = SimpleNamespace(completed_dispatches=0, input_write_counts=[0, 1, 1])
+                self.down = SimpleNamespace(completed_dispatches=0, input_write_counts=[0, 1])
+                self.runners = dict(swiglu=self.swiglu, down=self.down)
+                for weight in weights_and_root[:3]:
+                    if weight.data.flags.writeable:
+                        raise AssertionError('worker weight file must be read-only')
+
+            def run(self, x):
+                for runner in self.runners.values():
+                    runner.completed_dispatches += 1
+                self.last_diagnostics = dict(dispatch_wait_us=dict(swiglu=0.0, down=0.0))
+                return x.copy()
+
+        with tempfile.TemporaryDirectory() as root:
+            root = Path(root)
+            args = SimpleNamespace(m=128, hidden=256, channels=128, artifact_root=root,
+                channel_start=128, warmup=2, iterations=2, block_timeout=30)
+            inputs = [(label, np.full((128, 256), bits, np.uint16))
+                      for label, bits in (('signed_a', 0x3F80), ('signed_b', 0x4000))]
+            fixture_paths = benchmark._fixture_files(root, _weights(), inputs)
+            entry = dict(segment_pipeline_depth=2)
+
+            def fake_process(command, **unused):
+                self.assertEqual(command[1:3], ['-m', 'experiments.ffn_partition.benchmark_upstream_pipeline'])
+                code = benchmark._worker_main(Path(command[-1]))
+                return SimpleNamespace(returncode=code, stdout='CPU mocked child process')
+
+            with patch.object(benchmark, 'UpstreamNpuFFN', FakeBranch), \
+                 patch.object(benchmark.subprocess, 'run', side_effect=fake_process):
+                outputs = benchmark._subprocess_block(args, fixture_paths, entry, root / 'child')
+            benchmark._compare_outputs(entry, outputs, dict(inputs))
+            self.assertEqual(entry['status'], 'passed')
+            self.assertEqual(entry['completed_dispatches'], dict(swiglu=4, down=4))
+            self.assertEqual(len(entry['warmup']), 2)
+            self.assertEqual(len(entry['runs']), 2)
+            for output, (_, original) in zip(outputs, inputs):
+                np.testing.assert_array_equal(output, original)
 
 
 if __name__ == "__main__":

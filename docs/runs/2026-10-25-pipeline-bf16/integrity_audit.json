@@ -1,0 +1,502 @@
+{
+  "status": "passed",
+  "archived_sources": {
+    "experiments/ffn_partition/benchmark_upstream_pipeline.py": "bb87fa642dd11109504627ff07552afbb1d7bc4d9b0a7c8513d54730f7434583",
+    "experiments/ffn_partition/check_upstream.py": "a523b5c887c552acae542e2884b2cbad011d0a2eee000764596db42caac95263",
+    "experiments/ffn_partition/contract.py": "b1199d8dff1812f972d2e8f4ac5fbfaddc24a7a023ff2aab19585ec13d154a2b",
+    "experiments/ffn_partition/npu_backend.py": "ececc53ce31432b2bddfbdb987ce145b5d1dc3d2e0be833027529c309d842fa3",
+    "experiments/ffn_partition/test_upstream_npu.py": "9b752d4ee168d6e13dd03b8c0f113d02316662b3c31e920d0d71e9a5cb64aeda",
+    "experiments/ffn_partition/upstream_npu.py": "239cda4d1584d2f4b6d500de3d4ecde3f4d6f01c0729861ca09a1c92da694513",
+    "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+    "npu/ffn/prefill_reference.py": "24f4218251fc08a0e8969601d477e65074887243035d161e27a38c8f84e52554",
+    "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+    "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+    "npu/ffn/projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e",
+    "npu/ffn/reference.py": "351923dabc1ec03bc76f11d2d2c941960c5b7d3fb56233be59c66661c82ca631",
+    "npu/ffn/run_silu_mul.py": "20f4070dd5d5dd2e3f6ea3728540faf26cede3899250073300fa93b14aabc109",
+    "npu/ffn/run_w4a16_linear.py": "bff0cfe20b86f3dcfaf07cd792d07c8f61d911bc67f141b108beffb7a25a5ea9",
+    "npu/ffn/run_w4a16_prefill.py": "43c04e158871925c199590d88d8d41a53dcfd5a4bd8d8332b0996f350c287475",
+    "npu/ffn/silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+    "npu/ffn/silu_mul.py": "46fbde0fb57e72be60b4544e8bfa0c3d80c1f36409a25b70dcde3afe8da638d9",
+    "npu/ffn/test_bfp16_kernel_layout.py": "70518bd6677cda05a7f3137a0754847bc20cc49bb51f99ef51416fbbd23862c3",
+    "npu/ffn/test_prefill.py": "31e6e9f6b61ee6af9ce61cb5e40cc3f9922759ab1f9653ac1e80c358afae3550",
+    "npu/ffn/test_prefill_gate_up_schedule.py": "bf5382692004868641054ccbfc639ca453a7065a6228dca3555ed3c6b18683fb",
+    "npu/ffn/test_prefill_schedule.py": "efcb01e8943c8bbfe628e79a5c50919b483d1c4c4678876e453a340dbd71b552",
+    "npu/ffn/test_prefill_swiglu_schedule.py": "f5306b2ef25b606a19d31eb450d245c42eae6a6dbecb1c67722db5f5f4d6e66f",
+    "npu/ffn/test_projection_arithmetic.py": "abbbc17c378622e88bb19ca2ed457dfbf6c17b58c05f7c51f9a7bdb26a3c37cb",
+    "npu/ffn/test_reference.py": "cf998bf9dd984d08c12a102b81d42a89e06082a71945978e221edbd44ac41773",
+    "npu/ffn/test_upstream_schedule.py": "99ec88028d0cd8a6f0f6052527cd12138a224898050342da71f0fa7b3d826ee6",
+    "npu/ffn/test_upstream_weights.py": "df0bbc2f964930708bdbbc4187bfdc6b95fecf8280ba1c27d63d9f727efb4984",
+    "npu/ffn/upstream_schedule.py": "2ec37ca4b4e8e8313b4b8f2c968bcaa169605c22c828d814b8c05a6eba9530e3",
+    "npu/ffn/upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+    "npu/ffn/w4a16_gate_up.py": "8ad818d1b1e58d23745c847d17870a3ffba5d8ba7d8befbe9e1e3742b5314474",
+    "npu/ffn/w4a16_linear.cc": "2f8242f4dab67c09a2424cce7e55a8258ec9c387b9c66ee82038d3f0f47f6358",
+    "npu/ffn/w4a16_linear.py": "2e3d251e920d35f70283eb64177752876ddcc4f6ba4222ff252f60840b48bfed",
+    "npu/ffn/w4a16_prefill.cc": "090e87845395f730b580be537c7da5f11c0f53eaee110b28786e362cdfd32ba2",
+    "npu/ffn/w4a16_prefill.py": "8e35485ad1f40852efd97f9ea289643f07648cf9f2f1bf932fdd4a11b62cbdf7",
+    "npu/ffn/w4a16_prefill_bfp16.cc": "9419624b5979e53c6e1378890dc63daba9d8e6980e8ca78750946f240e6dfee1",
+    "npu/ffn/w4a16_prefill_reuse.cc": "b2d0e52c42bd010813228b5eb67deb2d74562bb9c21598a5175e054efc56ffba",
+    "npu/ffn/w4a16_prefill_reuse.py": "15f35483ddadec53df4ef8214cd041b7513e052eacf32cdb8628e2f5e5ddde17",
+    "npu/ffn/w4a16_prefill_upstream.cc": "0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368",
+    "npu/ffn/w4a16_swiglu.py": "7092db86470d2ab594688c6ed66d510580a3a7f9fc738c5c5d1006de6ed4604d",
+    "npu/ffn/w4a16_upstream.py": "6b5dd9a24ee5ce84bf5a3795f51b847430a9013fa416597d7f70a03f42a8f171",
+    "npu/ffn/xrt_runner.py": "68115a215d1deeb5f9af620e7cff56bad0f977d1d20e69276bc9f73a4353d598"
+  },
+  "binaries": {
+    "depth1/swiglu": {
+      "xclbin_sha256": "8570428d8ac44722af0dbb0c4de6dd037cb0ad57ab613f579dfdb0e329bd99dc",
+      "insts_sha256": "3e924e0bf1830c133acba87d8d2c3a417233d35830a80e0c10c12bc189ccfba9",
+      "all_manifest_and_contract_fields_verified": true
+    },
+    "depth1/down": {
+      "xclbin_sha256": "18487d06fdae08a6f2430b39e5019450e0a9c79d24044a75920b3f611f60964c",
+      "insts_sha256": "525502407f26d987aa83b998d6f8f4c5d11155e8debcacb4eed91b1341c7243d",
+      "all_manifest_and_contract_fields_verified": true
+    },
+    "depth2/swiglu": {
+      "xclbin_sha256": "3c93faebe6702a77cd79f5fd6e3e0f6fbc7a3318e3b292e07a2344829ddc340a",
+      "insts_sha256": "e986d592450245cdce1d08418cbfaf49ebf2200dfcc7ae17149442464d41f823",
+      "all_manifest_and_contract_fields_verified": true
+    },
+    "depth2/down": {
+      "xclbin_sha256": "fd3517af442d252ebac84a98c7ab7a02ce0c0bfa7c4f548393d1d866b43ec287",
+      "insts_sha256": "d7ad762ae6e8d4cf9aa1bf18a0446682563666c8f6228ee2749a1a5564774347",
+      "all_manifest_and_contract_fields_verified": true
+    }
+  },
+  "elf_equivalence": {
+    "swiglu": {
+      "count": 32,
+      "all_byte_identical": true,
+      "sha256": {
+        "elfs_main_core_0_2.elf": "3fe03c866fcbf794faba0193201998bc5e798e81c35d261f4dde4bd281db7adf",
+        "elfs_main_core_0_3.elf": "6f2e7b1a594688c9dc22653a6475e71d1f844ddea141c5dcb57df95b24894587",
+        "elfs_main_core_0_4.elf": "6f35a203b9cee8f2191c47bf58b326758db270f4be50bbbded29135bb73eb5fc",
+        "elfs_main_core_0_5.elf": "0fbe83e25b6a27e41db7ca95dc37490a57b23433d8fcf5c16abd50429b4fa3dd",
+        "elfs_main_core_1_2.elf": "e2b40805ee1c50a52eb7c5f703aa5d2602e21445f151031585db49a56eeef22d",
+        "elfs_main_core_1_3.elf": "f96ecfa851be033a1001956d56a879b02f77a469a4a7ee250351fdd08313b6d6",
+        "elfs_main_core_1_4.elf": "efe05847dc5d27532db2cc3837be52c29582c6bc842121339d161da833ec25f1",
+        "elfs_main_core_1_5.elf": "1d4c763f61c56cfe69a7332fdda30eeaf994550561cdb7d34656eab5b2763bfc",
+        "elfs_main_core_2_2.elf": "ea43f6679f6d3cc75b1839c4fc8c31758fca27203cb8bf2371cf144d1105cd9a",
+        "elfs_main_core_2_3.elf": "50beb3ccc6e957205aef45ad6951433439dfc9219bdf7ea721f130d0323320e8",
+        "elfs_main_core_2_4.elf": "c9ab65d1ca2dc9fe6b71c7924425632671405772ac7b3abf1c83200186798a53",
+        "elfs_main_core_2_5.elf": "548981ccd23bbedebea85ad783b5befb0919f8c09f328da70d724fddd03b0583",
+        "elfs_main_core_3_2.elf": "efd04dcd9bde3a555f01f4e6976aecafd0990f0a1a2fa4292eb25d4fc1e968af",
+        "elfs_main_core_3_3.elf": "00cd6eb33699f4a67b2f937a72a6a6993b06b24d67425f73125a342133241bb3",
+        "elfs_main_core_3_4.elf": "862ba68b64a9c90b9677e776d64d766667beaa1cbfb83b9c1c6b1257cd450b0a",
+        "elfs_main_core_3_5.elf": "3e15742ff9ca9eeed037a653b830e9d124af3191dd9d734859e540cafcd8a840",
+        "elfs_main_core_4_2.elf": "fbf40deba5cc8ca9e933acedc3b7e8461bc4a29a731dd66576dde89c8595227a",
+        "elfs_main_core_4_3.elf": "1080b45967e9c80ed42b07d91306fe189bbf68e24b79fe5b2774f9716b86b4d0",
+        "elfs_main_core_4_4.elf": "459b34cf08b099505e0327e2393358bc9cd16fe54b45388fafb9e8730f33f57b",
+        "elfs_main_core_4_5.elf": "89163dd1c6c9f1d0fc9451e6fe1fb378fdb92113d8b759f576ec0f37fcfd8181",
+        "elfs_main_core_5_2.elf": "b105c3c9132dad69149cd6af8a4ace5ae2ea67fe6de5134fa7a2a1dfa0321dd8",
+        "elfs_main_core_5_3.elf": "6b60fc7add74775e5def394e06e213cf7ec58d3f9a2b2b4a0bcf9752fe49a890",
+        "elfs_main_core_5_4.elf": "ed2d297602ab3367a48cb79f7d4bade6035d02c9f18bc5f649aa3cc8287d69b2",
+        "elfs_main_core_5_5.elf": "154746d718b5b903c36042943bb692bf3f818d7c2d8a8c4221627cede606b3b2",
+        "elfs_main_core_6_2.elf": "0724dfa51d6f56ece73352d6da53f346b814a96e5a2e33f157b1167fc38c82bd",
+        "elfs_main_core_6_3.elf": "dc2f258a00e2f2acc221614ebc6b0c2dea3fc32a542128380c8a3ba49db30657",
+        "elfs_main_core_6_4.elf": "ea10edd51f2bee8ce4a097676f1ad924366531ab32b6bc764fb0b44a494944b9",
+        "elfs_main_core_6_5.elf": "347748a62e9538336c2530d330909edd859ee64502c7a3d237478a6a47f8fbea",
+        "elfs_main_core_7_2.elf": "72f9905940d3e0b8a206934344a5c3eaa927409a434af2f7cd72ae7119d12ebc",
+        "elfs_main_core_7_3.elf": "617b2f9e95d353c43ca4dba09c5693d4ef8b8aeac215713df02eb03fe52e4b47",
+        "elfs_main_core_7_4.elf": "da0b2a069632d6cc7b9ebee563b781018fed7c6dba21f64e97671c59dc762209",
+        "elfs_main_core_7_5.elf": "4bd18bd094afe7c1ca75a0b41b4a42aa962d669c5f60ae3596f19ed3e3cfd5c8"
+      }
+    },
+    "down": {
+      "count": 32,
+      "all_byte_identical": true,
+      "sha256": {
+        "elfs_main_core_0_2.elf": "487ac3fbc1c4d4f17320a04558ac26faec217479ad9eac2fd63954c57058b5cc",
+        "elfs_main_core_0_3.elf": "1d2d02fdd1f2c1d69b19a8bea7bdec2c8fd8675e846f0889daef329a770cc8af",
+        "elfs_main_core_0_4.elf": "df75e8397a8c80a4a54a456a8fe0dca858889c6980dfdaf1a8c9b061e67823f9",
+        "elfs_main_core_0_5.elf": "1b86c234beb3f2f0e40f5c263e63ebf81ee322c728e0705d8fa803886b1ad0b9",
+        "elfs_main_core_1_2.elf": "b9048a93dbb772ee9b05c31b4f8eafdccda2aac9589a51c2f1f3d125cfbd2dae",
+        "elfs_main_core_1_3.elf": "09c753dfc02a1f8cf3104ef5d33d80b8aa2494a97767b916e4dc31e3d2516083",
+        "elfs_main_core_1_4.elf": "442471b8a5f966182d21ace9832425ec204f2585f572923f08008f98b0c1074f",
+        "elfs_main_core_1_5.elf": "f394fd7470b3211c22fe565368a1386234d13c51b6ece2e344e7999e3ceea48b",
+        "elfs_main_core_2_2.elf": "c71044f6f3e156fff0876c360669ada67492e9fec24bdc61719c290fd5f56a26",
+        "elfs_main_core_2_3.elf": "0a311bc3f48e9e4b73d6ba9d4619ee5b58e26a2e44073bc1c564236cf6119fd1",
+        "elfs_main_core_2_4.elf": "21be5bddcf14bbeeaef79396c6f0589eac70d7fbc79e03539a7bb5260c88f546",
+        "elfs_main_core_2_5.elf": "8104a387069dd9a378a09dc6619cdfb4de7c256efc04c18f937cab267794446c",
+        "elfs_main_core_3_2.elf": "ddbe4f9a2826b191f58743a0dcddea1af6462b61e2506b3e7eeb6533d22b925c",
+        "elfs_main_core_3_3.elf": "570b59982e23b6da38a3eb3a91c532e6d4242b52821bf2670980cd35510becc3",
+        "elfs_main_core_3_4.elf": "fc6c34998ca640575c2d5259c1f0b658679794b30a59b77821a5475bdd0fb5e0",
+        "elfs_main_core_3_5.elf": "814f827bc6ff91e8a4764794da49435f73ed5ecae9e1cf652120de22b6dd992c",
+        "elfs_main_core_4_2.elf": "327213ed84e5958f54596adf77335c24e2f051f2c7e967f4529a5285ce6b99b4",
+        "elfs_main_core_4_3.elf": "3d226cffe9a3790c17c02f1583f62def988977b50ea3f6be974ba0891722cc81",
+        "elfs_main_core_4_4.elf": "b9eb0d3cc0e9633a6c42fdfe4d7296c41472f798cedf308ea38ca6cb8af3e364",
+        "elfs_main_core_4_5.elf": "2ed4888783c63750816fa36587f5a846a583fd4415d6cdcedd7dea3cf7f29df1",
+        "elfs_main_core_5_2.elf": "9f77c67545c88e8b96b9b7e746b2ddec1fc63c38177ebe3a1815503b3add1197",
+        "elfs_main_core_5_3.elf": "57d68132c5c6dbda6457e9ac54c8a9f2cee87d332acfdab1d86e0d9f2501dd44",
+        "elfs_main_core_5_4.elf": "5d4b74fb1012ec83f8e0bfa18b6b9a7a531f059948daa19ec71f95cd82d0c5a0",
+        "elfs_main_core_5_5.elf": "2216767c5f4726cb60efbb6dd6e692080f34518bec96f717a27a6c9f590db85c",
+        "elfs_main_core_6_2.elf": "e0a87351a68429d47f0f4eb6f63638f215df7f9af68ee79d66eaef0dcf6f2bb5",
+        "elfs_main_core_6_3.elf": "4c7d28ef948044b0284af6be2368722bae0f478667d3e6b6e07505e4d714bc0d",
+        "elfs_main_core_6_4.elf": "eb71c635d4705297818c3f10e53321a5eff3761835b0d516a8f694fc71f2b5b3",
+        "elfs_main_core_6_5.elf": "73e46964088b8c3d5f7d5454d002b4e3fad9daa151f0d3503245dc235f267d8b",
+        "elfs_main_core_7_2.elf": "b287d400706450525db4b54aeb82305a3e698f9632af0390fbb9daba42176f01",
+        "elfs_main_core_7_3.elf": "99925d41b67c0b4fe47070b5e204d9eec07ef176236122df109df46156c0cbd4",
+        "elfs_main_core_7_4.elf": "dee52e9db219b21cdb3f48a10fc8e6946eefc3aa897dcd34ea3f5c720bc915e8",
+        "elfs_main_core_7_5.elf": "1a05ee169553a1c86a403e4663f91b249382bd897aa54e2c04286c3c320d30d0"
+      }
+    }
+  },
+  "correctness": {
+    "pipeline_smoke": {
+      "completed_npu_dispatches": 24,
+      "cases": [
+        {
+          "config": {
+            "name": "projection_slice",
+            "mode": "projection",
+            "m": 128,
+            "k": 256,
+            "n": 256,
+            "weight_k": 512,
+            "weight_n": 1024,
+            "k_start": 128,
+            "n_start": 32
+          },
+          "all_checks_passed": true
+        },
+        {
+          "config": {
+            "name": "projection_paired",
+            "mode": "projection",
+            "m": 128,
+            "k": 512,
+            "n": 512,
+            "weight_k": 512,
+            "weight_n": 1024,
+            "k_start": 0,
+            "n_start": 0
+          },
+          "all_checks_passed": true
+        },
+        {
+          "config": {
+            "name": "projection_narrow",
+            "mode": "projection",
+            "m": 128,
+            "k": 256,
+            "n": 128,
+            "weight_k": 512,
+            "weight_n": 1024,
+            "k_start": 128,
+            "n_start": 64
+          },
+          "all_checks_passed": true
+        },
+        {
+          "config": {
+            "name": "swiglu",
+            "mode": "swiglu",
+            "m": 128,
+            "k": 512,
+            "n": 256,
+            "weight_k": 512,
+            "weight_n": 1024,
+            "k_start": 0,
+            "n_start": 128
+          },
+          "all_checks_passed": true
+        },
+        {
+          "config": {
+            "name": "ffn",
+            "mode": "ffn",
+            "m": 128,
+            "hidden": 512,
+            "channels": 256,
+            "intermediate": 1024,
+            "channel_start": 128
+          },
+          "all_checks_passed": true
+        }
+      ]
+    },
+    "pipeline_model": {
+      "completed_npu_dispatches": 8,
+      "cases": [
+        {
+          "config": {
+            "name": "ffn",
+            "mode": "ffn",
+            "m": 512,
+            "hidden": 4096,
+            "channels": 2560,
+            "intermediate": 14336,
+            "channel_start": 0
+          },
+          "all_checks_passed": true
+        }
+      ]
+    },
+    "pipeline_odd": {
+      "completed_npu_dispatches": 8,
+      "cases": [
+        {
+          "config": {
+            "name": "ffn",
+            "mode": "ffn",
+            "m": 128,
+            "hidden": 512,
+            "channels": 1152,
+            "intermediate": 2048,
+            "channel_start": 128
+          },
+          "all_checks_passed": true
+        }
+      ]
+    }
+  },
+  "benchmarks": {
+    "pipeline_abba": {
+      "completed_npu_dispatches": 248,
+      "all_exact_to_model_check": true,
+      "results": {
+        "1": {
+          "timed_runs": 50,
+          "median_wall_us": 24795.6515,
+          "median_host_dispatch_wait_us": {
+            "swiglu": 12381.4055,
+            "down": 7783.3885
+          }
+        },
+        "2": {
+          "timed_runs": 50,
+          "median_wall_us": 24023.9365,
+          "median_host_dispatch_wait_us": {
+            "swiglu": 12093.867,
+            "down": 7428.6065
+          }
+        }
+      },
+      "latency_reduction_percent": 3.112299751430206,
+      "reference_excluded_from_summary": true
+    },
+    "pipeline_baab": {
+      "completed_npu_dispatches": 448,
+      "all_exact_to_model_check": true,
+      "results": {
+        "1": {
+          "timed_runs": 100,
+          "median_wall_us": 25125.531000000003,
+          "median_host_dispatch_wait_us": {
+            "swiglu": 12451.015,
+            "down": 7841.348
+          }
+        },
+        "2": {
+          "timed_runs": 100,
+          "median_wall_us": 24511.573,
+          "median_host_dispatch_wait_us": {
+            "swiglu": 12245.734499999999,
+            "down": 7440.121
+          }
+        }
+      },
+      "latency_reduction_percent": 2.4435622873005243,
+      "reference_excluded_from_summary": true
+    }
+  },
+  "mlir": {
+    "swiglu": {
+      "status": "passed",
+      "checks": {
+        "prefix_bytes_identical": true,
+        "prefix_tokens_identical": true,
+        "dma_configs_identical": true,
+        "start_order_identical": true,
+        "await_order_identical": true,
+        "free_order_identical": true,
+        "starts_before_first_await_doubled": true
+      },
+      "serial": {
+        "path": "/tmp/heteromega-pipeline-bf16-evidence-20261025/prebuilt/depth1/swiglu/aie.mlir",
+        "sha256": "f68def870144880eb08a3147fe6692049733329ed34efc31f910819ef229ff2d",
+        "logical_task_BDs": 640,
+        "segments_per_channel": 40,
+        "starts_before_first_await": 16,
+        "maximum_live_BDs_per_shim": {
+          "0": 2,
+          "1": 3,
+          "2": 2,
+          "3": 3,
+          "4": 1,
+          "5": 2,
+          "6": 1,
+          "7": 2
+        },
+        "maximum_live_transfers_per_channel": {
+          "(0, 'MM2S', 0)": 1,
+          "(0, 'MM2S', 1)": 1,
+          "(1, 'MM2S', 0)": 1,
+          "(1, 'MM2S', 1)": 1,
+          "(1, 'S2MM', 0)": 1,
+          "(2, 'MM2S', 0)": 1,
+          "(2, 'MM2S', 1)": 1,
+          "(3, 'MM2S', 0)": 1,
+          "(3, 'MM2S', 1)": 1,
+          "(3, 'S2MM', 0)": 1,
+          "(4, 'MM2S', 1)": 1,
+          "(5, 'MM2S', 1)": 1,
+          "(5, 'S2MM', 0)": 1,
+          "(6, 'MM2S', 1)": 1,
+          "(7, 'MM2S', 1)": 1,
+          "(7, 'S2MM', 0)": 1
+        },
+        "all_output_awaits_precede_group_frees": true,
+        "all_tasks_started_and_freed_once": true
+      },
+      "pipeline": {
+        "path": "/tmp/heteromega-pipeline-bf16-evidence-20261025/prebuilt/depth2/swiglu/aie.mlir",
+        "sha256": "c8276de30d7b152bf60871972403be99133529e77d2b5b4a1e573ec9371dfae1",
+        "logical_task_BDs": 640,
+        "segments_per_channel": 40,
+        "starts_before_first_await": 32,
+        "maximum_live_BDs_per_shim": {
+          "0": 4,
+          "1": 6,
+          "2": 4,
+          "3": 6,
+          "4": 2,
+          "5": 4,
+          "6": 2,
+          "7": 4
+        },
+        "maximum_live_transfers_per_channel": {
+          "(0, 'MM2S', 0)": 2,
+          "(0, 'MM2S', 1)": 2,
+          "(1, 'MM2S', 0)": 2,
+          "(1, 'MM2S', 1)": 2,
+          "(1, 'S2MM', 0)": 2,
+          "(2, 'MM2S', 0)": 2,
+          "(2, 'MM2S', 1)": 2,
+          "(3, 'MM2S', 0)": 2,
+          "(3, 'MM2S', 1)": 2,
+          "(3, 'S2MM', 0)": 2,
+          "(4, 'MM2S', 1)": 2,
+          "(5, 'MM2S', 1)": 2,
+          "(5, 'S2MM', 0)": 2,
+          "(6, 'MM2S', 1)": 2,
+          "(7, 'MM2S', 1)": 2,
+          "(7, 'S2MM', 0)": 2
+        },
+        "all_output_awaits_precede_group_frees": true,
+        "all_tasks_started_and_freed_once": true
+      },
+      "scope": "Emitted pre-lowering MLIR logical task audit; not device-cycle or physical BD-allocation evidence"
+    },
+    "down": {
+      "status": "passed",
+      "checks": {
+        "prefix_bytes_identical": true,
+        "prefix_tokens_identical": true,
+        "dma_configs_identical": true,
+        "start_order_identical": true,
+        "await_order_identical": true,
+        "free_order_identical": true,
+        "starts_before_first_await_doubled": true
+      },
+      "serial": {
+        "path": "/tmp/heteromega-pipeline-bf16-evidence-20261025/prebuilt/depth1/down/aie.mlir",
+        "sha256": "4be6cad7716641d2fc75f06c317599945d6bf873dec06f4f8173a99f6941b04a",
+        "logical_task_BDs": 640,
+        "segments_per_channel": 32,
+        "starts_before_first_await": 20,
+        "maximum_live_BDs_per_shim": {
+          "0": 3,
+          "1": 3,
+          "2": 3,
+          "3": 3,
+          "4": 2,
+          "5": 2,
+          "6": 2,
+          "7": 2
+        },
+        "maximum_live_transfers_per_channel": {
+          "(0, 'MM2S', 0)": 1,
+          "(0, 'MM2S', 1)": 1,
+          "(0, 'S2MM', 0)": 1,
+          "(1, 'MM2S', 0)": 1,
+          "(1, 'MM2S', 1)": 1,
+          "(1, 'S2MM', 0)": 1,
+          "(2, 'MM2S', 0)": 1,
+          "(2, 'MM2S', 1)": 1,
+          "(2, 'S2MM', 0)": 1,
+          "(3, 'MM2S', 0)": 1,
+          "(3, 'MM2S', 1)": 1,
+          "(3, 'S2MM', 0)": 1,
+          "(4, 'MM2S', 1)": 1,
+          "(4, 'S2MM', 0)": 1,
+          "(5, 'MM2S', 1)": 1,
+          "(5, 'S2MM', 0)": 1,
+          "(6, 'MM2S', 1)": 1,
+          "(6, 'S2MM', 0)": 1,
+          "(7, 'MM2S', 1)": 1,
+          "(7, 'S2MM', 0)": 1
+        },
+        "all_output_awaits_precede_group_frees": true,
+        "all_tasks_started_and_freed_once": true
+      },
+      "pipeline": {
+        "path": "/tmp/heteromega-pipeline-bf16-evidence-20261025/prebuilt/depth2/down/aie.mlir",
+        "sha256": "5d98eebc8784048d889b40d4b97d521155b148469862b76777ccb5cf83688830",
+        "logical_task_BDs": 640,
+        "segments_per_channel": 32,
+        "starts_before_first_await": 40,
+        "maximum_live_BDs_per_shim": {
+          "0": 6,
+          "1": 6,
+          "2": 6,
+          "3": 6,
+          "4": 4,
+          "5": 4,
+          "6": 4,
+          "7": 4
+        },
+        "maximum_live_transfers_per_channel": {
+          "(0, 'MM2S', 0)": 2,
+          "(0, 'MM2S', 1)": 2,
+          "(0, 'S2MM', 0)": 2,
+          "(1, 'MM2S', 0)": 2,
+          "(1, 'MM2S', 1)": 2,
+          "(1, 'S2MM', 0)": 2,
+          "(2, 'MM2S', 0)": 2,
+          "(2, 'MM2S', 1)": 2,
+          "(2, 'S2MM', 0)": 2,
+          "(3, 'MM2S', 0)": 2,
+          "(3, 'MM2S', 1)": 2,
+          "(3, 'S2MM', 0)": 2,
+          "(4, 'MM2S', 1)": 2,
+          "(4, 'S2MM', 0)": 2,
+          "(5, 'MM2S', 1)": 2,
+          "(5, 'S2MM', 0)": 2,
+          "(6, 'MM2S', 1)": 2,
+          "(6, 'S2MM', 0)": 2,
+          "(7, 'MM2S', 1)": 2,
+          "(7, 'S2MM', 0)": 2
+        },
+        "all_output_awaits_precede_group_frees": true,
+        "all_tasks_started_and_freed_once": true
+      },
+      "scope": "Emitted pre-lowering MLIR logical task audit; not device-cycle or physical BD-allocation evidence"
+    }
+  },
+  "source_version_note": {
+    "path": "experiments/ffn_partition/upstream_npu.py",
+    "correctness_source_sha256": "5a2fff2b9a4dcadd1ee0f3270b8db1b1c1f26df13c675b0e5bfd178296c0d26b",
+    "source_in_upload_archive": "uploads/heteromega-pipeline-bf16-v1.tar.gz",
+    "final_source_sha256": "239cda4d1584d2f4b6d500de3d4ecde3f4d6f01c0729861ca09a1c92da694513",
+    "only_difference": "shared strict depth validator replaces inline depth validation; valid integer 1/2 behavior and run() unchanged"
+  },
+  "archived_source_count": 40,
+  "maximum_relative_l2": 0.004000482184398329,
+  "correctness_dispatches": 40,
+  "benchmark_dispatches": 696,
+  "completed_npu_dispatches": 736,
+  "original_native_bf16_package_outputs_identical": true,
+  "scope": "Independent saved-evidence consistency audit, source/binary hashes and bytewise core ELF equality; no full-model speedup claim"
+}

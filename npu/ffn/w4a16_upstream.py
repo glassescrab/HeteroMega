@@ -21,7 +21,8 @@ from aie.utils.hostruntime.cli import run_design_cli
 from ml_dtypes import bfloat16
 
 from projection_arithmetic import ProjectionArithmetic, UPSTREAM_KERNEL_COMMIT
-from upstream_schedule import plan_upstream
+from upstream_schedule import (plan_upstream, segment_pipeline_actions,
+                               validate_segment_pipeline_depth)
 from upstream_weights import UPSTREAM_LAYOUT_VERSION
 
 ROOT = Path(__file__).parent
@@ -42,9 +43,10 @@ def _tap(spec):
 
 
 def _design(m, k, n, mode, weight_k, weight_n, k_start, n_start, cols,
-            max_reuse, fingerprint):
+            max_reuse, segment_pipeline_depth, fingerprint):
     if fingerprint != FINGERPRINT:
         raise ValueError('upstream graph dependency identity changed; rebuild')
+    validate_segment_pipeline_depth(segment_pipeline_depth)
     direct = plan_upstream(m, k, n, mode=mode, weight_k=weight_k,
                            weight_n=weight_n, k_start=k_start, n_start=n_start,
                            columns=cols, max_reuse=max_reuse)
@@ -176,18 +178,28 @@ def _design(m, k, n, mode, weight_k, weight_n, k_start, n_start, cols,
                                   stack_size=2048, dynamic_objfifo_lowering=True))
 
     def submit(a, ws, y, a_hs, w_hs, y_hs):
-        for group in range(plan.groups_per_column):
-            for segment in range(direct.segment_count):
-                tasks = TaskGroup()
-                for out_index, col in enumerate(output_cols):
-                    y_hs[out_index].drain(y, _tap(direct.output_tap(col, group, segment)),
-                                         wait=True, group=tasks)
-                for lane, handle in enumerate(a_hs):
-                    handle.fill(a, _tap(direct.activation_tap(lane, group)), group=tasks)
-                for col in range(8):
-                    weight = ws[col % 2] if mode == 'swiglu' else ws[0]
-                    w_hs[col].fill(weight, _tap(direct.weight_tap(col, segment)), group=tasks)
-                tasks.finish()
+        pending = {}
+        for action in segment_pipeline_actions(direct, segment_pipeline_depth):
+            key = (action.group, action.segment)
+            if action.kind == 'finish':
+                # TaskGroup.finish awaits all waited output drains before
+                # freeing the group's BDs. Retire in FIFO order so completion
+                # tokens from a shared shim channel cannot be misattributed.
+                pending.pop(key).finish()
+                continue
+            tasks = TaskGroup()
+            pending[key] = tasks
+            # Queue every drain before any fill for this segment. The next
+            # segment can then stream through the existing depth-two FIFOs
+            # while this one's output drains, without adding core buffers.
+            for out_index, col in enumerate(output_cols):
+                y_hs[out_index].drain(y, _tap(direct.output_tap(col, *key)),
+                                     wait=True, group=tasks)
+            for lane, handle in enumerate(a_hs):
+                handle.fill(a, _tap(direct.activation_tap(lane, action.group)), group=tasks)
+            for col in range(8):
+                weight = ws[col % 2] if mode == 'swiglu' else ws[0]
+                w_hs[col].fill(weight, _tap(direct.weight_tap(col, action.segment)), group=tasks)
     if mode == 'swiglu':
         def sequence(a, gate_w, up_w, y, a_hs, w_hs, y_hs):
             submit(a, (gate_w, up_w), y, a_hs, w_hs, y_hs)
@@ -205,9 +217,10 @@ def upstream_projection(a: In, w: In, y: Out, *,
     weight_k: CompileTime[int], weight_n: CompileTime[int],
     k_start: CompileTime[int] = 0, n_start: CompileTime[int] = 0,
     cols: CompileTime[int] = 8, max_reuse: CompileTime[int] = 2,
+    segment_pipeline_depth: CompileTime[int] = 2,
     fingerprint: CompileTime[str] = FINGERPRINT):
     return _design(m, k, n, 'projection', weight_k, weight_n, k_start, n_start,
-                   cols, max_reuse, fingerprint)
+                   cols, max_reuse, segment_pipeline_depth, fingerprint)
 
 
 @iron.jit(aiecc_flags=['--alloc-scheme=basic-sequential'])
@@ -216,9 +229,10 @@ def upstream_swiglu(a: In, gate_w: In, up_w: In, z: Out, *,
     weight_k: CompileTime[int], weight_n: CompileTime[int],
     k_start: CompileTime[int] = 0, n_start: CompileTime[int] = 0,
     cols: CompileTime[int] = 8, max_reuse: CompileTime[int] = 2,
+    segment_pipeline_depth: CompileTime[int] = 2,
     fingerprint: CompileTime[str] = FINGERPRINT):
     return _design(m, k, n, 'swiglu', weight_k, weight_n, k_start, n_start,
-                   cols, max_reuse, fingerprint)
+                   cols, max_reuse, segment_pipeline_depth, fingerprint)
 
 
 def main():
@@ -233,11 +247,14 @@ def main():
     parser.add_argument('--n-start', type=int, default=0)
     parser.add_argument('-co', '--columns', type=int, default=8)
     parser.add_argument('--max-reuse', type=int, choices=(1, 2), default=2)
+    parser.add_argument('--segment-pipeline-depth', type=int, choices=(1, 2), default=2,
+                        help='maximum in-flight N64 segments; 1 preserves serial DMA scheduling')
     opts = parser.parse_args()
     wk, wn = opts.weight_k or opts.K, opts.weight_n or opts.N
     kwargs = dict(m=opts.M, k=opts.K, n=opts.N, weight_k=wk, weight_n=wn,
                   k_start=opts.k_start, n_start=opts.n_start, cols=opts.columns,
-                  max_reuse=opts.max_reuse, fingerprint=FINGERPRINT)
+                  max_reuse=opts.max_reuse,
+                  segment_pipeline_depth=opts.segment_pipeline_depth, fingerprint=FINGERPRINT)
     direct = plan_upstream(opts.M, opts.K, opts.N, mode=opts.mode,
                            weight_k=wk, weight_n=wn, k_start=opts.k_start,
                            n_start=opts.n_start, columns=opts.columns, max_reuse=opts.max_reuse)
@@ -249,6 +266,7 @@ def main():
             m=opts.M, k=opts.K, n=opts.N, weight_k=wk, weight_n=wn,
             k_start=opts.k_start, n_start=opts.n_start, cols=8, worker_count=32,
             compute_rows=4, m_reuse=direct.base.m_reuse, weight_tile_bytes=4352,
+            segment_pipeline_depth=opts.segment_pipeline_depth,
             weight_layout=UPSTREAM_LAYOUT_VERSION, arithmetic='bf16', compute_format='bf16',
             worker_stack_size=2048, source_sha256=HASHES['w4a16_prefill_upstream.cc'],
             graph_sha256=HASHES['w4a16_upstream.py'], weight_layout_sha256=HASHES['upstream_weights.py'],

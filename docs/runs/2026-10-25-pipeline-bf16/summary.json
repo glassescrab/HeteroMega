@@ -1,0 +1,180 @@
+{
+  "scope": "Synthetic native BF16 NPU FFN branch; segment depth1 serial versus depth2 pipeline; no GPU+NPU/model claim",
+  "archive_sha256": "0dabb910ce0392ec9e2b4dfbea959d3016ba4069834a799fbe110eeba3f2cdbe",
+  "shape": {
+    "m": 512,
+    "hidden": 4096,
+    "intermediate": 14336,
+    "channels": 2560,
+    "channel_start": 0
+  },
+  "correctness": {
+    "cases": 7,
+    "input_runs": 28,
+    "completed_npu_dispatches": 40,
+    "all_passed": true,
+    "max_relative_l2": 0.004000482184398329,
+    "max_absolute_error": 0.0009765625,
+    "original_tolerances": {
+      "rtol": 0.03,
+      "atol": 0.05,
+      "relative_l2_limit": 0.02
+    }
+  },
+  "timing": {
+    "pipeline_abba": {
+      "status": "passed",
+      "completed_npu_dispatches": 248,
+      "summary": {
+        "1": {
+          "wall": {
+            "count": 50,
+            "median_us": 24795.6515,
+            "mean_us": 24611.330100000003,
+            "min_us": 23402.109,
+            "max_us": 26053.506,
+            "p10_us": 23832.235099999998,
+            "p90_us": 25227.1709
+          },
+          "dispatch_wait": {
+            "swiglu": {
+              "count": 50,
+              "median_us": 12381.4055,
+              "mean_us": 12365.33482,
+              "min_us": 11596.357,
+              "max_us": 13521.638,
+              "p10_us": 11927.8062,
+              "p90_us": 12770.4717
+            },
+            "down": {
+              "count": 50,
+              "median_us": 7783.3885,
+              "mean_us": 7756.99742,
+              "min_us": 7298.973,
+              "max_us": 8545.088,
+              "p10_us": 7362.386,
+              "p90_us": 8022.973000000001
+            }
+          }
+        },
+        "2": {
+          "wall": {
+            "count": 50,
+            "median_us": 24023.9365,
+            "mean_us": 23941.681520000006,
+            "min_us": 22336.111,
+            "max_us": 24776.802,
+            "p10_us": 23218.574,
+            "p90_us": 24458.092
+          },
+          "dispatch_wait": {
+            "swiglu": {
+              "count": 50,
+              "median_us": 12093.867,
+              "mean_us": 12065.53848,
+              "min_us": 11268.384,
+              "max_us": 12823.682,
+              "p10_us": 11457.2142,
+              "p90_us": 12490.0281
+            },
+            "down": {
+              "count": 50,
+              "median_us": 7428.6065,
+              "mean_us": 7364.28452,
+              "min_us": 6919.691,
+              "max_us": 7804.623,
+              "p10_us": 7035.1631,
+              "p90_us": 7539.2057
+            }
+          }
+        },
+        "candidate_over_serial_speedup": 1.0321227539042155,
+        "candidate_latency_reduction_percent": 3.112299751430206
+      }
+    },
+    "pipeline_baab": {
+      "status": "passed",
+      "completed_npu_dispatches": 448,
+      "summary": {
+        "1": {
+          "wall": {
+            "count": 100,
+            "median_us": 25125.531000000003,
+            "mean_us": 25140.88706,
+            "min_us": 23989.089,
+            "max_us": 26948.37,
+            "p10_us": 24446.243,
+            "p90_us": 25865.137
+          },
+          "dispatch_wait": {
+            "swiglu": {
+              "count": 100,
+              "median_us": 12451.015,
+              "mean_us": 12467.16493,
+              "min_us": 11696.666,
+              "max_us": 13380.192,
+              "p10_us": 12139.1642,
+              "p90_us": 12771.245
+            },
+            "down": {
+              "count": 100,
+              "median_us": 7841.348,
+              "mean_us": 7864.44912,
+              "min_us": 7400.221,
+              "max_us": 8601.278,
+              "p10_us": 7607.264,
+              "p90_us": 8145.4281
+            }
+          }
+        },
+        "2": {
+          "wall": {
+            "count": 100,
+            "median_us": 24511.573,
+            "mean_us": 24557.457229999996,
+            "min_us": 23317.102,
+            "max_us": 26431.02,
+            "p10_us": 23931.2751,
+            "p90_us": 25057.003999999997
+          },
+          "dispatch_wait": {
+            "swiglu": {
+              "count": 100,
+              "median_us": 12245.734499999999,
+              "mean_us": 12216.264830000002,
+              "min_us": 11484.3,
+              "max_us": 13006.648,
+              "p10_us": 11785.5,
+              "p90_us": 12608.1669
+            },
+            "down": {
+              "count": 100,
+              "median_us": 7440.121,
+              "mean_us": 7456.67454,
+              "min_us": 7102.407,
+              "max_us": 8155.857,
+              "p10_us": 7222.6530999999995,
+              "p90_us": 7679.902
+            }
+          }
+        },
+        "candidate_over_serial_speedup": 1.0250476784986424,
+        "candidate_latency_reduction_percent": 2.4435622873005243
+      }
+    }
+  },
+  "completed_npu_dispatches": 736,
+  "timed_branch_samples": 300,
+  "local_checks": {
+    "npu_tests": 63,
+    "experiment_tests": 114,
+    "passed": 176,
+    "skipped": 1
+  },
+  "limitations": [
+    "Overlapping latency distributions; small isolated NPU branch gain",
+    "Host launch+wait intervals are not kernel cycle attribution",
+    "Partition P2560 held fixed, not retuned",
+    "No pretrained model accuracy or complete GPU+NPU prefill acceleration established"
+  ]
+}

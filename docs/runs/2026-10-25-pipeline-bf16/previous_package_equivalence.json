@@ -1,0 +1,25 @@
+{
+  "same_original_weights": true,
+  "runs": [
+    {
+      "input": "signed_a",
+      "same_input": true,
+      "same_output": true
+    },
+    {
+      "input": "signed_b",
+      "same_input": true,
+      "same_output": true
+    },
+    {
+      "input": "zero",
+      "same_input": true,
+      "same_output": true
+    },
+    {
+      "input": "repeat_a",
+      "same_input": true,
+      "same_output": true
+    }
+  ]
+}
