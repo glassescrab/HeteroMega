@@ -1,5 +1,72 @@
 # HeteroMega progress
 
+## 2026-10-25: native BF16 consuming original upstream weights
+
+- **User scope:** return to native BF16 and accept glassescrab's existing
+  packed weight buffers directly. The clarification concerns weights;
+  SwiGLU-to-down activation conversion remains outside this change.
+- **Implemented:** `w4a16_prefill_upstream.cc` and `w4a16_upstream.py` consume
+  the original striped K128/N64/4352-byte payloads, with separate gate/up
+  buffers and full-source K/N strides for partition selection. Native 4×8×8
+  BF16 is explicitly selected before AIE headers; partials remain FP32. All
+  32 workers are retained. A worker processes its N32 halves from one A/W
+  acquisition with shared 8 KiB scratch and separate partial accumulators.
+  A column ownership boundary can reread a shared N64 tile without repacking.
+- **Implemented host path:** `upstream_npu.py` accepts original buffer
+  descriptors, validates BF16/layout/source/artifact identity, and uploads
+  fixed bytes once. It performs no weight conversion or concatenation.
+  Existing compact/BFP16 experiment paths remain reproducible controls.
+- **Measured correctness:** seven cases and 28 input runs completed 40 NPU
+  dispatches on HX370. Strict numerical, finite, changed-input, exact-zero,
+  repeatability and unchanged-weight checks all pass. Worst relative L2 is
+  0.00400048 (limit 0.02); largest absolute error is 0.0009765625. Selected
+  M512/H4096/I14336/P2560 FFN relative L2 is at most 0.00375981. Nonzero K/N
+  slices, paired N64 halves, narrow N128, fused SwiGLU, complete FFN, and an
+  uneven P1152 partition were exercised.
+- **Verified locally:** 59 NPU tests pass; 111 partition tests complete with
+  one existing skip. Source/manifest identities and selected binary hashes
+  match the downloaded evidence. Both MLIR graphs assign 32 cores across
+  eight columns with 2048-byte stacks. Package checksums pass.
+- **Published:** [PR #3](https://github.com/glassescrab/HeteroMega/pull/3)
+  updated with commit `4749d92`, retaining only 21 kernel/package files.
+  Full research changes and evidence are checkpointed locally on
+  `codex/native-bf16-upstream-weights` and are not part of the kernel-only PR.
+- **Limits/next step:** synthetic NPU correctness only. BO upload copies and
+  activation staging remain; no new end-to-end GPU+NPU speedup or model
+  accuracy is established. P2560 is retained, not retuned. Benchmark the new
+  graph's per-segment schedule and partition ratio before quoting latency.
+  [Contract](../npu/ffn/UPSTREAM_BF16.md) and
+  [hardware evidence/reproduction](runs/2026-10-25-upstream-bf16/README.md).
+
+## 2026-10-25: glassescrab W4A16 compatibility re-audit
+
+- **Code-confirmed:** a fresh check of all seven `glassescrab/mlir-aie`
+  branch heads leaves the corrected reference at
+  `121dd54abc68f84d89a7074372ebf82be2db62d5`. Our BFP16 projection matches
+  its unsigned W4, BF16 activations/scales, per-output-channel K128 groups,
+  low-even/high-odd nibble order and BF16 `(q - zero) * scale` dequantization.
+  Both enable BFP16-backed 8×8×8 MMUL with four accumulators.
+- **Intentional differences:** upstream uses N64 weight tiles of 4,352 bytes
+  with duplicated zero metadata and eight-column-striped host tile order;
+  ours uses compact N32 tiles of 2,144 bytes. Buffers require repacking.
+  Upstream's default BF16-output kernel rounds partial sums after each K128
+  call; ours retains FP32 partials until final BF16 output. Tile geometry,
+  explicit M reuse and fused FFN scheduling also differ. This is an adaptation,
+  not a drop-in binary interface or a claim of bit-identical GEMM results.
+- **CPU-verified:** all 48 existing NPU tests pass. An additional independent
+  transcription of the upstream host packer and kernel metadata addressing
+  at K384/N1024 checked 393,216 dequantized weights, including multiple K
+  groups, striped column tiles and varying scales/zeros. Its BF16 weight
+  values are bit-identical to the compact kernel-layout model and logical
+  reference. This checks layout/dequantization, not hardware BFP16 MMUL.
+- **Package-verified:** PR #3 still points to `8622dbe`; all 20 package hashes
+  pass, packaged source identities match this workspace, and manifests match
+  the archived measured artifacts. Packaged arithmetic is explicitly BFP16;
+  the native BF16 experiment control remains a separate path. No new device
+  execution, direct upstream-versus-ours hardware comparison or PR change.
+  Next comparison, if exact upstream numerical parity is required, must use
+  matched output/partial precision and the respective host layouts.
+
 ## 2026-10-22: PR narrowed to final kernels and required binaries
 
 - User requested final MLIR code and needed XCLBINs only. PR #3 was replaced

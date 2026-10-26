@@ -1,6 +1,46 @@
 # HeteroMega agent continuation guide
 
-## Latest scope — final kernels only in PR #3
+## Latest direction — 2026-10-25: native BF16, original upstream weights
+
+The user requested **"we dont want repacking and go back to BF16"** and
+clarified **"Accept glassescrab weight buffers directly"**. This supersedes
+the BFP16 selection for the final package. Activation layout conversion was
+explicitly outside that clarification; do not conflate it with weight packing.
+
+The new `npu/ffn/w4a16_upstream.py` graph uses native BF16 4×8×8 MMUL,
+FP32 K-group partials, and all eight columns / 32 workers. It consumes original
+striped K128/N64/4352-byte weight payloads, selecting slices with the **full
+source dimensions**. Gate/up have separate original weight BOs. N32 halves
+owned by one worker share an A/W acquisition and 8 KiB scratch. BF16 is fixed
+in this graph; BFP16 emulation is explicitly zero. Existing compact/BFP16
+graphs and measurements remain controls, not the newly selected interface.
+
+Read `npu/ffn/UPSTREAM_BF16.md` and
+`docs/runs/2026-10-25-upstream-bf16/README.md`. The new host adapter is
+`experiments/ffn_partition/upstream_npu.py`; correctness entry point is
+`python -m experiments.ffn_partition.check_upstream`. This adapter uploads
+existing packed bytes once without converting/concatenating them. BO upload
+copies and the Z-to-down activation permutation still occur.
+
+**Measured correctness on HX370:** seven cases, 28 input runs, 40 completed
+NPU dispatches; all strict numerical, finite, zero, repeat, changed-input and
+unchanged-weight checks pass. Worst relative L2 is 0.00400048. This includes
+M512/H4096/I14336/P2560 and a nonzero-offset P1152 partition. Native BF16
+package binaries and generated MLIR match the selected report/source hashes.
+No new GPU+NPU latency, whole-model speedup or model-accuracy claim is made.
+Per-segment barriers differ, so old timing results do not transfer.
+
+The remote overlay is `/notebooks/HeteroMega-upstream-bf16-20261025`.
+Earlier remote checkouts and baselines were preserved. Published in
+[PR #3](https://github.com/glassescrab/HeteroMega/pull/3) as
+`4749d927d50bf1c5cd03f4310f72fd9669f23640`; the final package still contains
+only 21 files under `npu/ffn`. Continue the kernel-only PR in
+`../HeteroMega-kernels`. Full implementation, tests and evidence are saved
+locally on `codex/native-bf16-upstream-weights`; do not push full research
+history, test harnesses or evidence archives into that PR. Branch and package
+statements in the dated entries below describe earlier checkpoints.
+
+## Previous package checkpoint — final kernels only in PR #3
 
 The user asked to reduce the PR to final MLIR code and needed XCLBINs.
 PR #3 now has one commit, `8622dbee423ba8e13ee3e1f166799f6201d0bc28`,

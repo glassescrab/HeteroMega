@@ -13,14 +13,17 @@
 // 7e00b57955e108fe9d8e9419f5828a0c7e650858.
 // This is native BF16 multiplication with FP32 accumulation, not BFP16.
 
+// Fix the arithmetic before including AIE headers, including direct builds
+// that do not use projection_arithmetic.py's explicit compiler flags.
+#ifndef AIE_API_EMULATE_BFLOAT16_MMUL_WITH_BFP16
+#define AIE_API_EMULATE_BFLOAT16_MMUL_WITH_BFP16 0
+#elif AIE_API_EMULATE_BFLOAT16_MMUL_WITH_BFP16 != 0
+#error "W4A16 prefill requires native BF16 MMUL; disable BFP16 emulation"
+#endif
+
 #include <aie_api/aie.hpp>
 #include <stdint.h>
 #include "aie_kernel_utils.h"
-
-#if defined(AIE_API_EMULATE_BFLOAT16_MMUL_WITH_BFP16) && \
-    AIE_API_EMULATE_BFLOAT16_MMUL_WITH_BFP16
-#error "W4A16 prefill requires native BF16 MMUL; disable BFP16 emulation"
-#endif
 
 #ifndef HETEROMEGA_M_REUSE
 #define HETEROMEGA_M_REUSE 2

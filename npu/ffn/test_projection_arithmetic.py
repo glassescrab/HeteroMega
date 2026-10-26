@@ -5,6 +5,8 @@ import ast
 import hashlib
 import json
 from pathlib import Path
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -23,14 +25,41 @@ COMPILER_COMMIT = '7e00b57955e108fe9d8e9419f5828a0c7e650858'
 
 
 class ProjectionArithmeticTests(unittest.TestCase):
-    def test_default_retains_checkpointed_native_bf16_source(self):
+    def test_default_selects_native_bf16_source_and_disables_emulation(self):
         projection = projection_arithmetic()
         self.assertEqual(projection.arithmetic, 'bf16')
         self.assertEqual(projection.source_path.name, 'w4a16_prefill_reuse.cc')
-        self.assertEqual(projection.source_sha256, ORIGINAL_BF16_SHA)
-        self.assertEqual(projection.compile_flags(2), ['-DHETEROMEGA_M_REUSE=2'])
+        self.assertEqual(projection.source_sha256,
+                         hashlib.sha256(projection.source_path.read_bytes()).hexdigest())
+        self.assertEqual(projection.compile_flags(2), [
+            '-DHETEROMEGA_M_REUSE=2',
+            '-DAIE_API_EMULATE_BFLOAT16_MMUL_WITH_BFP16=0'])
         self.assertEqual(projection.stack_size, 2048)
         self.assertIsNone(projection.manifest_fields()['upstream_kernel_commit'])
+
+    def test_native_source_fixes_emulation_before_loading_aie_headers(self):
+        # Exercise the actual source prefix with a host preprocessor. No AIE
+        # compiler/headers are needed to validate the arithmetic-mode guard.
+        compiler = shutil.which('c++') or shutil.which('clang++') or shutil.which('g++')
+        if compiler is None:
+            self.skipTest('a C++ preprocessor is unavailable')
+        source = projection_arithmetic().source
+        prefix, separator, _ = source.partition('#include <aie_api/aie.hpp>')
+        self.assertTrue(separator)
+        macro = 'AIE_API_EMULATE_BFLOAT16_MMUL_WITH_BFP16'
+        for value in (None, 0, 1, -1):
+            command = [compiler, '-E', '-dM', '-x', 'c++', '-']
+            if value is not None:
+                command.append(f'-D{macro}={value}')
+            with self.subTest(emulation=value):
+                result = subprocess.run(command, input=prefix, text=True,
+                                        capture_output=True, check=False)
+                if value in (None, 0):
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertIn(f'#define {macro} 0', result.stdout)
+                else:
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertIn('requires native BF16 MMUL', result.stderr)
 
     def test_bfp16_is_an_explicit_distinct_source_and_compile_mode(self):
         native = projection_arithmetic('bf16')

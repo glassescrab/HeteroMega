@@ -1,0 +1,434 @@
+{
+  "status": "passed",
+  "evidence_kind": "NPU hardware correctness",
+  "timestamp_utc": "2026-10-26T00:01:13.826913+00:00",
+  "scope": "native BF16, unchanged original-format weights; no performance claim",
+  "arithmetic": "bf16",
+  "weight_layout": "glassescrab_w4a16_k128_n64_colmod8_4352_v1",
+  "weight_repacking": false,
+  "tolerances": {
+    "rtol": 0.03,
+    "atol": 0.05,
+    "relative_l2_limit": 0.02
+  },
+  "npu_wait_timeout_ms": 10000,
+  "completed_npu_dispatches": 8,
+  "config": {
+    "output": "results/model_p2560.json",
+    "artifact_root": "artifacts",
+    "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+    "suite": "model",
+    "cases": null,
+    "seed": 251025,
+    "compile_timeout": 900,
+    "build_only": false,
+    "no_build": false,
+    "m": 512,
+    "hidden": 4096,
+    "intermediate": 14336,
+    "channels": 2560,
+    "channel_start": 0
+  },
+  "environment": {
+    "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+    "numpy": "1.26.4",
+    "platform": "Linux-6.17.0-42-generic-x86_64-with-glibc2.39"
+  },
+  "cases": [
+    {
+      "config": {
+        "name": "ffn",
+        "mode": "ffn",
+        "m": 512,
+        "hidden": 4096,
+        "channels": 2560,
+        "intermediate": 14336,
+        "channel_start": 0
+      },
+      "status": "passed",
+      "original_weight_sha256": {
+        "gate": "ddc1d8054b48ca77c5e49b74e8dc730f28daf19cd0568fe739df6a2ca710e820",
+        "up": "1ab1c4aa9c9634a781a4e5161558d2f02d838f81cac33dbca7104dbf85a8c663",
+        "down": "db32ec1fac7d390b0c89058b2694794dcf37cf3db8d03babb8c1428d346c0dad"
+      },
+      "weight_bytes": {
+        "gate": 31195136,
+        "up": 31195136,
+        "down": 31195136
+      },
+      "artifacts": {
+        "swiglu": {
+          "xclbin": "/notebooks/HeteroMega-upstream-bf16-20261025/artifacts/upstream_bf16_swiglu_m512_k4096_n2560_4d393a319d1933da/final.xclbin",
+          "insts": "/notebooks/HeteroMega-upstream-bf16-20261025/artifacts/upstream_bf16_swiglu_m512_k4096_n2560_4d393a319d1933da/insts.bin",
+          "manifest": {
+            "kind": "w4a16_upstream_bf16",
+            "mode": "swiglu",
+            "m": 512,
+            "k": 4096,
+            "n": 2560,
+            "weight_k": 4096,
+            "weight_n": 14336,
+            "k_start": 0,
+            "n_start": 0,
+            "cols": 8,
+            "worker_count": 32,
+            "compute_rows": 4,
+            "m_reuse": 2,
+            "weight_tile_bytes": 4352,
+            "weight_layout": "glassescrab_w4a16_k128_n64_colmod8_4352_v1",
+            "arithmetic": "bf16",
+            "compute_format": "bf16",
+            "worker_stack_size": 2048,
+            "source_sha256": "0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368",
+            "graph_sha256": "c63fd3ae719d1730eb5183edbdd21340848e915d0ec12dd7d09b9b25ba1860de",
+            "weight_layout_sha256": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+            "schedule_sha256": "7e347204b32107d175ea36e7a8e591071aa82999c2464f4a57375480ae25e502",
+            "dependency_sha256": {
+              "w4a16_upstream.py": "c63fd3ae719d1730eb5183edbdd21340848e915d0ec12dd7d09b9b25ba1860de",
+              "w4a16_prefill_upstream.cc": "0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368",
+              "upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+              "upstream_schedule.py": "7e347204b32107d175ea36e7a8e591071aa82999c2464f4a57375480ae25e502",
+              "prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+              "prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+              "prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+              "silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+              "projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e"
+            },
+            "upstream_kernel_commit": "121dd54abc68f84d89a7074372ebf82be2db62d5",
+            "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+            "xclbin_sha256": "e3c9337aa134a45ac5a97f9e3dd605a8b3fad7d6dcaa62605eb7f36efb04fb8b",
+            "insts_sha256": "3e924e0bf1830c133acba87d8d2c3a417233d35830a80e0c10c12bc189ccfba9"
+          },
+          "build_contract": {
+            "version": 1,
+            "source_sha256": {
+              "w4a16_upstream.py": "c63fd3ae719d1730eb5183edbdd21340848e915d0ec12dd7d09b9b25ba1860de",
+              "w4a16_prefill_upstream.cc": "0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368",
+              "upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+              "upstream_schedule.py": "7e347204b32107d175ea36e7a8e591071aa82999c2464f4a57375480ae25e502",
+              "prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+              "prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+              "prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+              "silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+              "projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e"
+            },
+            "expected_manifest": {
+              "kind": "w4a16_upstream_bf16",
+              "mode": "swiglu",
+              "m": 512,
+              "k": 4096,
+              "n": 2560,
+              "weight_k": 4096,
+              "weight_n": 14336,
+              "k_start": 0,
+              "n_start": 0,
+              "cols": 8,
+              "compute_rows": 4,
+              "worker_count": 32,
+              "m_reuse": 2,
+              "worker_stack_size": 2048,
+              "weight_layout": "glassescrab_w4a16_k128_n64_colmod8_4352_v1",
+              "weight_tile_bytes": 4352,
+              "arithmetic": "bf16",
+              "compute_format": "bf16",
+              "upstream_kernel_commit": "121dd54abc68f84d89a7074372ebf82be2db62d5",
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+              "source_sha256": "0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368",
+              "graph_sha256": "c63fd3ae719d1730eb5183edbdd21340848e915d0ec12dd7d09b9b25ba1860de",
+              "weight_layout_sha256": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+              "schedule_sha256": "7e347204b32107d175ea36e7a8e591071aa82999c2464f4a57375480ae25e502",
+              "dependency_sha256": {
+                "w4a16_upstream.py": "c63fd3ae719d1730eb5183edbdd21340848e915d0ec12dd7d09b9b25ba1860de",
+                "w4a16_prefill_upstream.cc": "0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368",
+                "upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+                "upstream_schedule.py": "7e347204b32107d175ea36e7a8e591071aa82999c2464f4a57375480ae25e502",
+                "prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+                "projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e"
+              }
+            },
+            "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858"
+          }
+        },
+        "down": {
+          "xclbin": "/notebooks/HeteroMega-upstream-bf16-20261025/artifacts/upstream_bf16_projection_m512_k2560_n4096_f70d2f1be5b6bc96/final.xclbin",
+          "insts": "/notebooks/HeteroMega-upstream-bf16-20261025/artifacts/upstream_bf16_projection_m512_k2560_n4096_f70d2f1be5b6bc96/insts.bin",
+          "manifest": {
+            "kind": "w4a16_upstream_bf16",
+            "mode": "projection",
+            "m": 512,
+            "k": 2560,
+            "n": 4096,
+            "weight_k": 14336,
+            "weight_n": 4096,
+            "k_start": 0,
+            "n_start": 0,
+            "cols": 8,
+            "worker_count": 32,
+            "compute_rows": 4,
+            "m_reuse": 2,
+            "weight_tile_bytes": 4352,
+            "weight_layout": "glassescrab_w4a16_k128_n64_colmod8_4352_v1",
+            "arithmetic": "bf16",
+            "compute_format": "bf16",
+            "worker_stack_size": 2048,
+            "source_sha256": "0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368",
+            "graph_sha256": "c63fd3ae719d1730eb5183edbdd21340848e915d0ec12dd7d09b9b25ba1860de",
+            "weight_layout_sha256": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+            "schedule_sha256": "7e347204b32107d175ea36e7a8e591071aa82999c2464f4a57375480ae25e502",
+            "dependency_sha256": {
+              "w4a16_upstream.py": "c63fd3ae719d1730eb5183edbdd21340848e915d0ec12dd7d09b9b25ba1860de",
+              "w4a16_prefill_upstream.cc": "0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368",
+              "upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+              "upstream_schedule.py": "7e347204b32107d175ea36e7a8e591071aa82999c2464f4a57375480ae25e502",
+              "prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+              "prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+              "prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+              "silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+              "projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e"
+            },
+            "upstream_kernel_commit": "121dd54abc68f84d89a7074372ebf82be2db62d5",
+            "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+            "xclbin_sha256": "91a3c5ba138d6598be9fb105f1bcbc79bc8bf01529fd05c4545cfa1b171f451f",
+            "insts_sha256": "525502407f26d987aa83b998d6f8f4c5d11155e8debcacb4eed91b1341c7243d"
+          },
+          "build_contract": {
+            "version": 1,
+            "source_sha256": {
+              "w4a16_upstream.py": "c63fd3ae719d1730eb5183edbdd21340848e915d0ec12dd7d09b9b25ba1860de",
+              "w4a16_prefill_upstream.cc": "0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368",
+              "upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+              "upstream_schedule.py": "7e347204b32107d175ea36e7a8e591071aa82999c2464f4a57375480ae25e502",
+              "prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+              "prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+              "prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+              "silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+              "projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e"
+            },
+            "expected_manifest": {
+              "kind": "w4a16_upstream_bf16",
+              "mode": "projection",
+              "m": 512,
+              "k": 2560,
+              "n": 4096,
+              "weight_k": 14336,
+              "weight_n": 4096,
+              "k_start": 0,
+              "n_start": 0,
+              "cols": 8,
+              "compute_rows": 4,
+              "worker_count": 32,
+              "m_reuse": 2,
+              "worker_stack_size": 2048,
+              "weight_layout": "glassescrab_w4a16_k128_n64_colmod8_4352_v1",
+              "weight_tile_bytes": 4352,
+              "arithmetic": "bf16",
+              "compute_format": "bf16",
+              "upstream_kernel_commit": "121dd54abc68f84d89a7074372ebf82be2db62d5",
+              "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+              "source_sha256": "0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368",
+              "graph_sha256": "c63fd3ae719d1730eb5183edbdd21340848e915d0ec12dd7d09b9b25ba1860de",
+              "weight_layout_sha256": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+              "schedule_sha256": "7e347204b32107d175ea36e7a8e591071aa82999c2464f4a57375480ae25e502",
+              "dependency_sha256": {
+                "w4a16_upstream.py": "c63fd3ae719d1730eb5183edbdd21340848e915d0ec12dd7d09b9b25ba1860de",
+                "w4a16_prefill_upstream.cc": "0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368",
+                "upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+                "upstream_schedule.py": "7e347204b32107d175ea36e7a8e591071aa82999c2464f4a57375480ae25e502",
+                "prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+                "prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+                "prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+                "silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+                "projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e"
+              }
+            },
+            "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858"
+          }
+        }
+      },
+      "runs": [
+        {
+          "input": "signed_a",
+          "status": "completed",
+          "input_sha256": "5d92024cbfcc1fb03c03d34113f189f416e8b8471393482678f1d468a44be45a",
+          "host_wall_us": 29056.474,
+          "completed_npu_dispatches": 2,
+          "output_sha256": "dba2fc65cd4e6714b880603e06cf60bdf6b8dfddfd0d10852364eea3c458f744",
+          "reference_sha256": "047a24f0b6baaac8af82ed4f1ef62cd5e3cce919a2d187247e322c08f701d4fb",
+          "errors": {
+            "correctness": "passed",
+            "finite": true,
+            "max_abs_error": 0.0009765625,
+            "relative_l2_error": 0.0037400364699664273,
+            "rms_error": 0.0001086981111942673,
+            "reference_max_abs": 0.185546875,
+            "max_error_limit": 0.055566406250000006,
+            "elementwise_close_fraction": 1.0
+          },
+          "diagnostics": {
+            "branch_host_wall_us": 22465.153,
+            "stages": {
+              "input_layout_us": 788.905,
+              "swiglu_with_host_io_us": 12371.559,
+              "down_input_layout_us": 112.588,
+              "down_with_host_io_us": 8355.987,
+              "output_layout_us": 825.174
+            },
+            "dispatch_wait_us": {
+              "swiglu": 11788.27,
+              "down": 7688.62
+            },
+            "completed_dispatches_total": 2,
+            "weight_upload_counts": {
+              "gate": 1,
+              "up": 1,
+              "down": 1
+            }
+          }
+        },
+        {
+          "input": "signed_b",
+          "status": "completed",
+          "input_sha256": "a3e810555edf38114de21f11fb6e6c1d293fa1120a944c9d9ad8d9b309cb0305",
+          "host_wall_us": 30506.537,
+          "completed_npu_dispatches": 2,
+          "output_sha256": "f05bde1ee3b118ab62f136d37904f26cda649f4e4df97d48eedabdd99dba3332",
+          "reference_sha256": "4217a152c848dbb779f89c9c9b679af608312948129785105f734e1d45e76b14",
+          "errors": {
+            "correctness": "passed",
+            "finite": true,
+            "max_abs_error": 0.0009765625,
+            "relative_l2_error": 0.003759808012714911,
+            "rms_error": 0.00011078122579186757,
+            "reference_max_abs": 0.1865234375,
+            "max_error_limit": 0.055595703125,
+            "elementwise_close_fraction": 1.0
+          },
+          "diagnostics": {
+            "branch_host_wall_us": 24017.423,
+            "stages": {
+              "input_layout_us": 839.224,
+              "swiglu_with_host_io_us": 13047.835,
+              "down_input_layout_us": 194.186,
+              "down_with_host_io_us": 8583.824,
+              "output_layout_us": 1332.364
+            },
+            "dispatch_wait_us": {
+              "swiglu": 12331.429,
+              "down": 7767.129
+            },
+            "completed_dispatches_total": 4,
+            "weight_upload_counts": {
+              "gate": 1,
+              "up": 1,
+              "down": 1
+            }
+          }
+        },
+        {
+          "input": "zero",
+          "status": "completed",
+          "input_sha256": "bb9f8df61474d25e71fa00722318cd387396ca1736605e1248821cc0de3d3af8",
+          "host_wall_us": 30804.51,
+          "completed_npu_dispatches": 2,
+          "output_sha256": "bb9f8df61474d25e71fa00722318cd387396ca1736605e1248821cc0de3d3af8",
+          "reference_sha256": "bb9f8df61474d25e71fa00722318cd387396ca1736605e1248821cc0de3d3af8",
+          "errors": {
+            "correctness": "passed",
+            "finite": true,
+            "max_abs_error": 0.0,
+            "relative_l2_error": 0.0,
+            "rms_error": 0.0,
+            "reference_max_abs": 0.0,
+            "max_error_limit": 0.05,
+            "elementwise_close_fraction": 1.0
+          },
+          "diagnostics": {
+            "branch_host_wall_us": 23125.03,
+            "stages": {
+              "input_layout_us": 873.693,
+              "swiglu_with_host_io_us": 12084.955,
+              "down_input_layout_us": 110.348,
+              "down_with_host_io_us": 8815.139,
+              "output_layout_us": 1231.836
+            },
+            "dispatch_wait_us": {
+              "swiglu": 11607.264,
+              "down": 8128.352
+            },
+            "completed_dispatches_total": 6,
+            "weight_upload_counts": {
+              "gate": 1,
+              "up": 1,
+              "down": 1
+            }
+          }
+        },
+        {
+          "input": "repeat_a",
+          "status": "completed",
+          "input_sha256": "5d92024cbfcc1fb03c03d34113f189f416e8b8471393482678f1d468a44be45a",
+          "host_wall_us": 31427.228,
+          "completed_npu_dispatches": 2,
+          "output_sha256": "dba2fc65cd4e6714b880603e06cf60bdf6b8dfddfd0d10852364eea3c458f744",
+          "reference_sha256": "047a24f0b6baaac8af82ed4f1ef62cd5e3cce919a2d187247e322c08f701d4fb",
+          "errors": {
+            "correctness": "passed",
+            "finite": true,
+            "max_abs_error": 0.0009765625,
+            "relative_l2_error": 0.0037400364699664273,
+            "rms_error": 0.0001086981111942673,
+            "reference_max_abs": 0.185546875,
+            "max_error_limit": 0.055566406250000006,
+            "elementwise_close_fraction": 1.0
+          },
+          "diagnostics": {
+            "branch_host_wall_us": 24599.541,
+            "stages": {
+              "input_layout_us": 876.833,
+              "swiglu_with_host_io_us": 13024.887,
+              "down_input_layout_us": 162.476,
+              "down_with_host_io_us": 9014.044,
+              "output_layout_us": 1507.471
+            },
+            "dispatch_wait_us": {
+              "swiglu": 12327.871,
+              "down": 8196.82
+            },
+            "completed_dispatches_total": 8,
+            "weight_upload_counts": {
+              "gate": 1,
+              "up": 1,
+              "down": 1
+            }
+          }
+        }
+      ],
+      "runner_completed_dispatches": {
+        "swiglu": 4,
+        "down": 4
+      },
+      "checks": {
+        "original_numerical_tolerances": true,
+        "repeat_exact": true,
+        "changed_input_changes_output": true,
+        "exact_zero": true,
+        "nonzero_signed_inputs": true,
+        "each_runner_completed_four": true,
+        "fixed_weights_uploaded_once": true,
+        "original_weight_bytes_unchanged": true
+      }
+    }
+  ],
+  "source_sha256": {
+    "experiments/ffn_partition/check_upstream.py": "a05a0e8aed5bac8a82298fdb742a946b450034bfd20d18e4510f80f0f91933b9",
+    "experiments/ffn_partition/upstream_npu.py": "16ca38897e4a6c69385709e5682313e2d6e2434d5ed9c12da5cc69b1f8c9b385",
+    "experiments/ffn_partition/npu_backend.py": "ececc53ce31432b2bddfbdb987ce145b5d1dc3d2e0be833027529c309d842fa3",
+    "experiments/ffn_partition/contract.py": "b1199d8dff1812f972d2e8f4ac5fbfaddc24a7a023ff2aab19585ec13d154a2b",
+    "npu/ffn/xrt_runner.py": "68115a215d1deeb5f9af620e7cff56bad0f977d1d20e69276bc9f73a4353d598",
+    "npu/ffn/reference.py": "351923dabc1ec03bc76f11d2d2c941960c5b7d3fb56233be59c66661c82ca631",
+    "npu/ffn/prefill_reference.py": "24f4218251fc08a0e8969601d477e65074887243035d161e27a38c8f84e52554"
+  }
+}

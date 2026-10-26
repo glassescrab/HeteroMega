@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "completed_npu_dispatches": 40,
+  "reports": {
+    "odd_partition.json": {
+      "cases": 1,
+      "max_relative_l2": 0.003800694621453203,
+      "max_abs_error": 0.0001220703125
+    },
+    "model_p2560.json": {
+      "cases": 1,
+      "max_relative_l2": 0.003759808012714911,
+      "max_abs_error": 0.0009765625
+    },
+    "smoke.json": {
+      "cases": 5,
+      "max_relative_l2": 0.004000482184398329,
+      "max_abs_error": 0.0009765625
+    }
+  }
+}
