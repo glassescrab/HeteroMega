@@ -13,19 +13,20 @@
   "compute_rows": 4,
   "m_reuse": 2,
   "weight_tile_bytes": 4352,
+  "segment_pipeline_depth": 2,
   "weight_layout": "glassescrab_w4a16_k128_n64_colmod8_4352_v1",
   "arithmetic": "bf16",
   "compute_format": "bf16",
   "worker_stack_size": 2048,
   "source_sha256": "0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368",
-  "graph_sha256": "c63fd3ae719d1730eb5183edbdd21340848e915d0ec12dd7d09b9b25ba1860de",
+  "graph_sha256": "6b5dd9a24ee5ce84bf5a3795f51b847430a9013fa416597d7f70a03f42a8f171",
   "weight_layout_sha256": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
-  "schedule_sha256": "7e347204b32107d175ea36e7a8e591071aa82999c2464f4a57375480ae25e502",
+  "schedule_sha256": "2ec37ca4b4e8e8313b4b8f2c968bcaa169605c22c828d814b8c05a6eba9530e3",
   "dependency_sha256": {
-    "w4a16_upstream.py": "c63fd3ae719d1730eb5183edbdd21340848e915d0ec12dd7d09b9b25ba1860de",
+    "w4a16_upstream.py": "6b5dd9a24ee5ce84bf5a3795f51b847430a9013fa416597d7f70a03f42a8f171",
     "w4a16_prefill_upstream.cc": "0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368",
     "upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
-    "upstream_schedule.py": "7e347204b32107d175ea36e7a8e591071aa82999c2464f4a57375480ae25e502",
+    "upstream_schedule.py": "2ec37ca4b4e8e8313b4b8f2c968bcaa169605c22c828d814b8c05a6eba9530e3",
     "prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
     "prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
     "prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
@@ -34,6 +35,6 @@
   },
   "upstream_kernel_commit": "121dd54abc68f84d89a7074372ebf82be2db62d5",
   "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
-  "xclbin_sha256": "e3c9337aa134a45ac5a97f9e3dd605a8b3fad7d6dcaa62605eb7f36efb04fb8b",
-  "insts_sha256": "3e924e0bf1830c133acba87d8d2c3a417233d35830a80e0c10c12bc189ccfba9"
+  "xclbin_sha256": "3c93faebe6702a77cd79f5fd6e3e0f6fbc7a3318e3b292e07a2344829ddc340a",
+  "insts_sha256": "e986d592450245cdce1d08418cbfaf49ebf2200dfcc7ae17149442464d41f823"
 }

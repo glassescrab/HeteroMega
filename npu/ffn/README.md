@@ -9,6 +9,12 @@ buffers directly**. There is no weight repacking or gate/up concatenation.
 Selected partition: M512, H4096, P2560 out of full I14336. This partition is
 retained for compatibility testing; it has not been retuned for this design.
 
+Successive N64 segments now use a bounded pipeline of depth two. The next
+segment is submitted before waiting for the previous output drains; the
+oldest group finishes before a third is submitted. Native BF16 arithmetic,
+core buffers, weight format and DMA addresses are unchanged. Use
+`--segment-pipeline-depth 1` to rebuild the serial control.
+
 | Stage | Generated MLIR | XCLBIN | Instructions |
 |---|---|---|---|
 | Gate + up + SiLU × up | [aie.mlir](prebuilt/swiglu_m512_k4096_p2560/aie.mlir) | [final.xclbin](prebuilt/swiglu_m512_k4096_p2560/final.xclbin) | [insts.bin](prebuilt/swiglu_m512_k4096_p2560/insts.bin) |
@@ -18,8 +24,19 @@ These exact binaries passed signed/changed-input, zero and repeatability
 checks on HX370. The selected FFN passed the original numerical bounds;
 maximum observed relative L2 error was 0.003760. Seven test cases across
 small/model shapes completed 40 NPU launches, including nonzero K/N slices,
-paired halves, narrow N128 and an uneven P1152 partition. This establishes
-synthetic NPU FFN correctness, not model accuracy or a new speedup claim.
+paired halves, narrow N128 and an uneven P1152 partition. The full-shape
+outputs are bit-identical to the preceding serial package.
+
+On HX370 at default power mode, complete NPU-branch median latency (including
+activation layouts and BO I/O) improved **24.796→24.024 ms** in an ABBA
+comparison and **25.126→24.512 ms** in a longer reversed-order BAAB run:
+**3.1% and 2.4% reductions**. Each schedule had 50 and 100 timed samples,
+respectively. All outputs matched the serial control exactly; across both
+schedules and correctness cases, runs completed 736 NPU launches. All 32
+core ELF files per graph are byte-identical between pipeline depths.
+Timing distributions overlap;
+this modest isolated-branch gain does not establish GPU+NPU or whole-model
+speedup. Synthetic correctness does not establish model accuracy.
 
 ## Original weight format
 
@@ -51,11 +68,11 @@ From this directory:
 ```bash
 mkdir -p build/swiglu build/down
 python w4a16_upstream.py --mode swiglu -M 512 -K 4096 -N 2560 \
-  --weight-k 4096 --weight-n 14336 --max-reuse 2 \
+  --weight-k 4096 --weight-n 14336 --max-reuse 2 --segment-pipeline-depth 2 \
   --xclbin-path build/swiglu/final.xclbin \
   --insts-path build/swiglu/insts.bin --pdi-path build/swiglu/final.pdi
 python w4a16_upstream.py --mode projection -M 512 -K 2560 -N 4096 \
-  --weight-k 14336 --weight-n 4096 --max-reuse 2 \
+  --weight-k 14336 --weight-n 4096 --max-reuse 2 --segment-pipeline-depth 2 \
   --xclbin-path build/down/final.xclbin \
   --insts-path build/down/insts.bin --pdi-path build/down/final.pdi
 ```
@@ -64,6 +81,8 @@ python w4a16_upstream.py --mode projection -M 512 -K 2560 -N 4096 \
 `--k-start/--n-start` describe the selected region; K starts align to 128,
 N starts to 32. `-N` means P for SwiGLU. The packaged binaries select start 0.
 Arithmetic is fixed to native BF16; there is no BFP16 selector in this graph.
+Pipeline depth is recorded in the manifest. Depth one and two use distinct
+compiled artifact identities; the packaged binaries use depth two.
 
 ## Runtime contract
 
