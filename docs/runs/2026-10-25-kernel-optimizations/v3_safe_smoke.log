@@ -1,0 +1,6 @@
+{
+  "status": "passed",
+  "output": "results/v3_safe_smoke.json",
+  "completed_npu_dispatches": 24,
+  "error": null
+}

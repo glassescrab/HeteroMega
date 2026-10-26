@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/opt/xilinx/xrt/bin/xrt-smi",
+    "examine",
+    "--report",
+    "platform",
+    "--format",
+    "JSON",
+    "--output",
+    "/notebooks/HeteroMega-kernel-opt-bf16-20261025/results/platform_after.json"
+  ],
+  "returncode": 0,
+  "stdout": "\n---------------------------\n[0000:66:00.1] : NPU Strix\n---------------------------\nPlatform\n  Name                   : NPU Strix \n  Power Mode             : default \n  Total Columns          : 8 \n\nEstimated Power          : N/A\nTemperature (C)          : N/A\n\nSuccessfully wrote the JSON file: /notebooks/HeteroMega-kernel-opt-bf16-20261025/results/platform_after.json\n",
+  "stderr": ""
+}

@@ -80,6 +80,62 @@ class _ObservedRunner:
 
 
 class UpstreamNpuTests(unittest.TestCase):
+    def test_kernel_ablations_have_distinct_cache_identity_and_strict_options(self):
+        with tempfile.TemporaryDirectory() as root:
+            weights = _weights()
+            base = backend._ffn_specs(512, 256, 128, *weights, root)
+            variants = ({'vector_zero': True}, {'mmul_m_reuse': 2},
+                {'output_layout': 'down_a'},
+                {'swiglu_input_layout': 'row_major'},
+                {'down_reuse': 4, 'down_activation_fifo_depth': 1})
+            for options in variants:
+                specs = backend._ffn_specs(512, 256, 128, *weights, root, **options)
+                self.assertTrue(any(specs[key]['directory'] != base[key]['directory'] for key in base))
+                for spec in specs.values():
+                    _write_artifact(spec)
+                    backend._load_artifact(spec)
+            for options in ({'vector_zero': 1}, {'mmul_m_reuse': True},
+                    {'down_reuse': 4}, {'down_activation_fifo_depth': 3},
+                    {'output_layout': 'unknown'}, {'swiglu_reuse': 4}):
+                with self.subTest(options=options), self.assertRaises(ValueError):
+                    backend._ffn_specs(512, 256, 128, *weights, root, **options)
+
+    def test_direct_down_layout_borrows_only_until_staging_and_returns_owned_output(self):
+        weights = _weights()
+        with tempfile.TemporaryDirectory() as root:
+            specs = backend._ffn_specs(128, 256, 128, *weights, root, output_layout='down_a')
+            for spec in specs.values():
+                _write_artifact(spec)
+            with patch.object(backend, 'PersistentXrtRunner', _ObservedRunner), \
+                    patch.object(backend, 'packed_output_to_activation', side_effect=AssertionError('unexpected permutation')):
+                branch = backend.UpstreamNpuFFN(128, 256, 128, *weights, root,
+                    output_layout='down_a', copy_output_bits=False)
+                output = branch.run(np.zeros((128, 256), np.uint16))
+                self.assertIs(branch.down.inputs[0], branch.swiglu.result)
+                saved = output.copy()
+                branch.down.result.fill(7)
+                branch.swiglu.result.fill(9)
+                branch.run(np.zeros((128, 256), np.uint16))
+            np.testing.assert_array_equal(output, saved)
+            self.assertEqual(branch.metadata['kernel_options']['output_layout'], 'down_a')
+
+    def test_row_major_input_skips_pack_and_preserves_noncontiguous_values(self):
+        weights = _weights()
+        with tempfile.TemporaryDirectory() as root:
+            specs = backend._ffn_specs(128, 256, 128, *weights, root,
+                                      swiglu_input_layout='row_major')
+            for spec in specs.values():
+                _write_artifact(spec)
+            with patch.object(backend, 'PersistentXrtRunner', _ObservedRunner), \
+                    patch.object(backend, '_pack_activation_bits', side_effect=AssertionError('unexpected pack')):
+                branch = backend.UpstreamNpuFFN(128, 256, 128, *weights, root,
+                                               swiglu_input_layout='row_major')
+                x = (np.arange(128 * 512, dtype=np.uint16) % 512).reshape(128, 512)[:, ::2]
+                self.assertFalse(x.flags.c_contiguous)
+                branch.run(x)
+                np.testing.assert_array_equal(branch.swiglu.inputs[0].reshape(x.shape), x)
+                self.assertTrue(branch.swiglu.inputs[0].flags.c_contiguous)
+
     def test_pipeline_depth_is_strict_and_changes_both_artifact_identities(self):
         with tempfile.TemporaryDirectory() as root:
             weights = _weights()
@@ -131,6 +187,7 @@ class UpstreamNpuTests(unittest.TestCase):
                         json=json, Path=Path, __doc__='CPU graph manifest check',
                         add_compile_args=compile_args, device_from_args=lambda *a, **k: None,
                         run_design_cli=lambda *a, **k: None, plan_upstream=backend.plan_upstream,
+                        upstream_worker_stack_size=backend.upstream_worker_stack_size,
                         upstream_swiglu=object(), upstream_projection=object(),
                         FINGERPRINT=sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest(),
                         HASHES=hashes, UPSTREAM_LAYOUT_VERSION=backend.UPSTREAM_LAYOUT_VERSION,

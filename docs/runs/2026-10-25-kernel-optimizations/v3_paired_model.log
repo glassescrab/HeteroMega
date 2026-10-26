@@ -1,0 +1,6 @@
+{
+  "status": "passed",
+  "output": "results/v3_paired_model.json",
+  "completed_npu_dispatches": 8,
+  "error": null
+}

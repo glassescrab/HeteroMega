@@ -1,0 +1,6 @@
+{
+  "status": "passed",
+  "output": "results/v2_combo_row_model.json",
+  "completed_npu_dispatches": 8,
+  "error": null
+}

@@ -1,0 +1,6 @@
+{
+  "status": "passed",
+  "output": "results/combo_smoke.json",
+  "completed_npu_dispatches": 8,
+  "error": null
+}

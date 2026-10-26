@@ -1,5 +1,53 @@
 # HeteroMega agent continuation guide
 
+## Latest optimization — 2026-10-25: reuse and DMA activation layouts
+
+The user requested **"do all other optimizations first"** before combined
+GPU+NPU integration. This pass evaluated vector zero metadata, down M reuse,
+MMUL accumulator blocking, row-major input DMA, direct down-A output DMA and
+borrowed readback. Native BF16, eight columns/32 workers and original packed
+glassescrab weight buffers are retained. No weight repacking is introduced.
+
+Selected profile: `combo_mmul1_row_major` in
+`experiments/ffn_partition/benchmark_upstream_optimizations.py`. SwiGLU uses
+reuse2/Adepth2/row-major input/down-A output; down uses reuse4/Adepth1/compact
+input/output. Both enable vector zero metadata, retain MMUL M blocking1,
+2 KiB stacks and segment depth2. Host readback is borrowed; final output is
+independent. **The activation ABI changed**: Z already has down-A layout,
+so do not apply the previous CPU permutation. BO I/O still occurs.
+
+**Measured HX370/default power:** versus the preceding two-segment control,
+median NPU-branch latency is 24.576→22.590 ms (ABBA, 8.08% lower) and
+24.194→22.490 ms (BAAB, 7.04% lower), 100 timed samples/profile/order.
+All outputs match exactly. The combination beats the simpler DMA-only
+configuration by 2.4–2.7% in both orders. This remains an isolated NPU-branch
+result, not combined GPU+NPU/full-model acceleration or model accuracy.
+
+The experimental eight-accumulator MMUL overflowed its original 2 KiB stack
+on full shapes. A conditional 4 KiB stack fixes correctness, but heavy
+register spills make it about 2.2× slower. It is not selected. Keep the failed
+report separate from successful evidence. Passing reports complete 2,672
+dispatches; the retained failed report has eight further completions.
+Local tests: 201 passed, one skipped. Runtime sources/artifacts and exact
+output equivalence were independently audited.
+
+Read `docs/runs/2026-10-25-kernel-optimizations/README.md` and
+`npu/ffn/UPSTREAM_BF16.md`. Research branch:
+`codex/native-bf16-reuse-optimizations`; isolated cloud overlay:
+`/notebooks/HeteroMega-kernel-opt-bf16-20261025`. Earlier overlays/controls
+remain intact. Kernel-only PR #3 is managed in `../HeteroMega-kernels`;
+do not push research harnesses or evidence into it. Device-phase tracing,
+dequant/MMUL overlap, larger N reuse and SwiGLU buffer redesign remain open;
+this pass does not exhaust those research changes. Integration stays deferred
+until this optimization checkpoint is delivered.
+
+Published kernel package: `fc0b25585d5835e976302ac14910817f53a34cac` in
+[PR #3](https://github.com/glassescrab/HeteroMega/pull/3), 22 files under
+`npu/ffn` including the new DMA-output helper. All 21 payload checksums pass.
+Generated MLIR is retained byte-for-byte, including compiler whitespace.
+The PR description documents the new activation ABI and measured limits;
+the PR remains open and unmerged.
+
 ## Latest optimization — 2026-10-25: two-segment native BF16 pipeline
 
 The user authorized implementing the proposed segment pipeline. The selected

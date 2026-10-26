@@ -1,0 +1,56 @@
+[
+  {
+    "command": [
+      "/home/mliraie/mlir-aie/ironenv/bin/python",
+      "-m",
+      "experiments.ffn_partition.benchmark_upstream_optimizations",
+      "--artifact-root",
+      "artifacts_v3",
+      "--output",
+      "results/confirm_selected_abba.json",
+      "--profile-b",
+      "combo_mmul1_row_major",
+      "--order",
+      "ABBA",
+      "--rounds",
+      "1",
+      "--warmup",
+      "5",
+      "--iterations",
+      "50",
+      "--no-build",
+      "--environment-note",
+      "HX370 default power; final selected nativeBF16 combo; reversed-order confirmation"
+    ],
+    "started": 1792982109.4858627,
+    "returncode": 0,
+    "finished": 1792982121.5567749
+  },
+  {
+    "command": [
+      "/home/mliraie/mlir-aie/ironenv/bin/python",
+      "-m",
+      "experiments.ffn_partition.benchmark_upstream_optimizations",
+      "--artifact-root",
+      "artifacts_v3",
+      "--output",
+      "results/confirm_selected_baab.json",
+      "--profile-b",
+      "combo_mmul1_row_major",
+      "--order",
+      "BAAB",
+      "--rounds",
+      "1",
+      "--warmup",
+      "5",
+      "--iterations",
+      "50",
+      "--no-build",
+      "--environment-note",
+      "HX370 default power; final selected nativeBF16 combo; reversed-order confirmation"
+    ],
+    "started": 1792982121.5572114,
+    "returncode": 0,
+    "finished": 1792982133.3762898
+  }
+]

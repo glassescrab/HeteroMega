@@ -32,6 +32,51 @@ def validate_segment_pipeline_depth(depth):
     return depth
 
 
+def validate_activation_fifo_depth(depth):
+    if isinstance(depth, bool) or not isinstance(depth, int) or depth not in (1, 2):
+        raise ValueError('activation_fifo_depth must be 1 or 2')
+    return depth
+
+
+def validate_input_layout(input_layout):
+    if input_layout not in ('compact', 'row_major'):
+        raise ValueError('input_layout must be compact or row_major')
+    return input_layout
+
+
+def validate_kernel_tuning(vector_zero, mmul_m_reuse):
+    if not isinstance(vector_zero, bool):
+        raise ValueError('vector_zero must be a bool')
+    if (isinstance(mmul_m_reuse, bool) or not isinstance(mmul_m_reuse, int)
+            or mmul_m_reuse not in (1, 2)):
+        raise ValueError('mmul_m_reuse must be 1 or 2')
+
+
+def upstream_worker_stack_size(mmul_m_reuse):
+    """Reserve enough stack for the audited eight-accumulator call chain.
+
+    The paired-M kernel's full model core has 2,112 bytes across nested
+    frames, exceeding the original 2 KiB reservation. Keep that reservation
+    for the baseline kernel and use 4 KiB for the paired-M ablation.
+    """
+    validate_kernel_tuning(False, mmul_m_reuse)
+    return 4096 if mmul_m_reuse == 2 else 2048
+
+
+def validate_upstream_buffering(schedule, activation_fifo_depth):
+    """Reject the known oversized reuse-four core-buffer configuration.
+
+    Projection reuse four needs 76,288 raw bytes with depth-two A buffers,
+    or 59,904 with depth-one consumers, including the baseline 2 KiB stack.
+    The paired-M ablation's 4 KiB stack raises the latter to 61,952 bytes.
+    Actual compiler placement/spills still need build and hardware checks.
+    Host and memory-tile A buffers remain double-buffered in either case.
+    """
+    depth = validate_activation_fifo_depth(activation_fifo_depth)
+    if schedule.base.m_reuse == 4 and depth != 1:
+        raise ValueError('effective M reuse 4 requires activation_fifo_depth=1')
+
+
 def segment_pipeline_actions(schedule, segment_pipeline_depth=2):
     """Submit at most two segments, finishing the oldest before the next.
 
@@ -89,10 +134,26 @@ class UpstreamSchedule:
         return TapSpec(self.weight_bytes, offset,
                        (1, 1, 1, self.base.kb * 4352), (0, 0, 0, 1))
 
-    def activation_tap(self, lane, group):
+    def activation_tap(self, lane, group, input_layout='compact'):
+        validate_input_layout(input_layout)
         col = (lane // 4) * self.base.n_columns
         tap = self.base.activation_tap(col, lane % 4, group)
+        if input_layout == 'row_major':
+            # Each shim object is [reuse*16 rows, 128 K values]. Its source
+            # rows retain the full logical K stride. The memory-tile stream
+            # permutation below restores exactly the existing core A ABI.
+            return replace(tap, sizes=(1, self.base.kb, self.base.m_reuse * 16, 128),
+                           strides=(0, 128, self.base.k, 1))
         return replace(tap, sizes=(1, *tap.sizes[1:]))
+
+    def activation_dims_to_stream(self, input_layout='compact'):
+        validate_input_layout(input_layout)
+        if input_layout == 'compact':
+            return self.base.activation_dims_to_stream
+        # Row-major [R*16,128] -> native [R*4,16,4,8]. Strides refer to
+        # BF16 elements within one unchanged R*2048-element FIFO object.
+        # Four dimensions fit the AIE2 memory-tile DMA addressing limit.
+        return ((self.base.m_reuse * 4, 512), (16, 8), (4, 128), (8, 1))
 
     def output_tap(self, col, group, segment):
         tap = (swiglu_output_tap(self.base, col, group) if self.mode == 'swiglu'
@@ -106,8 +167,11 @@ def plan_upstream(m, k, n, *, mode='projection', weight_k=None, weight_n=None,
                   k_start=0, n_start=0, columns=8, max_reuse=2):
     if mode not in ('projection', 'swiglu'):
         raise ValueError('mode must be projection or swiglu')
-    if isinstance(max_reuse, bool) or max_reuse not in (1, 2):
-        raise ValueError('direct upstream weights support max_reuse 1 or 2')
+    if (isinstance(max_reuse, bool) or not isinstance(max_reuse, int)
+            or max_reuse not in (1, 2, 4)):
+        raise ValueError('direct upstream weights support max_reuse 1, 2 or 4')
+    if mode == 'swiglu' and max_reuse == 4:
+        raise ValueError('SwiGLU reuse 4 exceeds the current core-buffer budget')
     base = (plan_swiglu(m, k, n, columns=columns, max_reuse=max_reuse)
             if mode == 'swiglu' else
             plan_prefill(m, k, n, columns=columns, max_reuse=max_reuse))

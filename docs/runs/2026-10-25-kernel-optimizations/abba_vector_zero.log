@@ -1,0 +1,71 @@
+{
+  "status": "passed",
+  "completed_npu_dispatches": 152,
+  "summary": {
+    "1": {
+      "wall": {
+        "count": 30,
+        "median_us": 23862.2955,
+        "mean_us": 23832.09716666667,
+        "min_us": 22951.533,
+        "max_us": 24569.392,
+        "p10_us": 23493.5662,
+        "p90_us": 24198.3908
+      },
+      "dispatch_wait": {
+        "swiglu": {
+          "count": 30,
+          "median_us": 12088.135,
+          "mean_us": 12000.688566666666,
+          "min_us": 11520.441,
+          "max_us": 12379.435,
+          "p10_us": 11742.5771,
+          "p90_us": 12174.6509
+        },
+        "down": {
+          "count": 30,
+          "median_us": 7406.684,
+          "mean_us": 7398.6424,
+          "min_us": 7109.605,
+          "max_us": 8168.295,
+          "p10_us": 7173.1301,
+          "p90_us": 7563.3459
+        }
+      }
+    },
+    "2": {
+      "wall": {
+        "count": 30,
+        "median_us": 23836.845999999998,
+        "mean_us": 23836.646233333333,
+        "min_us": 23371.456,
+        "max_us": 24276.339,
+        "p10_us": 23509.229,
+        "p90_us": 24144.477899999998
+      },
+      "dispatch_wait": {
+        "swiglu": {
+          "count": 30,
+          "median_us": 11795.8095,
+          "mean_us": 11771.023633333334,
+          "min_us": 11431.212,
+          "max_us": 12052.511,
+          "p10_us": 11497.005000000001,
+          "p90_us": 11991.3698
+        },
+        "down": {
+          "count": 30,
+          "median_us": 7589.055,
+          "mean_us": 7623.388333333335,
+          "min_us": 7068.855,
+          "max_us": 8188.915,
+          "p10_us": 7269.1341,
+          "p90_us": 7957.4710000000005
+        }
+      }
+    },
+    "candidate_over_baseline_speedup": 1.0010676538330618,
+    "candidate_latency_reduction_percent": 0.1066515164058816
+  },
+  "error": null
+}

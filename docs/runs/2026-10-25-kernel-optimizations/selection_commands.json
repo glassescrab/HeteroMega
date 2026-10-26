@@ -1,0 +1,58 @@
+[
+  {
+    "command": [
+      "/home/mliraie/mlir-aie/ironenv/bin/python",
+      "-m",
+      "experiments.ffn_partition.benchmark_upstream_optimizations",
+      "--artifact-root",
+      "artifacts_v3",
+      "--output",
+      "results/select_staging_vs_combo_abba.json",
+      "--profile-a",
+      "results/staging_profile.json",
+      "--profile-b",
+      "combo_mmul1_row_major",
+      "--order",
+      "ABBA",
+      "--rounds",
+      "1",
+      "--warmup",
+      "5",
+      "--iterations",
+      "25",
+      "--environment-note",
+      "HX370 default power; selecting staging-only vs added vectorzero/downR4"
+    ],
+    "started": 1792982007.7122092,
+    "returncode": 0,
+    "finished": 1792982029.1763983
+  },
+  {
+    "command": [
+      "/home/mliraie/mlir-aie/ironenv/bin/python",
+      "-m",
+      "experiments.ffn_partition.benchmark_upstream_optimizations",
+      "--artifact-root",
+      "artifacts_v3",
+      "--output",
+      "results/select_staging_vs_combo_baab.json",
+      "--profile-a",
+      "results/staging_profile.json",
+      "--profile-b",
+      "combo_mmul1_row_major",
+      "--order",
+      "BAAB",
+      "--rounds",
+      "1",
+      "--warmup",
+      "5",
+      "--iterations",
+      "25",
+      "--environment-note",
+      "HX370 default power; selecting staging-only vs added vectorzero/downR4"
+    ],
+    "started": 1792982029.176756,
+    "returncode": 0,
+    "finished": 1792982036.4719422
+  }
+]

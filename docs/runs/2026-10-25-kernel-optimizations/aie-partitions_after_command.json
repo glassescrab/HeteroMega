@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/opt/xilinx/xrt/bin/xrt-smi",
+    "examine",
+    "--report",
+    "aie-partitions",
+    "--format",
+    "JSON",
+    "--output",
+    "/notebooks/HeteroMega-kernel-opt-bf16-20261025/results/aie-partitions_after.json"
+  ],
+  "returncode": 0,
+  "stdout": "\n---------------------------\n[0000:66:00.1] : NPU Strix\n---------------------------\nAIE Partitions\n  No hardware contexts running on device\n\nSuccessfully wrote the JSON file: /notebooks/HeteroMega-kernel-opt-bf16-20261025/results/aie-partitions_after.json\n",
+  "stderr": ""
+}

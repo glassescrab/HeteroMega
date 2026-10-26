@@ -1,0 +1,5 @@
+{
+  "output_layout": "down_a",
+  "swiglu_input_layout": "row_major",
+  "copy_output_bits": false
+}

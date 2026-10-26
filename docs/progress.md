@@ -1,5 +1,45 @@
 # HeteroMega progress
 
+## 2026-10-25: native BF16 reuse and activation-layout optimization pass
+
+- **Implemented:** vector zero metadata, down M reuse four with core A FIFO
+  depth one, row-major SwiGLU input DMA, direct down-A output DMA and borrowed
+  readback. The selected profile keeps four MMUL accumulators, native BF16,
+  all eight columns and unchanged original packed W4 bytes. Activation layout
+  ABI changes are documented; BO reads/writes and final output unpack remain.
+- **Measured:** selected NPU-branch median 24.576→22.590 ms (ABBA, 8.08%) and
+  24.194→22.490 ms (BAAB, 7.04%), each 100 samples/profile. Both orders use
+  fresh subprocess blocks, fixed inputs/weights, excluded warmup/reference and
+  exact output comparisons. The combination also beats the simpler staging
+  configuration by 2.4–2.7%; vector zero/down reuse alone show no convincing
+  benefit. All measurements use HX370/default power, M512/H4096/I14336/P2560.
+- **Measured correctness:** selected smoke/model checks pass strict bounds,
+  finite/zero/repeat/changed-input and unchanged-weight checks (32 dispatches).
+  All 12 benchmark reports pass bitwise controls. Across passing reports,
+  2,672 dispatches complete; the retained failed bring-up report has eight
+  additional completions that are not correctness successes. Worst strict
+  relative L2 is 0.0040004822; maximum absolute error 0.0009765625.
+- **Compiler-confirmed/rejected:** eight-accumulator MMUL overflowed 2 KiB
+  on full shapes. A 4 KiB conditional stack fixes correctness, but the repaired
+  variant is about 2.2× slower due to heavy spills. Selected MMUL remains1.
+  Down reuse halves its weight/dequant replay; these are logical counts, not
+  measured physical bandwidth or a kernel-phase timing breakdown.
+- **Verified:** 201 local tests pass, one skips. Independent audit resolves
+  34 artifact pairs/source versions, recomputes summaries and completion
+  counts, and matches benchmark outputs to the strict prior full-shape oracle.
+  Selected runtime sources match the cloud snapshot; one test-only file has
+  later local test additions. Previous baselines and failed evidence remain.
+- **Published:** kernel-only [PR #3](https://github.com/glassescrab/HeteroMega/pull/3)
+  updated at `fc0b255`, with 22 files and 21 verified payload checksums.
+  Selected binaries/MLIR match the cloud evidence exactly. Full research code
+  and reports remain on local `codex/native-bf16-reuse-optimizations`.
+- **Scope/next step:** this completes the bounded optimization pass before
+  integration. It does not establish combined GPU+NPU or whole-model speedup.
+  Device-phase tracing, dequant/MMUL overlap, larger N reuse and a SwiGLU
+  buffering redesign remain research work. Retune partitions under real
+  attention/GPU overlap when integration resumes.
+  [Evidence and reproduction](runs/2026-10-25-kernel-optimizations/README.md).
+
 ## 2026-10-25: bounded pipeline for original-weight BF16 segments
 
 - **Implemented:** keep two successive DMA task groups in flight, including

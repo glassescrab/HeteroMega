@@ -12,7 +12,9 @@ import unittest
 
 import numpy as np
 
-from upstream_schedule import plan_upstream, segment_pipeline_actions
+from upstream_schedule import (plan_upstream, segment_pipeline_actions,
+                               validate_activation_fifo_depth, validate_kernel_tuning,
+                               validate_upstream_buffering, upstream_worker_stack_size)
 
 
 def _upstream_offsets(k, n):
@@ -35,9 +37,77 @@ def _cases():
             yield dict(m=m, k=256, n=n, mode=mode, weight_k=512,
                        weight_n=((n + start + 63) // 64 + 9) * 64,
                        k_start=128, n_start=start)
+    for m, n, start in ((512, 128, 32), (512, 1152, 32), (512, 4096, 128),
+                        (128, 512, 0)):
+        yield dict(m=m, k=256, n=n, mode='projection', weight_k=512,
+                   weight_n=((n + start + 63) // 64 + 9) * 64,
+                   k_start=128, n_start=start, max_reuse=4)
 
 
 class UpstreamScheduleTests(unittest.TestCase):
+    def test_paired_m_stack_reservation_and_reuse_four_raw_memory_budget(self):
+        self.assertEqual(upstream_worker_stack_size(1), 2048)
+        self.assertEqual(upstream_worker_stack_size(2), 4096)
+        reuse = plan_upstream(512, 2560, 4096, max_reuse=4).base.m_reuse
+        # Independently count the down worker's A, W, two FP32 C buffers,
+        # BF16 scratch and Y pools with one core-consumer A object.
+        raw_buffers = (reuse * 2048 * 2 + 2 * 4352 + 2 * reuse * 512 * 4
+                       + 4096 * 2 + 2 * reuse * 512 * 2)
+        self.assertEqual(raw_buffers + upstream_worker_stack_size(1), 59904)
+        self.assertEqual(raw_buffers + upstream_worker_stack_size(2), 61952)
+        self.assertLess(raw_buffers + upstream_worker_stack_size(2), 65536)
+        for bad in (0, 3, True, 2.0, '2', None):
+            with self.subTest(value=bad), self.assertRaises(ValueError):
+                upstream_worker_stack_size(bad)
+
+    def test_reuse_four_projection_halves_weight_work_without_changing_a_bytes(self):
+        plans = [plan_upstream(512, 2560, 4096, weight_k=14336, max_reuse=r)
+                 for r in (2, 4)]
+        self.assertEqual([p.base.m_reuse for p in plans], [2, 4])
+        self.assertEqual([p.base.groups_per_column for p in plans], [4, 2])
+        traffic = []
+        for direct in plans:
+            base = direct.base
+            a_elements = sum(direct.activation_tap(lane, group).element_count
+                             for lane in range(base.m_column_groups * 4)
+                             for group in range(base.groups_per_column)) * direct.segment_count
+            w_bytes = sum(direct.weight_tap(col, segment).element_count
+                          for col in range(8) for segment in range(direct.segment_count)) \
+                * base.groups_per_column
+            dequant_calls = sum(len(item.halves) for items in direct.segments for item in items) \
+                * base.kb * 4 * base.groups_per_column
+            traffic.append((a_elements * 2, w_bytes, dequant_calls))
+        self.assertEqual(traffic, [(20971520, 22282240, 40960),
+                                   (20971520, 11141120, 20480)])
+
+    def test_tuning_validation_preserves_controls_and_rejects_oversized_buffers(self):
+        r2 = plan_upstream(512, 2560, 4096)
+        r4 = plan_upstream(512, 2560, 4096, max_reuse=4)
+        for depth in (1, 2):
+            self.assertEqual(validate_activation_fifo_depth(depth), depth)
+            validate_upstream_buffering(r2, depth)
+        validate_upstream_buffering(r4, 1)
+        with self.assertRaises(ValueError):
+            validate_upstream_buffering(r4, 2)
+        # A maximum is not a demand for an unsupported effective tile size.
+        fallback = plan_upstream(128, 256, 512, max_reuse=4)
+        self.assertEqual(fallback.base.m_reuse, 2)
+        validate_upstream_buffering(fallback, 2)
+        with self.assertRaises(ValueError):
+            plan_upstream(512, 4096, 2560, mode='swiglu', max_reuse=4)
+        for value in (0, 3, -1, True, False, 1.0, '2', None):
+            with self.subTest(depth=value), self.assertRaises(ValueError):
+                validate_activation_fifo_depth(value)
+        for vector in (False, True):
+            for reuse in (1, 2):
+                validate_kernel_tuning(vector, reuse)
+        for vector in (0, 1, None, 'true'):
+            with self.subTest(vector=vector), self.assertRaises(ValueError):
+                validate_kernel_tuning(vector, 1)
+        for reuse in (0, 3, True, 1.0, None, '2'):
+            with self.subTest(mmul_reuse=reuse), self.assertRaises(ValueError):
+                validate_kernel_tuning(False, reuse)
+
     def test_segment_pipeline_preserves_fifo_order_and_bounds_live_transfers(self):
         cases = list(_cases()) + [
             dict(m=512, k=4096, n=2560, mode='swiglu', weight_n=14336),
@@ -143,6 +213,7 @@ class UpstreamScheduleTests(unittest.TestCase):
 
                     context = dict(plan=direct.base, direct=direct, mode=mode,
                                    output_cols=output_cols, segment_pipeline_depth=depth,
+                                   input_layout='compact', output_layout='compact',
                                    segment_pipeline_actions=segment_pipeline_actions,
                                    TaskGroup=RecordingGroup, _tap=lambda tap: tap)
                     exec(code, context)

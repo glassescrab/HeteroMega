@@ -1,0 +1,3145 @@
+{
+  "audit_version": 1,
+  "classification": "compiled-artifact-confirmed",
+  "scope": "Paired eight-accumulator native BF16 candidate; local read-only analysis of saved compiler output.",
+  "method": "Parse non-local disassembly function boundaries; read actual positive paddxm stack adjustments; follow direct jl calls; combine with ELF _sp_start_value_DM_stack and A-buffer symbols and address-assigned MLIR. Local labels do not end function bodies.",
+  "limitations": [
+    "Representative cores (0,2) and (1,2) per stage have disassembly; all archived core ELF stack/A addresses are checked.",
+    "Does not count device cycles or certify absence of any unrelated memory fault.",
+    "The .stack_sizes section omits worker frames and is not sufficient for nested stack safety."
+  ],
+  "stages": [
+    {
+      "stage": "combo_model/down",
+      "build_contract_sha256": "60d9487975444d1a6b7f3f7ab11790103fc4f43b7cf25c94209672dc0f0eff25",
+      "manifest": {
+        "kind": "w4a16_upstream_bf16",
+        "mode": "projection",
+        "m": 512,
+        "k": 2560,
+        "n": 4096,
+        "weight_k": 14336,
+        "weight_n": 4096,
+        "k_start": 0,
+        "n_start": 0,
+        "cols": 8,
+        "compute_rows": 4,
+        "worker_count": 32,
+        "m_reuse": 4,
+        "worker_stack_size": 2048,
+        "segment_pipeline_depth": 2,
+        "activation_fifo_depth": 1,
+        "vector_zero": true,
+        "mmul_m_reuse": 2,
+        "output_layout": "compact",
+        "weight_layout": "glassescrab_w4a16_k128_n64_colmod8_4352_v1",
+        "weight_tile_bytes": 4352,
+        "arithmetic": "bf16",
+        "compute_format": "bf16",
+        "upstream_kernel_commit": "121dd54abc68f84d89a7074372ebf82be2db62d5",
+        "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+        "source_sha256": "ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7",
+        "graph_sha256": "d1fc323fff8d710689626ece43df2ef002a29fa01711ee0a34c24164971288ec",
+        "weight_layout_sha256": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+        "schedule_sha256": "160e7bb30cac7220fe9a30ae676732589941b4180d0f6136092b4c3db802ae26",
+        "dependency_sha256": {
+          "w4a16_upstream.py": "d1fc323fff8d710689626ece43df2ef002a29fa01711ee0a34c24164971288ec",
+          "w4a16_prefill_upstream.cc": "ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7",
+          "upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+          "upstream_schedule.py": "160e7bb30cac7220fe9a30ae676732589941b4180d0f6136092b4c3db802ae26",
+          "prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+          "prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+          "prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+          "silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+          "projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e",
+          "upstream_output.py": "9429859351f85611394847bd844a38ec38f768991d36d88b3c16a5dc898aa5df"
+        }
+      },
+      "representative_disassembly_audits": [
+        {
+          "disassembly": "combo_model/down/core_0_2.disasm",
+          "disassembly_sha256": "16f2f16f3a39e7c146ff996e62b851150ac355d819223391542deea6bb016446",
+          "elf": "combo_model/down/final.prj/elfs_main_core_0_2/elfs_main_core_0_2.elf",
+          "elf_sha256": "e5207a86a6aea2591f7c030d6190c51739718aa09fa0e993db8fdbe48e61d7f5",
+          "core": [
+            0,
+            2
+          ],
+          "stack_start": "0x70000",
+          "reserved_stack_bytes": 2048,
+          "reserved_stack_end_exclusive": "0x70800",
+          "first_a_buffer": {
+            "symbol": "direct_a_broadcast_0_0_cons_buff_0",
+            "tile_offset": 2048,
+            "size_bytes": 16384,
+            "mlir_line": 1158,
+            "mlir": "%direct_a_broadcast_0_0_cons_buff_0 = aie.buffer(%tile_0_2) {address = 2048 : i32, sym_name = \"direct_a_broadcast_0_0_cons_buff_0\"} : memref<8192xbf16>  loc(#loc65)",
+            "elf_address": "0x70800"
+          },
+          "call_chain": [
+            {
+              "function": "_main_init",
+              "symbol_address": "0x22d0",
+              "frame": {
+                "bytes": 64,
+                "address": "0x22e0",
+                "line": 1718,
+                "instruction": "22e0: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x70040"
+            },
+            {
+              "function": "main",
+              "symbol_address": "0x20",
+              "frame": {
+                "bytes": 128,
+                "address": "0x20",
+                "line": 13,
+                "instruction": "20: c4 01 00 00 10 00    \tpaddxm\t [sp], #0x80"
+              },
+              "sp_after_frame": "0x700c0"
+            },
+            {
+              "function": "w4a16_prefill_reuse_accumulate_low",
+              "symbol_address": "0x15e0",
+              "frame": {
+                "bytes": 64,
+                "address": "0x15f2",
+                "line": 1191,
+                "instruction": "15f2: ba 70 00 00 00 02 00 00 84 67\tmova\tr4, #0x33c;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x70100"
+            },
+            {
+              "function": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "symbol_address": "0x1b90",
+              "frame": {
+                "bytes": 1856,
+                "address": "0x1be6",
+                "line": 1443,
+                "instruction": "1be6: ba 70 00 00 00 3a 00 80 02 40\tmova\tdj0, #0x200;\t\tpaddxm\t [sp], #0x740"
+              },
+              "sp_after_frame": "0x70840"
+            }
+          ],
+          "call_edges": [
+            {
+              "caller": "_main_init",
+              "callee": "main",
+              "count": 1,
+              "first": {
+                "address": "0x22d0",
+                "line": 1717,
+                "instruction": "22d0: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+              }
+            },
+            {
+              "caller": "main",
+              "callee": "w4a16_prefill_reuse_accumulate_low",
+              "count": 32,
+              "first": {
+                "address": "0x102",
+                "line": 54,
+                "instruction": "102: 04 01 00 f0 0a 00    \tjl\t#0x15e0"
+              }
+            },
+            {
+              "caller": "w4a16_prefill_reuse_accumulate_low",
+              "callee": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "count": 2,
+              "first": {
+                "address": "0x17d8",
+                "line": 1270,
+                "instruction": "17d8: 04 01 00 c8 0d 00    \tjl\t#0x1b90"
+              }
+            }
+          ],
+          "high_wrapper_frame_bytes": 64,
+          "peak_chain_bytes": 2112,
+          "excess_over_reservation_bytes": 64,
+          "paired_helper_scalar_stores": [
+            {
+              "address": "0x1bf0",
+              "line": 1444,
+              "instruction": "1bf0: 76 10 40 c5 02 00 80 15 c1 07 95 00  \tmova\tr21, #0x4;\t\tst\t r8, [sp, #-64];\t\tmovxm\tdj5, #0xa80",
+              "register": "r8",
+              "address_from_sp": "0x70800",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            },
+            {
+              "address": "0x1bfc",
+              "line": 1445,
+              "instruction": "1bfc: 76 10 00 00 05 00 80 35 c5 87 12 50  \tmova\tdj4, #0x280;\t\tst\t r9, [sp, #-60];\t\tmovxm\tm2, #0x1000",
+              "register": "r9",
+              "address_from_sp": "0x70804",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            },
+            {
+              "address": "0x1c08",
+              "line": 1446,
+              "instruction": "1c08: 76 78 60 b0 a9 60 81 55 c9 07 3a 00  \tmova\tr26, #0x1;\t\tst\t r10, [sp, #-56];\t\tmovx\tr22, #0x5;\t\tmov\tp3, p0",
+              "register": "r10",
+              "address_from_sp": "0x70808",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            },
+            {
+              "address": "0x1c14",
+              "line": 1447,
+              "instruction": "1c14: 76 58 00 e8 8a d3 81 1d cf f7 0c 69  \tpadda\t [p3], m2;\t\tst\t p6, [sp, #-52];\t\tmovx\tr29, #0x1c;\t\tmov\tr23, #0x0",
+              "register": "p6",
+              "address_from_sp": "0x7080c",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            }
+          ],
+          "paired_inner_loop": {
+            "inclusive_start": "0x1cc0",
+            "inclusive_end": "0x2220",
+            "static_stack_vector_loads": 128,
+            "static_stack_vector_stores": 128,
+            "static_vmac_f": 64,
+            "note": "Instruction counts in one K8 inner-loop body, not cycle attribution. Physical vector transfer byte width is not inferred here."
+          },
+          "main_init_instructions": [
+            {
+              "address": "0x22d0",
+              "line": 1717,
+              "instruction": "22d0: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+            },
+            {
+              "address": "0x22e0",
+              "line": 1718,
+              "instruction": "22e0: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+            },
+            {
+              "address": "0x22ea",
+              "line": 1719,
+              "instruction": "22ea: 98 9d c7 0f  \tst\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x22ee",
+              "line": 1720,
+              "instruction": "22ee: 02 70 f0 b2 03 b0 07 f8      \tst\t lr, [sp, #-64];\t\tmov\tp7, sp"
+            },
+            {
+              "address": "0x22f6",
+              "line": 1721,
+              "instruction": "22f6: 98 67 fc 07  \tpadda\t [p7], #-0x40"
+            },
+            {
+              "address": "0x22fa",
+              "line": 1722,
+              "instruction": "22fa: 2c 02 04 40 03 00    \tmova\tp0, #0x0;\t\tmovx\tr1, #0x0"
+            },
+            {
+              "address": "0x2300",
+              "line": 1723,
+              "instruction": "2300: e1 00 00 78 a5 01 00 40 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tdone\t;\t\tnopm\t;\t\tnopv"
+            }
+          ],
+          "delay_slot_accounting": "The SP increment and saved LR/P7 stores following _main_init jl main are call-delay-slot instructions executed before main; the startup jl _main_init similarly has movxm sp in its delay slots."
+        },
+        {
+          "disassembly": "combo_model/down/core_1_2.disasm",
+          "disassembly_sha256": "475ef9ea474e4e05dbe389a652d2794e50077909efdb770b64f0c2d928bee739",
+          "elf": "combo_model/down/final.prj/elfs_main_core_1_2/elfs_main_core_1_2.elf",
+          "elf_sha256": "a8fbb5fe09de2bfcb302ba8bb93765010d990d49b82c837bd01c0057efce8240",
+          "core": [
+            1,
+            2
+          ],
+          "stack_start": "0x70000",
+          "reserved_stack_bytes": 2048,
+          "reserved_stack_end_exclusive": "0x70800",
+          "first_a_buffer": {
+            "symbol": "direct_a_broadcast_0_1_cons_buff_0",
+            "tile_offset": 2048,
+            "size_bytes": 16384,
+            "mlir_line": 1161,
+            "mlir": "%direct_a_broadcast_0_1_cons_buff_0 = aie.buffer(%tile_1_2) {address = 2048 : i32, sym_name = \"direct_a_broadcast_0_1_cons_buff_0\"} : memref<8192xbf16>  loc(#loc65)",
+            "elf_address": "0x70800"
+          },
+          "call_chain": [
+            {
+              "function": "_main_init",
+              "symbol_address": "0x22d0",
+              "frame": {
+                "bytes": 64,
+                "address": "0x22e0",
+                "line": 1718,
+                "instruction": "22e0: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x70040"
+            },
+            {
+              "function": "main",
+              "symbol_address": "0x20",
+              "frame": {
+                "bytes": 128,
+                "address": "0x20",
+                "line": 13,
+                "instruction": "20: c4 01 00 00 10 00    \tpaddxm\t [sp], #0x80"
+              },
+              "sp_after_frame": "0x700c0"
+            },
+            {
+              "function": "w4a16_prefill_reuse_accumulate_low",
+              "symbol_address": "0x15e0",
+              "frame": {
+                "bytes": 64,
+                "address": "0x15f2",
+                "line": 1191,
+                "instruction": "15f2: ba 70 00 00 00 02 00 00 84 67\tmova\tr4, #0x33c;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x70100"
+            },
+            {
+              "function": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "symbol_address": "0x1b90",
+              "frame": {
+                "bytes": 1856,
+                "address": "0x1be6",
+                "line": 1443,
+                "instruction": "1be6: ba 70 00 00 00 3a 00 80 02 40\tmova\tdj0, #0x200;\t\tpaddxm\t [sp], #0x740"
+              },
+              "sp_after_frame": "0x70840"
+            }
+          ],
+          "call_edges": [
+            {
+              "caller": "_main_init",
+              "callee": "main",
+              "count": 1,
+              "first": {
+                "address": "0x22d0",
+                "line": 1717,
+                "instruction": "22d0: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+              }
+            },
+            {
+              "caller": "main",
+              "callee": "w4a16_prefill_reuse_accumulate_low",
+              "count": 32,
+              "first": {
+                "address": "0x102",
+                "line": 54,
+                "instruction": "102: 04 01 00 f0 0a 00    \tjl\t#0x15e0"
+              }
+            },
+            {
+              "caller": "w4a16_prefill_reuse_accumulate_low",
+              "callee": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "count": 2,
+              "first": {
+                "address": "0x17d8",
+                "line": 1270,
+                "instruction": "17d8: 04 01 00 c8 0d 00    \tjl\t#0x1b90"
+              }
+            }
+          ],
+          "high_wrapper_frame_bytes": 64,
+          "peak_chain_bytes": 2112,
+          "excess_over_reservation_bytes": 64,
+          "paired_helper_scalar_stores": [
+            {
+              "address": "0x1bf0",
+              "line": 1444,
+              "instruction": "1bf0: 76 10 40 c5 02 00 80 15 c1 07 95 00  \tmova\tr21, #0x4;\t\tst\t r8, [sp, #-64];\t\tmovxm\tdj5, #0xa80",
+              "register": "r8",
+              "address_from_sp": "0x70800",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            },
+            {
+              "address": "0x1bfc",
+              "line": 1445,
+              "instruction": "1bfc: 76 10 00 00 05 00 80 35 c5 87 12 50  \tmova\tdj4, #0x280;\t\tst\t r9, [sp, #-60];\t\tmovxm\tm2, #0x1000",
+              "register": "r9",
+              "address_from_sp": "0x70804",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            },
+            {
+              "address": "0x1c08",
+              "line": 1446,
+              "instruction": "1c08: 76 78 60 b0 a9 60 81 55 c9 07 3a 00  \tmova\tr26, #0x1;\t\tst\t r10, [sp, #-56];\t\tmovx\tr22, #0x5;\t\tmov\tp3, p0",
+              "register": "r10",
+              "address_from_sp": "0x70808",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            },
+            {
+              "address": "0x1c14",
+              "line": 1447,
+              "instruction": "1c14: 76 58 00 e8 8a d3 81 1d cf f7 0c 69  \tpadda\t [p3], m2;\t\tst\t p6, [sp, #-52];\t\tmovx\tr29, #0x1c;\t\tmov\tr23, #0x0",
+              "register": "p6",
+              "address_from_sp": "0x7080c",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            }
+          ],
+          "paired_inner_loop": {
+            "inclusive_start": "0x1cc0",
+            "inclusive_end": "0x2220",
+            "static_stack_vector_loads": 128,
+            "static_stack_vector_stores": 128,
+            "static_vmac_f": 64,
+            "note": "Instruction counts in one K8 inner-loop body, not cycle attribution. Physical vector transfer byte width is not inferred here."
+          },
+          "main_init_instructions": [
+            {
+              "address": "0x22d0",
+              "line": 1717,
+              "instruction": "22d0: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+            },
+            {
+              "address": "0x22e0",
+              "line": 1718,
+              "instruction": "22e0: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+            },
+            {
+              "address": "0x22ea",
+              "line": 1719,
+              "instruction": "22ea: 98 9d c7 0f  \tst\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x22ee",
+              "line": 1720,
+              "instruction": "22ee: 02 70 f0 b2 03 b0 07 f8      \tst\t lr, [sp, #-64];\t\tmov\tp7, sp"
+            },
+            {
+              "address": "0x22f6",
+              "line": 1721,
+              "instruction": "22f6: 98 67 fc 07  \tpadda\t [p7], #-0x40"
+            },
+            {
+              "address": "0x22fa",
+              "line": 1722,
+              "instruction": "22fa: 2c 02 04 40 03 00    \tmova\tp0, #0x0;\t\tmovx\tr1, #0x0"
+            },
+            {
+              "address": "0x2300",
+              "line": 1723,
+              "instruction": "2300: e1 00 00 78 a5 01 00 40 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tdone\t;\t\tnopm\t;\t\tnopv"
+            }
+          ],
+          "delay_slot_accounting": "The SP increment and saved LR/P7 stores following _main_init jl main are call-delay-slot instructions executed before main; the startup jl _main_init similarly has movxm sp in its delay slots."
+        }
+      ],
+      "all_core_elf_address_checks": [
+        {
+          "core": [
+            0,
+            2
+          ],
+          "elf_sha256": "e5207a86a6aea2591f7c030d6190c51739718aa09fa0e993db8fdbe48e61d7f5",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            0,
+            3
+          ],
+          "elf_sha256": "ca8bc9354659834879d3c217ed2cdd1d2713bf50c458cb005ed41b8adfd6ac5c",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            0,
+            4
+          ],
+          "elf_sha256": "0d7db3163bca0fd465f12e8c4667ebed015786460e8908779ac1b6d0c9745cfa",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            0,
+            5
+          ],
+          "elf_sha256": "ceed93de46d0b77f5f8d0b8d121199940acc91794eb3c4ba1def38a3de6ed4c7",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            2
+          ],
+          "elf_sha256": "a8fbb5fe09de2bfcb302ba8bb93765010d990d49b82c837bd01c0057efce8240",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            3
+          ],
+          "elf_sha256": "5dcd048ac4d6cf58d05f15b03e933e840f2686faddaf9d257a181425983a21ac",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            4
+          ],
+          "elf_sha256": "ed681ae833efab7819d17dbcd58356cec8ce0160c712a638ae53f8cdb38f2036",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            5
+          ],
+          "elf_sha256": "903b4c2085a46a29c7a13e61c9f146b210163ecc2c47a7dcdfac31838744d038",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            2
+          ],
+          "elf_sha256": "8cb988fc5ef4e53bdec23d8d8792902898f809af956116c3ed682e23d5e3da57",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            3
+          ],
+          "elf_sha256": "54142696499bcabc649b5edcb7ca643c13bc93cfd97425ec3f6b1c8ca9538865",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            4
+          ],
+          "elf_sha256": "a64f235463b148eb326673fba6c3dadb3795b633c85a451e2739688f7d3d061e",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            5
+          ],
+          "elf_sha256": "b3188b22195a019b7479709224bc8ed554aad58867139fc697c8a1daf4dbd4d3",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            2
+          ],
+          "elf_sha256": "de11e6af5c383ed8763117a32ce2aa2ff18d9231dd866044f0a00d64e0123659",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            3
+          ],
+          "elf_sha256": "1c91471c8504d8cf8fd9effeed85c37708f452bc6d932d53f0f106543e627e0b",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            4
+          ],
+          "elf_sha256": "e2b29839a5089262d44d020b6104db40e1e022b4b30e52de37fea1d1c9b65cb9",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            5
+          ],
+          "elf_sha256": "9cdbef724c59d4e97b5274c4cb6328478c4d487c719ed2d91aecca074012c7a3",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            2
+          ],
+          "elf_sha256": "1a95c2d3ac5b744efc36c8001490499c1cdf05caa5ac07575702cbedef6c6231",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            3
+          ],
+          "elf_sha256": "2d648269d03a538defa7fc6308a6f15c6d0b368a4b51176611a7962bc5533608",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            4
+          ],
+          "elf_sha256": "00471569e0c90b7c5a2e4f1aa9fcdc4be846594036ae7d627a38043f6abe4e07",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            5
+          ],
+          "elf_sha256": "1baa9eb416452af2b864642059ccecc75849f707dfb8af0f1fcdc493c6861f0e",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            2
+          ],
+          "elf_sha256": "231dddd810de4a3dde9b9b8741800191f8b27886d56114fcfdbc47ede4c07bee",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            3
+          ],
+          "elf_sha256": "627b40ff1bcc211454c1d3e0a08ab6befdd94282d1f783010e19df2acc74e518",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            4
+          ],
+          "elf_sha256": "4331baa86c91c2f026d4c3c375e557dfd026e2fb014aba33f250f351e57a6016",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            5
+          ],
+          "elf_sha256": "0286d9e5f04495ebd13126e1141c220295cf8d7b1ec795984b24d642196c6bcd",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            2
+          ],
+          "elf_sha256": "fe1a2d1df582fb0dc92977890f6dc91dd271e3ba67096c84851ab78d9d9be0f7",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            3
+          ],
+          "elf_sha256": "8d5f605080fcafacbc215fdbb8aca2a360db44dd19df8b8188cfecdde565fb58",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            4
+          ],
+          "elf_sha256": "e0ebb62df505b36e8ddb83a97b5cab787f99d75889d24f7ebadac93dac303139",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            5
+          ],
+          "elf_sha256": "2fe3c87189df616e2db137070db942173972a4c195efcf2fdd39543668694bc7",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            2
+          ],
+          "elf_sha256": "52ec119548d440f4c5629cae047f3fd708400baf63af170497d8469ebb646472",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            3
+          ],
+          "elf_sha256": "688e0879e7cb5dd00a33f042827cc1818740355ceb00081c5470e22ba264e9af",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            4
+          ],
+          "elf_sha256": "56d18c640aa572ec99a6557116b37de1f680adda02a4e16f139cfc0947c300a7",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            5
+          ],
+          "elf_sha256": "39a4a02bb9baef8ad50aae721034497d8481c7ba9ba6f745c0adbfe47fc6abf1",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        }
+      ]
+    },
+    {
+      "stage": "combo_model/swiglu",
+      "build_contract_sha256": "cfd16268e5fc51baa987db82daf0b00c719646459d569c3a107ef227ccbc263d",
+      "manifest": {
+        "kind": "w4a16_upstream_bf16",
+        "mode": "swiglu",
+        "m": 512,
+        "k": 4096,
+        "n": 2560,
+        "weight_k": 4096,
+        "weight_n": 14336,
+        "k_start": 0,
+        "n_start": 0,
+        "cols": 8,
+        "compute_rows": 4,
+        "worker_count": 32,
+        "m_reuse": 2,
+        "worker_stack_size": 2048,
+        "segment_pipeline_depth": 2,
+        "activation_fifo_depth": 2,
+        "vector_zero": true,
+        "mmul_m_reuse": 2,
+        "output_layout": "down_a",
+        "weight_layout": "glassescrab_w4a16_k128_n64_colmod8_4352_v1",
+        "weight_tile_bytes": 4352,
+        "arithmetic": "bf16",
+        "compute_format": "bf16",
+        "upstream_kernel_commit": "121dd54abc68f84d89a7074372ebf82be2db62d5",
+        "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+        "source_sha256": "ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7",
+        "graph_sha256": "d1fc323fff8d710689626ece43df2ef002a29fa01711ee0a34c24164971288ec",
+        "weight_layout_sha256": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+        "schedule_sha256": "160e7bb30cac7220fe9a30ae676732589941b4180d0f6136092b4c3db802ae26",
+        "dependency_sha256": {
+          "w4a16_upstream.py": "d1fc323fff8d710689626ece43df2ef002a29fa01711ee0a34c24164971288ec",
+          "w4a16_prefill_upstream.cc": "ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7",
+          "upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+          "upstream_schedule.py": "160e7bb30cac7220fe9a30ae676732589941b4180d0f6136092b4c3db802ae26",
+          "prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+          "prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+          "prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+          "silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+          "projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e",
+          "upstream_output.py": "9429859351f85611394847bd844a38ec38f768991d36d88b3c16a5dc898aa5df"
+        }
+      },
+      "representative_disassembly_audits": [
+        {
+          "disassembly": "combo_model/swiglu/core_0_2.disasm",
+          "disassembly_sha256": "053f4d53bbef93346d3aadbbea2fd08385ee2694ed35d615356235db3d0ec450",
+          "elf": "combo_model/swiglu/final.prj/elfs_main_core_0_2/elfs_main_core_0_2.elf",
+          "elf_sha256": "8308d8beefdb6aabeb9d1c6961b7c67cfb46aaa4d67702f173ea075048c2ba80",
+          "core": [
+            0,
+            2
+          ],
+          "stack_start": "0x70000",
+          "reserved_stack_bytes": 2048,
+          "reserved_stack_end_exclusive": "0x70800",
+          "first_a_buffer": {
+            "symbol": "direct_a_broadcast_0_0_cons_buff_0",
+            "tile_offset": 2048,
+            "size_bytes": 8192,
+            "mlir_line": 1583,
+            "mlir": "%direct_a_broadcast_0_0_cons_buff_0 = aie.buffer(%tile_0_2) {address = 2048 : i32, sym_name = \"direct_a_broadcast_0_0_cons_buff_0\"} : memref<4096xbf16>  loc(#loc61)",
+            "elf_address": "0x70800"
+          },
+          "call_chain": [
+            {
+              "function": "_main_init",
+              "symbol_address": "0x2d30",
+              "frame": {
+                "bytes": 64,
+                "address": "0x2d40",
+                "line": 2220,
+                "instruction": "2d40: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x70040"
+            },
+            {
+              "function": "main",
+              "symbol_address": "0x20",
+              "frame": {
+                "bytes": 128,
+                "address": "0x20",
+                "line": 13,
+                "instruction": "20: e1 00 00 70 00 00 00 04 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tpaddxm\t [sp], #0x80;\t\tnopv"
+              },
+              "sp_after_frame": "0x700c0"
+            },
+            {
+              "function": "w4a16_prefill_reuse_accumulate_low",
+              "symbol_address": "0x20d0",
+              "frame": {
+                "bytes": 64,
+                "address": "0x210a",
+                "line": 1720,
+                "instruction": "210a: ba 70 00 00 00 02 00 00 07 10\tmova\tr7, #0x80;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x70100"
+            },
+            {
+              "function": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "symbol_address": "0x25f0",
+              "frame": {
+                "bytes": 1856,
+                "address": "0x2646",
+                "line": 1945,
+                "instruction": "2646: ba 70 00 00 00 3a 00 80 02 40\tmova\tdj0, #0x200;\t\tpaddxm\t [sp], #0x740"
+              },
+              "sp_after_frame": "0x70840"
+            }
+          ],
+          "call_edges": [
+            {
+              "caller": "_main_init",
+              "callee": "main",
+              "count": 1,
+              "first": {
+                "address": "0x2d30",
+                "line": 2219,
+                "instruction": "2d30: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+              }
+            },
+            {
+              "caller": "main",
+              "callee": "w4a16_prefill_reuse_accumulate_low",
+              "count": 40,
+              "first": {
+                "address": "0x140",
+                "line": 67,
+                "instruction": "140: 04 01 00 68 10 00    \tjl\t#0x20d0"
+              }
+            },
+            {
+              "caller": "w4a16_prefill_reuse_accumulate_low",
+              "callee": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "count": 1,
+              "first": {
+                "address": "0x22be",
+                "line": 1796,
+                "instruction": "22be: 04 01 00 f8 12 00    \tjl\t#0x25f0"
+              }
+            }
+          ],
+          "high_wrapper_frame_bytes": 64,
+          "peak_chain_bytes": 2112,
+          "excess_over_reservation_bytes": 64,
+          "paired_helper_scalar_stores": [
+            {
+              "address": "0x2650",
+              "line": 1946,
+              "instruction": "2650: 76 10 40 c5 02 00 80 15 c1 07 95 00  \tmova\tr21, #0x4;\t\tst\t r8, [sp, #-64];\t\tmovxm\tdj5, #0xa80",
+              "register": "r8",
+              "address_from_sp": "0x70800",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            },
+            {
+              "address": "0x265c",
+              "line": 1947,
+              "instruction": "265c: 76 10 00 00 05 00 80 35 c5 87 12 50  \tmova\tdj4, #0x280;\t\tst\t r9, [sp, #-60];\t\tmovxm\tm2, #0x1000",
+              "register": "r9",
+              "address_from_sp": "0x70804",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            },
+            {
+              "address": "0x2668",
+              "line": 1948,
+              "instruction": "2668: 76 78 60 b0 a9 60 81 55 c9 07 3a 00  \tmova\tr26, #0x1;\t\tst\t r10, [sp, #-56];\t\tmovx\tr22, #0x5;\t\tmov\tp3, p0",
+              "register": "r10",
+              "address_from_sp": "0x70808",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            },
+            {
+              "address": "0x2674",
+              "line": 1949,
+              "instruction": "2674: 76 58 00 e8 8a d3 81 1d cf f7 0c 69  \tpadda\t [p3], m2;\t\tst\t p6, [sp, #-52];\t\tmovx\tr29, #0x1c;\t\tmov\tr23, #0x0",
+              "register": "p6",
+              "address_from_sp": "0x7080c",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            }
+          ],
+          "paired_inner_loop": {
+            "inclusive_start": "0x2720",
+            "inclusive_end": "0x2c80",
+            "static_stack_vector_loads": 128,
+            "static_stack_vector_stores": 128,
+            "static_vmac_f": 64,
+            "note": "Instruction counts in one K8 inner-loop body, not cycle attribution. Physical vector transfer byte width is not inferred here."
+          },
+          "main_init_instructions": [
+            {
+              "address": "0x2d30",
+              "line": 2219,
+              "instruction": "2d30: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+            },
+            {
+              "address": "0x2d40",
+              "line": 2220,
+              "instruction": "2d40: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+            },
+            {
+              "address": "0x2d4a",
+              "line": 2221,
+              "instruction": "2d4a: 98 9d c7 0f  \tst\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x2d4e",
+              "line": 2222,
+              "instruction": "2d4e: 02 70 f0 b2 03 b0 07 f8      \tst\t lr, [sp, #-64];\t\tmov\tp7, sp"
+            },
+            {
+              "address": "0x2d56",
+              "line": 2223,
+              "instruction": "2d56: 98 67 fc 07  \tpadda\t [p7], #-0x40"
+            },
+            {
+              "address": "0x2d5a",
+              "line": 2224,
+              "instruction": "2d5a: 2c 02 04 40 03 00    \tmova\tp0, #0x0;\t\tmovx\tr1, #0x0"
+            },
+            {
+              "address": "0x2d60",
+              "line": 2225,
+              "instruction": "2d60: e1 00 00 78 a5 01 00 40 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tdone\t;\t\tnopm\t;\t\tnopv"
+            }
+          ],
+          "delay_slot_accounting": "The SP increment and saved LR/P7 stores following _main_init jl main are call-delay-slot instructions executed before main; the startup jl _main_init similarly has movxm sp in its delay slots."
+        },
+        {
+          "disassembly": "combo_model/swiglu/core_1_2.disasm",
+          "disassembly_sha256": "2c4807ae372c6b3f445b91e852b3347cd40be0108d912f65742f49d6afe509f4",
+          "elf": "combo_model/swiglu/final.prj/elfs_main_core_1_2/elfs_main_core_1_2.elf",
+          "elf_sha256": "d65e1aac167534d0cb5a19ac63de79777119a0ecd49e8dfd2336e29a11866cef",
+          "core": [
+            1,
+            2
+          ],
+          "stack_start": "0x70000",
+          "reserved_stack_bytes": 2048,
+          "reserved_stack_end_exclusive": "0x70800",
+          "first_a_buffer": {
+            "symbol": "direct_a_broadcast_0_1_cons_buff_0",
+            "tile_offset": 2048,
+            "size_bytes": 8192,
+            "mlir_line": 1587,
+            "mlir": "%direct_a_broadcast_0_1_cons_buff_0 = aie.buffer(%tile_1_2) {address = 2048 : i32, sym_name = \"direct_a_broadcast_0_1_cons_buff_0\"} : memref<4096xbf16>  loc(#loc61)",
+            "elf_address": "0x70800"
+          },
+          "call_chain": [
+            {
+              "function": "_main_init",
+              "symbol_address": "0x3330",
+              "frame": {
+                "bytes": 64,
+                "address": "0x3340",
+                "line": 2518,
+                "instruction": "3340: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x70040"
+            },
+            {
+              "function": "main",
+              "symbol_address": "0x20",
+              "frame": {
+                "bytes": 128,
+                "address": "0x20",
+                "line": 13,
+                "instruction": "20: e1 00 00 70 00 00 00 04 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tpaddxm\t [sp], #0x80;\t\tnopv"
+              },
+              "sp_after_frame": "0x700c0"
+            },
+            {
+              "function": "w4a16_prefill_reuse_accumulate_low",
+              "symbol_address": "0x2490",
+              "frame": {
+                "bytes": 64,
+                "address": "0x24ca",
+                "line": 1912,
+                "instruction": "24ca: ba 70 00 00 00 02 00 00 07 10\tmova\tr7, #0x80;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x70100"
+            },
+            {
+              "function": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "symbol_address": "0x29b0",
+              "frame": {
+                "bytes": 1856,
+                "address": "0x2a06",
+                "line": 2137,
+                "instruction": "2a06: ba 70 00 00 00 3a 00 80 02 40\tmova\tdj0, #0x200;\t\tpaddxm\t [sp], #0x740"
+              },
+              "sp_after_frame": "0x70840"
+            }
+          ],
+          "call_edges": [
+            {
+              "caller": "_main_init",
+              "callee": "main",
+              "count": 1,
+              "first": {
+                "address": "0x3330",
+                "line": 2517,
+                "instruction": "3330: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+              }
+            },
+            {
+              "caller": "main",
+              "callee": "w4a16_prefill_reuse_accumulate_low",
+              "count": 40,
+              "first": {
+                "address": "0x140",
+                "line": 67,
+                "instruction": "140: 04 01 00 48 12 00    \tjl\t#0x2490"
+              }
+            },
+            {
+              "caller": "w4a16_prefill_reuse_accumulate_low",
+              "callee": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "count": 1,
+              "first": {
+                "address": "0x267e",
+                "line": 1988,
+                "instruction": "267e: 04 01 00 d8 14 00    \tjl\t#0x29b0"
+              }
+            }
+          ],
+          "high_wrapper_frame_bytes": 64,
+          "peak_chain_bytes": 2112,
+          "excess_over_reservation_bytes": 64,
+          "paired_helper_scalar_stores": [
+            {
+              "address": "0x2a10",
+              "line": 2138,
+              "instruction": "2a10: 76 10 40 c5 02 00 80 15 c1 07 95 00  \tmova\tr21, #0x4;\t\tst\t r8, [sp, #-64];\t\tmovxm\tdj5, #0xa80",
+              "register": "r8",
+              "address_from_sp": "0x70800",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            },
+            {
+              "address": "0x2a1c",
+              "line": 2139,
+              "instruction": "2a1c: 76 10 00 00 05 00 80 35 c5 87 12 50  \tmova\tdj4, #0x280;\t\tst\t r9, [sp, #-60];\t\tmovxm\tm2, #0x1000",
+              "register": "r9",
+              "address_from_sp": "0x70804",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            },
+            {
+              "address": "0x2a28",
+              "line": 2140,
+              "instruction": "2a28: 76 78 60 b0 a9 60 81 55 c9 07 3a 00  \tmova\tr26, #0x1;\t\tst\t r10, [sp, #-56];\t\tmovx\tr22, #0x5;\t\tmov\tp3, p0",
+              "register": "r10",
+              "address_from_sp": "0x70808",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            },
+            {
+              "address": "0x2a34",
+              "line": 2141,
+              "instruction": "2a34: 76 58 00 e8 8a d3 81 1d cf f7 0c 69  \tpadda\t [p3], m2;\t\tst\t p6, [sp, #-52];\t\tmovx\tr29, #0x1c;\t\tmov\tr23, #0x0",
+              "register": "p6",
+              "address_from_sp": "0x7080c",
+              "width_bytes": 4,
+              "overlaps_first_a": true,
+              "outside_reserved_stack": true
+            }
+          ],
+          "paired_inner_loop": {
+            "inclusive_start": "0x2ae0",
+            "inclusive_end": "0x3040",
+            "static_stack_vector_loads": 128,
+            "static_stack_vector_stores": 128,
+            "static_vmac_f": 64,
+            "note": "Instruction counts in one K8 inner-loop body, not cycle attribution. Physical vector transfer byte width is not inferred here."
+          },
+          "main_init_instructions": [
+            {
+              "address": "0x3330",
+              "line": 2517,
+              "instruction": "3330: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+            },
+            {
+              "address": "0x3340",
+              "line": 2518,
+              "instruction": "3340: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+            },
+            {
+              "address": "0x334a",
+              "line": 2519,
+              "instruction": "334a: 98 9d c7 0f  \tst\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x334e",
+              "line": 2520,
+              "instruction": "334e: 02 70 f0 b2 03 b0 07 f8      \tst\t lr, [sp, #-64];\t\tmov\tp7, sp"
+            },
+            {
+              "address": "0x3356",
+              "line": 2521,
+              "instruction": "3356: 98 67 fc 07  \tpadda\t [p7], #-0x40"
+            },
+            {
+              "address": "0x335a",
+              "line": 2522,
+              "instruction": "335a: 2c 02 04 40 03 00    \tmova\tp0, #0x0;\t\tmovx\tr1, #0x0"
+            },
+            {
+              "address": "0x3360",
+              "line": 2523,
+              "instruction": "3360: e1 00 00 78 a5 01 00 40 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tdone\t;\t\tnopm\t;\t\tnopv"
+            }
+          ],
+          "delay_slot_accounting": "The SP increment and saved LR/P7 stores following _main_init jl main are call-delay-slot instructions executed before main; the startup jl _main_init similarly has movxm sp in its delay slots."
+        }
+      ],
+      "all_core_elf_address_checks": [
+        {
+          "core": [
+            0,
+            2
+          ],
+          "elf_sha256": "8308d8beefdb6aabeb9d1c6961b7c67cfb46aaa4d67702f173ea075048c2ba80",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            0,
+            3
+          ],
+          "elf_sha256": "c7973301caf6578e6c659edab36dcbb65517e189d670ff9ae436d68c16c893ad",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            0,
+            4
+          ],
+          "elf_sha256": "40ba1d1d6853e8c0c4a710eebe5a9169b23307b65502be0f2d2708f21c212fb4",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            0,
+            5
+          ],
+          "elf_sha256": "2ec1175c216e32aafe9ef3a4a62d5c2b5bb1f9c15c825b3a3fd2b29f20168624",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            2
+          ],
+          "elf_sha256": "d65e1aac167534d0cb5a19ac63de79777119a0ecd49e8dfd2336e29a11866cef",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            3
+          ],
+          "elf_sha256": "ac11c577e7da32c324f36fb7f3aba1778a763b451c56c867459f2b1c2b14a1d9",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            4
+          ],
+          "elf_sha256": "2c7ecf57ed761f920c614764a4f3a4b22b29bbff19bd42ee335eea89dab1e4a8",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            5
+          ],
+          "elf_sha256": "82528412d7230b0b0dad79758e244dbf7d2d1974429932bb729461fa144f3e5f",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            2
+          ],
+          "elf_sha256": "43a2e398d3a624b640d66baf7b81b9e790d57d3578343061e67161d8206effc8",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            3
+          ],
+          "elf_sha256": "df61e7e2c1402392b684b2a9caf77391c959936e4536c455bd54e2c8c3885f96",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            4
+          ],
+          "elf_sha256": "9dcea6733055f36fcdc124a63f4c462afd15f945d45d67640eed5fa332bce964",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            5
+          ],
+          "elf_sha256": "c238b231707d9117996ef5d18883c42dca6ca4ab7926e6485cc80334c9a2e729",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            2
+          ],
+          "elf_sha256": "7246341ae0810c53ebfbb24264e269d4e89c4f26caff1a8ef6364bc5a1ea2113",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            3
+          ],
+          "elf_sha256": "b32bf7d44f6823b0e13e69465eba41f0833ea2e3fbb2becc423dba1ba8906344",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            4
+          ],
+          "elf_sha256": "7413f11a0d18cea9c6d20fb964eefea81ad96c1ccfddd986e2842ade5a84a826",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            5
+          ],
+          "elf_sha256": "31883af2d578940721a7a238d9d539036749e7bf0fb1f0d0fbd8e000fda549b3",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            2
+          ],
+          "elf_sha256": "d4e47f052fb3a80f3bc409dcd1d2d2effde5cbaa4b892d4bdc8bda1f4747df5f",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            3
+          ],
+          "elf_sha256": "a6944a5553d39c9aebb468db58e4edffc392181629d2d979be9be941aae3218e",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            4
+          ],
+          "elf_sha256": "66e32b6cbe6de3f796c25d6465b5c0bd195ed7fc0d58e114f99c2519ca7e3e92",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            5
+          ],
+          "elf_sha256": "0ef3ff5320fcfe8e75e634edefecc26ddd4ba6221411064246a51513de9ff008",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            2
+          ],
+          "elf_sha256": "dd1f0b57e54eb407c2f90286cdc9482fe7d4908445fffb61ba883d6a924975fb",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            3
+          ],
+          "elf_sha256": "c2dc00408546c8248a915e55564a5de59747e48c217b06e6bc6eab79586d3f85",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            4
+          ],
+          "elf_sha256": "ca3b598a463023235b5e8ceed19cffaab53424e99ed72757b7a4d9f988557204",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            5
+          ],
+          "elf_sha256": "5235519d136974ad3ebe6883214c796d214f6c497fd5c9e78893c36f41526906",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            2
+          ],
+          "elf_sha256": "e305649817a9c5063cea17dbe2651887bbbf67759db82df9ff15a65078df260f",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            3
+          ],
+          "elf_sha256": "1f1dea81f363ae34c940fdd521d6e72f48bc5d7b89111edfdd7685844ce3c53a",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            4
+          ],
+          "elf_sha256": "621d943dfec5cc12d167d7641e0d205fd2f337b8f1ca121d0e65315d91a324c2",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            5
+          ],
+          "elf_sha256": "4912ed44caeb43af1cdf004a2a4a51486277dce5f4578d943140c6ecee89579e",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            2
+          ],
+          "elf_sha256": "75d3a5d6db4c6dd2d7fcc94093f4718eb0bda3c65b9d5d7a503742d0681ca579",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            3
+          ],
+          "elf_sha256": "5818f08cd6c06460f13be45a50b8403c1ce6faa8615f9bf032c5b2c45dbacc0b",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            4
+          ],
+          "elf_sha256": "ab4ca7cdcb4b394ec65f3f5279cee5424003d44fe1d74363858b38efc46ab08b",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            5
+          ],
+          "elf_sha256": "4cd92f2b361dbc3cc62b9cab166936b25b3cadbbbd69c1ad918a848b6cc8fcc7",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        }
+      ]
+    },
+    {
+      "stage": "combo_smoke/down",
+      "build_contract_sha256": "a996dca3a6c8b67542d50c7f3e25ca1ef6ee8e25750597a6487426a8d25ea5bb",
+      "manifest": {
+        "kind": "w4a16_upstream_bf16",
+        "mode": "projection",
+        "m": 256,
+        "k": 1152,
+        "n": 512,
+        "weight_k": 2048,
+        "weight_n": 512,
+        "k_start": 128,
+        "n_start": 0,
+        "cols": 8,
+        "compute_rows": 4,
+        "worker_count": 32,
+        "m_reuse": 4,
+        "worker_stack_size": 2048,
+        "segment_pipeline_depth": 2,
+        "activation_fifo_depth": 1,
+        "vector_zero": true,
+        "mmul_m_reuse": 2,
+        "output_layout": "compact",
+        "weight_layout": "glassescrab_w4a16_k128_n64_colmod8_4352_v1",
+        "weight_tile_bytes": 4352,
+        "arithmetic": "bf16",
+        "compute_format": "bf16",
+        "upstream_kernel_commit": "121dd54abc68f84d89a7074372ebf82be2db62d5",
+        "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+        "source_sha256": "ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7",
+        "graph_sha256": "d1fc323fff8d710689626ece43df2ef002a29fa01711ee0a34c24164971288ec",
+        "weight_layout_sha256": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+        "schedule_sha256": "160e7bb30cac7220fe9a30ae676732589941b4180d0f6136092b4c3db802ae26",
+        "dependency_sha256": {
+          "w4a16_upstream.py": "d1fc323fff8d710689626ece43df2ef002a29fa01711ee0a34c24164971288ec",
+          "w4a16_prefill_upstream.cc": "ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7",
+          "upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+          "upstream_schedule.py": "160e7bb30cac7220fe9a30ae676732589941b4180d0f6136092b4c3db802ae26",
+          "prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+          "prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+          "prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+          "silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+          "projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e",
+          "upstream_output.py": "9429859351f85611394847bd844a38ec38f768991d36d88b3c16a5dc898aa5df"
+        }
+      },
+      "representative_disassembly_audits": [
+        {
+          "disassembly": "combo_smoke/down/core_0_2.disasm",
+          "disassembly_sha256": "3c043fea962d75f233e0c2ebc2b8ec3016863b287a7b7ac912f06e9dc79f7ea1",
+          "elf": "combo_smoke/down/final.prj/elfs_main_core_0_2/elfs_main_core_0_2.elf",
+          "elf_sha256": "b6617bbb9c8e90753a2c8d6d69589cdf69ea8325a4ba7c9bc190d02b647b6bf4",
+          "core": [
+            0,
+            2
+          ],
+          "stack_start": "0x70000",
+          "reserved_stack_bytes": 2048,
+          "reserved_stack_end_exclusive": "0x70800",
+          "first_a_buffer": {
+            "symbol": "direct_a_broadcast_0_0_cons_buff_0",
+            "tile_offset": 2048,
+            "size_bytes": 16384,
+            "mlir_line": 678,
+            "mlir": "%direct_a_broadcast_0_0_cons_buff_0 = aie.buffer(%tile_0_2) {address = 2048 : i32, sym_name = \"direct_a_broadcast_0_0_cons_buff_0\"} : memref<8192xbf16>  loc(#loc65)",
+            "elf_address": "0x70800"
+          },
+          "call_chain": [
+            {
+              "function": "_main_init",
+              "symbol_address": "0x12e0",
+              "frame": {
+                "bytes": 64,
+                "address": "0x12f0",
+                "line": 853,
+                "instruction": "12f0: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x70040"
+            },
+            {
+              "function": "main",
+              "symbol_address": "0x20",
+              "frame": {
+                "bytes": 64,
+                "address": "0x20",
+                "line": 13,
+                "instruction": "20: e1 00 00 70 00 00 00 02 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tpaddxm\t [sp], #0x40;\t\tnopv"
+              },
+              "sp_after_frame": "0x70080"
+            },
+            {
+              "function": "w4a16_prefill_reuse_accumulate_low",
+              "symbol_address": "0x5f0",
+              "frame": {
+                "bytes": 64,
+                "address": "0x602",
+                "line": 326,
+                "instruction": "602: ba 70 00 00 00 02 00 00 84 67\tmova\tr4, #0x33c;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x700c0"
+            },
+            {
+              "function": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "symbol_address": "0xba0",
+              "frame": {
+                "bytes": 1856,
+                "address": "0xbf6",
+                "line": 578,
+                "instruction": "bf6: ba 70 00 00 00 3a 00 80 02 40\tmova\tdj0, #0x200;\t\tpaddxm\t [sp], #0x740"
+              },
+              "sp_after_frame": "0x70800"
+            }
+          ],
+          "call_edges": [
+            {
+              "caller": "_main_init",
+              "callee": "main",
+              "count": 1,
+              "first": {
+                "address": "0x12e0",
+                "line": 852,
+                "instruction": "12e0: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+              }
+            },
+            {
+              "caller": "main",
+              "callee": "w4a16_prefill_reuse_accumulate_low",
+              "count": 9,
+              "first": {
+                "address": "0xc2",
+                "line": 40,
+                "instruction": "c2: 04 01 00 f8 02 00    \tjl\t#0x5f0"
+              }
+            },
+            {
+              "caller": "w4a16_prefill_reuse_accumulate_low",
+              "callee": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "count": 2,
+              "first": {
+                "address": "0x7e8",
+                "line": 405,
+                "instruction": "7e8: 04 01 00 d0 05 00    \tjl\t#0xba0"
+              }
+            }
+          ],
+          "high_wrapper_frame_bytes": 64,
+          "peak_chain_bytes": 2048,
+          "excess_over_reservation_bytes": 0,
+          "paired_helper_scalar_stores": [
+            {
+              "address": "0xc00",
+              "line": 579,
+              "instruction": "c00: 76 10 40 c5 02 00 80 15 c1 07 95 00  \tmova\tr21, #0x4;\t\tst\t r8, [sp, #-64];\t\tmovxm\tdj5, #0xa80",
+              "register": "r8",
+              "address_from_sp": "0x707c0",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            },
+            {
+              "address": "0xc0c",
+              "line": 580,
+              "instruction": "c0c: 76 10 00 00 05 00 80 35 c5 87 12 50  \tmova\tdj4, #0x280;\t\tst\t r9, [sp, #-60];\t\tmovxm\tm2, #0x1000",
+              "register": "r9",
+              "address_from_sp": "0x707c4",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            },
+            {
+              "address": "0xc18",
+              "line": 581,
+              "instruction": "c18: 76 78 60 b0 a9 60 81 55 c9 07 3a 00  \tmova\tr26, #0x1;\t\tst\t r10, [sp, #-56];\t\tmovx\tr22, #0x5;\t\tmov\tp3, p0",
+              "register": "r10",
+              "address_from_sp": "0x707c8",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            },
+            {
+              "address": "0xc24",
+              "line": 582,
+              "instruction": "c24: 76 58 00 e8 8a d3 81 1d cf f7 0c 69  \tpadda\t [p3], m2;\t\tst\t p6, [sp, #-52];\t\tmovx\tr29, #0x1c;\t\tmov\tr23, #0x0",
+              "register": "p6",
+              "address_from_sp": "0x707cc",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            }
+          ],
+          "paired_inner_loop": {
+            "inclusive_start": "0xcd0",
+            "inclusive_end": "0x1230",
+            "static_stack_vector_loads": 128,
+            "static_stack_vector_stores": 128,
+            "static_vmac_f": 64,
+            "note": "Instruction counts in one K8 inner-loop body, not cycle attribution. Physical vector transfer byte width is not inferred here."
+          },
+          "main_init_instructions": [
+            {
+              "address": "0x12e0",
+              "line": 852,
+              "instruction": "12e0: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+            },
+            {
+              "address": "0x12f0",
+              "line": 853,
+              "instruction": "12f0: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+            },
+            {
+              "address": "0x12fa",
+              "line": 854,
+              "instruction": "12fa: 98 9d c7 0f  \tst\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x12fe",
+              "line": 855,
+              "instruction": "12fe: 02 70 f0 b2 03 b0 07 f8      \tst\t lr, [sp, #-64];\t\tmov\tp7, sp"
+            },
+            {
+              "address": "0x1306",
+              "line": 856,
+              "instruction": "1306: 98 67 fc 07  \tpadda\t [p7], #-0x40"
+            },
+            {
+              "address": "0x130a",
+              "line": 857,
+              "instruction": "130a: 2c 02 04 40 03 00    \tmova\tp0, #0x0;\t\tmovx\tr1, #0x0"
+            },
+            {
+              "address": "0x1310",
+              "line": 858,
+              "instruction": "1310: e1 00 00 78 a5 01 00 40 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tdone\t;\t\tnopm\t;\t\tnopv"
+            }
+          ],
+          "delay_slot_accounting": "The SP increment and saved LR/P7 stores following _main_init jl main are call-delay-slot instructions executed before main; the startup jl _main_init similarly has movxm sp in its delay slots."
+        },
+        {
+          "disassembly": "combo_smoke/down/core_1_2.disasm",
+          "disassembly_sha256": "c5fd73bb95df5900866fae301d3b9fca3f88a8b3a1fb87553bfe77224ee28bc6",
+          "elf": "combo_smoke/down/final.prj/elfs_main_core_1_2/elfs_main_core_1_2.elf",
+          "elf_sha256": "aec2373889f727aa64a9bfd73eb45779b65ebb9f3b66ecc80908eca311b8ffc0",
+          "core": [
+            1,
+            2
+          ],
+          "stack_start": "0x70000",
+          "reserved_stack_bytes": 2048,
+          "reserved_stack_end_exclusive": "0x70800",
+          "first_a_buffer": {
+            "symbol": "direct_a_broadcast_0_1_cons_buff_0",
+            "tile_offset": 2048,
+            "size_bytes": 16384,
+            "mlir_line": 681,
+            "mlir": "%direct_a_broadcast_0_1_cons_buff_0 = aie.buffer(%tile_1_2) {address = 2048 : i32, sym_name = \"direct_a_broadcast_0_1_cons_buff_0\"} : memref<8192xbf16>  loc(#loc65)",
+            "elf_address": "0x70800"
+          },
+          "call_chain": [
+            {
+              "function": "_main_init",
+              "symbol_address": "0x12e0",
+              "frame": {
+                "bytes": 64,
+                "address": "0x12f0",
+                "line": 853,
+                "instruction": "12f0: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x70040"
+            },
+            {
+              "function": "main",
+              "symbol_address": "0x20",
+              "frame": {
+                "bytes": 64,
+                "address": "0x20",
+                "line": 13,
+                "instruction": "20: e1 00 00 70 00 00 00 02 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tpaddxm\t [sp], #0x40;\t\tnopv"
+              },
+              "sp_after_frame": "0x70080"
+            },
+            {
+              "function": "w4a16_prefill_reuse_accumulate_low",
+              "symbol_address": "0x5f0",
+              "frame": {
+                "bytes": 64,
+                "address": "0x602",
+                "line": 326,
+                "instruction": "602: ba 70 00 00 00 02 00 00 84 67\tmova\tr4, #0x33c;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x700c0"
+            },
+            {
+              "function": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "symbol_address": "0xba0",
+              "frame": {
+                "bytes": 1856,
+                "address": "0xbf6",
+                "line": 578,
+                "instruction": "bf6: ba 70 00 00 00 3a 00 80 02 40\tmova\tdj0, #0x200;\t\tpaddxm\t [sp], #0x740"
+              },
+              "sp_after_frame": "0x70800"
+            }
+          ],
+          "call_edges": [
+            {
+              "caller": "_main_init",
+              "callee": "main",
+              "count": 1,
+              "first": {
+                "address": "0x12e0",
+                "line": 852,
+                "instruction": "12e0: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+              }
+            },
+            {
+              "caller": "main",
+              "callee": "w4a16_prefill_reuse_accumulate_low",
+              "count": 9,
+              "first": {
+                "address": "0xc2",
+                "line": 40,
+                "instruction": "c2: 04 01 00 f8 02 00    \tjl\t#0x5f0"
+              }
+            },
+            {
+              "caller": "w4a16_prefill_reuse_accumulate_low",
+              "callee": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "count": 2,
+              "first": {
+                "address": "0x7e8",
+                "line": 405,
+                "instruction": "7e8: 04 01 00 d0 05 00    \tjl\t#0xba0"
+              }
+            }
+          ],
+          "high_wrapper_frame_bytes": 64,
+          "peak_chain_bytes": 2048,
+          "excess_over_reservation_bytes": 0,
+          "paired_helper_scalar_stores": [
+            {
+              "address": "0xc00",
+              "line": 579,
+              "instruction": "c00: 76 10 40 c5 02 00 80 15 c1 07 95 00  \tmova\tr21, #0x4;\t\tst\t r8, [sp, #-64];\t\tmovxm\tdj5, #0xa80",
+              "register": "r8",
+              "address_from_sp": "0x707c0",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            },
+            {
+              "address": "0xc0c",
+              "line": 580,
+              "instruction": "c0c: 76 10 00 00 05 00 80 35 c5 87 12 50  \tmova\tdj4, #0x280;\t\tst\t r9, [sp, #-60];\t\tmovxm\tm2, #0x1000",
+              "register": "r9",
+              "address_from_sp": "0x707c4",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            },
+            {
+              "address": "0xc18",
+              "line": 581,
+              "instruction": "c18: 76 78 60 b0 a9 60 81 55 c9 07 3a 00  \tmova\tr26, #0x1;\t\tst\t r10, [sp, #-56];\t\tmovx\tr22, #0x5;\t\tmov\tp3, p0",
+              "register": "r10",
+              "address_from_sp": "0x707c8",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            },
+            {
+              "address": "0xc24",
+              "line": 582,
+              "instruction": "c24: 76 58 00 e8 8a d3 81 1d cf f7 0c 69  \tpadda\t [p3], m2;\t\tst\t p6, [sp, #-52];\t\tmovx\tr29, #0x1c;\t\tmov\tr23, #0x0",
+              "register": "p6",
+              "address_from_sp": "0x707cc",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            }
+          ],
+          "paired_inner_loop": {
+            "inclusive_start": "0xcd0",
+            "inclusive_end": "0x1230",
+            "static_stack_vector_loads": 128,
+            "static_stack_vector_stores": 128,
+            "static_vmac_f": 64,
+            "note": "Instruction counts in one K8 inner-loop body, not cycle attribution. Physical vector transfer byte width is not inferred here."
+          },
+          "main_init_instructions": [
+            {
+              "address": "0x12e0",
+              "line": 852,
+              "instruction": "12e0: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+            },
+            {
+              "address": "0x12f0",
+              "line": 853,
+              "instruction": "12f0: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+            },
+            {
+              "address": "0x12fa",
+              "line": 854,
+              "instruction": "12fa: 98 9d c7 0f  \tst\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x12fe",
+              "line": 855,
+              "instruction": "12fe: 02 70 f0 b2 03 b0 07 f8      \tst\t lr, [sp, #-64];\t\tmov\tp7, sp"
+            },
+            {
+              "address": "0x1306",
+              "line": 856,
+              "instruction": "1306: 98 67 fc 07  \tpadda\t [p7], #-0x40"
+            },
+            {
+              "address": "0x130a",
+              "line": 857,
+              "instruction": "130a: 2c 02 04 40 03 00    \tmova\tp0, #0x0;\t\tmovx\tr1, #0x0"
+            },
+            {
+              "address": "0x1310",
+              "line": 858,
+              "instruction": "1310: e1 00 00 78 a5 01 00 40 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tdone\t;\t\tnopm\t;\t\tnopv"
+            }
+          ],
+          "delay_slot_accounting": "The SP increment and saved LR/P7 stores following _main_init jl main are call-delay-slot instructions executed before main; the startup jl _main_init similarly has movxm sp in its delay slots."
+        }
+      ],
+      "all_core_elf_address_checks": [
+        {
+          "core": [
+            0,
+            2
+          ],
+          "elf_sha256": "b6617bbb9c8e90753a2c8d6d69589cdf69ea8325a4ba7c9bc190d02b647b6bf4",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            0,
+            3
+          ],
+          "elf_sha256": "6a1fda33e1b9387c73bcdb9a67c9cdb415a00ecdebbcdf60711c47fd2af55f10",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            0,
+            4
+          ],
+          "elf_sha256": "7207d5433821553423f478bebef1af660bc9a8ca1640e1da748aa8051ebbfed6",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            0,
+            5
+          ],
+          "elf_sha256": "9d81c5678593791e8ff591a5f6005fcd9d3046a49fe5c4456129fb7b3f7477a1",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            2
+          ],
+          "elf_sha256": "aec2373889f727aa64a9bfd73eb45779b65ebb9f3b66ecc80908eca311b8ffc0",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            3
+          ],
+          "elf_sha256": "a2382d1702b70138a54a41cffdaf9b3513c7482bc67a8827ed1724fd5239040b",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            4
+          ],
+          "elf_sha256": "de5e385d942cfc8e61cf4e7a0f44ca5737b4c37658bf7d4797af064be41c5f9f",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            5
+          ],
+          "elf_sha256": "fab5f385cfacc1d4cf0f8a66e1f5f3cebe31aa2f0fea5d9e219c7d0f6d5f9436",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            2
+          ],
+          "elf_sha256": "4d577c3df5b38b96abfe9ec52bf68d675caded3f0663886469c914ef895817e6",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            3
+          ],
+          "elf_sha256": "bce5b94c282f4fb187e97c4985ee420a566a2bdc51eec8e0a41d12e0443a392a",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            4
+          ],
+          "elf_sha256": "2f85c99d34b77f0e1e764f0616e6a8f3ea57d25f2f0fcc983c1e72be3037e1d5",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            5
+          ],
+          "elf_sha256": "a80ef2310dde0e069f0978daf55a54d80a5ed1937aab90c9030b9fea5206135f",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            2
+          ],
+          "elf_sha256": "e1dc2f828df7e965ea54519fccb7e6f80e5bdf73d2d62d3d906ca7d461707fae",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            3
+          ],
+          "elf_sha256": "8da706531731607bab482a6eae044bd025c2c5604c273016ad9204eb602bbafb",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            4
+          ],
+          "elf_sha256": "0efdfa5b9bf9f651453c80ee62f807a27a744d44189cf5a8979eae5c6f5761d8",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            5
+          ],
+          "elf_sha256": "70c1bafdbb9504dab43fb28a696471e98b92be36d0e0d647e43a240c567c74ad",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            2
+          ],
+          "elf_sha256": "984896465ad8a315ba81e5a5818bb04ad384b28ea5f8777935e06ba7a8fea78e",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            3
+          ],
+          "elf_sha256": "75764f4950e1a57ef459ccbc88a0ef5c446fd6db813d8cccbad8854064d079c1",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            4
+          ],
+          "elf_sha256": "92514d8404f73b4635e8b27a30609d9c9b7cbd7c1e0e5d77d1316724fecfb981",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            5
+          ],
+          "elf_sha256": "e4e73b703af6828506a33429c4dd0d9da78f2a102739e13773a665ffe1b80bab",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            2
+          ],
+          "elf_sha256": "9fca2bf05cc97de6602c238317adf9fea79c36e97f4d29981c72ddf179270f12",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            3
+          ],
+          "elf_sha256": "cbeee7bc722e89b22cbae04fbace34c9df048290de70fb1c5a412199f1e02ade",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            4
+          ],
+          "elf_sha256": "cec3d64b20d3dcf95bb447fcb21bf18097e1874c7572fbf0f73b3d926b10bcce",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            5
+          ],
+          "elf_sha256": "67133b5b626a1eb69c54d4e54a1c7d5047f631a4fe1a0f686119109af3dafcb5",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            2
+          ],
+          "elf_sha256": "f3561b2c4126d8d0b1394bed50fb165f9668c55b913ebde8a760bef5d57300a5",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            3
+          ],
+          "elf_sha256": "582addef7d542e678cea9848952c8934081aa0e46c5039c64cb64035423678a8",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            4
+          ],
+          "elf_sha256": "17b09d307fea57a7a90f7c78ca8ef357c141fdf572d3a6893294912d8bd62f04",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            5
+          ],
+          "elf_sha256": "db25122674368e8b05953ea3b91e8c31840bd8e4b49cacf135c7285c08f47e05",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            2
+          ],
+          "elf_sha256": "6748546b48b8bb2699ee2af6b0232133819982a9169788e81db6121588ba1fdc",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            3
+          ],
+          "elf_sha256": "d0ca92f446952dd00cf79d3d63d8c9d950796518be1f649950dfd52223feb735",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            4
+          ],
+          "elf_sha256": "6d13667cca4918a6f0c43230a6ca9ed0c4be9bc6135934de925f0022d84b8f9e",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            5
+          ],
+          "elf_sha256": "b49a2bb6438cc7d4753a87203441532970f0899ec91a71f174fe0629a5a0cdfe",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        }
+      ]
+    },
+    {
+      "stage": "combo_smoke/swiglu",
+      "build_contract_sha256": "bff0468873c4cdc0ba82b22528e00a84f6b9ab5b6d0226616d91c41f17edd459",
+      "manifest": {
+        "kind": "w4a16_upstream_bf16",
+        "mode": "swiglu",
+        "m": 256,
+        "k": 512,
+        "n": 1152,
+        "weight_k": 512,
+        "weight_n": 2048,
+        "k_start": 0,
+        "n_start": 128,
+        "cols": 8,
+        "compute_rows": 4,
+        "worker_count": 32,
+        "m_reuse": 2,
+        "worker_stack_size": 2048,
+        "segment_pipeline_depth": 2,
+        "activation_fifo_depth": 2,
+        "vector_zero": true,
+        "mmul_m_reuse": 2,
+        "output_layout": "down_a",
+        "weight_layout": "glassescrab_w4a16_k128_n64_colmod8_4352_v1",
+        "weight_tile_bytes": 4352,
+        "arithmetic": "bf16",
+        "compute_format": "bf16",
+        "upstream_kernel_commit": "121dd54abc68f84d89a7074372ebf82be2db62d5",
+        "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+        "source_sha256": "ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7",
+        "graph_sha256": "d1fc323fff8d710689626ece43df2ef002a29fa01711ee0a34c24164971288ec",
+        "weight_layout_sha256": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+        "schedule_sha256": "160e7bb30cac7220fe9a30ae676732589941b4180d0f6136092b4c3db802ae26",
+        "dependency_sha256": {
+          "w4a16_upstream.py": "d1fc323fff8d710689626ece43df2ef002a29fa01711ee0a34c24164971288ec",
+          "w4a16_prefill_upstream.cc": "ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7",
+          "upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+          "upstream_schedule.py": "160e7bb30cac7220fe9a30ae676732589941b4180d0f6136092b4c3db802ae26",
+          "prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+          "prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+          "prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+          "silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+          "projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e",
+          "upstream_output.py": "9429859351f85611394847bd844a38ec38f768991d36d88b3c16a5dc898aa5df"
+        }
+      },
+      "representative_disassembly_audits": [
+        {
+          "disassembly": "combo_smoke/swiglu/core_0_2.disasm",
+          "disassembly_sha256": "d4385857b1c8eb42a8d16a9665fc60a4c3d431dc44e85ee1c0705c8e2da21a46",
+          "elf": "combo_smoke/swiglu/final.prj/elfs_main_core_0_2/elfs_main_core_0_2.elf",
+          "elf_sha256": "f8c0ef2d78f04a21dbd01492bb9194778e76c754abc6abd67a0dea848ae91e4d",
+          "core": [
+            0,
+            2
+          ],
+          "stack_start": "0x70000",
+          "reserved_stack_bytes": 2048,
+          "reserved_stack_end_exclusive": "0x70800",
+          "first_a_buffer": {
+            "symbol": "direct_a_broadcast_0_0_cons_buff_0",
+            "tile_offset": 2048,
+            "size_bytes": 8192,
+            "mlir_line": 1535,
+            "mlir": "%direct_a_broadcast_0_0_cons_buff_0 = aie.buffer(%tile_0_2) {address = 2048 : i32, sym_name = \"direct_a_broadcast_0_0_cons_buff_0\"} : memref<4096xbf16>  loc(#loc61)",
+            "elf_address": "0x70800"
+          },
+          "call_chain": [
+            {
+              "function": "_main_init",
+              "symbol_address": "0x17e0",
+              "frame": {
+                "bytes": 64,
+                "address": "0x17f0",
+                "line": 1145,
+                "instruction": "17f0: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x70040"
+            },
+            {
+              "function": "main",
+              "symbol_address": "0x20",
+              "frame": {
+                "bytes": 64,
+                "address": "0x20",
+                "line": 13,
+                "instruction": "20: e1 00 00 70 00 00 00 02 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tpaddxm\t [sp], #0x40;\t\tnopv"
+              },
+              "sp_after_frame": "0x70080"
+            },
+            {
+              "function": "w4a16_prefill_reuse_accumulate_low",
+              "symbol_address": "0xb80",
+              "frame": {
+                "bytes": 64,
+                "address": "0xbba",
+                "line": 645,
+                "instruction": "bba: ba 70 00 00 00 02 00 00 07 10\tmova\tr7, #0x80;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x700c0"
+            },
+            {
+              "function": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "symbol_address": "0x10a0",
+              "frame": {
+                "bytes": 1856,
+                "address": "0x10f6",
+                "line": 870,
+                "instruction": "10f6: ba 70 00 00 00 3a 00 80 02 40\tmova\tdj0, #0x200;\t\tpaddxm\t [sp], #0x740"
+              },
+              "sp_after_frame": "0x70800"
+            }
+          ],
+          "call_edges": [
+            {
+              "caller": "_main_init",
+              "callee": "main",
+              "count": 1,
+              "first": {
+                "address": "0x17e0",
+                "line": 1144,
+                "instruction": "17e0: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+              }
+            },
+            {
+              "caller": "main",
+              "callee": "w4a16_prefill_reuse_accumulate_low",
+              "count": 20,
+              "first": {
+                "address": "0xce",
+                "line": 43,
+                "instruction": "ce: 04 01 00 c0 05 00    \tjl\t#0xb80"
+              }
+            },
+            {
+              "caller": "w4a16_prefill_reuse_accumulate_low",
+              "callee": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "count": 1,
+              "first": {
+                "address": "0xd6e",
+                "line": 721,
+                "instruction": "d6e: 04 01 00 50 08 00    \tjl\t#0x10a0"
+              }
+            }
+          ],
+          "high_wrapper_frame_bytes": 64,
+          "peak_chain_bytes": 2048,
+          "excess_over_reservation_bytes": 0,
+          "paired_helper_scalar_stores": [
+            {
+              "address": "0x1100",
+              "line": 871,
+              "instruction": "1100: 76 10 40 c5 02 00 80 15 c1 07 95 00  \tmova\tr21, #0x4;\t\tst\t r8, [sp, #-64];\t\tmovxm\tdj5, #0xa80",
+              "register": "r8",
+              "address_from_sp": "0x707c0",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            },
+            {
+              "address": "0x110c",
+              "line": 872,
+              "instruction": "110c: 76 10 00 00 05 00 80 35 c5 87 12 50  \tmova\tdj4, #0x280;\t\tst\t r9, [sp, #-60];\t\tmovxm\tm2, #0x1000",
+              "register": "r9",
+              "address_from_sp": "0x707c4",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            },
+            {
+              "address": "0x1118",
+              "line": 873,
+              "instruction": "1118: 76 78 60 b0 a9 60 81 55 c9 07 3a 00  \tmova\tr26, #0x1;\t\tst\t r10, [sp, #-56];\t\tmovx\tr22, #0x5;\t\tmov\tp3, p0",
+              "register": "r10",
+              "address_from_sp": "0x707c8",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            },
+            {
+              "address": "0x1124",
+              "line": 874,
+              "instruction": "1124: 76 58 00 e8 8a d3 81 1d cf f7 0c 69  \tpadda\t [p3], m2;\t\tst\t p6, [sp, #-52];\t\tmovx\tr29, #0x1c;\t\tmov\tr23, #0x0",
+              "register": "p6",
+              "address_from_sp": "0x707cc",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            }
+          ],
+          "paired_inner_loop": {
+            "inclusive_start": "0x11d0",
+            "inclusive_end": "0x1730",
+            "static_stack_vector_loads": 128,
+            "static_stack_vector_stores": 128,
+            "static_vmac_f": 64,
+            "note": "Instruction counts in one K8 inner-loop body, not cycle attribution. Physical vector transfer byte width is not inferred here."
+          },
+          "main_init_instructions": [
+            {
+              "address": "0x17e0",
+              "line": 1144,
+              "instruction": "17e0: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+            },
+            {
+              "address": "0x17f0",
+              "line": 1145,
+              "instruction": "17f0: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+            },
+            {
+              "address": "0x17fa",
+              "line": 1146,
+              "instruction": "17fa: 98 9d c7 0f  \tst\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x17fe",
+              "line": 1147,
+              "instruction": "17fe: 02 70 f0 b2 03 b0 07 f8      \tst\t lr, [sp, #-64];\t\tmov\tp7, sp"
+            },
+            {
+              "address": "0x1806",
+              "line": 1148,
+              "instruction": "1806: 98 67 fc 07  \tpadda\t [p7], #-0x40"
+            },
+            {
+              "address": "0x180a",
+              "line": 1149,
+              "instruction": "180a: 2c 02 04 40 03 00    \tmova\tp0, #0x0;\t\tmovx\tr1, #0x0"
+            },
+            {
+              "address": "0x1810",
+              "line": 1150,
+              "instruction": "1810: e1 00 00 78 a5 01 00 40 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tdone\t;\t\tnopm\t;\t\tnopv"
+            }
+          ],
+          "delay_slot_accounting": "The SP increment and saved LR/P7 stores following _main_init jl main are call-delay-slot instructions executed before main; the startup jl _main_init similarly has movxm sp in its delay slots."
+        },
+        {
+          "disassembly": "combo_smoke/swiglu/core_1_2.disasm",
+          "disassembly_sha256": "e17774f9d43840a58bd795c587631a904d074b551d76af8e168a0a0b92e75cce",
+          "elf": "combo_smoke/swiglu/final.prj/elfs_main_core_1_2/elfs_main_core_1_2.elf",
+          "elf_sha256": "7afb680d1b00dcb7fbc78b63e2c7af0e35c159815873d9f896dec8844429979e",
+          "core": [
+            1,
+            2
+          ],
+          "stack_start": "0x70000",
+          "reserved_stack_bytes": 2048,
+          "reserved_stack_end_exclusive": "0x70800",
+          "first_a_buffer": {
+            "symbol": "direct_a_broadcast_0_1_cons_buff_0",
+            "tile_offset": 2048,
+            "size_bytes": 8192,
+            "mlir_line": 1539,
+            "mlir": "%direct_a_broadcast_0_1_cons_buff_0 = aie.buffer(%tile_1_2) {address = 2048 : i32, sym_name = \"direct_a_broadcast_0_1_cons_buff_0\"} : memref<4096xbf16>  loc(#loc61)",
+            "elf_address": "0x70800"
+          },
+          "call_chain": [
+            {
+              "function": "_main_init",
+              "symbol_address": "0x1c20",
+              "frame": {
+                "bytes": 64,
+                "address": "0x1c30",
+                "line": 1325,
+                "instruction": "1c30: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x70040"
+            },
+            {
+              "function": "main",
+              "symbol_address": "0x20",
+              "frame": {
+                "bytes": 64,
+                "address": "0x20",
+                "line": 13,
+                "instruction": "20: c4 01 00 00 08 00    \tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x70080"
+            },
+            {
+              "function": "w4a16_prefill_reuse_accumulate_low",
+              "symbol_address": "0xd80",
+              "frame": {
+                "bytes": 64,
+                "address": "0xdba",
+                "line": 719,
+                "instruction": "dba: ba 70 00 00 00 02 00 00 07 10\tmova\tr7, #0x80;\t\tpaddxm\t [sp], #0x40"
+              },
+              "sp_after_frame": "0x700c0"
+            },
+            {
+              "function": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "symbol_address": "0x12a0",
+              "frame": {
+                "bytes": 1856,
+                "address": "0x12f6",
+                "line": 944,
+                "instruction": "12f6: ba 70 00 00 00 3a 00 80 02 40\tmova\tdj0, #0x200;\t\tpaddxm\t [sp], #0x740"
+              },
+              "sp_after_frame": "0x70800"
+            }
+          ],
+          "call_edges": [
+            {
+              "caller": "_main_init",
+              "callee": "main",
+              "count": 1,
+              "first": {
+                "address": "0x1c20",
+                "line": 1324,
+                "instruction": "1c20: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+              }
+            },
+            {
+              "caller": "main",
+              "callee": "w4a16_prefill_reuse_accumulate_low",
+              "count": 20,
+              "first": {
+                "address": "0xce",
+                "line": 43,
+                "instruction": "ce: 04 01 00 c0 06 00    \tjl\t#0xd80"
+              }
+            },
+            {
+              "caller": "w4a16_prefill_reuse_accumulate_low",
+              "callee": "_ZN12_GLOBAL__N_127accumulate_dequantized_pairEPK8bfloat16S2_Pf",
+              "count": 1,
+              "first": {
+                "address": "0xf6e",
+                "line": 795,
+                "instruction": "f6e: 04 01 00 50 09 00    \tjl\t#0x12a0"
+              }
+            }
+          ],
+          "high_wrapper_frame_bytes": 64,
+          "peak_chain_bytes": 2048,
+          "excess_over_reservation_bytes": 0,
+          "paired_helper_scalar_stores": [
+            {
+              "address": "0x1300",
+              "line": 945,
+              "instruction": "1300: 76 10 40 c5 02 00 80 15 c1 07 95 00  \tmova\tr21, #0x4;\t\tst\t r8, [sp, #-64];\t\tmovxm\tdj5, #0xa80",
+              "register": "r8",
+              "address_from_sp": "0x707c0",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            },
+            {
+              "address": "0x130c",
+              "line": 946,
+              "instruction": "130c: 76 10 00 00 05 00 80 35 c5 87 12 50  \tmova\tdj4, #0x280;\t\tst\t r9, [sp, #-60];\t\tmovxm\tm2, #0x1000",
+              "register": "r9",
+              "address_from_sp": "0x707c4",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            },
+            {
+              "address": "0x1318",
+              "line": 947,
+              "instruction": "1318: 76 78 60 b0 a9 60 81 55 c9 07 3a 00  \tmova\tr26, #0x1;\t\tst\t r10, [sp, #-56];\t\tmovx\tr22, #0x5;\t\tmov\tp3, p0",
+              "register": "r10",
+              "address_from_sp": "0x707c8",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            },
+            {
+              "address": "0x1324",
+              "line": 948,
+              "instruction": "1324: 76 58 00 e8 8a d3 81 1d cf f7 0c 69  \tpadda\t [p3], m2;\t\tst\t p6, [sp, #-52];\t\tmovx\tr29, #0x1c;\t\tmov\tr23, #0x0",
+              "register": "p6",
+              "address_from_sp": "0x707cc",
+              "width_bytes": 4,
+              "overlaps_first_a": false,
+              "outside_reserved_stack": false
+            }
+          ],
+          "paired_inner_loop": {
+            "inclusive_start": "0x13d0",
+            "inclusive_end": "0x1930",
+            "static_stack_vector_loads": 128,
+            "static_stack_vector_stores": 128,
+            "static_vmac_f": 64,
+            "note": "Instruction counts in one K8 inner-loop body, not cycle attribution. Physical vector transfer byte width is not inferred here."
+          },
+          "main_init_instructions": [
+            {
+              "address": "0x1c20",
+              "line": 1324,
+              "instruction": "1c20: e1 00 00 40 00 00 04 00 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tjl\t#0x20;\t\tnopv"
+            },
+            {
+              "address": "0x1c30",
+              "line": 1325,
+              "instruction": "1c30: ba 70 00 00 00 02 00 f0 2c 00\tnopa\t;\t\tpaddxm\t [sp], #0x40"
+            },
+            {
+              "address": "0x1c3a",
+              "line": 1326,
+              "instruction": "1c3a: 98 9d c7 0f  \tst\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x1c3e",
+              "line": 1327,
+              "instruction": "1c3e: 02 70 f0 b2 03 b0 07 f8      \tst\t lr, [sp, #-64];\t\tmov\tp7, sp"
+            },
+            {
+              "address": "0x1c46",
+              "line": 1328,
+              "instruction": "1c46: 98 67 fc 07  \tpadda\t [p7], #-0x40"
+            },
+            {
+              "address": "0x1c4a",
+              "line": 1329,
+              "instruction": "1c4a: 2c 02 04 40 03 00    \tmova\tp0, #0x0;\t\tmovx\tr1, #0x0"
+            },
+            {
+              "address": "0x1c50",
+              "line": 1330,
+              "instruction": "1c50: e1 00 00 78 a5 01 00 40 00 5b 01 20 00 f0 2c 00      \tnopa\t;\t\tnopb\t;\t\tnops\t;\t\tdone\t;\t\tnopm\t;\t\tnopv"
+            }
+          ],
+          "delay_slot_accounting": "The SP increment and saved LR/P7 stores following _main_init jl main are call-delay-slot instructions executed before main; the startup jl _main_init similarly has movxm sp in its delay slots."
+        }
+      ],
+      "all_core_elf_address_checks": [
+        {
+          "core": [
+            0,
+            2
+          ],
+          "elf_sha256": "f8c0ef2d78f04a21dbd01492bb9194778e76c754abc6abd67a0dea848ae91e4d",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            0,
+            3
+          ],
+          "elf_sha256": "c2c8beb006165262de83242b06d2917df396958ccd9001f7440a59647a0c0911",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            0,
+            4
+          ],
+          "elf_sha256": "163c384cb0f80783175d1cca41ac8fa1173fd9ac3a9bd9c6eea14be56e5d3ea2",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            0,
+            5
+          ],
+          "elf_sha256": "7d4b863a612e7604c09d924805c80c19ca9967575029ed6be3517ead4c2d8d40",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_0_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            2
+          ],
+          "elf_sha256": "7afb680d1b00dcb7fbc78b63e2c7af0e35c159815873d9f896dec8844429979e",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            3
+          ],
+          "elf_sha256": "4660294945d298a84ab2a12c4925f87439927a5bd08290802790f133a0db882f",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            4
+          ],
+          "elf_sha256": "f344850e946bca402eb68585bc07a0568c6e2f0f3f54121fae7d0908803be390",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            1,
+            5
+          ],
+          "elf_sha256": "f2e60186c858517b0b2631c1de849f9b3503a46d986b759217dec6c43d54ee3f",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_1_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            2
+          ],
+          "elf_sha256": "a4e6c2bbc5e37444934b47fa0734ad03e55f427ac0ccc6369c45bb56c40c03bc",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            3
+          ],
+          "elf_sha256": "b520cb26ea5255b26a3784d295d96ead319e8a122ad657b79fcd5fe519e2cd44",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            4
+          ],
+          "elf_sha256": "f64e3b221a21092de73def0bce63e5d24e150ead7bb14760cbcafc2d84ecdce1",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            2,
+            5
+          ],
+          "elf_sha256": "c10d3c3d6d4a43e5840fb3953199f229394cbc196f1763d4403903c42dba05a2",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_2_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            2
+          ],
+          "elf_sha256": "6aaa2f1935f04826305eaaba1a13c451f4be6c92002cdc475db61b00f6d58e00",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            3
+          ],
+          "elf_sha256": "23adaf80d72cc2bc3b7ecf9e9194a752d61b9ae52dfa1cf5cc01d1f887ddef76",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            4
+          ],
+          "elf_sha256": "79a0843e8ffd178bce9d4fb3f0d775c36617277751732aa670f188860bd43f6d",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            3,
+            5
+          ],
+          "elf_sha256": "a0d280d3bddd2862a3b8734b6bc9f99db82788ba13beb488bd2f957d9c263037",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_3_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            2
+          ],
+          "elf_sha256": "4703f213d8120cf130d309cb782b9415b9439753ce29931ba0474d9ee96fa038",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            3
+          ],
+          "elf_sha256": "17c52eacfcc0a5b86d93d6e1973a4595618c2129a69725d65bfc3157653d6e6d",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            4
+          ],
+          "elf_sha256": "c81dca75200aa0eecfa01be2a8115527fea9910d19dc32988d953f12d3c9a9b9",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            4,
+            5
+          ],
+          "elf_sha256": "c4cd1946f117c1c0a8c8997df4526f046b3ad3c3226948cc843016b6fae904c4",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_4_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            2
+          ],
+          "elf_sha256": "9adf48ecac31fe9574f5b5b4c529ac0ecc1207ed1a6cdb849bd4c4984f021f5b",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            3
+          ],
+          "elf_sha256": "7f2ffc1e5be9390e780d5dc4f43a478679616aaaeb86772f5fb68066aacf0af0",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            4
+          ],
+          "elf_sha256": "ed8dba33dc3c60a1835659b77de13ac827f707be56691c85ac0c018fea77cb8e",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            5,
+            5
+          ],
+          "elf_sha256": "49be8bc9900daaa322f1b26984f6d020e80a2bb8efbc621d081eb74d84a72331",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_5_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            2
+          ],
+          "elf_sha256": "fa13366464cacd8da5c196402a26ab37ee7e903fe803705c9f0e18675388e8b4",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            3
+          ],
+          "elf_sha256": "7cccfe2968bec901efccefc6e053b70f8e6fcc521a9242a89c7d1de178f70c39",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            4
+          ],
+          "elf_sha256": "4e1f147911423aa5b1026f2077f657310e26ae81e99115019268a79bc31d2cb2",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            6,
+            5
+          ],
+          "elf_sha256": "a6a82976e3ad11b53bf1853d826d0ca5c6f148587b9e3c8e552ab7bc1b929e5b",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_6_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            2
+          ],
+          "elf_sha256": "e8d14ecce8f036a258473bb2a55cb3f05567e597c9f10c5a8d9bde3ae0482430",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_0_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            3
+          ],
+          "elf_sha256": "4d7d5f3fcfec6de478f6e3b66ce7ae5110a8e6dd8f5da774e531549a644353c7",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_1_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            4
+          ],
+          "elf_sha256": "121dcef32d481035f80a0cd805bb2e93aa11d51ee9f9d7e6c1a32a3e9d227846",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_2_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        },
+        {
+          "core": [
+            7,
+            5
+          ],
+          "elf_sha256": "31020a33e48b197fb95d3865411c2331f2446b6bcb4a3a9b69becdd124f01e86",
+          "stack_start": "0x70000",
+          "first_a_symbol": "direct_a_broadcast_3_7_cons_buff_0",
+          "first_a_address": "0x70800",
+          "first_a_offset_from_stack": 2048
+        }
+      ]
+    }
+  ]
+}

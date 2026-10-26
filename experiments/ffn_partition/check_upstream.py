@@ -27,7 +27,7 @@ from .npu_backend import KERNEL_ROOT, ROOT
 from .upstream_npu import (GRAPH, UpstreamNpuFFN, _artifact_spec, _build_contract,
                            _ffn_specs, _load_artifact, _validate_manifest)
 from prefill_reference import (bf16_bits, bf16_from_bits, error_metrics,
-                               pack_activations, unpack_output)
+                               pack_activations, unpack_output, unpack_activations)
 from reference import bf16, silu_multiply
 from upstream_weights import UpstreamWeightBuffer, UPSTREAM_LAYOUT_VERSION
 from xrt_runner import XrtRunner
@@ -178,7 +178,28 @@ def _case_list(args):
                  channel_start=args.channel_start)]
 
 
+def kernel_options(args):
+    """Shared options for correctness and separately timed ablations."""
+    defaults = dict(swiglu_reuse=2, down_reuse=2, swiglu_activation_fifo_depth=2,
+        down_activation_fifo_depth=2, vector_zero=False, mmul_m_reuse=1, output_layout='compact',
+        swiglu_input_layout='compact')
+    return {name: getattr(args, name, value) for name, value in defaults.items()}
+
+
+def add_kernel_options(parser):
+    parser.add_argument('--swiglu-reuse', type=int, choices=(1, 2), default=2)
+    parser.add_argument('--down-reuse', type=int, choices=(1, 2, 4), default=2)
+    parser.add_argument('--swiglu-activation-fifo-depth', type=int, choices=(1, 2), default=2)
+    parser.add_argument('--down-activation-fifo-depth', type=int, choices=(1, 2), default=2)
+    parser.add_argument('--vector-zero', action='store_true')
+    parser.add_argument('--mmul-m-reuse', type=int, choices=(1, 2), default=1)
+    parser.add_argument('--output-layout', choices=('compact', 'down_a'), default='compact')
+    parser.add_argument('--swiglu-input-layout', choices=('compact', 'row_major'), default='compact')
+    parser.add_argument('--borrow-npu-readback', action='store_true')
+
+
 def run_check(args):
+    options = kernel_options(args)
     report = dict(status='preparing', evidence_kind='NPU hardware correctness',
         timestamp_utc=datetime.now(timezone.utc).isoformat(),
         scope='native BF16, unchanged original-format weights; no performance claim',
@@ -228,7 +249,7 @@ def run_check(args):
                 fixtures = dict(gate=gate, up=up, down=down)
                 specs = _ffn_specs(m, h, p, gate.weight, up.weight, down.weight,
                                    args.artifact_root, start,
-                                   segment_pipeline_depth=args.segment_pipeline_depth)
+                                   segment_pipeline_depth=args.segment_pipeline_depth, **options)
             else:
                 m, k, n, wk, wn, ks, ns = (case[key] for key in
                     ('m', 'k', 'n', 'weight_k', 'weight_n', 'k_start', 'n_start'))
@@ -237,7 +258,13 @@ def run_check(args):
                     fixtures['up'] = prepare_weights(wk, wn, seed + 1)
                 specs = {'projection': _artifact_spec(case['mode'], m, k, n,
                     fixtures['gate'].weight, args.artifact_root, k_start=ks, n_start=ns,
-                    segment_pipeline_depth=args.segment_pipeline_depth)}
+                    segment_pipeline_depth=args.segment_pipeline_depth,
+                    max_reuse=options['swiglu_reuse' if case['mode'] == 'swiglu' else 'down_reuse'],
+                    activation_fifo_depth=options['swiglu_activation_fifo_depth' if case['mode'] == 'swiglu'
+                                                   else 'down_activation_fifo_depth'],
+                    vector_zero=options['vector_zero'], mmul_m_reuse=options['mmul_m_reuse'],
+                    input_layout=options['swiglu_input_layout'] if case['mode'] == 'swiglu' else 'compact',
+                    output_layout=options['output_layout'] if case['mode'] == 'swiglu' else 'compact')}
             original_hashes = {label: _hash(f.weight.data) for label, f in fixtures.items()}
             entry['original_weight_sha256'] = original_hashes
             entry['weight_bytes'] = {label: f.weight.nbytes for label, f in fixtures.items()}
@@ -256,7 +283,9 @@ def run_check(args):
                 dense_down = down.dense_slice(start, 0, p, h)
                 branch = UpstreamNpuFFN(m, h, p, gate.weight, up.weight, down.weight,
                                         args.artifact_root, channel_start=start,
-                                        segment_pipeline_depth=args.segment_pipeline_depth)
+                                        segment_pipeline_depth=args.segment_pipeline_depth,
+                                        copy_output_bits=not getattr(args, 'borrow_npu_readback', False),
+                                        **options)
 
                 def reference(x):
                     z = silu_multiply(bf16(x @ dense_gate), bf16(x @ dense_up), bf16_io=True)
@@ -296,9 +325,13 @@ def run_check(args):
                     return gate_output
 
                 def run(x):
-                    raw, launch_us = runner.run([pack_activations(x)]
+                    a = (bf16_bits(x).reshape(-1) if case['mode'] == 'swiglu'
+                         and options['swiglu_input_layout'] == 'row_major' else pack_activations(x))
+                    raw, launch_us = runner.run([a]
                         + [f.weight.data for f in fixtures.values()])
-                    return unpack_output(raw, m, n), {'dispatch_wait_us': launch_us}
+                    unpack = (unpack_activations if case['mode'] == 'swiglu'
+                              and options['output_layout'] == 'down_a' else unpack_output)
+                    return unpack(raw, m, n), {'dispatch_wait_us': launch_us}
 
                 _checks(entry, run, reference, m, k, seed + 3, save, report, launches=1)
                 del runner
@@ -330,6 +363,7 @@ def main():
     parser.add_argument('--compile-timeout', type=float, default=900)
     parser.add_argument('--segment-pipeline-depth', type=int, choices=(1, 2), default=2,
                         help='1: serial control; 2: queue two consecutive segments')
+    add_kernel_options(parser)
     builds = parser.add_mutually_exclusive_group()
     builds.add_argument('--build-only', action='store_true')
     builds.add_argument('--no-build', action='store_true')

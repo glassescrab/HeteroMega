@@ -27,7 +27,8 @@ except ImportError:
     from contract import packed_output_to_activation
 
 from upstream_weights import UpstreamWeightBuffer, UPSTREAM_LAYOUT_VERSION, WEIGHT_TILE_BYTES
-from upstream_schedule import plan_upstream, validate_segment_pipeline_depth
+from upstream_schedule import (plan_upstream, validate_segment_pipeline_depth,
+                               upstream_worker_stack_size)
 from projection_arithmetic import UPSTREAM_KERNEL_COMMIT
 from xrt_runner import load_manifest
 
@@ -37,7 +38,8 @@ GRAPH = "w4a16_upstream.py"
 SOURCE = "w4a16_prefill_upstream.cc"
 DEPENDENCIES = (GRAPH, SOURCE, "upstream_weights.py", "upstream_schedule.py",
                 "prefill_schedule.py", "prefill_gate_up_schedule.py",
-                "prefill_swiglu_schedule.py", "silu_mul.cc", "projection_arithmetic.py")
+                "prefill_swiglu_schedule.py", "silu_mul.cc", "projection_arithmetic.py",
+                "upstream_output.py")
 
 
 def _source_contract():
@@ -46,21 +48,41 @@ def _source_contract():
 
 
 def _artifact_spec(mode, m, k, n, weight, root, *, k_start=0, n_start=0,
-                   segment_pipeline_depth=2):
+                   segment_pipeline_depth=2, max_reuse=2, activation_fifo_depth=2,
+                   vector_zero=False, mmul_m_reuse=1, output_layout="compact",
+                   input_layout="compact"):
     if mode not in ("projection", "swiglu"):
         raise ValueError("upstream graph mode must be projection or swiglu")
     if not isinstance(weight, UpstreamWeightBuffer):
         raise TypeError("weights must be an UpstreamWeightBuffer; implicit packing is unsupported")
     segment_pipeline_depth = validate_segment_pipeline_depth(segment_pipeline_depth)
+    for name, value, allowed in (("max_reuse", max_reuse, (1, 2, 4)),
+            ("activation_fifo_depth", activation_fifo_depth, (1, 2)),
+            ("mmul_m_reuse", mmul_m_reuse, (1, 2))):
+        if type(value) is not int or value not in allowed:
+            raise ValueError(f"{name} must be one of {allowed}")
+    if type(vector_zero) is not bool:
+        raise ValueError("vector_zero must be a boolean")
+    if input_layout not in ("compact", "row_major"):
+        raise ValueError("input_layout must be compact or row_major")
+    if output_layout not in ("compact", "down_a") or (mode != "swiglu" and output_layout != "compact"):
+        raise ValueError("down_a output layout is only supported for SwiGLU")
+    if output_layout == "down_a" and n % 128:
+        raise ValueError("down_a output width must be divisible by 128")
     weight.validate_slice(k_start, n_start, k, n)
     plan = plan_upstream(m, k, n, mode=mode, weight_k=weight.k, weight_n=weight.n,
-                         k_start=k_start, n_start=n_start, columns=8, max_reuse=2)
+                         k_start=k_start, n_start=n_start, columns=8, max_reuse=max_reuse)
+    if plan.base.m_reuse == 4 and activation_fifo_depth != 1:
+        raise ValueError("reuse4 requires activation_fifo_depth=1 for tile memory")
     dependency = _source_contract()
     expected = dict(kind="w4a16_upstream_bf16", mode=mode, m=m, k=k, n=n,
         weight_k=weight.k, weight_n=weight.n, k_start=k_start, n_start=n_start,
         cols=8, compute_rows=4, worker_count=32,
-        m_reuse=plan.base.m_reuse, worker_stack_size=2048,
+        m_reuse=plan.base.m_reuse, worker_stack_size=upstream_worker_stack_size(mmul_m_reuse),
         segment_pipeline_depth=segment_pipeline_depth,
+        activation_fifo_depth=activation_fifo_depth, vector_zero=vector_zero,
+        mmul_m_reuse=mmul_m_reuse, output_layout=output_layout,
+        input_layout=input_layout,
         weight_layout=UPSTREAM_LAYOUT_VERSION, weight_tile_bytes=WEIGHT_TILE_BYTES,
         arithmetic="bf16", compute_format="bf16",
         upstream_kernel_commit=UPSTREAM_KERNEL_COMMIT,
@@ -73,14 +95,22 @@ def _artifact_spec(mode, m, k, n, weight, root, *, k_start=0, n_start=0,
     arguments = ["--mode", mode, "-M", str(m), "-K", str(k), "-N", str(n),
                  "--weight-k", str(weight.k), "--weight-n", str(weight.n),
                  "--k-start", str(k_start), "--n-start", str(n_start),
-                 "-co", "8", "--max-reuse", "2",
+                 "-co", "8", "--max-reuse", str(max_reuse),
+                 "--activation-fifo-depth", str(activation_fifo_depth),
+                 "--mmul-m-reuse", str(mmul_m_reuse), "--output-layout", output_layout,
+                 "--input-layout", input_layout,
                  "--segment-pipeline-depth", str(segment_pipeline_depth)]
+    if vector_zero:
+        arguments.insert(-2, "--vector-zero")
     return {"directory": directory, "expected": expected,
             "source_sha256": dependency, "arguments": arguments}
 
 
 def _ffn_specs(m, hidden, channels, gate, up, down, root, channel_start=0,
-               *, segment_pipeline_depth=2):
+               *, segment_pipeline_depth=2, swiglu_reuse=2, down_reuse=2,
+               swiglu_activation_fifo_depth=2, down_activation_fifo_depth=2,
+               vector_zero=False, mmul_m_reuse=1, output_layout="compact",
+               swiglu_input_layout="compact"):
     m, hidden, channels, _ = _geometry(m, hidden, channels, 8)
     if any(not isinstance(w, UpstreamWeightBuffer) for w in (gate, up, down)):
         raise TypeError("gate/up/down must be UpstreamWeightBuffer objects; implicit packing is unsupported")
@@ -94,10 +124,15 @@ def _ffn_specs(m, hidden, channels, gate, up, down, root, channel_start=0,
     return {
         "swiglu": _artifact_spec("swiglu", m, hidden, channels, gate, root,
                                  n_start=channel_start,
-                                 segment_pipeline_depth=segment_pipeline_depth),
+                                 segment_pipeline_depth=segment_pipeline_depth,
+                                 max_reuse=swiglu_reuse, activation_fifo_depth=swiglu_activation_fifo_depth,
+                                 vector_zero=vector_zero, mmul_m_reuse=mmul_m_reuse,
+                                 output_layout=output_layout, input_layout=swiglu_input_layout),
         "down": _artifact_spec("projection", m, channels, hidden, down, root,
                                k_start=channel_start,
-                               segment_pipeline_depth=segment_pipeline_depth),
+                               segment_pipeline_depth=segment_pipeline_depth,
+                               max_reuse=down_reuse, activation_fifo_depth=down_activation_fifo_depth,
+                               vector_zero=vector_zero, mmul_m_reuse=mmul_m_reuse),
     }
 
 
@@ -131,14 +166,14 @@ def _load_artifact(spec):
 
 def build_upstream_artifacts(m, hidden, channels, gate, up, down, artifact_root,
                              *, channel_start=0, python_executable=None,
-                             segment_pipeline_depth=2):
+                             segment_pipeline_depth=2, **kernel_options):
     """Compile missing/stale native-BF16 artifacts for unchanged full buffers.
 
     ``python_executable`` should name the configured IRON environment. This
     function never edits, slices, concatenates or repacks a weight buffer.
     """
     specs = _ffn_specs(m, hidden, channels, gate, up, down, artifact_root, channel_start,
-                       segment_pipeline_depth=segment_pipeline_depth)
+                       segment_pipeline_depth=segment_pipeline_depth, **kernel_options)
     artifacts = {}
     for label, spec in specs.items():
         try:
@@ -177,13 +212,23 @@ class UpstreamNpuFFN:
     """
 
     def __init__(self, m, hidden, channels, gate, up, down, artifact_root, *,
-                 channel_start=0, copy_output_bits=True, segment_pipeline_depth=2):
+                 channel_start=0, copy_output_bits=True, segment_pipeline_depth=2,
+                 swiglu_reuse=2, down_reuse=2, swiglu_activation_fifo_depth=2,
+                 down_activation_fifo_depth=2, vector_zero=False, mmul_m_reuse=1,
+                 output_layout="compact", swiglu_input_layout="compact"):
+        kernel_options = dict(swiglu_reuse=swiglu_reuse, down_reuse=down_reuse,
+            swiglu_activation_fifo_depth=swiglu_activation_fifo_depth,
+            down_activation_fifo_depth=down_activation_fifo_depth,
+            vector_zero=vector_zero, mmul_m_reuse=mmul_m_reuse, output_layout=output_layout,
+            swiglu_input_layout=swiglu_input_layout)
         specs = _ffn_specs(m, hidden, channels, gate, up, down, artifact_root, channel_start,
-                           segment_pipeline_depth=segment_pipeline_depth)
+                           segment_pipeline_depth=segment_pipeline_depth, **kernel_options)
         artifacts = {label: _load_artifact(spec) for label, spec in specs.items()}
         self.m, self.hidden, self.channels, _ = _geometry(m, hidden, channels, 8)
         self.channel_start = int(channel_start)
         self.copy_output_bits = bool(copy_output_bits)
+        self.output_layout = output_layout
+        self.swiglu_input_layout = swiglu_input_layout
         self.weights = (gate, up, down)  # Keep the caller's original buffers alive.
         swiglu = artifacts["swiglu"]
         self.swiglu = PersistentXrtRunner(swiglu["xclbin"], swiglu["insts"],
@@ -208,12 +253,15 @@ class UpstreamNpuFFN:
             weight_repacking=False, full_weight_buffers=True, m=self.m, hidden=self.hidden,
             channels=self.channels, channel_start=self.channel_start,
             segment_pipeline_depth=segment_pipeline_depth,
+            kernel_options=kernel_options,
             full_intermediate=gate.n, columns_requested=8, worker_count=32,
             fuse_gate_up=True, fuse_swiglu=True, launches_per_run=2,
             fixed_weight_uploads=3, fixed_weight_bytes=sum(w.nbytes for w in self.weights),
             artifacts=artifacts, cpu_activation_fallback=False,
             host_output_readback="owned_copy" if self.copy_output_bits else "borrowed_until_consumed",
-            intermediates="gate/up on-chip through SiLU/multiply; Z host-staged with CPU layout conversion before down",
+            intermediates=("gate/up on-chip through SiLU/multiply; Z host-staged in down A layout"
+                if output_layout == "down_a" else
+                "gate/up on-chip through SiLU/multiply; Z host-staged with CPU layout conversion before down"),
             host_bo_io_bytes_per_run_estimate=4 * self.m * (self.hidden + self.channels),
             timing_note="whole FFN timing must additionally include GPU transfers and boundary sum")
 
@@ -226,7 +274,8 @@ class UpstreamNpuFFN:
         start = time.perf_counter_ns()
         stages, waits = {}, {}
         before = time.perf_counter_ns()
-        activation = _pack_activation_bits(x_bits)
+        activation = (np.ascontiguousarray(x_bits).reshape(-1)
+                      if self.swiglu_input_layout == "row_major" else _pack_activation_bits(x_bits))
         stages["input_layout_us"] = (time.perf_counter_ns() - before) / 1000.0
 
         def invoke(label, runner, values):
@@ -239,7 +288,8 @@ class UpstreamNpuFFN:
 
         z = invoke("swiglu", self.swiglu, activation)
         before = time.perf_counter_ns()
-        down_a = packed_output_to_activation(z, self.m, self.channels)
+        down_a = (z if self.output_layout == "down_a" else
+                  packed_output_to_activation(z, self.m, self.channels))
         stages["down_input_layout_us"] = (time.perf_counter_ns() - before) / 1000.0
         y = invoke("down", self.down, down_a)
         before = time.perf_counter_ns()

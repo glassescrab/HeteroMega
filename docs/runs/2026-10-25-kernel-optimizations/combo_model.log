@@ -1,0 +1,6 @@
+{
+  "status": "failed",
+  "output": "results/combo_model.json",
+  "completed_npu_dispatches": 8,
+  "error": null
+}
