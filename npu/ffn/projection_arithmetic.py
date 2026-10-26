@@ -31,10 +31,11 @@ class ProjectionArithmetic:
     def compile_flags(self, reuse):
         if reuse not in (1, 2, 4):
             raise ValueError('M reuse must be 1, 2 or 4')
-        flags = [f'-DHETEROMEGA_M_REUSE={reuse}']
-        if self.arithmetic == 'bfp16':
-            flags.append('-DAIE_API_EMULATE_BFLOAT16_MMUL_WITH_BFP16=1')
-        return flags
+        # Specify both modes before the AIE headers are parsed. Native BF16
+        # must not inherit a toolchain-wide BFP16 emulation default.
+        emulation = 1 if self.arithmetic == 'bfp16' else 0
+        return [f'-DHETEROMEGA_M_REUSE={reuse}',
+                f'-DAIE_API_EMULATE_BFLOAT16_MMUL_WITH_BFP16={emulation}']
 
     def object_name(self, reuse):
         self.compile_flags(reuse)  # Validate before creating a cache identity.
