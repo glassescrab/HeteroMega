@@ -22,12 +22,16 @@ from ml_dtypes import bfloat16
 
 from projection_arithmetic import ProjectionArithmetic, UPSTREAM_KERNEL_COMMIT
 from upstream_schedule import (plan_upstream, segment_pipeline_actions,
-                               validate_segment_pipeline_depth)
+                               validate_segment_pipeline_depth,
+                               validate_kernel_tuning, validate_upstream_buffering,
+                               validate_input_layout, upstream_worker_stack_size)
+from upstream_output import upstream_down_activation_tap
 from upstream_weights import UPSTREAM_LAYOUT_VERSION
 
 ROOT = Path(__file__).parent
 DEPENDENCIES = ('w4a16_upstream.py', 'w4a16_prefill_upstream.cc',
-                'upstream_weights.py', 'upstream_schedule.py', 'prefill_schedule.py',
+                'upstream_weights.py', 'upstream_schedule.py', 'upstream_output.py',
+                'prefill_schedule.py',
                 'prefill_gate_up_schedule.py', 'prefill_swiglu_schedule.py',
                 'silu_mul.cc', 'projection_arithmetic.py')
 HASHES = {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
@@ -43,13 +47,22 @@ def _tap(spec):
 
 
 def _design(m, k, n, mode, weight_k, weight_n, k_start, n_start, cols,
-            max_reuse, segment_pipeline_depth, fingerprint):
+            max_reuse, segment_pipeline_depth, activation_fifo_depth,
+            vector_zero, mmul_m_reuse, input_layout, output_layout, fingerprint):
     if fingerprint != FINGERPRINT:
         raise ValueError('upstream graph dependency identity changed; rebuild')
     validate_segment_pipeline_depth(segment_pipeline_depth)
+    validate_kernel_tuning(vector_zero, mmul_m_reuse)
+    worker_stack_size = upstream_worker_stack_size(mmul_m_reuse)
+    validate_input_layout(input_layout)
+    if output_layout not in ('compact', 'down_a'):
+        raise ValueError('output_layout must be compact or down_a')
+    if mode != 'swiglu' and output_layout != 'compact':
+        raise ValueError('down_a output layout is only supported for SwiGLU')
     direct = plan_upstream(m, k, n, mode=mode, weight_k=weight_k,
                            weight_n=weight_n, k_start=k_start, n_start=n_start,
                            columns=cols, max_reuse=max_reuse)
+    validate_upstream_buffering(direct, activation_fifo_depth)
     plan = direct.base
     device = iron.get_current_device()
     if device is None or device.cols != 8:
@@ -66,12 +79,16 @@ def _design(m, k, n, mode, weight_k, weight_n, k_start, n_start, cols,
     a_host = np.ndarray[(m * k,), np.dtype[bfloat16]]
     w_host = np.ndarray[(direct.weight_bytes,), np.dtype[np.uint8]]
     y_host = np.ndarray[(m * n,), np.dtype[bfloat16]]
-    obj = projection.object_name(reuse)
+    # All variants share the C++ source but must never share a compiled object.
+    obj = projection.object_name(reuse).removesuffix('.o') + (
+        f'_vectorzero{int(vector_zero)}_mmulmreuse{mmul_m_reuse}.o')
     include_dirs = [config.cxx_header_path(), str(Path(config.cxx_header_path()) / 'aie_kernels')]
     low = ExternalFunction('w4a16_prefill_reuse_accumulate_low',
         object_file_name=obj, source_string=SOURCE,
         arg_types=[a_tile, w_tile, c_tile, b_tile],
-        compile_flags=projection.compile_flags(reuse), include_dirs=include_dirs)
+        compile_flags=[*projection.compile_flags(reuse),
+                       f'-DHETEROMEGA_VECTOR_ZERO={int(vector_zero)}',
+                       f'-DHETEROMEGA_MMUL_M_REUSE={mmul_m_reuse}'], include_dirs=include_dirs)
     high = Kernel('w4a16_prefill_reuse_accumulate_high', obj,
                   [a_tile, w_tile, c_tile, b_tile])
     init = Kernel('w4a16_prefill_reuse_init', obj, [c_tile])
@@ -88,7 +105,8 @@ def _design(m, k, n, mode, weight_k, weight_n, k_start, n_start, cols,
         source = ObjectFifo(a_tile, depth=2, name=f'direct_a_host_{lane}')
         a_prods.append(source.prod(tile=Tile(lane, 0), channel=0))
         a_broadcasts.append(source.cons().forward(tile=Tile(lane, 1),
-            name=f'direct_a_broadcast_{lane}', dims_to_stream=list(plan.activation_dims_to_stream)))
+            name=f'direct_a_broadcast_{lane}',
+            dims_to_stream=list(direct.activation_dims_to_stream(input_layout))))
     w_prods, w_broadcasts = [], []
     for col in range(8):
         source = ObjectFifo(w_tile, depth=2, name=f'direct_w_host_{col}')
@@ -164,7 +182,8 @@ def _design(m, k, n, mode, weight_k, weight_n, k_start, n_start, cols,
             c0 = Buffer(c_tile, name=f'direct_acc0_{col}_{row}')
             c1 = Buffer(c_tile, name=f'direct_acc1_{col}_{row}')
             b = Buffer(b_tile, name=f'direct_dequant_{col}_{row}')
-            inputs = [a_broadcasts[m_group * 4 + row].cons(), w_broadcasts[col].cons()]
+            inputs = [a_broadcasts[m_group * 4 + row].cons(depth=activation_fifo_depth),
+                      w_broadcasts[col].cons()]
             if mode == 'swiglu' and col % 2:
                 up = Buffer(y_tile, name=f'direct_up_{col}_{row}')
                 fn = consumer_fn(direct.segments[col])
@@ -175,7 +194,7 @@ def _design(m, k, n, mode, weight_k, weight_n, k_start, n_start, cols,
                 output = gates[col, row].prod() if mode == 'swiglu' else y_workers[col][row].prod()
                 args = [*inputs, output, c0, c1, b, init, low, high, finish]
             workers.append(Worker(fn, args, tile=Tile(col, row + 2),
-                                  stack_size=2048, dynamic_objfifo_lowering=True))
+                                  stack_size=worker_stack_size, dynamic_objfifo_lowering=True))
 
     def submit(a, ws, y, a_hs, w_hs, y_hs):
         pending = {}
@@ -193,10 +212,12 @@ def _design(m, k, n, mode, weight_k, weight_n, k_start, n_start, cols,
             # segment can then stream through the existing depth-two FIFOs
             # while this one's output drains, without adding core buffers.
             for out_index, col in enumerate(output_cols):
-                y_hs[out_index].drain(y, _tap(direct.output_tap(col, *key)),
+                tap = (upstream_down_activation_tap(direct, col, *key)
+                       if output_layout == 'down_a' else direct.output_tap(col, *key))
+                y_hs[out_index].drain(y, _tap(tap),
                                      wait=True, group=tasks)
             for lane, handle in enumerate(a_hs):
-                handle.fill(a, _tap(direct.activation_tap(lane, action.group)), group=tasks)
+                handle.fill(a, _tap(direct.activation_tap(lane, action.group, input_layout)), group=tasks)
             for col in range(8):
                 weight = ws[col % 2] if mode == 'swiglu' else ws[0]
                 w_hs[col].fill(weight, _tap(direct.weight_tap(col, action.segment)), group=tasks)
@@ -218,9 +239,14 @@ def upstream_projection(a: In, w: In, y: Out, *,
     k_start: CompileTime[int] = 0, n_start: CompileTime[int] = 0,
     cols: CompileTime[int] = 8, max_reuse: CompileTime[int] = 2,
     segment_pipeline_depth: CompileTime[int] = 2,
+    activation_fifo_depth: CompileTime[int] = 2,
+    vector_zero: CompileTime[bool] = False, mmul_m_reuse: CompileTime[int] = 1,
+    input_layout: CompileTime[str] = 'compact',
+    output_layout: CompileTime[str] = 'compact',
     fingerprint: CompileTime[str] = FINGERPRINT):
     return _design(m, k, n, 'projection', weight_k, weight_n, k_start, n_start,
-                   cols, max_reuse, segment_pipeline_depth, fingerprint)
+                   cols, max_reuse, segment_pipeline_depth, activation_fifo_depth,
+                   vector_zero, mmul_m_reuse, input_layout, output_layout, fingerprint)
 
 
 @iron.jit(aiecc_flags=['--alloc-scheme=basic-sequential'])
@@ -230,9 +256,14 @@ def upstream_swiglu(a: In, gate_w: In, up_w: In, z: Out, *,
     k_start: CompileTime[int] = 0, n_start: CompileTime[int] = 0,
     cols: CompileTime[int] = 8, max_reuse: CompileTime[int] = 2,
     segment_pipeline_depth: CompileTime[int] = 2,
+    activation_fifo_depth: CompileTime[int] = 2,
+    vector_zero: CompileTime[bool] = False, mmul_m_reuse: CompileTime[int] = 1,
+    input_layout: CompileTime[str] = 'compact',
+    output_layout: CompileTime[str] = 'compact',
     fingerprint: CompileTime[str] = FINGERPRINT):
     return _design(m, k, n, 'swiglu', weight_k, weight_n, k_start, n_start,
-                   cols, max_reuse, segment_pipeline_depth, fingerprint)
+                   cols, max_reuse, segment_pipeline_depth, activation_fifo_depth,
+                   vector_zero, mmul_m_reuse, input_layout, output_layout, fingerprint)
 
 
 def main():
@@ -246,15 +277,29 @@ def main():
     parser.add_argument('--k-start', type=int, default=0)
     parser.add_argument('--n-start', type=int, default=0)
     parser.add_argument('-co', '--columns', type=int, default=8)
-    parser.add_argument('--max-reuse', type=int, choices=(1, 2), default=2)
+    parser.add_argument('--max-reuse', type=int, choices=(1, 2, 4), default=2)
     parser.add_argument('--segment-pipeline-depth', type=int, choices=(1, 2), default=2,
                         help='maximum in-flight N64 segments; 1 preserves serial DMA scheduling')
+    parser.add_argument('--activation-fifo-depth', type=int, choices=(1, 2), default=2,
+                        help='core-consumer A buffers; effective projection reuse 4 requires 1')
+    parser.add_argument('--vector-zero', action='store_true',
+                        help='vectorize original-format zero-point metadata loads')
+    parser.add_argument('--mmul-m-reuse', type=int, choices=(1, 2), default=1,
+                        help='M16 lanes sharing B loads in one MMUL register block')
+    parser.add_argument('--input-layout', choices=('compact', 'row_major'), default='compact',
+                        help='input BO layout; row_major moves native A packing to memory-tile DMA')
+    parser.add_argument('--output-layout', choices=('compact', 'down_a'), default='compact',
+                        help='SwiGLU output DMA layout; down_a is ready for the down projection')
     opts = parser.parse_args()
     wk, wn = opts.weight_k or opts.K, opts.weight_n or opts.N
     kwargs = dict(m=opts.M, k=opts.K, n=opts.N, weight_k=wk, weight_n=wn,
                   k_start=opts.k_start, n_start=opts.n_start, cols=opts.columns,
                   max_reuse=opts.max_reuse,
-                  segment_pipeline_depth=opts.segment_pipeline_depth, fingerprint=FINGERPRINT)
+                  segment_pipeline_depth=opts.segment_pipeline_depth,
+                  activation_fifo_depth=opts.activation_fifo_depth,
+                  vector_zero=opts.vector_zero, mmul_m_reuse=opts.mmul_m_reuse,
+                  input_layout=opts.input_layout, output_layout=opts.output_layout,
+                  fingerprint=FINGERPRINT)
     direct = plan_upstream(opts.M, opts.K, opts.N, mode=opts.mode,
                            weight_k=wk, weight_n=wn, k_start=opts.k_start,
                            n_start=opts.n_start, columns=opts.columns, max_reuse=opts.max_reuse)
@@ -267,8 +312,13 @@ def main():
             k_start=opts.k_start, n_start=opts.n_start, cols=8, worker_count=32,
             compute_rows=4, m_reuse=direct.base.m_reuse, weight_tile_bytes=4352,
             segment_pipeline_depth=opts.segment_pipeline_depth,
+            activation_fifo_depth=opts.activation_fifo_depth,
+            vector_zero=opts.vector_zero, mmul_m_reuse=opts.mmul_m_reuse,
+            input_layout=opts.input_layout,
+            output_layout=opts.output_layout,
             weight_layout=UPSTREAM_LAYOUT_VERSION, arithmetic='bf16', compute_format='bf16',
-            worker_stack_size=2048, source_sha256=HASHES['w4a16_prefill_upstream.cc'],
+            worker_stack_size=upstream_worker_stack_size(opts.mmul_m_reuse),
+            source_sha256=HASHES['w4a16_prefill_upstream.cc'],
             graph_sha256=HASHES['w4a16_upstream.py'], weight_layout_sha256=HASHES['upstream_weights.py'],
             schedule_sha256=HASHES['upstream_schedule.py'], dependency_sha256=HASHES,
             upstream_kernel_commit=UPSTREAM_KERNEL_COMMIT, target_mlir_aie_commit=TARGET_COMMIT,

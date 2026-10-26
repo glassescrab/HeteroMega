@@ -9,34 +9,37 @@ buffers directly**. There is no weight repacking or gate/up concatenation.
 Selected partition: M512, H4096, P2560 out of full I14336. This partition is
 retained for compatibility testing; it has not been retuned for this design.
 
-Successive N64 segments now use a bounded pipeline of depth two. The next
-segment is submitted before waiting for the previous output drains; the
-oldest group finishes before a third is submitted. Native BF16 arithmetic,
-core buffers, weight format and DMA addresses are unchanged. Use
-`--segment-pipeline-depth 1` to rebuild the serial control.
+The selected graph accepts row-major SwiGLU input and scatters its output
+straight into the down projection's activation layout. Down reuses each weight
+tile across four M16 lanes with a single core activation FIFO buffer; SwiGLU
+retains reuse two. Vector zero-point metadata construction preserves exact
+BF16 bits. Both stages retain the bounded two-segment DMA pipeline and the
+four-accumulator MMUL path. These choices are explicit build options; baseline
+controls remain available.
 
 | Stage | Generated MLIR | XCLBIN | Instructions |
 |---|---|---|---|
 | Gate + up + SiLU × up | [aie.mlir](prebuilt/swiglu_m512_k4096_p2560/aie.mlir) | [final.xclbin](prebuilt/swiglu_m512_k4096_p2560/final.xclbin) | [insts.bin](prebuilt/swiglu_m512_k4096_p2560/insts.bin) |
 | Down projection | [aie.mlir](prebuilt/down_m512_k2560_n4096/aie.mlir) | [final.xclbin](prebuilt/down_m512_k2560_n4096/final.xclbin) | [insts.bin](prebuilt/down_m512_k2560_n4096/insts.bin) |
 
-These exact binaries passed signed/changed-input, zero and repeatability
-checks on HX370. The selected FFN passed the original numerical bounds;
-maximum observed relative L2 error was 0.003760. Seven test cases across
-small/model shapes completed 40 NPU launches, including nonzero K/N slices,
-paired halves, narrow N128 and an uneven P1152 partition. The full-shape
-outputs are bit-identical to the preceding serial package.
+These exact binaries pass signed/changed-input, zero and repeatability checks
+on HX370 under the original strict numerical bounds. Five small-shape cases
+and one model-shape case completed 32 NPU launches. Selected model-shape
+outputs match the previous two-segment native-BF16 package bit for bit.
 
-On HX370 at default power mode, complete NPU-branch median latency (including
-activation layouts and BO I/O) improved **24.796→24.024 ms** in an ABBA
-comparison and **25.126→24.512 ms** in a longer reversed-order BAAB run:
-**3.1% and 2.4% reductions**. Each schedule had 50 and 100 timed samples,
-respectively. All outputs matched the serial control exactly; across both
-schedules and correctness cases, runs completed 736 NPU launches. All 32
-core ELF files per graph are byte-identical between pipeline depths.
-Timing distributions overlap;
-this modest isolated-branch gain does not establish GPU+NPU or whole-model
-speedup. Synthetic correctness does not establish model accuracy.
+At HX370 default power, complete isolated NPU-branch median latency improved
+**24.576→22.590 ms (8.08%)** in ABBA order and
+**24.194→22.490 ms (7.04%)** in BAAB order. Each profile has 100 timed samples
+per order. All timed/warmup outputs match the baseline exactly; the two
+confirmation experiments completed 896 NPU launches including reference and
+warmup. The timer includes host validation, activation handling, BO I/O, both
+launch/waits and final output unpacking. Construction, fixed-weight upload and
+checks are excluded. The optimized caller also borrows intermediate BO-read
+views instead of copying them again; BO read/sync remain.
+
+These are isolated NPU-branch results. Combined GPU+NPU prefill acceleration
+and pretrained-model accuracy remain unvalidated. Synthetic correctness does
+not establish model accuracy. Partition P2560 has not been retuned.
 
 ## Original weight format
 
@@ -69,10 +72,14 @@ From this directory:
 mkdir -p build/swiglu build/down
 python w4a16_upstream.py --mode swiglu -M 512 -K 4096 -N 2560 \
   --weight-k 4096 --weight-n 14336 --max-reuse 2 --segment-pipeline-depth 2 \
+  --vector-zero --mmul-m-reuse 1 --activation-fifo-depth 2 \
+  --input-layout row_major --output-layout down_a \
   --xclbin-path build/swiglu/final.xclbin \
   --insts-path build/swiglu/insts.bin --pdi-path build/swiglu/final.pdi
 python w4a16_upstream.py --mode projection -M 512 -K 2560 -N 4096 \
-  --weight-k 14336 --weight-n 4096 --max-reuse 2 --segment-pipeline-depth 2 \
+  --weight-k 14336 --weight-n 4096 --max-reuse 4 --segment-pipeline-depth 2 \
+  --vector-zero --mmul-m-reuse 1 --activation-fifo-depth 1 \
+  --input-layout compact --output-layout compact \
   --xclbin-path build/down/final.xclbin \
   --insts-path build/down/insts.bin --pdi-path build/down/final.pdi
 ```
@@ -101,17 +108,27 @@ XRT kernel name: `MLIR_AIE`. Instruction length is **bytes**, not words.
 | Each original W | 31,195,136 (gate and up separately) | 31,195,136 |
 | Output | 2,621,440 | 4,194,304 |
 
-A and output remain compact little-endian BF16:
+Activations use little-endian BF16 bits:
 
-- A: `[M/16,K/128,4,16,4,8]`.
-- Output: `[M/16,N/32,4,4,4,8]`, with N=P for SwiGLU.
+- SwiGLU A: row-major `[M,H]`.
+- SwiGLU Z and down A: `[M/16,P/128,4,16,4,8]`.
+- Down Y: compact `[M/16,H/32,4,4,4,8]`.
 
-The activation conversion before down remains: for flat uint16 Z, use
-`ascontiguousarray(z.reshape(32,20,4,4,4,4,8).transpose(0,1,3,2,4,5,6)).reshape(-1)`.
-This is an activation layout conversion, not weight repacking. Z goes through
-shared DRAM between the two launches. The caller computes complementary GPU
-channels and sums the two down partial outputs. Whole-model integration and
-new GPU+NPU timing remain separate work.
+The SwiGLU DMA writes the down-A layout directly; pass Z unchanged to down.
+No CPU Z permutation is required. Z still traverses shared DRAM and the
+current caller still reads and writes BOs between launches. This is not an
+on-chip fused FFN or a shared-BO claim. Final Y must be unpacked into row-major
+order before reducing it with the complementary GPU result. A borrowed
+readback view is valid only until the same non-reentrant runner is reused;
+materialize independent final Y before returning or overlapping calls.
+
+To rebuild the prior two-segment control, omit `--vector-zero`, use reuse two
+and activation FIFO depth two for both stages, and choose compact input/output.
+`--segment-pipeline-depth 1` retains the older serial schedule. Each option is
+recorded in the manifest/cache identity. Experimental `--mmul-m-reuse 2`
+reserves a 4 KiB stack: the original 2 KiB overflowed on full shapes. Even after
+the fix it is about 2.2× slower because of heavy register spilling, so these
+binaries use `--mmul-m-reuse 1` and 2 KiB stacks. SwiGLU reuse four is unsupported.
 
 Verify integrity from this directory: `sha256sum -c SHA256SUMS`.
 Each manifest identifies BF16 arithmetic, upstream weight layout, full source

@@ -64,199 +64,199 @@ module {
     %logical_shim_noc_58 = aie.logical_tile<ShimNOCTile>(5, 0)
     %logical_mem_59 = aie.logical_tile<MemTile>(7, 1)
     %logical_shim_noc_60 = aie.logical_tile<ShimNOCTile>(7, 0)
-    aie.objectfifo @direct_a_broadcast_0(%logical_mem dimensionsToStream [<size = 2, stride = 512>, <size = 4, stride = 1024>, <size = 512, stride = 1>], {%logical_core, %logical_core_3, %logical_core_7, %logical_core_11, %logical_core_15, %logical_core_19, %logical_core_23, %logical_core_27}, 2 : i32) : !aie.objectfifo<memref<4096xbf16>>
-    aie.objectfifo @direct_a_host_0(%logical_shim_noc, {%logical_mem}, 2 : i32) {prod_dma_channel = 0 : i32} : !aie.objectfifo<memref<4096xbf16>>
+    aie.objectfifo @direct_a_broadcast_0(%logical_mem dimensionsToStream [<size = 8, stride = 512>, <size = 16, stride = 8>, <size = 4, stride = 128>, <size = 8, stride = 1>], {%logical_core, %logical_core_3, %logical_core_7, %logical_core_11, %logical_core_15, %logical_core_19, %logical_core_23, %logical_core_27}, 2 : i32) : !aie.objectfifo<memref<4096xbf16>>  
+    aie.objectfifo @direct_a_host_0(%logical_shim_noc, {%logical_mem}, 2 : i32) {prod_dma_channel = 0 : i32} : !aie.objectfifo<memref<4096xbf16>>  
     aie.objectfifo.link [@direct_a_host_0] -> [@direct_a_broadcast_0]([] [0])
-    aie.objectfifo @direct_a_broadcast_1(%logical_mem_31 dimensionsToStream [<size = 2, stride = 512>, <size = 4, stride = 1024>, <size = 512, stride = 1>], {%logical_core_0, %logical_core_4, %logical_core_8, %logical_core_12, %logical_core_16, %logical_core_20, %logical_core_24, %logical_core_28}, 2 : i32) : !aie.objectfifo<memref<4096xbf16>>
-    aie.objectfifo @direct_a_host_1(%logical_shim_noc_34, {%logical_mem_31}, 2 : i32) {prod_dma_channel = 0 : i32} : !aie.objectfifo<memref<4096xbf16>>
+    aie.objectfifo @direct_a_broadcast_1(%logical_mem_31 dimensionsToStream [<size = 8, stride = 512>, <size = 16, stride = 8>, <size = 4, stride = 128>, <size = 8, stride = 1>], {%logical_core_0, %logical_core_4, %logical_core_8, %logical_core_12, %logical_core_16, %logical_core_20, %logical_core_24, %logical_core_28}, 2 : i32) : !aie.objectfifo<memref<4096xbf16>>  
+    aie.objectfifo @direct_a_host_1(%logical_shim_noc_34, {%logical_mem_31}, 2 : i32) {prod_dma_channel = 0 : i32} : !aie.objectfifo<memref<4096xbf16>>  
     aie.objectfifo.link [@direct_a_host_1] -> [@direct_a_broadcast_1]([] [0])
-    aie.objectfifo @direct_a_broadcast_2(%logical_mem_32 dimensionsToStream [<size = 2, stride = 512>, <size = 4, stride = 1024>, <size = 512, stride = 1>], {%logical_core_1, %logical_core_5, %logical_core_9, %logical_core_13, %logical_core_17, %logical_core_21, %logical_core_25, %logical_core_29}, 2 : i32) : !aie.objectfifo<memref<4096xbf16>>
-    aie.objectfifo @direct_a_host_2(%logical_shim_noc_35, {%logical_mem_32}, 2 : i32) {prod_dma_channel = 0 : i32} : !aie.objectfifo<memref<4096xbf16>>
+    aie.objectfifo @direct_a_broadcast_2(%logical_mem_32 dimensionsToStream [<size = 8, stride = 512>, <size = 16, stride = 8>, <size = 4, stride = 128>, <size = 8, stride = 1>], {%logical_core_1, %logical_core_5, %logical_core_9, %logical_core_13, %logical_core_17, %logical_core_21, %logical_core_25, %logical_core_29}, 2 : i32) : !aie.objectfifo<memref<4096xbf16>>  
+    aie.objectfifo @direct_a_host_2(%logical_shim_noc_35, {%logical_mem_32}, 2 : i32) {prod_dma_channel = 0 : i32} : !aie.objectfifo<memref<4096xbf16>>  
     aie.objectfifo.link [@direct_a_host_2] -> [@direct_a_broadcast_2]([] [0])
-    aie.objectfifo @direct_a_broadcast_3(%logical_mem_33 dimensionsToStream [<size = 2, stride = 512>, <size = 4, stride = 1024>, <size = 512, stride = 1>], {%logical_core_2, %logical_core_6, %logical_core_10, %logical_core_14, %logical_core_18, %logical_core_22, %logical_core_26, %logical_core_30}, 2 : i32) : !aie.objectfifo<memref<4096xbf16>>
-    aie.objectfifo @direct_a_host_3(%logical_shim_noc_36, {%logical_mem_33}, 2 : i32) {prod_dma_channel = 0 : i32} : !aie.objectfifo<memref<4096xbf16>>
+    aie.objectfifo @direct_a_broadcast_3(%logical_mem_33 dimensionsToStream [<size = 8, stride = 512>, <size = 16, stride = 8>, <size = 4, stride = 128>, <size = 8, stride = 1>], {%logical_core_2, %logical_core_6, %logical_core_10, %logical_core_14, %logical_core_18, %logical_core_22, %logical_core_26, %logical_core_30}, 2 : i32) : !aie.objectfifo<memref<4096xbf16>>  
+    aie.objectfifo @direct_a_host_3(%logical_shim_noc_36, {%logical_mem_33}, 2 : i32) {prod_dma_channel = 0 : i32} : !aie.objectfifo<memref<4096xbf16>>  
     aie.objectfifo.link [@direct_a_host_3] -> [@direct_a_broadcast_3]([] [0])
-    aie.objectfifo @direct_gate_0_0(%logical_core, {%logical_core_3}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_0_1(%logical_core_0, {%logical_core_4}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_0_2(%logical_core_1, {%logical_core_5}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_0_3(%logical_core_2, {%logical_core_6}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_2_0(%logical_core_7, {%logical_core_11}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_2_1(%logical_core_8, {%logical_core_12}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_2_2(%logical_core_9, {%logical_core_13}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_2_3(%logical_core_10, {%logical_core_14}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_4_0(%logical_core_15, {%logical_core_19}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_4_1(%logical_core_16, {%logical_core_20}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_4_2(%logical_core_17, {%logical_core_21}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_4_3(%logical_core_18, {%logical_core_22}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_6_0(%logical_core_23, {%logical_core_27}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_6_1(%logical_core_24, {%logical_core_28}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_6_2(%logical_core_25, {%logical_core_29}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_gate_6_3(%logical_core_26, {%logical_core_30}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_w_broadcast_0(%logical_mem_37, {%logical_core, %logical_core_0, %logical_core_1, %logical_core_2}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>
-    aie.objectfifo @direct_w_host_0(%logical_shim_noc_45, {%logical_mem_37}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>
+    aie.objectfifo @direct_gate_0_0(%logical_core, {%logical_core_3}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_0_1(%logical_core_0, {%logical_core_4}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_0_2(%logical_core_1, {%logical_core_5}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_0_3(%logical_core_2, {%logical_core_6}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_2_0(%logical_core_7, {%logical_core_11}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_2_1(%logical_core_8, {%logical_core_12}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_2_2(%logical_core_9, {%logical_core_13}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_2_3(%logical_core_10, {%logical_core_14}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_4_0(%logical_core_15, {%logical_core_19}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_4_1(%logical_core_16, {%logical_core_20}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_4_2(%logical_core_17, {%logical_core_21}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_4_3(%logical_core_18, {%logical_core_22}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_6_0(%logical_core_23, {%logical_core_27}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_6_1(%logical_core_24, {%logical_core_28}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_6_2(%logical_core_25, {%logical_core_29}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_gate_6_3(%logical_core_26, {%logical_core_30}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_w_broadcast_0(%logical_mem_37, {%logical_core, %logical_core_0, %logical_core_1, %logical_core_2}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>  
+    aie.objectfifo @direct_w_host_0(%logical_shim_noc_45, {%logical_mem_37}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>  
     aie.objectfifo.link [@direct_w_host_0] -> [@direct_w_broadcast_0]([] [0])
-    aie.objectfifo @direct_w_broadcast_1(%logical_mem_38, {%logical_core_3, %logical_core_4, %logical_core_5, %logical_core_6}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>
-    aie.objectfifo @direct_w_host_1(%logical_shim_noc_46, {%logical_mem_38}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>
+    aie.objectfifo @direct_w_broadcast_1(%logical_mem_38, {%logical_core_3, %logical_core_4, %logical_core_5, %logical_core_6}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>  
+    aie.objectfifo @direct_w_host_1(%logical_shim_noc_46, {%logical_mem_38}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>  
     aie.objectfifo.link [@direct_w_host_1] -> [@direct_w_broadcast_1]([] [0])
-    aie.objectfifo @direct_w_broadcast_2(%logical_mem_39, {%logical_core_7, %logical_core_8, %logical_core_9, %logical_core_10}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>
-    aie.objectfifo @direct_w_host_2(%logical_shim_noc_47, {%logical_mem_39}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>
+    aie.objectfifo @direct_w_broadcast_2(%logical_mem_39, {%logical_core_7, %logical_core_8, %logical_core_9, %logical_core_10}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>  
+    aie.objectfifo @direct_w_host_2(%logical_shim_noc_47, {%logical_mem_39}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>  
     aie.objectfifo.link [@direct_w_host_2] -> [@direct_w_broadcast_2]([] [0])
-    aie.objectfifo @direct_w_broadcast_3(%logical_mem_40, {%logical_core_11, %logical_core_12, %logical_core_13, %logical_core_14}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>
-    aie.objectfifo @direct_w_host_3(%logical_shim_noc_48, {%logical_mem_40}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>
+    aie.objectfifo @direct_w_broadcast_3(%logical_mem_40, {%logical_core_11, %logical_core_12, %logical_core_13, %logical_core_14}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>  
+    aie.objectfifo @direct_w_host_3(%logical_shim_noc_48, {%logical_mem_40}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>  
     aie.objectfifo.link [@direct_w_host_3] -> [@direct_w_broadcast_3]([] [0])
-    aie.objectfifo @direct_w_broadcast_4(%logical_mem_41, {%logical_core_15, %logical_core_16, %logical_core_17, %logical_core_18}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>
-    aie.objectfifo @direct_w_host_4(%logical_shim_noc_49, {%logical_mem_41}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>
+    aie.objectfifo @direct_w_broadcast_4(%logical_mem_41, {%logical_core_15, %logical_core_16, %logical_core_17, %logical_core_18}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>  
+    aie.objectfifo @direct_w_host_4(%logical_shim_noc_49, {%logical_mem_41}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>  
     aie.objectfifo.link [@direct_w_host_4] -> [@direct_w_broadcast_4]([] [0])
-    aie.objectfifo @direct_w_broadcast_5(%logical_mem_42, {%logical_core_19, %logical_core_20, %logical_core_21, %logical_core_22}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>
-    aie.objectfifo @direct_w_host_5(%logical_shim_noc_50, {%logical_mem_42}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>
+    aie.objectfifo @direct_w_broadcast_5(%logical_mem_42, {%logical_core_19, %logical_core_20, %logical_core_21, %logical_core_22}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>  
+    aie.objectfifo @direct_w_host_5(%logical_shim_noc_50, {%logical_mem_42}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>  
     aie.objectfifo.link [@direct_w_host_5] -> [@direct_w_broadcast_5]([] [0])
-    aie.objectfifo @direct_w_broadcast_6(%logical_mem_43, {%logical_core_23, %logical_core_24, %logical_core_25, %logical_core_26}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>
-    aie.objectfifo @direct_w_host_6(%logical_shim_noc_51, {%logical_mem_43}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>
+    aie.objectfifo @direct_w_broadcast_6(%logical_mem_43, {%logical_core_23, %logical_core_24, %logical_core_25, %logical_core_26}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>  
+    aie.objectfifo @direct_w_host_6(%logical_shim_noc_51, {%logical_mem_43}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>  
     aie.objectfifo.link [@direct_w_host_6] -> [@direct_w_broadcast_6]([] [0])
-    aie.objectfifo @direct_w_broadcast_7(%logical_mem_44, {%logical_core_27, %logical_core_28, %logical_core_29, %logical_core_30}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>
-    aie.objectfifo @direct_w_host_7(%logical_shim_noc_52, {%logical_mem_44}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>
+    aie.objectfifo @direct_w_broadcast_7(%logical_mem_44, {%logical_core_27, %logical_core_28, %logical_core_29, %logical_core_30}, 2 : i32) : !aie.objectfifo<memref<4352xui8>>  
+    aie.objectfifo @direct_w_host_7(%logical_shim_noc_52, {%logical_mem_44}, 2 : i32) {prod_dma_channel = 1 : i32} : !aie.objectfifo<memref<4352xui8>>  
     aie.objectfifo.link [@direct_w_host_7] -> [@direct_w_broadcast_7]([] [0])
-    aie.objectfifo @direct_y_host_1(%logical_mem_53, {%logical_shim_noc_54}, 2 : i32) {cons_dma_channels = array<i32: 0>} : !aie.objectfifo<memref<4096xbf16>>
-    aie.objectfifo @direct_y_worker_1_0(%logical_core_3, {%logical_mem_53}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_y_worker_1_1(%logical_core_4, {%logical_mem_53}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_y_worker_1_2(%logical_core_5, {%logical_mem_53}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_y_worker_1_3(%logical_core_6, {%logical_mem_53}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
+    aie.objectfifo @direct_y_host_1(%logical_mem_53, {%logical_shim_noc_54}, 2 : i32) {cons_dma_channels = array<i32: 0>} : !aie.objectfifo<memref<4096xbf16>>  
+    aie.objectfifo @direct_y_worker_1_0(%logical_core_3, {%logical_mem_53}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_y_worker_1_1(%logical_core_4, {%logical_mem_53}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_y_worker_1_2(%logical_core_5, {%logical_mem_53}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_y_worker_1_3(%logical_core_6, {%logical_mem_53}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
     aie.objectfifo.link [@direct_y_worker_1_0, @direct_y_worker_1_1, @direct_y_worker_1_2, @direct_y_worker_1_3] -> [@direct_y_host_1]([0, 1024, 2048, 3072] [])
-    aie.objectfifo @direct_y_host_3(%logical_mem_55, {%logical_shim_noc_56}, 2 : i32) {cons_dma_channels = array<i32: 0>} : !aie.objectfifo<memref<4096xbf16>>
-    aie.objectfifo @direct_y_worker_3_0(%logical_core_11, {%logical_mem_55}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_y_worker_3_1(%logical_core_12, {%logical_mem_55}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_y_worker_3_2(%logical_core_13, {%logical_mem_55}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_y_worker_3_3(%logical_core_14, {%logical_mem_55}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
+    aie.objectfifo @direct_y_host_3(%logical_mem_55, {%logical_shim_noc_56}, 2 : i32) {cons_dma_channels = array<i32: 0>} : !aie.objectfifo<memref<4096xbf16>>  
+    aie.objectfifo @direct_y_worker_3_0(%logical_core_11, {%logical_mem_55}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_y_worker_3_1(%logical_core_12, {%logical_mem_55}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_y_worker_3_2(%logical_core_13, {%logical_mem_55}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_y_worker_3_3(%logical_core_14, {%logical_mem_55}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
     aie.objectfifo.link [@direct_y_worker_3_0, @direct_y_worker_3_1, @direct_y_worker_3_2, @direct_y_worker_3_3] -> [@direct_y_host_3]([0, 1024, 2048, 3072] [])
-    aie.objectfifo @direct_y_host_5(%logical_mem_57, {%logical_shim_noc_58}, 2 : i32) {cons_dma_channels = array<i32: 0>} : !aie.objectfifo<memref<4096xbf16>>
-    aie.objectfifo @direct_y_worker_5_0(%logical_core_19, {%logical_mem_57}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_y_worker_5_1(%logical_core_20, {%logical_mem_57}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_y_worker_5_2(%logical_core_21, {%logical_mem_57}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_y_worker_5_3(%logical_core_22, {%logical_mem_57}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
+    aie.objectfifo @direct_y_host_5(%logical_mem_57, {%logical_shim_noc_58}, 2 : i32) {cons_dma_channels = array<i32: 0>} : !aie.objectfifo<memref<4096xbf16>>  
+    aie.objectfifo @direct_y_worker_5_0(%logical_core_19, {%logical_mem_57}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_y_worker_5_1(%logical_core_20, {%logical_mem_57}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_y_worker_5_2(%logical_core_21, {%logical_mem_57}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_y_worker_5_3(%logical_core_22, {%logical_mem_57}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
     aie.objectfifo.link [@direct_y_worker_5_0, @direct_y_worker_5_1, @direct_y_worker_5_2, @direct_y_worker_5_3] -> [@direct_y_host_5]([0, 1024, 2048, 3072] [])
-    aie.objectfifo @direct_y_host_7(%logical_mem_59, {%logical_shim_noc_60}, 2 : i32) {cons_dma_channels = array<i32: 0>} : !aie.objectfifo<memref<4096xbf16>>
-    aie.objectfifo @direct_y_worker_7_0(%logical_core_27, {%logical_mem_59}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_y_worker_7_1(%logical_core_28, {%logical_mem_59}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_y_worker_7_2(%logical_core_29, {%logical_mem_59}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
-    aie.objectfifo @direct_y_worker_7_3(%logical_core_30, {%logical_mem_59}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>
+    aie.objectfifo @direct_y_host_7(%logical_mem_59, {%logical_shim_noc_60}, 2 : i32) {cons_dma_channels = array<i32: 0>} : !aie.objectfifo<memref<4096xbf16>>  
+    aie.objectfifo @direct_y_worker_7_0(%logical_core_27, {%logical_mem_59}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_y_worker_7_1(%logical_core_28, {%logical_mem_59}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_y_worker_7_2(%logical_core_29, {%logical_mem_59}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
+    aie.objectfifo @direct_y_worker_7_3(%logical_core_30, {%logical_mem_59}, 2 : i32) : !aie.objectfifo<memref<1024xbf16>>  
     aie.objectfifo.link [@direct_y_worker_7_0, @direct_y_worker_7_1, @direct_y_worker_7_2, @direct_y_worker_7_3] -> [@direct_y_host_7]([0, 1024, 2048, 3072] [])
-    %direct_acc0_0_0 = aie.buffer(%logical_core) {sym_name = "direct_acc0_0_0"} : memref<1024xf32>
-    %direct_acc1_0_0 = aie.buffer(%logical_core) {sym_name = "direct_acc1_0_0"} : memref<1024xf32>
-    %direct_dequant_0_0 = aie.buffer(%logical_core) {sym_name = "direct_dequant_0_0"} : memref<4096xbf16>
-    func.func private @w4a16_prefill_reuse_init(memref<1024xf32>) attributes {link_with = "w4a16_prefill_reuse_bf16_0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2.o"}
-    func.func private @w4a16_prefill_reuse_accumulate_low(memref<4096xbf16>, memref<4352xui8>, memref<1024xf32>, memref<4096xbf16>) attributes {link_with = "w4a16_prefill_reuse_bf16_0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2.o"}
-    func.func private @w4a16_prefill_reuse_accumulate_high(memref<4096xbf16>, memref<4352xui8>, memref<1024xf32>, memref<4096xbf16>) attributes {link_with = "w4a16_prefill_reuse_bf16_0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2.o"}
-    func.func private @w4a16_prefill_reuse_finish(memref<1024xf32>, memref<1024xbf16>) attributes {link_with = "w4a16_prefill_reuse_bf16_0c5db4b1a9334cad1e30bdaab43c390bf5eed6b430f3969bd3d45ad01fd72368_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2.o"}
-    %direct_acc0_0_1 = aie.buffer(%logical_core_0) {sym_name = "direct_acc0_0_1"} : memref<1024xf32>
-    %direct_acc1_0_1 = aie.buffer(%logical_core_0) {sym_name = "direct_acc1_0_1"} : memref<1024xf32>
-    %direct_dequant_0_1 = aie.buffer(%logical_core_0) {sym_name = "direct_dequant_0_1"} : memref<4096xbf16>
-    %direct_acc0_0_2 = aie.buffer(%logical_core_1) {sym_name = "direct_acc0_0_2"} : memref<1024xf32>
-    %direct_acc1_0_2 = aie.buffer(%logical_core_1) {sym_name = "direct_acc1_0_2"} : memref<1024xf32>
-    %direct_dequant_0_2 = aie.buffer(%logical_core_1) {sym_name = "direct_dequant_0_2"} : memref<4096xbf16>
-    %direct_acc0_0_3 = aie.buffer(%logical_core_2) {sym_name = "direct_acc0_0_3"} : memref<1024xf32>
-    %direct_acc1_0_3 = aie.buffer(%logical_core_2) {sym_name = "direct_acc1_0_3"} : memref<1024xf32>
-    %direct_dequant_0_3 = aie.buffer(%logical_core_2) {sym_name = "direct_dequant_0_3"} : memref<4096xbf16>
-    %direct_acc0_1_0 = aie.buffer(%logical_core_3) {sym_name = "direct_acc0_1_0"} : memref<1024xf32>
-    %direct_acc1_1_0 = aie.buffer(%logical_core_3) {sym_name = "direct_acc1_1_0"} : memref<1024xf32>
-    %direct_dequant_1_0 = aie.buffer(%logical_core_3) {sym_name = "direct_dequant_1_0"} : memref<4096xbf16>
-    %direct_up_1_0 = aie.buffer(%logical_core_3) {sym_name = "direct_up_1_0"} : memref<1024xbf16>
+    %direct_acc0_0_0 = aie.buffer(%logical_core) {sym_name = "direct_acc0_0_0"} : memref<1024xf32> 
+    %direct_acc1_0_0 = aie.buffer(%logical_core) {sym_name = "direct_acc1_0_0"} : memref<1024xf32> 
+    %direct_dequant_0_0 = aie.buffer(%logical_core) {sym_name = "direct_dequant_0_0"} : memref<4096xbf16> 
+    func.func private @w4a16_prefill_reuse_init(memref<1024xf32>) attributes {link_with = "w4a16_prefill_reuse_bf16_ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2_vectorzero1_mmulmreuse1.o"}
+    func.func private @w4a16_prefill_reuse_accumulate_low(memref<4096xbf16>, memref<4352xui8>, memref<1024xf32>, memref<4096xbf16>) attributes {link_with = "w4a16_prefill_reuse_bf16_ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2_vectorzero1_mmulmreuse1.o"}
+    func.func private @w4a16_prefill_reuse_accumulate_high(memref<4096xbf16>, memref<4352xui8>, memref<1024xf32>, memref<4096xbf16>) attributes {link_with = "w4a16_prefill_reuse_bf16_ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2_vectorzero1_mmulmreuse1.o"}
+    func.func private @w4a16_prefill_reuse_finish(memref<1024xf32>, memref<1024xbf16>) attributes {link_with = "w4a16_prefill_reuse_bf16_ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2_vectorzero1_mmulmreuse1.o"}
+    %direct_acc0_0_1 = aie.buffer(%logical_core_0) {sym_name = "direct_acc0_0_1"} : memref<1024xf32> 
+    %direct_acc1_0_1 = aie.buffer(%logical_core_0) {sym_name = "direct_acc1_0_1"} : memref<1024xf32> 
+    %direct_dequant_0_1 = aie.buffer(%logical_core_0) {sym_name = "direct_dequant_0_1"} : memref<4096xbf16> 
+    %direct_acc0_0_2 = aie.buffer(%logical_core_1) {sym_name = "direct_acc0_0_2"} : memref<1024xf32> 
+    %direct_acc1_0_2 = aie.buffer(%logical_core_1) {sym_name = "direct_acc1_0_2"} : memref<1024xf32> 
+    %direct_dequant_0_2 = aie.buffer(%logical_core_1) {sym_name = "direct_dequant_0_2"} : memref<4096xbf16> 
+    %direct_acc0_0_3 = aie.buffer(%logical_core_2) {sym_name = "direct_acc0_0_3"} : memref<1024xf32> 
+    %direct_acc1_0_3 = aie.buffer(%logical_core_2) {sym_name = "direct_acc1_0_3"} : memref<1024xf32> 
+    %direct_dequant_0_3 = aie.buffer(%logical_core_2) {sym_name = "direct_dequant_0_3"} : memref<4096xbf16> 
+    %direct_acc0_1_0 = aie.buffer(%logical_core_3) {sym_name = "direct_acc0_1_0"} : memref<1024xf32> 
+    %direct_acc1_1_0 = aie.buffer(%logical_core_3) {sym_name = "direct_acc1_1_0"} : memref<1024xf32> 
+    %direct_dequant_1_0 = aie.buffer(%logical_core_3) {sym_name = "direct_dequant_1_0"} : memref<4096xbf16> 
+    %direct_up_1_0 = aie.buffer(%logical_core_3) {sym_name = "direct_up_1_0"} : memref<1024xbf16> 
     func.func private @silu_mul_bf16(memref<1024xbf16>, memref<1024xbf16>, memref<1024xbf16>) attributes {link_with = "silu_mul_1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc_1024.o"}
-    %direct_acc0_1_1 = aie.buffer(%logical_core_4) {sym_name = "direct_acc0_1_1"} : memref<1024xf32>
-    %direct_acc1_1_1 = aie.buffer(%logical_core_4) {sym_name = "direct_acc1_1_1"} : memref<1024xf32>
-    %direct_dequant_1_1 = aie.buffer(%logical_core_4) {sym_name = "direct_dequant_1_1"} : memref<4096xbf16>
-    %direct_up_1_1 = aie.buffer(%logical_core_4) {sym_name = "direct_up_1_1"} : memref<1024xbf16>
-    %direct_acc0_1_2 = aie.buffer(%logical_core_5) {sym_name = "direct_acc0_1_2"} : memref<1024xf32>
-    %direct_acc1_1_2 = aie.buffer(%logical_core_5) {sym_name = "direct_acc1_1_2"} : memref<1024xf32>
-    %direct_dequant_1_2 = aie.buffer(%logical_core_5) {sym_name = "direct_dequant_1_2"} : memref<4096xbf16>
-    %direct_up_1_2 = aie.buffer(%logical_core_5) {sym_name = "direct_up_1_2"} : memref<1024xbf16>
-    %direct_acc0_1_3 = aie.buffer(%logical_core_6) {sym_name = "direct_acc0_1_3"} : memref<1024xf32>
-    %direct_acc1_1_3 = aie.buffer(%logical_core_6) {sym_name = "direct_acc1_1_3"} : memref<1024xf32>
-    %direct_dequant_1_3 = aie.buffer(%logical_core_6) {sym_name = "direct_dequant_1_3"} : memref<4096xbf16>
-    %direct_up_1_3 = aie.buffer(%logical_core_6) {sym_name = "direct_up_1_3"} : memref<1024xbf16>
-    %direct_acc0_2_0 = aie.buffer(%logical_core_7) {sym_name = "direct_acc0_2_0"} : memref<1024xf32>
-    %direct_acc1_2_0 = aie.buffer(%logical_core_7) {sym_name = "direct_acc1_2_0"} : memref<1024xf32>
-    %direct_dequant_2_0 = aie.buffer(%logical_core_7) {sym_name = "direct_dequant_2_0"} : memref<4096xbf16>
-    %direct_acc0_2_1 = aie.buffer(%logical_core_8) {sym_name = "direct_acc0_2_1"} : memref<1024xf32>
-    %direct_acc1_2_1 = aie.buffer(%logical_core_8) {sym_name = "direct_acc1_2_1"} : memref<1024xf32>
-    %direct_dequant_2_1 = aie.buffer(%logical_core_8) {sym_name = "direct_dequant_2_1"} : memref<4096xbf16>
-    %direct_acc0_2_2 = aie.buffer(%logical_core_9) {sym_name = "direct_acc0_2_2"} : memref<1024xf32>
-    %direct_acc1_2_2 = aie.buffer(%logical_core_9) {sym_name = "direct_acc1_2_2"} : memref<1024xf32>
-    %direct_dequant_2_2 = aie.buffer(%logical_core_9) {sym_name = "direct_dequant_2_2"} : memref<4096xbf16>
-    %direct_acc0_2_3 = aie.buffer(%logical_core_10) {sym_name = "direct_acc0_2_3"} : memref<1024xf32>
-    %direct_acc1_2_3 = aie.buffer(%logical_core_10) {sym_name = "direct_acc1_2_3"} : memref<1024xf32>
-    %direct_dequant_2_3 = aie.buffer(%logical_core_10) {sym_name = "direct_dequant_2_3"} : memref<4096xbf16>
-    %direct_acc0_3_0 = aie.buffer(%logical_core_11) {sym_name = "direct_acc0_3_0"} : memref<1024xf32>
-    %direct_acc1_3_0 = aie.buffer(%logical_core_11) {sym_name = "direct_acc1_3_0"} : memref<1024xf32>
-    %direct_dequant_3_0 = aie.buffer(%logical_core_11) {sym_name = "direct_dequant_3_0"} : memref<4096xbf16>
-    %direct_up_3_0 = aie.buffer(%logical_core_11) {sym_name = "direct_up_3_0"} : memref<1024xbf16>
-    %direct_acc0_3_1 = aie.buffer(%logical_core_12) {sym_name = "direct_acc0_3_1"} : memref<1024xf32>
-    %direct_acc1_3_1 = aie.buffer(%logical_core_12) {sym_name = "direct_acc1_3_1"} : memref<1024xf32>
-    %direct_dequant_3_1 = aie.buffer(%logical_core_12) {sym_name = "direct_dequant_3_1"} : memref<4096xbf16>
-    %direct_up_3_1 = aie.buffer(%logical_core_12) {sym_name = "direct_up_3_1"} : memref<1024xbf16>
-    %direct_acc0_3_2 = aie.buffer(%logical_core_13) {sym_name = "direct_acc0_3_2"} : memref<1024xf32>
-    %direct_acc1_3_2 = aie.buffer(%logical_core_13) {sym_name = "direct_acc1_3_2"} : memref<1024xf32>
-    %direct_dequant_3_2 = aie.buffer(%logical_core_13) {sym_name = "direct_dequant_3_2"} : memref<4096xbf16>
-    %direct_up_3_2 = aie.buffer(%logical_core_13) {sym_name = "direct_up_3_2"} : memref<1024xbf16>
-    %direct_acc0_3_3 = aie.buffer(%logical_core_14) {sym_name = "direct_acc0_3_3"} : memref<1024xf32>
-    %direct_acc1_3_3 = aie.buffer(%logical_core_14) {sym_name = "direct_acc1_3_3"} : memref<1024xf32>
-    %direct_dequant_3_3 = aie.buffer(%logical_core_14) {sym_name = "direct_dequant_3_3"} : memref<4096xbf16>
-    %direct_up_3_3 = aie.buffer(%logical_core_14) {sym_name = "direct_up_3_3"} : memref<1024xbf16>
-    %direct_acc0_4_0 = aie.buffer(%logical_core_15) {sym_name = "direct_acc0_4_0"} : memref<1024xf32>
-    %direct_acc1_4_0 = aie.buffer(%logical_core_15) {sym_name = "direct_acc1_4_0"} : memref<1024xf32>
-    %direct_dequant_4_0 = aie.buffer(%logical_core_15) {sym_name = "direct_dequant_4_0"} : memref<4096xbf16>
-    %direct_acc0_4_1 = aie.buffer(%logical_core_16) {sym_name = "direct_acc0_4_1"} : memref<1024xf32>
-    %direct_acc1_4_1 = aie.buffer(%logical_core_16) {sym_name = "direct_acc1_4_1"} : memref<1024xf32>
-    %direct_dequant_4_1 = aie.buffer(%logical_core_16) {sym_name = "direct_dequant_4_1"} : memref<4096xbf16>
-    %direct_acc0_4_2 = aie.buffer(%logical_core_17) {sym_name = "direct_acc0_4_2"} : memref<1024xf32>
-    %direct_acc1_4_2 = aie.buffer(%logical_core_17) {sym_name = "direct_acc1_4_2"} : memref<1024xf32>
-    %direct_dequant_4_2 = aie.buffer(%logical_core_17) {sym_name = "direct_dequant_4_2"} : memref<4096xbf16>
-    %direct_acc0_4_3 = aie.buffer(%logical_core_18) {sym_name = "direct_acc0_4_3"} : memref<1024xf32>
-    %direct_acc1_4_3 = aie.buffer(%logical_core_18) {sym_name = "direct_acc1_4_3"} : memref<1024xf32>
-    %direct_dequant_4_3 = aie.buffer(%logical_core_18) {sym_name = "direct_dequant_4_3"} : memref<4096xbf16>
-    %direct_acc0_5_0 = aie.buffer(%logical_core_19) {sym_name = "direct_acc0_5_0"} : memref<1024xf32>
-    %direct_acc1_5_0 = aie.buffer(%logical_core_19) {sym_name = "direct_acc1_5_0"} : memref<1024xf32>
-    %direct_dequant_5_0 = aie.buffer(%logical_core_19) {sym_name = "direct_dequant_5_0"} : memref<4096xbf16>
-    %direct_up_5_0 = aie.buffer(%logical_core_19) {sym_name = "direct_up_5_0"} : memref<1024xbf16>
-    %direct_acc0_5_1 = aie.buffer(%logical_core_20) {sym_name = "direct_acc0_5_1"} : memref<1024xf32>
-    %direct_acc1_5_1 = aie.buffer(%logical_core_20) {sym_name = "direct_acc1_5_1"} : memref<1024xf32>
-    %direct_dequant_5_1 = aie.buffer(%logical_core_20) {sym_name = "direct_dequant_5_1"} : memref<4096xbf16>
-    %direct_up_5_1 = aie.buffer(%logical_core_20) {sym_name = "direct_up_5_1"} : memref<1024xbf16>
-    %direct_acc0_5_2 = aie.buffer(%logical_core_21) {sym_name = "direct_acc0_5_2"} : memref<1024xf32>
-    %direct_acc1_5_2 = aie.buffer(%logical_core_21) {sym_name = "direct_acc1_5_2"} : memref<1024xf32>
-    %direct_dequant_5_2 = aie.buffer(%logical_core_21) {sym_name = "direct_dequant_5_2"} : memref<4096xbf16>
-    %direct_up_5_2 = aie.buffer(%logical_core_21) {sym_name = "direct_up_5_2"} : memref<1024xbf16>
-    %direct_acc0_5_3 = aie.buffer(%logical_core_22) {sym_name = "direct_acc0_5_3"} : memref<1024xf32>
-    %direct_acc1_5_3 = aie.buffer(%logical_core_22) {sym_name = "direct_acc1_5_3"} : memref<1024xf32>
-    %direct_dequant_5_3 = aie.buffer(%logical_core_22) {sym_name = "direct_dequant_5_3"} : memref<4096xbf16>
-    %direct_up_5_3 = aie.buffer(%logical_core_22) {sym_name = "direct_up_5_3"} : memref<1024xbf16>
-    %direct_acc0_6_0 = aie.buffer(%logical_core_23) {sym_name = "direct_acc0_6_0"} : memref<1024xf32>
-    %direct_acc1_6_0 = aie.buffer(%logical_core_23) {sym_name = "direct_acc1_6_0"} : memref<1024xf32>
-    %direct_dequant_6_0 = aie.buffer(%logical_core_23) {sym_name = "direct_dequant_6_0"} : memref<4096xbf16>
-    %direct_acc0_6_1 = aie.buffer(%logical_core_24) {sym_name = "direct_acc0_6_1"} : memref<1024xf32>
-    %direct_acc1_6_1 = aie.buffer(%logical_core_24) {sym_name = "direct_acc1_6_1"} : memref<1024xf32>
-    %direct_dequant_6_1 = aie.buffer(%logical_core_24) {sym_name = "direct_dequant_6_1"} : memref<4096xbf16>
-    %direct_acc0_6_2 = aie.buffer(%logical_core_25) {sym_name = "direct_acc0_6_2"} : memref<1024xf32>
-    %direct_acc1_6_2 = aie.buffer(%logical_core_25) {sym_name = "direct_acc1_6_2"} : memref<1024xf32>
-    %direct_dequant_6_2 = aie.buffer(%logical_core_25) {sym_name = "direct_dequant_6_2"} : memref<4096xbf16>
-    %direct_acc0_6_3 = aie.buffer(%logical_core_26) {sym_name = "direct_acc0_6_3"} : memref<1024xf32>
-    %direct_acc1_6_3 = aie.buffer(%logical_core_26) {sym_name = "direct_acc1_6_3"} : memref<1024xf32>
-    %direct_dequant_6_3 = aie.buffer(%logical_core_26) {sym_name = "direct_dequant_6_3"} : memref<4096xbf16>
-    %direct_acc0_7_0 = aie.buffer(%logical_core_27) {sym_name = "direct_acc0_7_0"} : memref<1024xf32>
-    %direct_acc1_7_0 = aie.buffer(%logical_core_27) {sym_name = "direct_acc1_7_0"} : memref<1024xf32>
-    %direct_dequant_7_0 = aie.buffer(%logical_core_27) {sym_name = "direct_dequant_7_0"} : memref<4096xbf16>
-    %direct_up_7_0 = aie.buffer(%logical_core_27) {sym_name = "direct_up_7_0"} : memref<1024xbf16>
-    %direct_acc0_7_1 = aie.buffer(%logical_core_28) {sym_name = "direct_acc0_7_1"} : memref<1024xf32>
-    %direct_acc1_7_1 = aie.buffer(%logical_core_28) {sym_name = "direct_acc1_7_1"} : memref<1024xf32>
-    %direct_dequant_7_1 = aie.buffer(%logical_core_28) {sym_name = "direct_dequant_7_1"} : memref<4096xbf16>
-    %direct_up_7_1 = aie.buffer(%logical_core_28) {sym_name = "direct_up_7_1"} : memref<1024xbf16>
-    %direct_acc0_7_2 = aie.buffer(%logical_core_29) {sym_name = "direct_acc0_7_2"} : memref<1024xf32>
-    %direct_acc1_7_2 = aie.buffer(%logical_core_29) {sym_name = "direct_acc1_7_2"} : memref<1024xf32>
-    %direct_dequant_7_2 = aie.buffer(%logical_core_29) {sym_name = "direct_dequant_7_2"} : memref<4096xbf16>
-    %direct_up_7_2 = aie.buffer(%logical_core_29) {sym_name = "direct_up_7_2"} : memref<1024xbf16>
-    %direct_acc0_7_3 = aie.buffer(%logical_core_30) {sym_name = "direct_acc0_7_3"} : memref<1024xf32>
-    %direct_acc1_7_3 = aie.buffer(%logical_core_30) {sym_name = "direct_acc1_7_3"} : memref<1024xf32>
-    %direct_dequant_7_3 = aie.buffer(%logical_core_30) {sym_name = "direct_dequant_7_3"} : memref<4096xbf16>
-    %direct_up_7_3 = aie.buffer(%logical_core_30) {sym_name = "direct_up_7_3"} : memref<1024xbf16>
+    %direct_acc0_1_1 = aie.buffer(%logical_core_4) {sym_name = "direct_acc0_1_1"} : memref<1024xf32> 
+    %direct_acc1_1_1 = aie.buffer(%logical_core_4) {sym_name = "direct_acc1_1_1"} : memref<1024xf32> 
+    %direct_dequant_1_1 = aie.buffer(%logical_core_4) {sym_name = "direct_dequant_1_1"} : memref<4096xbf16> 
+    %direct_up_1_1 = aie.buffer(%logical_core_4) {sym_name = "direct_up_1_1"} : memref<1024xbf16> 
+    %direct_acc0_1_2 = aie.buffer(%logical_core_5) {sym_name = "direct_acc0_1_2"} : memref<1024xf32> 
+    %direct_acc1_1_2 = aie.buffer(%logical_core_5) {sym_name = "direct_acc1_1_2"} : memref<1024xf32> 
+    %direct_dequant_1_2 = aie.buffer(%logical_core_5) {sym_name = "direct_dequant_1_2"} : memref<4096xbf16> 
+    %direct_up_1_2 = aie.buffer(%logical_core_5) {sym_name = "direct_up_1_2"} : memref<1024xbf16> 
+    %direct_acc0_1_3 = aie.buffer(%logical_core_6) {sym_name = "direct_acc0_1_3"} : memref<1024xf32> 
+    %direct_acc1_1_3 = aie.buffer(%logical_core_6) {sym_name = "direct_acc1_1_3"} : memref<1024xf32> 
+    %direct_dequant_1_3 = aie.buffer(%logical_core_6) {sym_name = "direct_dequant_1_3"} : memref<4096xbf16> 
+    %direct_up_1_3 = aie.buffer(%logical_core_6) {sym_name = "direct_up_1_3"} : memref<1024xbf16> 
+    %direct_acc0_2_0 = aie.buffer(%logical_core_7) {sym_name = "direct_acc0_2_0"} : memref<1024xf32> 
+    %direct_acc1_2_0 = aie.buffer(%logical_core_7) {sym_name = "direct_acc1_2_0"} : memref<1024xf32> 
+    %direct_dequant_2_0 = aie.buffer(%logical_core_7) {sym_name = "direct_dequant_2_0"} : memref<4096xbf16> 
+    %direct_acc0_2_1 = aie.buffer(%logical_core_8) {sym_name = "direct_acc0_2_1"} : memref<1024xf32> 
+    %direct_acc1_2_1 = aie.buffer(%logical_core_8) {sym_name = "direct_acc1_2_1"} : memref<1024xf32> 
+    %direct_dequant_2_1 = aie.buffer(%logical_core_8) {sym_name = "direct_dequant_2_1"} : memref<4096xbf16> 
+    %direct_acc0_2_2 = aie.buffer(%logical_core_9) {sym_name = "direct_acc0_2_2"} : memref<1024xf32> 
+    %direct_acc1_2_2 = aie.buffer(%logical_core_9) {sym_name = "direct_acc1_2_2"} : memref<1024xf32> 
+    %direct_dequant_2_2 = aie.buffer(%logical_core_9) {sym_name = "direct_dequant_2_2"} : memref<4096xbf16> 
+    %direct_acc0_2_3 = aie.buffer(%logical_core_10) {sym_name = "direct_acc0_2_3"} : memref<1024xf32> 
+    %direct_acc1_2_3 = aie.buffer(%logical_core_10) {sym_name = "direct_acc1_2_3"} : memref<1024xf32> 
+    %direct_dequant_2_3 = aie.buffer(%logical_core_10) {sym_name = "direct_dequant_2_3"} : memref<4096xbf16> 
+    %direct_acc0_3_0 = aie.buffer(%logical_core_11) {sym_name = "direct_acc0_3_0"} : memref<1024xf32> 
+    %direct_acc1_3_0 = aie.buffer(%logical_core_11) {sym_name = "direct_acc1_3_0"} : memref<1024xf32> 
+    %direct_dequant_3_0 = aie.buffer(%logical_core_11) {sym_name = "direct_dequant_3_0"} : memref<4096xbf16> 
+    %direct_up_3_0 = aie.buffer(%logical_core_11) {sym_name = "direct_up_3_0"} : memref<1024xbf16> 
+    %direct_acc0_3_1 = aie.buffer(%logical_core_12) {sym_name = "direct_acc0_3_1"} : memref<1024xf32> 
+    %direct_acc1_3_1 = aie.buffer(%logical_core_12) {sym_name = "direct_acc1_3_1"} : memref<1024xf32> 
+    %direct_dequant_3_1 = aie.buffer(%logical_core_12) {sym_name = "direct_dequant_3_1"} : memref<4096xbf16> 
+    %direct_up_3_1 = aie.buffer(%logical_core_12) {sym_name = "direct_up_3_1"} : memref<1024xbf16> 
+    %direct_acc0_3_2 = aie.buffer(%logical_core_13) {sym_name = "direct_acc0_3_2"} : memref<1024xf32> 
+    %direct_acc1_3_2 = aie.buffer(%logical_core_13) {sym_name = "direct_acc1_3_2"} : memref<1024xf32> 
+    %direct_dequant_3_2 = aie.buffer(%logical_core_13) {sym_name = "direct_dequant_3_2"} : memref<4096xbf16> 
+    %direct_up_3_2 = aie.buffer(%logical_core_13) {sym_name = "direct_up_3_2"} : memref<1024xbf16> 
+    %direct_acc0_3_3 = aie.buffer(%logical_core_14) {sym_name = "direct_acc0_3_3"} : memref<1024xf32> 
+    %direct_acc1_3_3 = aie.buffer(%logical_core_14) {sym_name = "direct_acc1_3_3"} : memref<1024xf32> 
+    %direct_dequant_3_3 = aie.buffer(%logical_core_14) {sym_name = "direct_dequant_3_3"} : memref<4096xbf16> 
+    %direct_up_3_3 = aie.buffer(%logical_core_14) {sym_name = "direct_up_3_3"} : memref<1024xbf16> 
+    %direct_acc0_4_0 = aie.buffer(%logical_core_15) {sym_name = "direct_acc0_4_0"} : memref<1024xf32> 
+    %direct_acc1_4_0 = aie.buffer(%logical_core_15) {sym_name = "direct_acc1_4_0"} : memref<1024xf32> 
+    %direct_dequant_4_0 = aie.buffer(%logical_core_15) {sym_name = "direct_dequant_4_0"} : memref<4096xbf16> 
+    %direct_acc0_4_1 = aie.buffer(%logical_core_16) {sym_name = "direct_acc0_4_1"} : memref<1024xf32> 
+    %direct_acc1_4_1 = aie.buffer(%logical_core_16) {sym_name = "direct_acc1_4_1"} : memref<1024xf32> 
+    %direct_dequant_4_1 = aie.buffer(%logical_core_16) {sym_name = "direct_dequant_4_1"} : memref<4096xbf16> 
+    %direct_acc0_4_2 = aie.buffer(%logical_core_17) {sym_name = "direct_acc0_4_2"} : memref<1024xf32> 
+    %direct_acc1_4_2 = aie.buffer(%logical_core_17) {sym_name = "direct_acc1_4_2"} : memref<1024xf32> 
+    %direct_dequant_4_2 = aie.buffer(%logical_core_17) {sym_name = "direct_dequant_4_2"} : memref<4096xbf16> 
+    %direct_acc0_4_3 = aie.buffer(%logical_core_18) {sym_name = "direct_acc0_4_3"} : memref<1024xf32> 
+    %direct_acc1_4_3 = aie.buffer(%logical_core_18) {sym_name = "direct_acc1_4_3"} : memref<1024xf32> 
+    %direct_dequant_4_3 = aie.buffer(%logical_core_18) {sym_name = "direct_dequant_4_3"} : memref<4096xbf16> 
+    %direct_acc0_5_0 = aie.buffer(%logical_core_19) {sym_name = "direct_acc0_5_0"} : memref<1024xf32> 
+    %direct_acc1_5_0 = aie.buffer(%logical_core_19) {sym_name = "direct_acc1_5_0"} : memref<1024xf32> 
+    %direct_dequant_5_0 = aie.buffer(%logical_core_19) {sym_name = "direct_dequant_5_0"} : memref<4096xbf16> 
+    %direct_up_5_0 = aie.buffer(%logical_core_19) {sym_name = "direct_up_5_0"} : memref<1024xbf16> 
+    %direct_acc0_5_1 = aie.buffer(%logical_core_20) {sym_name = "direct_acc0_5_1"} : memref<1024xf32> 
+    %direct_acc1_5_1 = aie.buffer(%logical_core_20) {sym_name = "direct_acc1_5_1"} : memref<1024xf32> 
+    %direct_dequant_5_1 = aie.buffer(%logical_core_20) {sym_name = "direct_dequant_5_1"} : memref<4096xbf16> 
+    %direct_up_5_1 = aie.buffer(%logical_core_20) {sym_name = "direct_up_5_1"} : memref<1024xbf16> 
+    %direct_acc0_5_2 = aie.buffer(%logical_core_21) {sym_name = "direct_acc0_5_2"} : memref<1024xf32> 
+    %direct_acc1_5_2 = aie.buffer(%logical_core_21) {sym_name = "direct_acc1_5_2"} : memref<1024xf32> 
+    %direct_dequant_5_2 = aie.buffer(%logical_core_21) {sym_name = "direct_dequant_5_2"} : memref<4096xbf16> 
+    %direct_up_5_2 = aie.buffer(%logical_core_21) {sym_name = "direct_up_5_2"} : memref<1024xbf16> 
+    %direct_acc0_5_3 = aie.buffer(%logical_core_22) {sym_name = "direct_acc0_5_3"} : memref<1024xf32> 
+    %direct_acc1_5_3 = aie.buffer(%logical_core_22) {sym_name = "direct_acc1_5_3"} : memref<1024xf32> 
+    %direct_dequant_5_3 = aie.buffer(%logical_core_22) {sym_name = "direct_dequant_5_3"} : memref<4096xbf16> 
+    %direct_up_5_3 = aie.buffer(%logical_core_22) {sym_name = "direct_up_5_3"} : memref<1024xbf16> 
+    %direct_acc0_6_0 = aie.buffer(%logical_core_23) {sym_name = "direct_acc0_6_0"} : memref<1024xf32> 
+    %direct_acc1_6_0 = aie.buffer(%logical_core_23) {sym_name = "direct_acc1_6_0"} : memref<1024xf32> 
+    %direct_dequant_6_0 = aie.buffer(%logical_core_23) {sym_name = "direct_dequant_6_0"} : memref<4096xbf16> 
+    %direct_acc0_6_1 = aie.buffer(%logical_core_24) {sym_name = "direct_acc0_6_1"} : memref<1024xf32> 
+    %direct_acc1_6_1 = aie.buffer(%logical_core_24) {sym_name = "direct_acc1_6_1"} : memref<1024xf32> 
+    %direct_dequant_6_1 = aie.buffer(%logical_core_24) {sym_name = "direct_dequant_6_1"} : memref<4096xbf16> 
+    %direct_acc0_6_2 = aie.buffer(%logical_core_25) {sym_name = "direct_acc0_6_2"} : memref<1024xf32> 
+    %direct_acc1_6_2 = aie.buffer(%logical_core_25) {sym_name = "direct_acc1_6_2"} : memref<1024xf32> 
+    %direct_dequant_6_2 = aie.buffer(%logical_core_25) {sym_name = "direct_dequant_6_2"} : memref<4096xbf16> 
+    %direct_acc0_6_3 = aie.buffer(%logical_core_26) {sym_name = "direct_acc0_6_3"} : memref<1024xf32> 
+    %direct_acc1_6_3 = aie.buffer(%logical_core_26) {sym_name = "direct_acc1_6_3"} : memref<1024xf32> 
+    %direct_dequant_6_3 = aie.buffer(%logical_core_26) {sym_name = "direct_dequant_6_3"} : memref<4096xbf16> 
+    %direct_acc0_7_0 = aie.buffer(%logical_core_27) {sym_name = "direct_acc0_7_0"} : memref<1024xf32> 
+    %direct_acc1_7_0 = aie.buffer(%logical_core_27) {sym_name = "direct_acc1_7_0"} : memref<1024xf32> 
+    %direct_dequant_7_0 = aie.buffer(%logical_core_27) {sym_name = "direct_dequant_7_0"} : memref<4096xbf16> 
+    %direct_up_7_0 = aie.buffer(%logical_core_27) {sym_name = "direct_up_7_0"} : memref<1024xbf16> 
+    %direct_acc0_7_1 = aie.buffer(%logical_core_28) {sym_name = "direct_acc0_7_1"} : memref<1024xf32> 
+    %direct_acc1_7_1 = aie.buffer(%logical_core_28) {sym_name = "direct_acc1_7_1"} : memref<1024xf32> 
+    %direct_dequant_7_1 = aie.buffer(%logical_core_28) {sym_name = "direct_dequant_7_1"} : memref<4096xbf16> 
+    %direct_up_7_1 = aie.buffer(%logical_core_28) {sym_name = "direct_up_7_1"} : memref<1024xbf16> 
+    %direct_acc0_7_2 = aie.buffer(%logical_core_29) {sym_name = "direct_acc0_7_2"} : memref<1024xf32> 
+    %direct_acc1_7_2 = aie.buffer(%logical_core_29) {sym_name = "direct_acc1_7_2"} : memref<1024xf32> 
+    %direct_dequant_7_2 = aie.buffer(%logical_core_29) {sym_name = "direct_dequant_7_2"} : memref<4096xbf16> 
+    %direct_up_7_2 = aie.buffer(%logical_core_29) {sym_name = "direct_up_7_2"} : memref<1024xbf16> 
+    %direct_acc0_7_3 = aie.buffer(%logical_core_30) {sym_name = "direct_acc0_7_3"} : memref<1024xf32> 
+    %direct_acc1_7_3 = aie.buffer(%logical_core_30) {sym_name = "direct_acc1_7_3"} : memref<1024xf32> 
+    %direct_dequant_7_3 = aie.buffer(%logical_core_30) {sym_name = "direct_dequant_7_3"} : memref<4096xbf16> 
+    %direct_up_7_3 = aie.buffer(%logical_core_30) {sym_name = "direct_up_7_3"} : memref<1024xbf16> 
     %core_0_2 = aie.core(%logical_core) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -9315,42 +9315,42 @@ module {
     } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
     aie.runtime_sequence(%arg0: memref<2097152xbf16>, %arg1: memref<31195136xui8>, %arg2: memref<31195136xui8>, %arg3: memref<1310720xbf16>) {
       %0 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 0 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 0 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%0)
       %1 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 10240 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 10240 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%1)
       %2 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 20480 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 20480 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%2)
       %3 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 30720 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 30720 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%3)
       %4 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%4)
       %5 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%5)
       %6 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%6)
       %7 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%7)
@@ -9395,42 +9395,42 @@ module {
       }
       aiex.dma_start_task(%15)
       %16 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1024 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 256 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%16)
       %17 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 11264 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 10496 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%17)
       %18 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 21504 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 20736 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%18)
       %19 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 31744 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 30976 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%19)
       %20 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%20)
       %21 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%21)
       %22 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%22)
       %23 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%23)
@@ -9495,42 +9495,42 @@ module {
       aiex.dma_free_task(%14)
       aiex.dma_free_task(%15)
       %32 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 2048 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 2048 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%32)
       %33 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 12288 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 12288 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%33)
       %34 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 22528 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 22528 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%34)
       %35 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 32768 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 32768 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%35)
       %36 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%36)
       %37 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%37)
       %38 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%38)
       %39 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%39)
@@ -9595,42 +9595,42 @@ module {
       aiex.dma_free_task(%30)
       aiex.dma_free_task(%31)
       %48 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 3072 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 2304 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%48)
       %49 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 13312 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 12544 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%49)
       %50 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 23552 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 22784 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%50)
       %51 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 33792 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 33024 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%51)
       %52 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%52)
       %53 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%53)
       %54 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%54)
       %55 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%55)
@@ -9695,42 +9695,42 @@ module {
       aiex.dma_free_task(%46)
       aiex.dma_free_task(%47)
       %64 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 4096 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 4096 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%64)
       %65 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 14336 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 14336 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%65)
       %66 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 24576 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 24576 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%66)
       %67 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 34816 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 34816 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%67)
       %68 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%68)
       %69 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%69)
       %70 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%70)
       %71 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%71)
@@ -9795,42 +9795,42 @@ module {
       aiex.dma_free_task(%62)
       aiex.dma_free_task(%63)
       %80 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 5120 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 4352 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%80)
       %81 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 15360 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 14592 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%81)
       %82 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 25600 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 24832 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%82)
       %83 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 35840 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 35072 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%83)
       %84 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%84)
       %85 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%85)
       %86 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%86)
       %87 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%87)
@@ -9895,42 +9895,42 @@ module {
       aiex.dma_free_task(%78)
       aiex.dma_free_task(%79)
       %96 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 6144 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 6144 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%96)
       %97 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 16384 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 16384 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%97)
       %98 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 26624 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 26624 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%98)
       %99 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 36864 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 36864 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%99)
       %100 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%100)
       %101 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%101)
       %102 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%102)
       %103 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%103)
@@ -9995,42 +9995,42 @@ module {
       aiex.dma_free_task(%94)
       aiex.dma_free_task(%95)
       %112 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 7168 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 6400 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%112)
       %113 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 17408 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 16640 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%113)
       %114 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 27648 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 26880 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%114)
       %115 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 37888 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 37120 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%115)
       %116 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%116)
       %117 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%117)
       %118 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%118)
       %119 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%119)
@@ -10095,42 +10095,42 @@ module {
       aiex.dma_free_task(%110)
       aiex.dma_free_task(%111)
       %128 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 8192 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 8192 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%128)
       %129 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 18432 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 18432 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%129)
       %130 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 28672 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 28672 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%130)
       %131 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 38912 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 38912 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%131)
       %132 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%132)
       %133 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%133)
       %134 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%134)
       %135 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%135)
@@ -10195,42 +10195,42 @@ module {
       aiex.dma_free_task(%126)
       aiex.dma_free_task(%127)
       %144 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 9216 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 8448 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%144)
       %145 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 19456 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 18688 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%145)
       %146 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 29696 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 28928 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%146)
       %147 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 39936 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 39168 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%147)
       %148 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 0 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%148)
       %149 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 131072 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%149)
       %150 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 262144 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%150)
       %151 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 393216 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%151)
@@ -10295,42 +10295,42 @@ module {
       aiex.dma_free_task(%142)
       aiex.dma_free_task(%143)
       %160 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 327680 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 327680 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%160)
       %161 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 337920 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 337920 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%161)
       %162 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 348160 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 348160 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%162)
       %163 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 358400 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 358400 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%163)
       %164 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%164)
       %165 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%165)
       %166 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%166)
       %167 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%167)
@@ -10395,42 +10395,42 @@ module {
       aiex.dma_free_task(%158)
       aiex.dma_free_task(%159)
       %176 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 328704 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 327936 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%176)
       %177 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 338944 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 338176 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%177)
       %178 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 349184 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 348416 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%178)
       %179 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 359424 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 358656 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%179)
       %180 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%180)
       %181 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%181)
       %182 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%182)
       %183 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%183)
@@ -10495,42 +10495,42 @@ module {
       aiex.dma_free_task(%174)
       aiex.dma_free_task(%175)
       %192 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 329728 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 329728 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%192)
       %193 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 339968 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 339968 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%193)
       %194 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 350208 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 350208 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%194)
       %195 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 360448 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 360448 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%195)
       %196 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%196)
       %197 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%197)
       %198 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%198)
       %199 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%199)
@@ -10595,42 +10595,42 @@ module {
       aiex.dma_free_task(%190)
       aiex.dma_free_task(%191)
       %208 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 330752 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 329984 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%208)
       %209 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 340992 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 340224 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%209)
       %210 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 351232 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 350464 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%210)
       %211 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 361472 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 360704 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%211)
       %212 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%212)
       %213 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%213)
       %214 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%214)
       %215 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%215)
@@ -10695,42 +10695,42 @@ module {
       aiex.dma_free_task(%206)
       aiex.dma_free_task(%207)
       %224 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 331776 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 331776 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%224)
       %225 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 342016 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 342016 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%225)
       %226 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 352256 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 352256 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%226)
       %227 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 362496 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 362496 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%227)
       %228 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%228)
       %229 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%229)
       %230 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%230)
       %231 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%231)
@@ -10795,42 +10795,42 @@ module {
       aiex.dma_free_task(%222)
       aiex.dma_free_task(%223)
       %240 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 332800 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 332032 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%240)
       %241 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 343040 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 342272 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%241)
       %242 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 353280 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 352512 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%242)
       %243 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 363520 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 362752 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%243)
       %244 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%244)
       %245 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%245)
       %246 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%246)
       %247 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%247)
@@ -10895,42 +10895,42 @@ module {
       aiex.dma_free_task(%238)
       aiex.dma_free_task(%239)
       %256 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 333824 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 333824 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%256)
       %257 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 344064 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 344064 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%257)
       %258 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 354304 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 354304 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%258)
       %259 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 364544 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 364544 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%259)
       %260 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%260)
       %261 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%261)
       %262 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%262)
       %263 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%263)
@@ -10995,42 +10995,42 @@ module {
       aiex.dma_free_task(%254)
       aiex.dma_free_task(%255)
       %272 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 334848 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 334080 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%272)
       %273 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 345088 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 344320 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%273)
       %274 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 355328 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 354560 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%274)
       %275 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 365568 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 364800 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%275)
       %276 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%276)
       %277 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%277)
       %278 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%278)
       %279 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%279)
@@ -11095,42 +11095,42 @@ module {
       aiex.dma_free_task(%270)
       aiex.dma_free_task(%271)
       %288 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 335872 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 335872 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%288)
       %289 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 346112 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 346112 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%289)
       %290 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 356352 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 356352 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%290)
       %291 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 366592 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 366592 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%291)
       %292 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%292)
       %293 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%293)
       %294 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%294)
       %295 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%295)
@@ -11195,42 +11195,42 @@ module {
       aiex.dma_free_task(%286)
       aiex.dma_free_task(%287)
       %304 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 336896 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 336128 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%304)
       %305 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 347136 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 346368 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%305)
       %306 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 357376 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 356608 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%306)
       %307 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 367616 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 366848 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%307)
       %308 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 524288 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%308)
       %309 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 655360 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%309)
       %310 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 786432 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%310)
       %311 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 917504 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%311)
@@ -11295,42 +11295,42 @@ module {
       aiex.dma_free_task(%302)
       aiex.dma_free_task(%303)
       %320 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 655360 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 655360 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%320)
       %321 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 665600 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 665600 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%321)
       %322 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 675840 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 675840 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%322)
       %323 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 686080 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 686080 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%323)
       %324 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%324)
       %325 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%325)
       %326 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%326)
       %327 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%327)
@@ -11395,42 +11395,42 @@ module {
       aiex.dma_free_task(%318)
       aiex.dma_free_task(%319)
       %336 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 656384 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 655616 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%336)
       %337 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 666624 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 665856 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%337)
       %338 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 676864 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 676096 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%338)
       %339 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 687104 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 686336 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%339)
       %340 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%340)
       %341 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%341)
       %342 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%342)
       %343 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%343)
@@ -11495,42 +11495,42 @@ module {
       aiex.dma_free_task(%334)
       aiex.dma_free_task(%335)
       %352 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 657408 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 657408 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%352)
       %353 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 667648 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 667648 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%353)
       %354 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 677888 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 677888 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%354)
       %355 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 688128 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 688128 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%355)
       %356 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%356)
       %357 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%357)
       %358 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%358)
       %359 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%359)
@@ -11595,42 +11595,42 @@ module {
       aiex.dma_free_task(%350)
       aiex.dma_free_task(%351)
       %368 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 658432 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 657664 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%368)
       %369 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 668672 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 667904 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%369)
       %370 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 678912 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 678144 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%370)
       %371 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 689152 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 688384 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%371)
       %372 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%372)
       %373 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%373)
       %374 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%374)
       %375 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%375)
@@ -11695,42 +11695,42 @@ module {
       aiex.dma_free_task(%366)
       aiex.dma_free_task(%367)
       %384 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 659456 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 659456 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%384)
       %385 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 669696 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 669696 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%385)
       %386 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 679936 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 679936 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%386)
       %387 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 690176 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 690176 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%387)
       %388 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%388)
       %389 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%389)
       %390 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%390)
       %391 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%391)
@@ -11795,42 +11795,42 @@ module {
       aiex.dma_free_task(%382)
       aiex.dma_free_task(%383)
       %400 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 660480 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 659712 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%400)
       %401 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 670720 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 669952 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%401)
       %402 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 680960 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 680192 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%402)
       %403 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 691200 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 690432 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%403)
       %404 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%404)
       %405 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%405)
       %406 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%406)
       %407 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%407)
@@ -11895,42 +11895,42 @@ module {
       aiex.dma_free_task(%398)
       aiex.dma_free_task(%399)
       %416 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 661504 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 661504 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%416)
       %417 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 671744 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 671744 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%417)
       %418 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 681984 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 681984 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%418)
       %419 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 692224 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 692224 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%419)
       %420 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%420)
       %421 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%421)
       %422 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%422)
       %423 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%423)
@@ -11995,42 +11995,42 @@ module {
       aiex.dma_free_task(%414)
       aiex.dma_free_task(%415)
       %432 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 662528 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 661760 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%432)
       %433 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 672768 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 672000 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%433)
       %434 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 683008 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 682240 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%434)
       %435 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 693248 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 692480 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%435)
       %436 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%436)
       %437 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%437)
       %438 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%438)
       %439 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%439)
@@ -12095,42 +12095,42 @@ module {
       aiex.dma_free_task(%430)
       aiex.dma_free_task(%431)
       %448 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 663552 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 663552 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%448)
       %449 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 673792 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 673792 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%449)
       %450 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 684032 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 684032 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%450)
       %451 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 694272 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 694272 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%451)
       %452 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%452)
       %453 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%453)
       %454 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%454)
       %455 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%455)
@@ -12195,42 +12195,42 @@ module {
       aiex.dma_free_task(%446)
       aiex.dma_free_task(%447)
       %464 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 664576 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 663808 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%464)
       %465 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 674816 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 674048 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%465)
       %466 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 685056 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 684288 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%466)
       %467 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 695296 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 694528 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%467)
       %468 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1048576 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%468)
       %469 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1179648 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%469)
       %470 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1310720 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%470)
       %471 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1441792 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%471)
@@ -12295,42 +12295,42 @@ module {
       aiex.dma_free_task(%462)
       aiex.dma_free_task(%463)
       %480 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 983040 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 983040 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%480)
       %481 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 993280 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 993280 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%481)
       %482 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1003520 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1003520 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%482)
       %483 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1013760 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1013760 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%483)
       %484 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%484)
       %485 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%485)
       %486 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%486)
       %487 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%487)
@@ -12395,42 +12395,42 @@ module {
       aiex.dma_free_task(%478)
       aiex.dma_free_task(%479)
       %496 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 984064 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 983296 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%496)
       %497 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 994304 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 993536 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%497)
       %498 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1004544 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1003776 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%498)
       %499 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1014784 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1014016 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%499)
       %500 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%500)
       %501 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%501)
       %502 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%502)
       %503 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%503)
@@ -12495,42 +12495,42 @@ module {
       aiex.dma_free_task(%494)
       aiex.dma_free_task(%495)
       %512 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 985088 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 985088 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%512)
       %513 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 995328 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 995328 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%513)
       %514 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1005568 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1005568 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%514)
       %515 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1015808 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1015808 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%515)
       %516 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%516)
       %517 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%517)
       %518 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%518)
       %519 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%519)
@@ -12595,42 +12595,42 @@ module {
       aiex.dma_free_task(%510)
       aiex.dma_free_task(%511)
       %528 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 986112 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 985344 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%528)
       %529 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 996352 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 995584 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%529)
       %530 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1006592 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1005824 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%530)
       %531 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1016832 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1016064 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%531)
       %532 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%532)
       %533 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%533)
       %534 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%534)
       %535 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%535)
@@ -12695,42 +12695,42 @@ module {
       aiex.dma_free_task(%526)
       aiex.dma_free_task(%527)
       %544 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 987136 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 987136 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%544)
       %545 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 997376 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 997376 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%545)
       %546 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1007616 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1007616 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%546)
       %547 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1017856 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1017856 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%547)
       %548 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%548)
       %549 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%549)
       %550 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%550)
       %551 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%551)
@@ -12795,42 +12795,42 @@ module {
       aiex.dma_free_task(%542)
       aiex.dma_free_task(%543)
       %560 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 988160 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 987392 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%560)
       %561 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 998400 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 997632 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%561)
       %562 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1008640 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1007872 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%562)
       %563 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1018880 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1018112 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%563)
       %564 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%564)
       %565 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%565)
       %566 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%566)
       %567 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%567)
@@ -12895,42 +12895,42 @@ module {
       aiex.dma_free_task(%558)
       aiex.dma_free_task(%559)
       %576 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 989184 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 989184 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%576)
       %577 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 999424 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 999424 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%577)
       %578 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1009664 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1009664 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%578)
       %579 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1019904 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1019904 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%579)
       %580 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%580)
       %581 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%581)
       %582 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%582)
       %583 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%583)
@@ -12995,42 +12995,42 @@ module {
       aiex.dma_free_task(%574)
       aiex.dma_free_task(%575)
       %592 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 990208 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 989440 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%592)
       %593 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1000448 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 999680 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%593)
       %594 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1010688 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1009920 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%594)
       %595 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1020928 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1020160 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%595)
       %596 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%596)
       %597 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%597)
       %598 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%598)
       %599 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%599)
@@ -13095,42 +13095,42 @@ module {
       aiex.dma_free_task(%590)
       aiex.dma_free_task(%591)
       %608 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 991232 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 991232 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%608)
       %609 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1001472 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1001472 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%609)
       %610 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1011712 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1011712 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%610)
       %611 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1021952 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1021952 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%611)
       %612 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%612)
       %613 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%613)
       %614 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%614)
       %615 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%615)
@@ -13195,42 +13195,42 @@ module {
       aiex.dma_free_task(%606)
       aiex.dma_free_task(%607)
       %624 = aiex.dma_configure_task_for @direct_y_host_1 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 992256 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 991488 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%624)
       %625 = aiex.dma_configure_task_for @direct_y_host_3 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1002496 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1001728 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%625)
       %626 = aiex.dma_configure_task_for @direct_y_host_5 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1012736 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1011968 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%626)
       %627 = aiex.dma_configure_task_for @direct_y_host_7 {
-        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1022976 len = 8192 sizes = [1, 2, 8, 512] strides = [0, 512, 40960, 1])
+        aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 1022208 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
         aie.end
-      } {issue_token = true}
+      } {issue_token = true, repeat_count = 1 : i32}
       aiex.dma_start_task(%627)
       %628 = aiex.dma_configure_task_for @direct_a_host_0 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1572864 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%628)
       %629 = aiex.dma_configure_task_for @direct_a_host_1 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1703936 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%629)
       %630 = aiex.dma_configure_task_for @direct_a_host_2 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1835008 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%630)
       %631 = aiex.dma_configure_task_for @direct_a_host_3 {
-        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 128, 2, 512] strides = [0, 512, 65536, 1])
+        aie.dma_bd(%arg0 : memref<2097152xbf16> offset = 1966080 len = 131072 sizes = [1, 32, 32, 128] strides = [0, 128, 4096, 1])
         aie.end
       }
       aiex.dma_start_task(%631)
