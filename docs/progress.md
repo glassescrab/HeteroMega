@@ -1,5 +1,19 @@
 # HeteroMega progress
 
+## 2026-10-27 — down-specific BFP16 audit
+
+The request to apply the same treatment to Down is already covered by package
+`fd67fbf`: both projections use BFP16. A saved-artifact audit confirms down's
+reuse-four path, 8,192→512 matrix instructions and 8,640→2,400 steady MMUL
+bundles per half-call, no accumulator spills and 61,952 B SRAM allocation.
+Existing down launch-plus-wait medians are 7.223→4.732 ms and 7.228→4.791 ms
+(34.49%/33.71% lower). Final CPU Y unpack still takes 1.58–1.65 ms in BFP16.
+These are stage measurements from paired FFN runs, not a fixed-Z standalone
+down ablation or device-phase cycle measurements. No new kernel/hardware run
+was made. [Down breakdown and reproducible counts](runs/2026-10-27-upstream-bfp16/assembly/DOWN.md).
+Direct row-major down-output DMA is the next proposed host-overhead target;
+device conversion/dequant/stall shares still require profiling.
+
 ## 2026-10-27 — glassescrab BFP16 MMUL with original buffers
 
 The latest user direction supersedes the native-only arithmetic selection.

@@ -1,0 +1,131 @@
+{
+  "classification": "Saved measurements and code/compiled-artifact-confirmed derived counts; no new hardware run",
+  "source_hashes": {
+    "docs/runs/2026-10-27-upstream-bfp16/assembly/down_breakdown.py": "21b39a87ce2a9c94a9983c5adc97196a6066f7c57c684344a8d3996f0c17755c",
+    "docs/runs/2026-10-27-upstream-bfp16/assembly/audit.json": "ab0646047b1a923b81613a36820e85721fc0e7f46a996977bbcff1a7667c82b0",
+    "npu/ffn/upstream_schedule.py": "37b9dfdec2cbd039dda7eecfcdefd5306ba828394d1fd18176efe6241c023d1b",
+    "npu/ffn/w4a16_prefill_upstream.cc": "e343cda2d88bb86c2eddb7b1972f65d6f86bc18be8e3b4d401fda27688f41a55"
+  },
+  "shape": {
+    "m": 512,
+    "k": 2560,
+    "n": 4096,
+    "full_weight_k": 14336,
+    "full_weight_n": 4096
+  },
+  "schedule": {
+    "columns": 8,
+    "workers": 32,
+    "m_reuse": 4,
+    "m_waves": 2,
+    "n64_segments": 8,
+    "k128_groups": 20,
+    "half_calls_per_worker": 640,
+    "half_calls_total": 20480,
+    "input_weight_acquisition_pairs_per_worker": 320,
+    "output_objects_per_worker": 32,
+    "core_fifo_acquires_total": 21504,
+    "core_fifo_releases_total": 21504
+  },
+  "logical_shim_dma_bytes": {
+    "activation": 20971520,
+    "packed_weight": 11141120,
+    "output": 4194304
+  },
+  "kernels": {
+    "bf16": {
+      "matrix_mac_instructions_per_half_call": 8192,
+      "steady_mmul_bundles_per_half_call": 8640,
+      "local_bytes_per_half_call": {
+        "scratch_write": 8192,
+        "scratch_read": 65536,
+        "a_read": 32768,
+        "fp32_c_read_write": 16384
+      },
+      "local_allocation_bytes": 59904,
+      "max_nested_stack_bytes": 256,
+      "worker_stack_reservation": 2048,
+      "full_launch_matrix_instructions": 167772160,
+      "full_launch_logical_local_bytes": {
+        "scratch_write": 167772160,
+        "scratch_read": 1342177280,
+        "a_read": 671088640,
+        "fp32_c_read_write": 335544320
+      }
+    },
+    "bfp16": {
+      "matrix_mac_instructions_per_half_call": 512,
+      "steady_mmul_bundles_per_half_call": 2400,
+      "local_bytes_per_half_call": {
+        "scratch_write": 8192,
+        "scratch_read": 32768,
+        "a_read": 32768,
+        "fp32_c_read_write": 16384
+      },
+      "local_allocation_bytes": 61952,
+      "max_nested_stack_bytes": 256,
+      "worker_stack_reservation": 4096,
+      "full_launch_matrix_instructions": 10485760,
+      "full_launch_logical_local_bytes": {
+        "scratch_write": 167772160,
+        "scratch_read": 671088640,
+        "a_read": 671088640,
+        "fp32_c_read_write": 335544320
+      }
+    }
+  },
+  "timings": [
+    {
+      "order": "abba",
+      "report_sha256": "eea2407796a78d75ceda803167959a2679025a4349672149ada89aa59cb6b2bd",
+      "arithmetic": {
+        "bf16": {
+          "samples": 100,
+          "launch_wait_median_us": 7223.2485,
+          "with_host_io_median_us": 7906.0755,
+          "output_unpack_median_us": 1684.663,
+          "host_io_minus_wait_median_us": 672.5530000000003,
+          "with_host_io_plus_unpack_median_us": 9581.193500000001
+        },
+        "bfp16": {
+          "samples": 100,
+          "launch_wait_median_us": 4732.2005,
+          "with_host_io_median_us": 5332.804,
+          "output_unpack_median_us": 1576.43,
+          "host_io_minus_wait_median_us": 656.4880000000003,
+          "with_host_io_plus_unpack_median_us": 6915.2145
+        }
+      },
+      "launch_wait_reduction_percent": 34.48653330977053
+    },
+    {
+      "order": "baab",
+      "report_sha256": "b79a79f6d031ce534fc93c1a40405e9db9f887e53eec2a9aee0801c7b841669d",
+      "arithmetic": {
+        "bf16": {
+          "samples": 100,
+          "launch_wait_median_us": 7227.978999999999,
+          "with_host_io_median_us": 7916.6805,
+          "output_unpack_median_us": 1682.1135,
+          "host_io_minus_wait_median_us": 682.4424999999997,
+          "with_host_io_plus_unpack_median_us": 9592.52
+        },
+        "bfp16": {
+          "samples": 100,
+          "launch_wait_median_us": 4791.2395,
+          "with_host_io_median_us": 5459.722,
+          "output_unpack_median_us": 1646.899,
+          "host_io_minus_wait_median_us": 672.1174999999994,
+          "with_host_io_plus_unpack_median_us": 7054.762000000001
+        }
+      },
+      "launch_wait_reduction_percent": 33.71259794750372
+    }
+  ],
+  "limits": [
+    "Down timing is a stage of paired whole-FFN arithmetic experiments; its Z input differs with upstream SwiGLU arithmetic.",
+    "No fixed-Z down-only ablation, device-phase cycles, bank-stall breakdown or physical bandwidth measurement is asserted.",
+    "Local byte totals count logical operands excluding metadata, graph init/finish, instruction fetches and spills outside MMUL.",
+    "Final unpack is measured separately from down_with_host_io; combined medians are calculated from per-call sums."
+  ]
+}
