@@ -1,5 +1,37 @@
 # HeteroMega progress
 
+## 2026-10-27 — glassescrab BFP16 MMUL with original buffers
+
+The latest user direction supersedes the native-only arithmetic selection.
+The direct-weight kernel now offers explicit BFP16-backed 8×8×8 MMUL from
+the pinned corrected TileFuse source, preserving original 4,352-byte weights,
+eight columns/32 workers, BF16 I/O, FP32 partials and the selected reuse/DMA
+optimizations. Native BF16 remains the default strict control. BFP16 has its
+own compile/cache/manifest identity and a 4 KiB stack.
+
+**Measured:** at M512/H4096/I14336/P2560 on HX370/default, isolated NPU-branch
+median latency improves 22.322→14.470 ms (35.18%, ABBA) and 22.405→14.650 ms
+(34.61%, BAAB), 100 samples/arithmetic/order. First SwiGLU launch-plus-wait
+falls 11.729→6.512 ms; these are host waits, not device-only cycle timings.
+All numerical and structural checks pass across 1,024 completed NPU dispatches.
+Worst BFP16 relative L2 versus the CPU oracle is 0.0167717 against .02; cross
+arithmetic versus native is .0166252, maximum absolute error .00305176.
+Local checks pass 113 tests plus 584 subtests. Compiler/runtime sources,
+artifacts, raw reports, assembly and reproduction are in
+[runs/2026-10-27-upstream-bfp16](runs/2026-10-27-upstream-bfp16/README.md).
+
+The research branch is `codex/upstream-bfp16-mmul`; isolated cloud overlay is
+`/notebooks/HeteroMega-upstream-bfp16-20261027`. Previous baselines remain.
+The kernel-only package stays in `../HeteroMega-kernels`, PR #3. No GPU code,
+model scheduler, driver or kernel was changed. Next: evaluate the complementary
+GPU branch, boundary reduction and attention interference using this BFP16
+package, then retune the partition. NPU-only timing is not full-model speedup
+and synthetic checks are not pretrained-model accuracy.
+
+Published kernel package: `fd67fbf40e9e2e1d06b58d365e4657e61aed050f` in
+[PR #3](https://github.com/glassescrab/HeteroMega/pull/3), open and unmerged.
+The package has 22 files under `npu/ffn`; all 21 payload checksums pass.
+
 ## 2026-10-27: first-launch assembly breakdown
 
 - **Inspected, no kernel changes or new hardware run:** selected `fc0b255`

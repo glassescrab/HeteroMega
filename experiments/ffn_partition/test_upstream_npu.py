@@ -80,6 +80,47 @@ class _ObservedRunner:
 
 
 class UpstreamNpuTests(unittest.TestCase):
+    def test_bfp16_uses_original_weights_and_separate_manifest_identity(self):
+        weights = _weights()
+        with tempfile.TemporaryDirectory() as root:
+            native = backend._ffn_specs(128, 256, 128, *weights, root, 128)
+            bfp = backend._ffn_specs(128, 256, 128, *weights, root, 128, arithmetic='bfp16')
+            for name, spec in bfp.items():
+                self.assertNotEqual(spec['directory'], native[name]['directory'])
+                self.assertEqual(spec['expected']['worker_stack_size'], 4096)
+                self.assertEqual(spec['expected']['arithmetic'], 'bfp16')
+                self.assertEqual(spec['expected']['weight_tile_bytes'], 4352)
+                self.assertEqual(spec['arguments'][0:2], ['--arithmetic', 'bfp16'])
+                _write_artifact(spec)
+                backend._load_artifact(spec)
+            with patch.object(backend, 'PersistentXrtRunner', _ObservedRunner):
+                branch = backend.UpstreamNpuFFN(128, 256, 128, *weights, root,
+                    channel_start=128, arithmetic='bfp16')
+            self.assertEqual(branch.metadata['arithmetic'], 'bfp16')
+            self.assertIs(branch.swiglu.inputs[1], weights[0].data)
+            self.assertIs(branch.swiglu.inputs[2], weights[1].data)
+            self.assertIs(branch.down.inputs[1], weights[2].data)
+            for options in ({'arithmetic': 'bfp16', 'mmul_m_reuse': 2},
+                            {'arithmetic': 'unknown'}):
+                with self.assertRaises(ValueError):
+                    backend._ffn_specs(128, 256, 128, *weights, root, **options)
+
+    def test_report_policy_preserves_numerical_failure_and_structural_gate(self):
+        from experiments.ffn_partition.check_upstream import _set_check_status
+        entry = {'checks': {'original_numerical_tolerances': False,
+                            'finite_outputs': True, 'repeat_exact': True}}
+        _set_check_status(entry, {'accuracy_policy': 'report'})
+        self.assertEqual(entry['status'], 'passed')
+        self.assertEqual(entry['numerical_status'], 'failed')
+        _set_check_status(entry, {'accuracy_policy': 'strict'})
+        self.assertEqual(entry['status'], 'failed')
+        for failure in ('finite_outputs', 'repeat_exact', 'exact_zero',
+                        'changed_input_changes_output', 'original_weight_bytes_unchanged'):
+            entry['checks'][failure] = False
+            _set_check_status(entry, {'accuracy_policy': 'report'})
+            self.assertEqual(entry['status'], 'failed')
+            entry['checks'][failure] = True
+
     def test_kernel_ablations_have_distinct_cache_identity_and_strict_options(self):
         with tempfile.TemporaryDirectory() as root:
             weights = _weights()

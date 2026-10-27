@@ -1,0 +1,173 @@
+{
+  "status": "passed",
+  "completed_npu_dispatches": 488,
+  "summary": {
+    "1": {
+      "arithmetic": "bf16",
+      "wall": {
+        "count": 100,
+        "median_us": 22404.6065,
+        "mean_us": 22303.49926,
+        "min_us": 20266.157,
+        "max_us": 23395.428,
+        "p10_us": 21864.9801,
+        "p90_us": 22796.419100000003
+      },
+      "dispatch_wait": {
+        "swiglu": {
+          "count": 100,
+          "median_us": 11795.127499999999,
+          "mean_us": 11739.636230000004,
+          "min_us": 10899.025,
+          "max_us": 12461.874,
+          "p10_us": 11326.4781,
+          "p90_us": 11962.5742
+        },
+        "down": {
+          "count": 100,
+          "median_us": 7227.978999999999,
+          "mean_us": 7224.555780000001,
+          "min_us": 6704.173,
+          "max_us": 7777.813,
+          "p10_us": 6937.781,
+          "p90_us": 7476.2581
+        }
+      },
+      "host_stages": {
+        "input_layout_us": {
+          "count": 100,
+          "median_us": 3.125,
+          "mean_us": 3.15606,
+          "min_us": 1.93,
+          "max_us": 7.14,
+          "p10_us": 2.6,
+          "p90_us": 3.666000000000001
+        },
+        "swiglu_with_host_io_us": {
+          "count": 100,
+          "median_us": 12475.614000000001,
+          "mean_us": 12424.29456,
+          "min_us": 11427.304,
+          "max_us": 13175.301,
+          "p10_us": 12022.7281,
+          "p90_us": 12668.3088
+        },
+        "down_input_layout_us": {
+          "count": 100,
+          "median_us": 1.28,
+          "mean_us": 1.2834999999999999,
+          "min_us": 0.62,
+          "max_us": 1.84,
+          "p10_us": 1.0550000000000002,
+          "p90_us": 1.53
+        },
+        "down_with_host_io_us": {
+          "count": 100,
+          "median_us": 7916.6805,
+          "mean_us": 7895.07096,
+          "min_us": 7086.806,
+          "max_us": 8392.991,
+          "p10_us": 7637.966,
+          "p90_us": 8157.332
+        },
+        "output_layout_us": {
+          "count": 100,
+          "median_us": 1682.1135,
+          "mean_us": 1671.4237899999998,
+          "min_us": 1240.727,
+          "max_us": 2227.648,
+          "p10_us": 1323.3109,
+          "p90_us": 1982.701
+        }
+      },
+      "original_tolerances_vs_native_control": true,
+      "max_relative_l2_vs_native": 0.0,
+      "max_absolute_error_vs_native": 0.0
+    },
+    "2": {
+      "arithmetic": "bfp16",
+      "wall": {
+        "count": 100,
+        "median_us": 14650.2685,
+        "mean_us": 14618.197599999998,
+        "min_us": 13181.151,
+        "max_us": 15675.913,
+        "p10_us": 13982.0111,
+        "p90_us": 15271.4829
+      },
+      "dispatch_wait": {
+        "swiglu": {
+          "count": 100,
+          "median_us": 6592.845499999999,
+          "mean_us": 6613.37907,
+          "min_us": 6135.114,
+          "max_us": 7398.9,
+          "p10_us": 6333.631,
+          "p90_us": 6869.793000000001
+        },
+        "down": {
+          "count": 100,
+          "median_us": 4791.2395,
+          "mean_us": 4816.85377,
+          "min_us": 4328.178,
+          "max_us": 5496.006,
+          "p10_us": 4495.848000000001,
+          "p90_us": 5166.429
+        }
+      },
+      "host_stages": {
+        "input_layout_us": {
+          "count": 100,
+          "median_us": 2.8545,
+          "mean_us": 2.87541,
+          "min_us": 1.35,
+          "max_us": 5.48,
+          "p10_us": 2.17,
+          "p90_us": 3.5819
+        },
+        "swiglu_with_host_io_us": {
+          "count": 100,
+          "median_us": 7273.397,
+          "mean_us": 7280.409750000001,
+          "min_us": 6656.365,
+          "max_us": 8131.457,
+          "p10_us": 6945.145,
+          "p90_us": 7568.581
+        },
+        "down_input_layout_us": {
+          "count": 100,
+          "median_us": 1.2149999999999999,
+          "mean_us": 1.1863899999999998,
+          "min_us": 0.29,
+          "max_us": 1.91,
+          "p10_us": 0.878,
+          "p90_us": 1.421
+        },
+        "down_with_host_io_us": {
+          "count": 100,
+          "median_us": 5459.722,
+          "mean_us": 5453.4775899999995,
+          "min_us": 4787.699,
+          "max_us": 6220.813,
+          "p10_us": 5036.449,
+          "p90_us": 5869.709
+        },
+        "output_layout_us": {
+          "count": 100,
+          "median_us": 1646.899,
+          "mean_us": 1595.27489,
+          "min_us": 1167.258,
+          "max_us": 1975.373,
+          "p10_us": 1306.0479,
+          "p90_us": 1844.651
+        }
+      },
+      "original_tolerances_vs_native_control": true,
+      "max_relative_l2_vs_native": 0.016625198829807144,
+      "max_absolute_error_vs_native": 0.0030517578125
+    },
+    "candidate_over_baseline_speedup": 1.5292966473617873,
+    "candidate_latency_reduction_percent": 34.610462808172954
+  },
+  "error": null
+}

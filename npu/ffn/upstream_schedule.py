@@ -44,23 +44,28 @@ def validate_input_layout(input_layout):
     return input_layout
 
 
-def validate_kernel_tuning(vector_zero, mmul_m_reuse):
+def validate_kernel_tuning(vector_zero, mmul_m_reuse, arithmetic='bf16'):
+    if arithmetic not in ('bf16', 'bfp16'):
+        raise ValueError('arithmetic must be bf16 or bfp16')
     if not isinstance(vector_zero, bool):
         raise ValueError('vector_zero must be a bool')
     if (isinstance(mmul_m_reuse, bool) or not isinstance(mmul_m_reuse, int)
             or mmul_m_reuse not in (1, 2)):
         raise ValueError('mmul_m_reuse must be 1 or 2')
+    if arithmetic == 'bfp16' and mmul_m_reuse != 1:
+        raise ValueError('bfp16 requires mmul_m_reuse=1')
 
 
-def upstream_worker_stack_size(mmul_m_reuse):
-    """Reserve enough stack for the audited eight-accumulator call chain.
+def upstream_worker_stack_size(mmul_m_reuse, arithmetic='bf16'):
+    """Keep native stacks and reserve 4 KiB for explicit BFP16 arithmetic.
 
     The paired-M kernel's full model core has 2,112 bytes across nested
     frames, exceeding the original 2 KiB reservation. Keep that reservation
-    for the baseline kernel and use 4 KiB for the paired-M ablation.
+    for the baseline kernel and use 4 KiB for the paired-M ablation. BFP16
+    also reserves 4 KiB; its actual allocation still needs compiler checks.
     """
-    validate_kernel_tuning(False, mmul_m_reuse)
-    return 4096 if mmul_m_reuse == 2 else 2048
+    validate_kernel_tuning(False, mmul_m_reuse, arithmetic)
+    return 4096 if arithmetic == 'bfp16' or mmul_m_reuse == 2 else 2048
 
 
 def validate_upstream_buffering(schedule, activation_fifo_depth):
@@ -68,7 +73,7 @@ def validate_upstream_buffering(schedule, activation_fifo_depth):
 
     Projection reuse four needs 76,288 raw bytes with depth-two A buffers,
     or 59,904 with depth-one consumers, including the baseline 2 KiB stack.
-    The paired-M ablation's 4 KiB stack raises the latter to 61,952 bytes.
+    A paired-M or BFP16 4 KiB stack raises the latter to 61,952 bytes.
     Actual compiler placement/spills still need build and hardware checks.
     Host and memory-tile A buffers remain double-buffered in either case.
     """

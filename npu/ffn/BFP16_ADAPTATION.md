@@ -1,5 +1,33 @@
 # TileFuse W4A16 adaptation for prefill FFN
 
+## Current direct-buffer path — 2026-10-27
+
+The user's latest request selects glassescrab's BFP16 MMUL while preserving
+original packed weight buffers. `w4a16_upstream.py --arithmetic bfp16` selects
+8×8×8, four-accumulator MMUL in `w4a16_prefill_upstream.cc`, with the same
+pinned upstream algorithm described below. `--arithmetic bf16` keeps the
+native 4×8×8 control. Both use original **4,352-byte K128/N64 tiles**, unchanged
+dequantization, BF16 external A/Y and FP32 C. No compact weight repacking is
+performed. Internal A/C vector gathers/scatters bridge the existing 4×8 ABI.
+BFP16 uses a 4 KiB stack and rejects the native paired-M MMUL ablation.
+
+Selected dataflow remains eight columns/32 workers, SwiGLU reuse two with
+row-major input and down-A output, down reuse four with one core A buffer,
+vector zero metadata, and a two-segment pipeline. BFP16 arithmetic has its own
+object/cache/manifest identity. `check_upstream --arithmetic bfp16` defaults
+to report policy; original numerical verdicts and errors remain explicit,
+while finite/repeat/zero/change/weights/completion failures still reject a run.
+
+The sections below describe the earlier compact-weight adaptation and its
+historical measurements. They do not establish performance of the new direct
+buffer path. [Direct-buffer hardware evidence](../../docs/runs/2026-10-27-upstream-bfp16/README.md)
+now records 1,024 successful dispatches and 34.6–35.2% lower NPU-branch median
+latency versus the optimized native control. All original numerical tolerances
+pass; worst relative L2 versus the CPU oracle is 0.0167717. This is not a
+combined GPU+NPU or model-accuracy result.
+
+## Historical compact-weight adaptation
+
 **Code-confirmed:** the opt-in `--npu-arithmetic bfp16` path adapts the
 W4A16 GEMM strategy from `glassescrab/mlir-aie` to HeteroMega's existing
 eight-column prefill FFN graphs. It selects a separate C++ source; native

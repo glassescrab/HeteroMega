@@ -1,0 +1,153 @@
+{
+  "status": "passed",
+  "timestamp_utc": "2026-10-27T17:44:01.012890+00:00",
+  "evidence_root": "/tmp/upstream-bfp16-evidence-20261027",
+  "audit_script": "/tmp/upstream_bfp16_integrity_audit.py",
+  "checksum_count": 950,
+  "source_matches": 70,
+  "source_differences": [
+    "npu/ffn/test_upstream_kernel_optimizations.py"
+  ],
+  "unique_report_artifacts": 11,
+  "prebuilt": {
+    "bf16/down": {
+      "xclbin_sha256": "aa33e4259cbbb947dfe6c68f179d34573aa5376aeaf5ac905b5b38d5740b9277",
+      "insts_sha256": "2f4265c54bb90e6cf04160a4cb845b16acd1fb1fab8b3fc5dce00839bd12c857",
+      "mlir_sha256": "bf7fa372202845f9726d95fb9045a59f0204b773af2f4a6c0db83e43d441a520"
+    },
+    "bf16/swiglu": {
+      "xclbin_sha256": "78fb072db8e8c00befcd910a399ee813c6a9445305a97401f2b91bced660bc1b",
+      "insts_sha256": "d0d731e3fa3880beccfa908b2213c9d125b05f6404d6eadbb1f07d4c9e5b0df5",
+      "mlir_sha256": "b99246d90a4f4eba099fac5d1c58e5f975c7ac2f7d1311cd4b847e2c669ec9a0"
+    },
+    "bfp16/down": {
+      "xclbin_sha256": "c899f0601bb5680da52e5e6650f68eb299ed3f52c7a38ca199f7759682a63eac",
+      "insts_sha256": "2f4265c54bb90e6cf04160a4cb845b16acd1fb1fab8b3fc5dce00839bd12c857",
+      "mlir_sha256": "6104158637bdc9a9d4fd07b7d5d5bf89c96494684ebc19c9762cc8921f2cc855"
+    },
+    "bfp16/swiglu": {
+      "xclbin_sha256": "0c139549a2b746e7db6a25bc9cb744731d3d2a180bbb311aed496b7be6f98214",
+      "insts_sha256": "d0d731e3fa3880beccfa908b2213c9d125b05f6404d6eadbb1f07d4c9e5b0df5",
+      "mlir_sha256": "876b77682e80f6a1656e4e011faa5080dbd789055cb38e9e57f7fca22aaccecc"
+    }
+  },
+  "correctness": {
+    "bf16_model": {
+      "completed_dispatches": 8,
+      "cases": 1,
+      "max_relative_l2_error": 0.003759808012714911,
+      "max_abs_error": 0.0009765625,
+      "all_original_tolerances_passed": true,
+      "arithmetic": "bf16",
+      "accuracy_policy": "strict"
+    },
+    "bfp16_model": {
+      "completed_dispatches": 8,
+      "cases": 1,
+      "max_relative_l2_error": 0.016666964303850666,
+      "max_abs_error": 0.0030517578125,
+      "all_original_tolerances_passed": true,
+      "arithmetic": "bfp16",
+      "accuracy_policy": "report"
+    },
+    "bfp16_offset": {
+      "completed_dispatches": 8,
+      "cases": 1,
+      "max_relative_l2_error": 0.01672970309029105,
+      "max_abs_error": 0.00244140625,
+      "all_original_tolerances_passed": true,
+      "arithmetic": "bfp16",
+      "accuracy_policy": "report"
+    },
+    "bfp16_smoke": {
+      "completed_dispatches": 24,
+      "cases": 5,
+      "max_relative_l2_error": 0.016771666166635942,
+      "max_abs_error": 0.0068359375,
+      "all_original_tolerances_passed": true,
+      "arithmetic": "bfp16",
+      "accuracy_policy": "report"
+    }
+  },
+  "benchmarks": {
+    "arithmetic_abba": {
+      "completed_dispatches": 488,
+      "order": "ABBA",
+      "statistics": {
+        "bf16": {
+          "count": 100,
+          "median_us": 22322.063000000002,
+          "mean_us": 22319.73776,
+          "min_us": 21079.341,
+          "max_us": 23569.945,
+          "p10_us": 21645.0529,
+          "p90_us": 22994.8668,
+          "max_relative_l2_vs_native": 0.0,
+          "max_abs_error_vs_native": 0.0
+        },
+        "bfp16": {
+          "count": 100,
+          "median_us": 14469.5265,
+          "mean_us": 14393.47602,
+          "min_us": 12793.639,
+          "max_us": 15623.665,
+          "p10_us": 13763.23,
+          "p90_us": 14986.3619,
+          "max_relative_l2_vs_native": 0.016625198829807144,
+          "max_abs_error_vs_native": 0.0030517578125
+        }
+      },
+      "speedup": 1.542694779957036,
+      "latency_reduction_percent": 35.17836366647653
+    },
+    "arithmetic_baab": {
+      "completed_dispatches": 488,
+      "order": "BAAB",
+      "statistics": {
+        "bf16": {
+          "count": 100,
+          "median_us": 22404.6065,
+          "mean_us": 22303.49926,
+          "min_us": 20266.157,
+          "max_us": 23395.428,
+          "p10_us": 21864.9801,
+          "p90_us": 22796.419100000003,
+          "max_relative_l2_vs_native": 0.0,
+          "max_abs_error_vs_native": 0.0
+        },
+        "bfp16": {
+          "count": 100,
+          "median_us": 14650.2685,
+          "mean_us": 14618.197599999998,
+          "min_us": 13181.151,
+          "max_us": 15675.913,
+          "p10_us": 13982.0111,
+          "p90_us": 15271.4829,
+          "max_relative_l2_vs_native": 0.016625198829807144,
+          "max_abs_error_vs_native": 0.0030517578125
+        }
+      },
+      "speedup": 1.5292966473617873,
+      "latency_reduction_percent": 34.610462808172954
+    }
+  },
+  "total_completed_npu_dispatches": 1024,
+  "previous_native_report": "/home/adam/Documents/ChatGPT/HeteroMega/docs/runs/2026-10-25-kernel-optimizations/v3_safe_model.json",
+  "native_output_exact_vs_previous": true,
+  "abba_baab_output_reproducibility": true,
+  "package": {
+    "exists": true,
+    "artifacts": [
+      "down",
+      "swiglu"
+    ],
+    "payload_files": 21,
+    "readme_cli_and_runtime_abi_verified": true,
+    "verified_checksums": 21
+  },
+  "failures": [],
+  "limitations": [
+    "Only the four full-model binaries are exported; smoke/offset artifact manifests and source identity are verified, but those binaries are not independently available in this snapshot.",
+    "Numerical error magnitudes are audited from retained reports and original-tolerance verdicts; raw output tensors were not exported, so numerical errors cannot be independently recalculated from arrays."
+  ]
+}

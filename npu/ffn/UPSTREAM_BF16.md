@@ -1,9 +1,13 @@
 # Native BF16 with original glassescrab W4A16 buffers
 
-The current requested path is `w4a16_upstream.py`: eight NPU columns, four
-compute rows per column, native BF16 4×8×8 matrix multiplication and FP32
-partial sums across K128 groups. BFP16 emulation is explicitly disabled.
-The previous compact/BFP16 sources and measurements remain historical controls.
+The direct-buffer path is `w4a16_upstream.py`: eight NPU columns and four
+compute rows per column. The current selection is explicit `--arithmetic bfp16`,
+using glassescrab's BFP16-backed 8×8×8 MMUL with BF16 I/O and FP32 partials.
+`--arithmetic bf16` keeps the native 4×8×8 control. Both accept the original
+4,352-byte weight tiles directly. The filename is retained for existing links.
+See [BFP16 evidence](../../docs/runs/2026-10-27-upstream-bfp16/README.md):
+22.322→14.470 ms and 22.405→14.650 ms in paired orders on HX370; these are
+isolated NPU-branch timings. The older compact-weight artifacts are incompatible.
 
 The selected experimental profile is `combo_mmul1_row_major`: vectorized
 zero-point loads, the original four-accumulator MMUL, SwiGLU M reuse 2,
@@ -69,13 +73,13 @@ In the configured MLIR-AIE environment at
 intermediate width 14336:
 
 ```bash
-python npu/ffn/w4a16_upstream.py --mode swiglu -M 512 -K 4096 -N 2560 \
+python npu/ffn/w4a16_upstream.py --arithmetic bfp16 --mode swiglu -M 512 -K 4096 -N 2560 \
   --weight-k 4096 --weight-n 14336 \
   --vector-zero --mmul-m-reuse 1 --max-reuse 2 --activation-fifo-depth 2 \
   --input-layout row_major --output-layout down_a --segment-pipeline-depth 2 \
   --xclbin-path build/swiglu/final.xclbin \
   --insts-path build/swiglu/insts.bin --pdi-path build/swiglu/final.pdi
-python npu/ffn/w4a16_upstream.py --mode projection -M 512 -K 2560 -N 4096 \
+python npu/ffn/w4a16_upstream.py --arithmetic bfp16 --mode projection -M 512 -K 2560 -N 4096 \
   --weight-k 14336 --weight-n 4096 \
   --vector-zero --mmul-m-reuse 1 --max-reuse 4 --activation-fifo-depth 1 \
   --input-layout compact --output-layout compact --segment-pipeline-depth 2 \
@@ -85,13 +89,15 @@ python npu/ffn/w4a16_upstream.py --mode projection -M 512 -K 2560 -N 4096 \
 
 XRT launch inputs are `(A, gate_W, up_W, Z)` for SwiGLU and `(A, W, Y)` for
 projection. The existing `MLIR_AIE` control/instruction arguments precede them;
-instruction length is bytes. Verify the manifest's BF16 arithmetic, upstream
+instruction length is bytes. Verify the manifest's selected arithmetic, upstream
 layout identifier, full source geometry, partition offsets, input/output
 layouts, reuse, FIFO depth, MMUL mode, stack reservation and artifact hashes.
-Old compact or BFP16 binaries are not interchangeable with this graph.
+Old compact-weight binaries are incompatible; native/BFP16 artifacts must match
+the selected arithmetic and full manifest.
 
-The preceding commands build the selected profile. To retain the original
-native-BF16 control, omit `--vector-zero` and use `--max-reuse 2`,
+The preceding commands build the selected BFP16 profile. For the matched native
+control, change only `--arithmetic bf16`. To rebuild the older compact-layout
+native control, also omit `--vector-zero` and use `--max-reuse 2`,
 `--activation-fifo-depth 2`, `--mmul-m-reuse 1`, `--input-layout compact` and
 `--output-layout compact` for both stages. These remain their default values.
 Pipeline depth defaults to 2; depth 1 retains the earlier serial schedule.
@@ -102,7 +108,8 @@ Pipeline depth defaults to 2; depth 1 retains the earlier serial schedule.
 dequantized N32 half over four M16 tiles. This reduces M waves from four to
 two at M512. Only the core-consumer A FIFO becomes single-buffered; host and
 memory-tile A buffers retain depth two. The estimated down-worker buffer
-total, including the selected 2 KiB stack, is 59,904 bytes. Compilation,
+total is 59,904 bytes with the native 2 KiB stack, or 61,952 bytes with the
+selected BFP16 4 KiB stack. Compilation,
 memory placement and hardware checks remain necessary for another shape.
 The effective reuse may be smaller than the requested maximum when M is small.
 
@@ -122,12 +129,13 @@ Projection arithmetic remains 32.212 GFLOPs; SiLU and host work are excluded
 from that arithmetic count. The input/output DMA layout options remove CPU
 permutations without reducing these NPU transfer volumes.
 
-The experimental `--mmul-m-reuse 2` pairs M16 lanes in an eight-accumulator
+The native-only experimental `--mmul-m-reuse 2` pairs M16 lanes in an eight-accumulator
 register block to share B loads. Compiler inspection found substantial
 register spills and an overflowing nested call chain with the original
 2 KiB stack. This mode now reserves 4 KiB, but it was slower in the ablation
 and is not selected. `--mmul-m-reuse 1` retains the original four-accumulator
-kernel and 2 KiB stack. Both preserve native BF16 and FP32 partial sums.
+native kernel and 2 KiB stack, or BFP16 8×8×8 MMUL with a 4 KiB stack.
+BFP16 rejects paired mode2; both arithmetic paths retain FP32 partial sums.
 
 SwiGLU reuse 4 is currently rejected because its extra activation, accumulator,
 gate and output storage needs a separate buffering redesign. Larger N reuse,
@@ -153,7 +161,8 @@ overlap dequantization with MMUL inside an individual worker.
 The experimental host adapter is
 `experiments/ffn_partition/upstream_npu.py`. Wrap each existing flat contiguous
 uint8 buffer in `UpstreamWeightBuffer(data, full_k, full_n)`, call
-`build_upstream_artifacts(...)`, then construct `UpstreamNpuFFN(...)` and
+`build_upstream_artifacts(..., arithmetic="bfp16")`, then construct
+`UpstreamNpuFFN(..., arithmetic="bfp16")` and
 pass BF16 uint16 input bits to `.run(...)`. It uploads fixed weights once.
 It rejects unsupported storage rather than silently copying into another layout.
 

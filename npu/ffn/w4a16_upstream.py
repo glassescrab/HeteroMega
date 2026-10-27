@@ -1,8 +1,9 @@
-"""Eight-column native BF16 FFN projections consuming upstream W4A16 bytes.
+"""Eight-column FFN projections consuming upstream W4A16 bytes.
 
 Weight BOs are the unchanged glassescrab N64/K128/4352-byte striped buffers.
 Gate and up have separate inputs, so no concatenation/repacking is needed.
 The existing compact BF16 A/Y layouts and FP32 K-group partials are retained.
+Native BF16 is the default; explicit BFP16 changes only internal MMUL arithmetic.
 """
 import argparse
 import hashlib
@@ -48,12 +49,13 @@ def _tap(spec):
 
 def _design(m, k, n, mode, weight_k, weight_n, k_start, n_start, cols,
             max_reuse, segment_pipeline_depth, activation_fifo_depth,
-            vector_zero, mmul_m_reuse, input_layout, output_layout, fingerprint):
+            vector_zero, mmul_m_reuse, input_layout, output_layout, fingerprint,
+            arithmetic):
     if fingerprint != FINGERPRINT:
         raise ValueError('upstream graph dependency identity changed; rebuild')
     validate_segment_pipeline_depth(segment_pipeline_depth)
-    validate_kernel_tuning(vector_zero, mmul_m_reuse)
-    worker_stack_size = upstream_worker_stack_size(mmul_m_reuse)
+    validate_kernel_tuning(vector_zero, mmul_m_reuse, arithmetic)
+    worker_stack_size = upstream_worker_stack_size(mmul_m_reuse, arithmetic)
     validate_input_layout(input_layout)
     if output_layout not in ('compact', 'down_a'):
         raise ValueError('output_layout must be compact or down_a')
@@ -68,7 +70,7 @@ def _design(m, k, n, mode, weight_k, weight_n, k_start, n_start, cols,
     if device is None or device.cols != 8:
         raise ValueError('direct upstream graph requires the full NPU2 eight-column device')
     reuse = plan.m_reuse
-    projection = ProjectionArithmetic('bf16', ROOT / 'w4a16_prefill_upstream.cc',
+    projection = ProjectionArithmetic(arithmetic, ROOT / 'w4a16_prefill_upstream.cc',
                                      SOURCE, HASHES['w4a16_prefill_upstream.cc'])
     a_tile = np.ndarray[(reuse * 2048,), np.dtype[bfloat16]]
     w_tile = np.ndarray[(4352,), np.dtype[np.uint8]]
@@ -243,10 +245,12 @@ def upstream_projection(a: In, w: In, y: Out, *,
     vector_zero: CompileTime[bool] = False, mmul_m_reuse: CompileTime[int] = 1,
     input_layout: CompileTime[str] = 'compact',
     output_layout: CompileTime[str] = 'compact',
+    arithmetic: CompileTime[str] = 'bf16',
     fingerprint: CompileTime[str] = FINGERPRINT):
     return _design(m, k, n, 'projection', weight_k, weight_n, k_start, n_start,
                    cols, max_reuse, segment_pipeline_depth, activation_fifo_depth,
-                   vector_zero, mmul_m_reuse, input_layout, output_layout, fingerprint)
+                   vector_zero, mmul_m_reuse, input_layout, output_layout, fingerprint,
+                   arithmetic)
 
 
 @iron.jit(aiecc_flags=['--alloc-scheme=basic-sequential'])
@@ -260,16 +264,20 @@ def upstream_swiglu(a: In, gate_w: In, up_w: In, z: Out, *,
     vector_zero: CompileTime[bool] = False, mmul_m_reuse: CompileTime[int] = 1,
     input_layout: CompileTime[str] = 'compact',
     output_layout: CompileTime[str] = 'compact',
+    arithmetic: CompileTime[str] = 'bf16',
     fingerprint: CompileTime[str] = FINGERPRINT):
     return _design(m, k, n, 'swiglu', weight_k, weight_n, k_start, n_start,
                    cols, max_reuse, segment_pipeline_depth, activation_fifo_depth,
-                   vector_zero, mmul_m_reuse, input_layout, output_layout, fingerprint)
+                   vector_zero, mmul_m_reuse, input_layout, output_layout, fingerprint,
+                   arithmetic)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     add_compile_args(parser, dev_choices=('npu2',), default_dev='npu2', with_pdi=True, with_emit_mlir=True)
     parser.add_argument('--mode', choices=('projection', 'swiglu'), default='projection')
+    parser.add_argument('--arithmetic', choices=('bf16', 'bfp16'), default='bf16',
+                        help='internal MMUL arithmetic; BF16 buffers and packed weights are unchanged')
     for flag, default in (('-M', 512), ('-K', 4096), ('-N', 2560)):
         parser.add_argument(flag, type=int, default=default)
     parser.add_argument('--weight-k', type=int)
@@ -291,6 +299,8 @@ def main():
     parser.add_argument('--output-layout', choices=('compact', 'down_a'), default='compact',
                         help='SwiGLU output DMA layout; down_a is ready for the down projection')
     opts = parser.parse_args()
+    # Validate the arithmetic/tuning combination before invoking the compiler.
+    upstream_worker_stack_size(opts.mmul_m_reuse, opts.arithmetic)
     wk, wn = opts.weight_k or opts.K, opts.weight_n or opts.N
     kwargs = dict(m=opts.M, k=opts.K, n=opts.N, weight_k=wk, weight_n=wn,
                   k_start=opts.k_start, n_start=opts.n_start, cols=opts.columns,
@@ -299,6 +309,7 @@ def main():
                   activation_fifo_depth=opts.activation_fifo_depth,
                   vector_zero=opts.vector_zero, mmul_m_reuse=opts.mmul_m_reuse,
                   input_layout=opts.input_layout, output_layout=opts.output_layout,
+                  arithmetic=opts.arithmetic,
                   fingerprint=FINGERPRINT)
     direct = plan_upstream(opts.M, opts.K, opts.N, mode=opts.mode,
                            weight_k=wk, weight_n=wn, k_start=opts.k_start,
@@ -307,7 +318,7 @@ def main():
     run_design_cli(design, opts, compile_kwargs=kwargs,
                    device=lambda o: device_from_args(o, n_cols=None))
     if opts.xclbin_path and not opts.emit_mlir:
-        manifest = dict(kind='w4a16_upstream_bf16', mode=opts.mode,
+        manifest = dict(kind=f'w4a16_upstream_{opts.arithmetic}', mode=opts.mode,
             m=opts.M, k=opts.K, n=opts.N, weight_k=wk, weight_n=wn,
             k_start=opts.k_start, n_start=opts.n_start, cols=8, worker_count=32,
             compute_rows=4, m_reuse=direct.base.m_reuse, weight_tile_bytes=4352,
@@ -316,8 +327,9 @@ def main():
             vector_zero=opts.vector_zero, mmul_m_reuse=opts.mmul_m_reuse,
             input_layout=opts.input_layout,
             output_layout=opts.output_layout,
-            weight_layout=UPSTREAM_LAYOUT_VERSION, arithmetic='bf16', compute_format='bf16',
-            worker_stack_size=upstream_worker_stack_size(opts.mmul_m_reuse),
+            weight_layout=UPSTREAM_LAYOUT_VERSION, arithmetic=opts.arithmetic,
+            compute_format=opts.arithmetic,
+            worker_stack_size=upstream_worker_stack_size(opts.mmul_m_reuse, opts.arithmetic),
             source_sha256=HASHES['w4a16_prefill_upstream.cc'],
             graph_sha256=HASHES['w4a16_upstream.py'], weight_layout_sha256=HASHES['upstream_weights.py'],
             schedule_sha256=HASHES['upstream_schedule.py'], dependency_sha256=HASHES,

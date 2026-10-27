@@ -48,6 +48,7 @@ class UpstreamScheduleTests(unittest.TestCase):
     def test_paired_m_stack_reservation_and_reuse_four_raw_memory_budget(self):
         self.assertEqual(upstream_worker_stack_size(1), 2048)
         self.assertEqual(upstream_worker_stack_size(2), 4096)
+        self.assertEqual(upstream_worker_stack_size(1, 'bfp16'), 4096)
         reuse = plan_upstream(512, 2560, 4096, max_reuse=4).base.m_reuse
         # Independently count the down worker's A, W, two FP32 C buffers,
         # BF16 scratch and Y pools with one core-consumer A object.
@@ -55,10 +56,25 @@ class UpstreamScheduleTests(unittest.TestCase):
                        + 4096 * 2 + 2 * reuse * 512 * 2)
         self.assertEqual(raw_buffers + upstream_worker_stack_size(1), 59904)
         self.assertEqual(raw_buffers + upstream_worker_stack_size(2), 61952)
+        self.assertEqual(raw_buffers + upstream_worker_stack_size(1, 'bfp16'), 61952)
         self.assertLess(raw_buffers + upstream_worker_stack_size(2), 65536)
         for bad in (0, 3, True, 2.0, '2', None):
             with self.subTest(value=bad), self.assertRaises(ValueError):
                 upstream_worker_stack_size(bad)
+
+    def test_arithmetic_selection_rejects_unsupported_combinations(self):
+        for vector_zero in (False, True):
+            validate_kernel_tuning(vector_zero, 1, 'bfp16')
+            with self.assertRaisesRegex(ValueError, 'bfp16 requires mmul_m_reuse=1'):
+                validate_kernel_tuning(vector_zero, 2, 'bfp16')
+        with self.assertRaisesRegex(ValueError, 'bfp16 requires mmul_m_reuse=1'):
+            upstream_worker_stack_size(2, 'bfp16')
+        for arithmetic in ('BFP16', 'fp16', '', None, False, 1):
+            with self.subTest(arithmetic=arithmetic):
+                with self.assertRaisesRegex(ValueError, 'arithmetic must be'):
+                    validate_kernel_tuning(False, 1, arithmetic)
+                with self.assertRaisesRegex(ValueError, 'arithmetic must be'):
+                    upstream_worker_stack_size(1, arithmetic)
 
     def test_reuse_four_projection_halves_weight_work_without_changing_a_bytes(self):
         plans = [plan_upstream(512, 2560, 4096, weight_k=14336, max_reuse=r)

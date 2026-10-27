@@ -1,5 +1,31 @@
 # HeteroMega agent continuation guide
 
+## Latest direction — 2026-10-27: direct-buffer BFP16 MMUL
+
+The user explicitly requested **"use the glasscrab bfp mmul"** after the
+native-BF16 assembly breakdown. This supersedes the October 25 native-only
+selection. Keep the original glassescrab packed weight buffers directly,
+eight columns/32 workers, prefill scope and selected reuse/DMA optimizations.
+Use the corrected TileFuse BFP16-backed 8×8×8 MMUL strategy with BF16 I/O and
+FP32 K-group partials. Native BF16 remains a strict control. BFP16 numerical
+differences use explicit report policy, preserving original error/tolerance
+verdicts; structural failures remain failures.
+
+Implementation is on `codex/upstream-bfp16-mmul`. **Measured on HX370/default:**
+paired whole NPU-branch medians improve 22.322→14.470 ms (ABBA, 35.18%) and
+22.405→14.650 ms (BAAB, 34.61%). Each arithmetic has 100 timed samples/order;
+1,024 dispatches complete across smoke/model/offset checks and both timings.
+All original tolerances pass; worst BFP16/CPU relative L2 is 0.0167717.
+Read `docs/runs/2026-10-27-upstream-bfp16/README.md` and the assembly audit.
+Isolated overlay: `/notebooks/HeteroMega-upstream-bfp16-20261027`.
+This does not establish combined GPU+NPU/full-model acceleration or accuracy.
+The kernel-only PR remains managed in `../HeteroMega-kernels`; do not
+push the research harness/history into it.
+
+Published kernel package: `fd67fbf40e9e2e1d06b58d365e4657e61aed050f` in
+[PR #3](https://github.com/glassescrab/HeteroMega/pull/3), open and unmerged.
+The package has 22 files under `npu/ffn`; all 21 payload checksums pass.
+
 ## Latest optimization — 2026-10-25: reuse and DMA activation layouts
 
 The user requested **"do all other optimizations first"** before combined

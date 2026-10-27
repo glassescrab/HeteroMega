@@ -1,11 +1,12 @@
-"""Bounded device checks for native BF16 with unchanged upstream W4A16 bytes.
+"""Bounded device checks for BF16/BFP16 with unchanged upstream W4A16 bytes.
 
 Run with ``python -m experiments.ffn_partition.check_upstream --help``.
 Synthetic fixtures are produced directly by an independent transcription of
 glassescrab's original N64/K128 packer. No compact weight conversion is used.
 The CPU oracle retains BF16 input/dequantization/output boundaries and FP32
 K-group partials; it is not a bitwise AIE simulator. Original strict error
-bounds apply. This is a correctness check, not a performance benchmark.
+bounds are retained. BFP16 defaults to report-only numerical acceptance;
+structural failures always fail. This is not a performance benchmark.
 """
 
 import argparse
@@ -147,6 +148,7 @@ def _checks(entry, run, reference, m, k, seed, save, report, launches):
         outputs[label] = actual.copy()
         save()
     checks = {
+        'finite_outputs': all(bool(np.isfinite(value).all()) for value in outputs.values()),
         'original_numerical_tolerances': all(
             item['errors']['correctness'] == 'passed' for item in entry['runs']),
         'repeat_exact': bool(np.array_equal(bf16_bits(outputs['signed_a']),
@@ -157,8 +159,20 @@ def _checks(entry, run, reference, m, k, seed, save, report, launches):
                                     for label in ('signed_a', 'signed_b')),
     }
     entry['checks'] = checks
-    entry['status'] = 'passed' if all(checks.values()) else 'failed'
+    _set_check_status(entry, report)
     save()
+
+
+def _set_check_status(entry, report):
+    """Keep original numerical verdict separate from experiment acceptance."""
+    checks = entry['checks']
+    numeric = checks['original_numerical_tolerances']
+    structural = all(value for key, value in checks.items()
+                     if key != 'original_numerical_tolerances')
+    entry['numerical_status'] = 'passed' if numeric else 'failed'
+    entry['structural_status'] = 'passed' if structural else 'failed'
+    accepted = structural and (numeric or report.get('accuracy_policy', 'strict') == 'report')
+    entry['status'] = 'passed' if accepted else 'failed'
 
 
 def _case_list(args):
@@ -182,11 +196,12 @@ def kernel_options(args):
     """Shared options for correctness and separately timed ablations."""
     defaults = dict(swiglu_reuse=2, down_reuse=2, swiglu_activation_fifo_depth=2,
         down_activation_fifo_depth=2, vector_zero=False, mmul_m_reuse=1, output_layout='compact',
-        swiglu_input_layout='compact')
+        swiglu_input_layout='compact', arithmetic='bf16')
     return {name: getattr(args, name, value) for name, value in defaults.items()}
 
 
 def add_kernel_options(parser):
+    parser.add_argument('--arithmetic', choices=('bf16', 'bfp16'), default='bf16')
     parser.add_argument('--swiglu-reuse', type=int, choices=(1, 2), default=2)
     parser.add_argument('--down-reuse', type=int, choices=(1, 2, 4), default=2)
     parser.add_argument('--swiglu-activation-fifo-depth', type=int, choices=(1, 2), default=2)
@@ -200,10 +215,13 @@ def add_kernel_options(parser):
 
 def run_check(args):
     options = kernel_options(args)
+    policy = getattr(args, 'accuracy_policy', None) or ('report' if options['arithmetic'] == 'bfp16' else 'strict')
+    if options['arithmetic'] == 'bf16' and policy != 'strict':
+        raise ValueError('native BF16 correctness control requires strict policy')
     report = dict(status='preparing', evidence_kind='NPU hardware correctness',
         timestamp_utc=datetime.now(timezone.utc).isoformat(),
-        scope='native BF16, unchanged original-format weights; no performance claim',
-        arithmetic='bf16', weight_layout=UPSTREAM_LAYOUT_VERSION, weight_repacking=False,
+        scope='BF16 I/O, unchanged original-format weights; no performance or model-accuracy claim',
+        arithmetic=options['arithmetic'], accuracy_policy=policy, weight_layout=UPSTREAM_LAYOUT_VERSION, weight_repacking=False,
         tolerances=dict(rtol=0.03, atol=0.05, relative_l2_limit=0.02),
         npu_wait_timeout_ms=10000, completed_npu_dispatches=0,
         config={key: str(value) if isinstance(value, Path) else value
@@ -263,6 +281,7 @@ def run_check(args):
                     activation_fifo_depth=options['swiglu_activation_fifo_depth' if case['mode'] == 'swiglu'
                                                    else 'down_activation_fifo_depth'],
                     vector_zero=options['vector_zero'], mmul_m_reuse=options['mmul_m_reuse'],
+                    arithmetic=options['arithmetic'],
                     input_layout=options['swiglu_input_layout'] if case['mode'] == 'swiglu' else 'compact',
                     output_layout=options['output_layout'] if case['mode'] == 'swiglu' else 'compact')}
             original_hashes = {label: _hash(f.weight.data) for label, f in fixtures.items()}
@@ -337,7 +356,7 @@ def run_check(args):
                 del runner
             entry['checks']['original_weight_bytes_unchanged'] = all(
                 _hash(f.weight.data) == original_hashes[label] for label, f in fixtures.items())
-            entry['status'] = 'passed' if all(entry['checks'].values()) else 'failed'
+            _set_check_status(entry, report)
             save()
             gc.collect()
         report['status'] = ('built_not_executed' if args.build_only else
@@ -364,6 +383,7 @@ def main():
     parser.add_argument('--segment-pipeline-depth', type=int, choices=(1, 2), default=2,
                         help='1: serial control; 2: queue two consecutive segments')
     add_kernel_options(parser)
+    parser.add_argument('--accuracy-policy', choices=('strict', 'report'), default=None)
     builds = parser.add_mutually_exclusive_group()
     builds.add_argument('--build-only', action='store_true')
     builds.add_argument('--no-build', action='store_true')
