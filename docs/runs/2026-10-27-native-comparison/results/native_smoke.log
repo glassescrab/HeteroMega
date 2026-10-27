@@ -1,0 +1,11 @@
+nohup: ignoring input
+[1/2] c++ -MMD -MF native_heteromosaic_bindings.o.d -DTORCH_EXTENSION_NAME=heteromega_native_ffn_f549898be9574bd5 -DTORCH_API_INCLUDE_EXTENSION_H -I/notebooks/HeteroMosaic-baseline-20261027/include -I/notebooks/HeteroMosaic-baseline-20261027/libraries/xdna-driver-05-19-25/src/include/uapi/drm_local -I/opt/rocm-7.2.0/include -isystem /notebooks/heteromega-ffn-venv/lib/python3.12/site-packages/torch/include -isystem /notebooks/heteromega-ffn-venv/lib/python3.12/site-packages/torch/include/torch/csrc/api/include -isystem /usr/include/python3.12 -fPIC -std=c++17 -O3 -std=c++17 -D__HIP_PLATFORM_AMD__=1 -c /notebooks/HeteroMega-native-comparison-20261027/experiments/ffn_partition/native_heteromosaic_bindings.cpp -o native_heteromosaic_bindings.o -D__HIP_PLATFORM_AMD__=1 -DUSE_ROCM=1 -DHIPBLAS_V2 -fPIC
+[2/2] c++ native_heteromosaic_bindings.o -shared /notebooks/HeteroMosaic-baseline-20261027/build/py/unified_llm_w4a16/unified_llm_w4a16_hetero_libtorch.so -Wl,-rpath,/notebooks/HeteroMosaic-baseline-20261027/build/py/unified_llm_w4a16 -L/opt/rocm-7.2.0/lib -Wl,-rpath,/opt/rocm-7.2.0/lib -lamdhip64 -L/notebooks/heteromega-ffn-venv/lib/python3.12/site-packages/torch/lib -lc10 -ltorch_cpu -ltorch -ltorch_python -o heteromega_native_ffn_f549898be9574bd5.so
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/notebooks/HeteroMega-native-comparison-20261027/experiments/ffn_partition/native_heteromosaic.py", line 358, in <module>
+    main()
+  File "/notebooks/HeteroMega-native-comparison-20261027/experiments/ffn_partition/native_heteromosaic.py", line 307, in main
+    raise RuntimeError("native/GPU numerical validation failed; no performance claim is valid")
+RuntimeError: native/GPU numerical validation failed; no performance claim is valid

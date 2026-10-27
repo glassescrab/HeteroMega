@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/notebooks/HeteroMega-native-comparison-20261027/experiments/ffn_partition/native_heteromosaic.py", line 358, in <module>
+    main()
+  File "/notebooks/HeteroMega-native-comparison-20261027/experiments/ffn_partition/native_heteromosaic.py", line 307, in main
+    raise RuntimeError("native/GPU numerical validation failed; no performance claim is valid")
+RuntimeError: native/GPU numerical validation failed; no performance claim is valid

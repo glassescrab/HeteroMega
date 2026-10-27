@@ -1,0 +1,9 @@
+{
+  "implementation_commit": "1e30f8a140631bf9326394f63cb7733eaf9c0a50",
+  "sources": {
+    "experiments/ffn_partition/native_heteromosaic.py": "1123c580a7268e60413ec7dbfd651cc5a76914f6379921a1a125cf8ca032062f",
+    "experiments/ffn_partition/test_native_heteromosaic.py": "2ce10e2c161b183256da1dbe94d0a2c5d76ecda23ee8cd471c977dee1976aa55",
+    "experiments/ffn_partition/compare_upstream_native.py": "db3402ff43405122eb7190bc3800c0899a46cc898f62e20849a68fd1d016a330",
+    "experiments/ffn_partition/test_compare_upstream_native.py": "8702acf9ccba9b4aef6db174430c1b7afe62f277f502f5de79e2303e5c2f4b26"
+  }
+}

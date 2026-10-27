@@ -1,0 +1,13 @@
+nohup: ignoring input
+{"case": "constant_signed", "status": "failed", "worst_relative_l2": 0.5434409322921446}
+{"case": "constant_exact", "status": "passed", "worst_relative_l2": 0}
+{"case": "onehot_qzeros", "status": "passed", "worst_relative_l2": 0}
+{"case": "onehot_scales", "status": "passed", "worst_relative_l2": 0}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/notebooks/HeteroMega-native-comparison-20261027/experiments/ffn_partition/diagnose_native_projection.py", line 224, in <module>
+    main()
+  File "/notebooks/HeteroMega-native-comparison-20261027/experiments/ffn_partition/diagnose_native_projection.py", line 211, in main
+    raise RuntimeError("native projection diagnostics contain strict numerical or structural failures; see each case")
+RuntimeError: native projection diagnostics contain strict numerical or structural failures; see each case

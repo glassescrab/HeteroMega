@@ -2,6 +2,12 @@
 
 ## Current direct-buffer path — 2026-10-27
 
+The subsequent [faithful native FFN comparison](../../docs/runs/2026-10-27-native-comparison/README.md)
+measures our GPU+NPU path at 17.48–18.03 ms versus native HeteroMosaic at
+15.81–15.89 ms. Native numerical failures are recorded under explicitly
+authorized report policy; the native binary is unchanged. The NPU-branch gains
+below therefore do not establish an advantage over native heterogeneous FFN.
+
 The user's latest request selects glassescrab's BFP16 MMUL while preserving
 original packed weight buffers. `w4a16_upstream.py --arithmetic bfp16` selects
 8×8×8, four-accumulator MMUL in `w4a16_prefill_upstream.cc`, with the same

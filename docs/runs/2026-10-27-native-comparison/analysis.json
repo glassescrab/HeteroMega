@@ -1,0 +1,1511 @@
+{
+  "schema_version": 1,
+  "units": "microseconds unless field explicitly says ratio",
+  "source_manifest_sha256": "498e265f5f2914ed518d2339422cf901ed3d29eb67be58fc1a3880cec18c5d21",
+  "script_sha256": "8adbfe33086f393960f0ac3ecc5f605c24aef8b311952d86046dc03066fa41b2",
+  "scope": "Only fresh faithful_comparison jobs; timed samples only, excluding warmup and validation invocations.",
+  "semantics": {
+    "wall_us": "Complete ready-GPU-input to synchronized-GPU-output FFN host latency.",
+    "native_wrapper_overhead_us": "Per-sample outer wall_us minus binding_wall_us; includes Python/binding overhead and the binding's redundant readiness sync.",
+    "native_diagnostic": "Separate synchronized stage run: gate_up includes both native futures plus GPU completion, followed by GPU pointwise and full GPU down. Not ordinary timing or isolated NPU cycles.",
+    "npu_branch_host_wall_us": "Candidate host interval covering both launches, BO I/O and layouts. Excludes the preceding finite-input scan; outer wall includes that scan.",
+    "dispatch_wait_us": "Host XRT launch plus blocking completion wait, including device work, transfers, stalls and runtime. Not device cycles.",
+    "host_io_outside_wait_us": "Per-sample with_host_io_us minus its contained dispatch_wait_us: surrounding BO write/sync/read host work. Not measured DRAM bandwidth.",
+    "output_stage_and_boundary_wait_us": "CPU copy to pinned staging, H2D, GPU output sum and any unfinished GPU suffix. Cannot identify transfer cost or GPU compute alone.",
+    "nonadditivity": "NPU stages nest within branch_host_wall, while GPU work overlaps the NPU branch. Do not sum nested intervals or stage medians into device latency. Concurrent-minus-serial changes are descriptive, not causal attribution."
+  },
+  "jobs": [
+    {
+      "id": "b0_native_ordinary",
+      "variant": "native",
+      "mode": "ordinary",
+      "block": 0,
+      "npu_channels": null,
+      "report_path": "jobs/b0_native_ordinary.json",
+      "report_sha256": "da2d085e4103d4aaf35e51d8fd6ce7513e4277a360b48960397c258e45aa15e7",
+      "status": "completed_with_accuracy_deviations",
+      "numerical_passed": false,
+      "acceptance": "report",
+      "modes": {
+        "baseline": {
+          "wall_us": {
+            "count": 50,
+            "median": 22267.180500000002,
+            "p10": 21920.344,
+            "p90": 22621.6709,
+            "mean": 22295.61972,
+            "minimum": 21763.11,
+            "maximum": 23044.785
+          },
+          "binding_wall_us": {
+            "count": 50,
+            "median": 22249.606,
+            "p10": 21894.884,
+            "p90": 22601.4659,
+            "mean": 22275.9186,
+            "minimum": 21745.98,
+            "maximum": 23016.416
+          },
+          "native_wrapper_overhead_us": {
+            "count": 50,
+            "median": 18.659999999999854,
+            "p10": 17.01499999999869,
+            "p90": 24.535999999998605,
+            "mean": 19.701119999999936,
+            "minimum": 16.049999999999272,
+            "maximum": 28.368999999998778
+          }
+        },
+        "native": {
+          "wall_us": {
+            "count": 50,
+            "median": 15811.07,
+            "p10": 15371.250100000001,
+            "p90": 16308.054900000001,
+            "mean": 15816.1269,
+            "minimum": 15070.289,
+            "maximum": 16639.549
+          },
+          "binding_wall_us": {
+            "count": 50,
+            "median": 15788.295,
+            "p10": 15348.9131,
+            "p90": 16283.1729,
+            "mean": 15791.52468,
+            "minimum": 15046.489,
+            "maximum": 16612.809
+          },
+          "native_wrapper_overhead_us": {
+            "count": 50,
+            "median": 24.448999999999614,
+            "p10": 20.38799999999974,
+            "p90": 28.74200000000146,
+            "mean": 24.602220000000017,
+            "minimum": 19.44000000000051,
+            "maximum": 36.54899999999907
+          }
+        }
+      }
+    },
+    {
+      "id": "b0_upstream_p2560_ordinary",
+      "variant": "upstream",
+      "mode": "ordinary",
+      "block": 0,
+      "npu_channels": 2560,
+      "report_path": "jobs/b0_upstream_p2560_ordinary.json",
+      "report_sha256": "9c0e1ade666d61e3639704cdc1550649d8ca6f01f39946eedb4e4a47fa7a4d09",
+      "status": "passed",
+      "numerical_passed": true,
+      "acceptance": "report",
+      "modes": {
+        "baseline": {
+          "wall_us": {
+            "count": 50,
+            "median": 22214.471,
+            "p10": 21949.804,
+            "p90": 22525.9179,
+            "mean": 22254.93906,
+            "minimum": 21745.87,
+            "maximum": 23144.513
+          }
+        },
+        "serial": {
+          "wall_us": {
+            "count": 50,
+            "median": 34025.388999999996,
+            "p10": 33466.7481,
+            "p90": 34445.3699,
+            "mean": 33921.88206,
+            "minimum": 31919.914,
+            "maximum": 34875.737
+          },
+          "input_gpu_to_host_us": {
+            "count": 50,
+            "median": 129.498,
+            "p10": 126.7591,
+            "p90": 137.60580000000004,
+            "mean": 134.93374,
+            "minimum": 124.567,
+            "maximum": 208.406
+          },
+          "output_stage_and_boundary_wait_us": {
+            "count": 50,
+            "median": 721.696,
+            "p10": 700.249,
+            "p90": 733.9429,
+            "mean": 719.5539,
+            "minimum": 688.117,
+            "maximum": 797.514
+          },
+          "npu_branch_host_wall_us": {
+            "count": 50,
+            "median": 14281.2195,
+            "p10": 13726.970299999999,
+            "p90": 14807.485900000001,
+            "mean": 14238.2688,
+            "minimum": 12777.034,
+            "maximum": 15158.487
+          },
+          "input_layout_us": {
+            "count": 50,
+            "median": 4.165,
+            "p10": 3.669,
+            "p90": 4.671,
+            "mean": 4.2023399999999995,
+            "minimum": 3.49,
+            "maximum": 5.35
+          },
+          "down_input_layout_us": {
+            "count": 50,
+            "median": 1.16,
+            "p10": 0.7961,
+            "p90": 1.38,
+            "mean": 1.13354,
+            "minimum": 0.57,
+            "maximum": 1.41
+          },
+          "output_layout_us": {
+            "count": 50,
+            "median": 1259.7105,
+            "p10": 996.0350000000001,
+            "p90": 1684.1699,
+            "mean": 1306.63346,
+            "minimum": 797.804,
+            "maximum": 1792.605
+          },
+          "swiglu_dispatch_wait_us": {
+            "count": 50,
+            "median": 6799.8935,
+            "p10": 6401.206,
+            "p90": 7046.509,
+            "mean": 6777.58638,
+            "minimum": 6117.502,
+            "maximum": 7285.38
+          },
+          "swiglu_with_host_io_us": {
+            "count": 50,
+            "median": 7456.681,
+            "p10": 6941.642,
+            "p90": 7694.6151,
+            "mean": 7414.676,
+            "minimum": 6646.252,
+            "maximum": 7943.517
+          },
+          "swiglu_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 654.4575,
+            "p10": 537.5389000000005,
+            "p90": 679.6039000000006,
+            "mean": 637.08962,
+            "minimum": 512.1409999999996,
+            "maximum": 711.2460000000001
+          },
+          "down_dispatch_wait_us": {
+            "count": 50,
+            "median": 4829.537,
+            "p10": 4582.243100000001,
+            "p90": 5226.5809,
+            "mean": 4889.33506,
+            "minimum": 4359.245,
+            "maximum": 5693.27
+          },
+          "down_with_host_io_us": {
+            "count": 50,
+            "median": 5528.018,
+            "p10": 5079.1012,
+            "p90": 5867.849999999999,
+            "mean": 5501.76782,
+            "minimum": 4784.678,
+            "maximum": 6415.926
+          },
+          "down_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 664.2674999999995,
+            "p10": 502.7371999999994,
+            "p90": 720.3468999999999,
+            "mean": 612.43276,
+            "minimum": 404.8720000000003,
+            "maximum": 775.2150000000001
+          }
+        },
+        "concurrent": {
+          "wall_us": {
+            "count": 50,
+            "median": 18033.932,
+            "p10": 17552.484,
+            "p90": 18397.9649,
+            "mean": 18062.74674,
+            "minimum": 17379.185,
+            "maximum": 19751.069
+          },
+          "input_gpu_to_host_us": {
+            "count": 50,
+            "median": 257.9755,
+            "p10": 255.335,
+            "p90": 266.588,
+            "mean": 260.1884,
+            "minimum": 254.726,
+            "maximum": 291.424
+          },
+          "output_stage_and_boundary_wait_us": {
+            "count": 50,
+            "median": 2522.5865,
+            "p10": 1928.0593,
+            "p90": 3784.1667,
+            "mean": 2700.40706,
+            "minimum": 571.919,
+            "maximum": 5422.145
+          },
+          "npu_branch_host_wall_us": {
+            "count": 50,
+            "median": 14695.6915,
+            "p10": 13754.574,
+            "p90": 15292.5799,
+            "mean": 14547.32988,
+            "minimum": 12898.032,
+            "maximum": 15718.436
+          },
+          "input_layout_us": {
+            "count": 50,
+            "median": 4.27,
+            "p10": 3.826,
+            "p90": 4.819100000000001,
+            "mean": 4.33092,
+            "minimum": 3.47,
+            "maximum": 6.17
+          },
+          "down_input_layout_us": {
+            "count": 50,
+            "median": 1.2,
+            "p10": 0.868,
+            "p90": 1.5150000000000001,
+            "mean": 1.20536,
+            "minimum": 0.58,
+            "maximum": 1.79
+          },
+          "output_layout_us": {
+            "count": 50,
+            "median": 1333.299,
+            "p10": 991.6451000000001,
+            "p90": 1707.416,
+            "mean": 1333.91844,
+            "minimum": 796.135,
+            "maximum": 2008.341
+          },
+          "swiglu_dispatch_wait_us": {
+            "count": 50,
+            "median": 6893.442,
+            "p10": 6537.3333,
+            "p90": 7183.8169,
+            "mean": 6864.47514,
+            "minimum": 6170.881,
+            "maximum": 7388.347
+          },
+          "swiglu_with_host_io_us": {
+            "count": 50,
+            "median": 7576.4835,
+            "p10": 7096.5593,
+            "p90": 7908.0569,
+            "mean": 7541.7449,
+            "minimum": 6746.35,
+            "maximum": 8316.149
+          },
+          "swiglu_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 684.4369999999999,
+            "p10": 564.9999999999993,
+            "p90": 719.2180000000001,
+            "mean": 677.26976,
+            "minimum": 515.8099999999995,
+            "maximum": 927.8019999999997
+          },
+          "down_dispatch_wait_us": {
+            "count": 50,
+            "median": 4904.355,
+            "p10": 4521.1561,
+            "p90": 5439.6278,
+            "mean": 4964.8117,
+            "minimum": 4413.645,
+            "maximum": 5659.511
+          },
+          "down_with_host_io_us": {
+            "count": 50,
+            "median": 5645.8060000000005,
+            "p10": 5177.5821,
+            "p90": 6234.088,
+            "mean": 5654.8258399999995,
+            "minimum": 4994.193,
+            "maximum": 6380.467
+          },
+          "down_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 733.1059999999998,
+            "p10": 549.7260000000008,
+            "p90": 773.3460000000005,
+            "mean": 690.01414,
+            "minimum": 522.1499999999996,
+            "maximum": 853.7730000000001
+          }
+        }
+      }
+    },
+    {
+      "id": "b0_upstream_p2816_ordinary",
+      "variant": "upstream",
+      "mode": "ordinary",
+      "block": 0,
+      "npu_channels": 2816,
+      "report_path": "jobs/b0_upstream_p2816_ordinary.json",
+      "report_sha256": "bd8c5f58712aea88fc7fb2466d213d48e9079b6a3e0270587735bbdff509b16c",
+      "status": "passed",
+      "numerical_passed": true,
+      "acceptance": "report",
+      "modes": {
+        "baseline": {
+          "wall_us": {
+            "count": 50,
+            "median": 22228.821000000004,
+            "p10": 21893.583000000002,
+            "p90": 22599.392,
+            "mean": 22218.04144,
+            "minimum": 20771.809,
+            "maximum": 22806.06
+          }
+        },
+        "serial": {
+          "wall_us": {
+            "count": 50,
+            "median": 34410.806,
+            "p10": 33871.281,
+            "p90": 34872.048,
+            "mean": 34338.78402,
+            "minimum": 33031.583,
+            "maximum": 35807.679
+          },
+          "input_gpu_to_host_us": {
+            "count": 50,
+            "median": 134.262,
+            "p10": 128.428,
+            "p90": 200.00190000000003,
+            "mean": 155.10836,
+            "minimum": 123.658,
+            "maximum": 377.812
+          },
+          "output_stage_and_boundary_wait_us": {
+            "count": 50,
+            "median": 717.171,
+            "p10": 706.604,
+            "p90": 732.17,
+            "mean": 724.64342,
+            "minimum": 687.677,
+            "maximum": 896.982
+          },
+          "npu_branch_host_wall_us": {
+            "count": 50,
+            "median": 14926.8325,
+            "p10": 14598.2911,
+            "p90": 15546.3298,
+            "mean": 14973.91562,
+            "minimum": 13641.626,
+            "maximum": 16471.173
+          },
+          "input_layout_us": {
+            "count": 50,
+            "median": 3.77,
+            "p10": 3.3369999999999997,
+            "p90": 4.256,
+            "mean": 3.79474,
+            "minimum": 3.13,
+            "maximum": 5.21
+          },
+          "down_input_layout_us": {
+            "count": 50,
+            "median": 1.11,
+            "p10": 0.832,
+            "p90": 1.3010000000000002,
+            "mean": 1.08532,
+            "minimum": 0.54,
+            "maximum": 1.54
+          },
+          "output_layout_us": {
+            "count": 50,
+            "median": 1304.9195,
+            "p10": 991.655,
+            "p90": 1684.4139,
+            "mean": 1320.3006,
+            "minimum": 807.604,
+            "maximum": 1849.334
+          },
+          "swiglu_dispatch_wait_us": {
+            "count": 50,
+            "median": 7176.2315,
+            "p10": 6971.0011,
+            "p90": 7390.349,
+            "mean": 7166.80422,
+            "minimum": 6759.879,
+            "maximum": 7750.561
+          },
+          "swiglu_with_host_io_us": {
+            "count": 50,
+            "median": 7850.8085,
+            "p10": 7558.551100000001,
+            "p90": 8035.2438999999995,
+            "mean": 7839.62954,
+            "minimum": 7311.08,
+            "maximum": 8593.896
+          },
+          "swiglu_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 679.5870000000004,
+            "p10": 600.7090999999999,
+            "p90": 701.9079000000002,
+            "mean": 672.8253200000001,
+            "minimum": 535.6000000000004,
+            "maximum": 843.335000000001
+          },
+          "down_dispatch_wait_us": {
+            "count": 50,
+            "median": 5183.549999999999,
+            "p10": 4690.003,
+            "p90": 5473.217000000001,
+            "mean": 5148.66486,
+            "minimum": 4592.441,
+            "maximum": 5764.409
+          },
+          "down_with_host_io_us": {
+            "count": 50,
+            "median": 5872.7315,
+            "p10": 5349.9192,
+            "p90": 6154.051,
+            "mean": 5799.291,
+            "minimum": 5120.981,
+            "maximum": 6452.756
+          },
+          "down_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 671.9865000000004,
+            "p10": 528.267,
+            "p90": 715.4028999999998,
+            "mean": 650.6261400000001,
+            "minimum": 414.3820000000005,
+            "maximum": 874.8729999999996
+          }
+        },
+        "concurrent": {
+          "wall_us": {
+            "count": 50,
+            "median": 17680.674,
+            "p10": 17301.2952,
+            "p90": 18303.8729,
+            "mean": 17761.7217,
+            "minimum": 17023.391,
+            "maximum": 19649.021
+          },
+          "input_gpu_to_host_us": {
+            "count": 50,
+            "median": 259.77,
+            "p10": 257.723,
+            "p90": 264.45599999999996,
+            "mean": 260.47276,
+            "minimum": 256.525,
+            "maximum": 271.225
+          },
+          "output_stage_and_boundary_wait_us": {
+            "count": 50,
+            "median": 1818.91,
+            "p10": 836.9824000000001,
+            "p90": 3131.6720000000005,
+            "mean": 1944.51588,
+            "minimum": 547.549,
+            "maximum": 5278.998
+          },
+          "npu_branch_host_wall_us": {
+            "count": 50,
+            "median": 15083.934000000001,
+            "p10": 14009.7759,
+            "p90": 15774.0329,
+            "mean": 15004.87776,
+            "minimum": 13546.579,
+            "maximum": 15983.821
+          },
+          "input_layout_us": {
+            "count": 50,
+            "median": 3.78,
+            "p10": 3.439,
+            "p90": 4.096,
+            "mean": 3.76856,
+            "minimum": 3.33,
+            "maximum": 4.58
+          },
+          "down_input_layout_us": {
+            "count": 50,
+            "median": 1.14,
+            "p10": 0.77,
+            "p90": 1.302,
+            "mean": 1.08218,
+            "minimum": 0.47,
+            "maximum": 1.61
+          },
+          "output_layout_us": {
+            "count": 50,
+            "median": 1324.88,
+            "p10": 890.5110000000001,
+            "p90": 1640.976,
+            "mean": 1318.59992,
+            "minimum": 756.156,
+            "maximum": 1847.704
+          },
+          "swiglu_dispatch_wait_us": {
+            "count": 50,
+            "median": 7233.0905,
+            "p10": 6857.6039,
+            "p90": 7468.0650000000005,
+            "mean": 7181.56364,
+            "minimum": 6578.133,
+            "maximum": 7650.003
+          },
+          "swiglu_with_host_io_us": {
+            "count": 50,
+            "median": 7936.677,
+            "p10": 7436.0739,
+            "p90": 8151.3309,
+            "mean": 7865.22592,
+            "minimum": 7209.391,
+            "maximum": 8293.37
+          },
+          "swiglu_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 704.0319999999997,
+            "p10": 579.4861000000001,
+            "p90": 732.9611000000007,
+            "mean": 683.66228,
+            "minimum": 492.6100000000006,
+            "maximum": 750.4459999999999
+          },
+          "down_dispatch_wait_us": {
+            "count": 50,
+            "median": 5094.9619999999995,
+            "p10": 4792.8481,
+            "p90": 5542.7169,
+            "mean": 5148.94736,
+            "minimum": 4542.422,
+            "maximum": 5755.399
+          },
+          "down_with_host_io_us": {
+            "count": 50,
+            "median": 5790.3135,
+            "p10": 5351.387000000001,
+            "p90": 6274.7669000000005,
+            "mean": 5806.824,
+            "minimum": 5154.84,
+            "maximum": 6422.776
+          },
+          "down_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 691.1914999999999,
+            "p10": 551.2101999999994,
+            "p90": 766.9618999999997,
+            "mean": 657.87664,
+            "minimum": 437.6120000000001,
+            "maximum": 814.6949999999997
+          }
+        }
+      }
+    },
+    {
+      "id": "b1_upstream_p2816_ordinary",
+      "variant": "upstream",
+      "mode": "ordinary",
+      "block": 1,
+      "npu_channels": 2816,
+      "report_path": "jobs/b1_upstream_p2816_ordinary.json",
+      "report_sha256": "ffbd69bfd83d0ac2368e11ae618de1145e019cf48943f1acde0016a33d946ea1",
+      "status": "passed",
+      "numerical_passed": true,
+      "acceptance": "report",
+      "modes": {
+        "baseline": {
+          "wall_us": {
+            "count": 50,
+            "median": 22294.765,
+            "p10": 22056.3151,
+            "p90": 22572.2618,
+            "mean": 22265.8332,
+            "minimum": 19728.679,
+            "maximum": 22729.071
+          }
+        },
+        "serial": {
+          "wall_us": {
+            "count": 50,
+            "median": 34417.245500000005,
+            "p10": 33697.0981,
+            "p90": 35511.7039,
+            "mean": 34499.89474,
+            "minimum": 33382.646,
+            "maximum": 36112.413
+          },
+          "input_gpu_to_host_us": {
+            "count": 50,
+            "median": 133.34300000000002,
+            "p10": 127.952,
+            "p90": 194.7219,
+            "mean": 147.63382,
+            "minimum": 126.378,
+            "maximum": 234.065
+          },
+          "output_stage_and_boundary_wait_us": {
+            "count": 50,
+            "median": 718.486,
+            "p10": 707.6151,
+            "p90": 740.9770000000001,
+            "mean": 725.78744,
+            "minimum": 666.377,
+            "maximum": 830.144
+          },
+          "npu_branch_host_wall_us": {
+            "count": 50,
+            "median": 15040.349999999999,
+            "p10": 14432.021200000001,
+            "p90": 16051.7589,
+            "mean": 15147.79016,
+            "minimum": 13849.072,
+            "maximum": 16611.209
+          },
+          "input_layout_us": {
+            "count": 50,
+            "median": 3.815,
+            "p10": 3.4080000000000004,
+            "p90": 4.4030000000000005,
+            "mean": 3.85692,
+            "minimum": 3.23,
+            "maximum": 4.86
+          },
+          "down_input_layout_us": {
+            "count": 50,
+            "median": 1.18,
+            "p10": 0.956,
+            "p90": 1.451,
+            "mean": 1.1618,
+            "minimum": 0.52,
+            "maximum": 1.5
+          },
+          "output_layout_us": {
+            "count": 50,
+            "median": 1411.1775,
+            "p10": 1067.888,
+            "p90": 1577.7201,
+            "mean": 1357.41516,
+            "minimum": 746.215,
+            "maximum": 1755.246
+          },
+          "swiglu_dispatch_wait_us": {
+            "count": 50,
+            "median": 7228.1205,
+            "p10": 7111.1011,
+            "p90": 7551.4106,
+            "mean": 7300.11204,
+            "minimum": 6479.254,
+            "maximum": 8590.164
+          },
+          "swiglu_with_host_io_us": {
+            "count": 50,
+            "median": 7896.633,
+            "p10": 7708.2682,
+            "p90": 8252.4966,
+            "mean": 7959.23012,
+            "minimum": 6960.375,
+            "maximum": 9310.501
+          },
+          "swiglu_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 665.1314999999995,
+            "p10": 645.1659000000001,
+            "p90": 690.2288999999998,
+            "mean": 659.11808,
+            "minimum": 481.1210000000001,
+            "maximum": 745.5360000000001
+          },
+          "down_dispatch_wait_us": {
+            "count": 50,
+            "median": 5070.182000000001,
+            "p10": 4704.953,
+            "p90": 5689.7313,
+            "mean": 5170.54662,
+            "minimum": 4545.092,
+            "maximum": 6467.546
+          },
+          "down_with_host_io_us": {
+            "count": 50,
+            "median": 5695.855,
+            "p10": 5341.2481,
+            "p90": 6358.8057,
+            "mean": 5816.01576,
+            "minimum": 5050.482,
+            "maximum": 7158.482
+          },
+          "down_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 685.0219999999999,
+            "p10": 506.33389999999946,
+            "p90": 720.0821000000007,
+            "mean": 645.4691399999999,
+            "minimum": 428.47199999999975,
+            "maximum": 763.875
+          }
+        },
+        "concurrent": {
+          "wall_us": {
+            "count": 50,
+            "median": 17481.3475,
+            "p10": 17030.367100000003,
+            "p90": 17883.473100000003,
+            "mean": 17489.73668,
+            "minimum": 16839.665,
+            "maximum": 18606.841
+          },
+          "input_gpu_to_host_us": {
+            "count": 50,
+            "median": 258.63,
+            "p10": 256.815,
+            "p90": 265.40000000000003,
+            "mean": 260.11678,
+            "minimum": 255.835,
+            "maximum": 277.985
+          },
+          "output_stage_and_boundary_wait_us": {
+            "count": 50,
+            "median": 1066.3345,
+            "p10": 576.3888999999999,
+            "p90": 1948.1788000000004,
+            "mean": 1239.0296,
+            "minimum": 555.839,
+            "maximum": 3727.288
+          },
+          "npu_branch_host_wall_us": {
+            "count": 50,
+            "median": 15515.1905,
+            "p10": 14736.8391,
+            "p90": 16004.301000000001,
+            "mean": 15438.54456,
+            "minimum": 13522.309,
+            "maximum": 16522.522
+          },
+          "input_layout_us": {
+            "count": 50,
+            "median": 3.92,
+            "p10": 3.509,
+            "p90": 4.492,
+            "mean": 3.97178,
+            "minimum": 3.24,
+            "maximum": 5.31
+          },
+          "down_input_layout_us": {
+            "count": 50,
+            "median": 1.34,
+            "p10": 0.996,
+            "p90": 1.594,
+            "mean": 1.30058,
+            "minimum": 0.29,
+            "maximum": 1.91
+          },
+          "output_layout_us": {
+            "count": 50,
+            "median": 1396.038,
+            "p10": 880.608,
+            "p90": 1697.2739000000001,
+            "mean": 1367.8264,
+            "minimum": 733.046,
+            "maximum": 2370.225
+          },
+          "swiglu_dispatch_wait_us": {
+            "count": 50,
+            "median": 7316.989,
+            "p10": 7062.346100000001,
+            "p90": 7819.865900000001,
+            "mean": 7390.36622,
+            "minimum": 6580.623,
+            "maximum": 8270.8
+          },
+          "swiglu_with_host_io_us": {
+            "count": 50,
+            "median": 8025.701,
+            "p10": 7629.2282,
+            "p90": 8544.0789,
+            "mean": 8085.12982,
+            "minimum": 7169.371,
+            "maximum": 8978.376
+          },
+          "swiglu_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 701.7314999999994,
+            "p10": 687.913000000001,
+            "p90": 731.4579000000008,
+            "mean": 694.7636,
+            "minimum": 515.9309999999996,
+            "maximum": 750.2460000000001
+          },
+          "down_dispatch_wait_us": {
+            "count": 50,
+            "median": 5215.594,
+            "p10": 4885.412,
+            "p90": 5631.393,
+            "mean": 5237.69134,
+            "minimum": 4541.033,
+            "maximum": 5908.636
+          },
+          "down_with_host_io_us": {
+            "count": 50,
+            "median": 5973.1145,
+            "p10": 5554.0371,
+            "p90": 6370.9178999999995,
+            "mean": 5969.11862,
+            "minimum": 4995.064,
+            "maximum": 6691.891
+          },
+          "down_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 745.4650000000001,
+            "p10": 611.198,
+            "p90": 804.5279000000005,
+            "mean": 731.42728,
+            "minimum": 454.03099999999995,
+            "maximum": 969.3209999999999
+          }
+        }
+      }
+    },
+    {
+      "id": "b1_upstream_p2560_ordinary",
+      "variant": "upstream",
+      "mode": "ordinary",
+      "block": 1,
+      "npu_channels": 2560,
+      "report_path": "jobs/b1_upstream_p2560_ordinary.json",
+      "report_sha256": "94923374d75d21cf6d52f06199943a679d7ac45b1ca6bd7ef8d63d280eccb419",
+      "status": "passed",
+      "numerical_passed": true,
+      "acceptance": "report",
+      "modes": {
+        "baseline": {
+          "wall_us": {
+            "count": 50,
+            "median": 22446.567000000003,
+            "p10": 22115.831000000002,
+            "p90": 22771.624,
+            "mean": 22436.24872,
+            "minimum": 21884.968,
+            "maximum": 23326.57
+          }
+        },
+        "serial": {
+          "wall_us": {
+            "count": 50,
+            "median": 34808.2835,
+            "p10": 34172.097499999996,
+            "p90": 35250.7439,
+            "mean": 34765.9886,
+            "minimum": 33406.306,
+            "maximum": 36082.014
+          },
+          "input_gpu_to_host_us": {
+            "count": 50,
+            "median": 130.53199999999998,
+            "p10": 126.11,
+            "p90": 135.7669,
+            "mean": 131.38909999999998,
+            "minimum": 123.398,
+            "maximum": 163.347
+          },
+          "output_stage_and_boundary_wait_us": {
+            "count": 50,
+            "median": 720.241,
+            "p10": 709.0679,
+            "p90": 729.95,
+            "mean": 723.59742,
+            "minimum": 702.296,
+            "maximum": 864.253
+          },
+          "npu_branch_host_wall_us": {
+            "count": 50,
+            "median": 15058.214,
+            "p10": 14399.4247,
+            "p90": 15375.594799999999,
+            "mean": 15000.4666,
+            "minimum": 13919.922,
+            "maximum": 16099.39
+          },
+          "input_layout_us": {
+            "count": 50,
+            "median": 3.9450000000000003,
+            "p10": 3.552,
+            "p90": 4.351999999999999,
+            "mean": 3.93232,
+            "minimum": 3.09,
+            "maximum": 4.52
+          },
+          "down_input_layout_us": {
+            "count": 50,
+            "median": 1.185,
+            "p10": 0.989,
+            "p90": 1.3590000000000002,
+            "mean": 1.89174,
+            "minimum": 0.78,
+            "maximum": 35.649
+          },
+          "output_layout_us": {
+            "count": 50,
+            "median": 972.8215,
+            "p10": 717.3100000000001,
+            "p90": 1380.2979,
+            "mean": 998.1589,
+            "minimum": 713.816,
+            "maximum": 1705.017
+          },
+          "swiglu_dispatch_wait_us": {
+            "count": 50,
+            "median": 7606.923,
+            "p10": 6856.5289999999995,
+            "p90": 7769.6808,
+            "mean": 7465.44778,
+            "minimum": 6802.939,
+            "maximum": 7926.647
+          },
+          "swiglu_with_host_io_us": {
+            "count": 50,
+            "median": 8256.161,
+            "p10": 7524.35,
+            "p90": 8458.3799,
+            "mean": 8129.53672,
+            "minimum": 7451.826,
+            "maximum": 8584.625
+          },
+          "swiglu_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 662.5320000000002,
+            "p10": 642.5950000000007,
+            "p90": 689.9850999999995,
+            "mean": 664.0889400000001,
+            "minimum": 533.3399999999992,
+            "maximum": 716.755000000001
+          },
+          "down_dispatch_wait_us": {
+            "count": 50,
+            "median": 5186.575000000001,
+            "p10": 4628.4321,
+            "p90": 5562.867,
+            "mean": 5162.78912,
+            "minimum": 4435.045,
+            "maximum": 5755.139
+          },
+          "down_with_host_io_us": {
+            "count": 50,
+            "median": 5867.647000000001,
+            "p10": 5363.1591,
+            "p90": 6232.8949,
+            "mean": 5855.26794,
+            "minimum": 5200.639,
+            "maximum": 6426.507
+          },
+          "down_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 684.0169999999998,
+            "p10": 663.5439999999998,
+            "p90": 734.2969999999998,
+            "mean": 692.4788199999999,
+            "minimum": 661.1779999999999,
+            "maximum": 765.594
+          }
+        },
+        "concurrent": {
+          "wall_us": {
+            "count": 50,
+            "median": 17668.9095,
+            "p10": 17306.697,
+            "p90": 18344.121,
+            "mean": 17779.88186,
+            "minimum": 17175.949,
+            "maximum": 19146.7
+          },
+          "input_gpu_to_host_us": {
+            "count": 50,
+            "median": 259.55499999999995,
+            "p10": 257.074,
+            "p90": 267.2631,
+            "mean": 261.28051999999997,
+            "minimum": 255.445,
+            "maximum": 300.474
+          },
+          "output_stage_and_boundary_wait_us": {
+            "count": 50,
+            "median": 1444.587,
+            "p10": 581.761,
+            "p90": 2862.8738000000003,
+            "mean": 1722.23204,
+            "minimum": 557.529,
+            "maximum": 3985.913
+          },
+          "npu_branch_host_wall_us": {
+            "count": 50,
+            "median": 15355.1985,
+            "p10": 14290.3949,
+            "p90": 16036.2649,
+            "mean": 15243.68092,
+            "minimum": 13595.458,
+            "maximum": 16438.422
+          },
+          "input_layout_us": {
+            "count": 50,
+            "median": 3.87,
+            "p10": 3.499,
+            "p90": 4.301,
+            "mean": 3.92654,
+            "minimum": 3.17,
+            "maximum": 5.31
+          },
+          "down_input_layout_us": {
+            "count": 50,
+            "median": 1.31,
+            "p10": 1.0579,
+            "p90": 1.534,
+            "mean": 1.27916,
+            "minimum": 0.45,
+            "maximum": 1.64
+          },
+          "output_layout_us": {
+            "count": 50,
+            "median": 973.1965,
+            "p10": 750.264,
+            "p90": 1466.6619,
+            "mean": 1092.3182,
+            "minimum": 719.856,
+            "maximum": 1711.097
+          },
+          "swiglu_dispatch_wait_us": {
+            "count": 50,
+            "median": 7507.9405,
+            "p10": 6929.8212,
+            "p90": 7939.0589,
+            "mean": 7423.56772,
+            "minimum": 6265.35,
+            "maximum": 8025.996
+          },
+          "swiglu_with_host_io_us": {
+            "count": 50,
+            "median": 8190.817,
+            "p10": 7645.5860999999995,
+            "p90": 8626.460000000001,
+            "mean": 8119.61786,
+            "minimum": 6994.095,
+            "maximum": 8736.662
+          },
+          "swiglu_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 708.1164999999996,
+            "p10": 669.9409999999998,
+            "p90": 725.1670000000003,
+            "mean": 696.0501399999999,
+            "minimum": 494.08000000000084,
+            "maximum": 743.1359999999995
+          },
+          "down_dispatch_wait_us": {
+            "count": 50,
+            "median": 5304.593,
+            "p10": 4804.8089,
+            "p90": 5691.7269,
+            "mean": 5282.1935,
+            "minimum": 4535.162,
+            "maximum": 6019.004
+          },
+          "down_with_host_io_us": {
+            "count": 50,
+            "median": 6063.7525000000005,
+            "p10": 5545.23,
+            "p90": 6420.3809,
+            "mean": 6014.76896,
+            "minimum": 4968.444,
+            "maximum": 6769.9
+          },
+          "down_host_io_outside_wait_us": {
+            "count": 50,
+            "median": 742.3359999999998,
+            "p10": 713.7989000000002,
+            "p90": 769.5567999999998,
+            "mean": 732.57546,
+            "minimum": 433.28200000000015,
+            "maximum": 863.3240000000005
+          }
+        }
+      }
+    },
+    {
+      "id": "b1_native_ordinary",
+      "variant": "native",
+      "mode": "ordinary",
+      "block": 1,
+      "npu_channels": null,
+      "report_path": "jobs/b1_native_ordinary.json",
+      "report_sha256": "0a72461ea397b0fa82b0f61e6fb224b7599d2f1f6e0e008ade8474a6598fea31",
+      "status": "completed_with_accuracy_deviations",
+      "numerical_passed": false,
+      "acceptance": "report",
+      "modes": {
+        "baseline": {
+          "wall_us": {
+            "count": 50,
+            "median": 22381.298000000003,
+            "p10": 22068.629,
+            "p90": 22715.5048,
+            "mean": 22422.93168,
+            "minimum": 22025.485,
+            "maximum": 23590.785
+          },
+          "binding_wall_us": {
+            "count": 50,
+            "median": 22358.358500000002,
+            "p10": 22048.118,
+            "p90": 22698.3497,
+            "mean": 22403.602319999998,
+            "minimum": 22009.265,
+            "maximum": 23573.665
+          },
+          "native_wrapper_overhead_us": {
+            "count": 50,
+            "median": 18.104999999999563,
+            "p10": 16.27599999999875,
+            "p90": 23.705000000000656,
+            "mean": 19.32936000000016,
+            "minimum": 15.629000000000815,
+            "maximum": 31.579000000001543
+          }
+        },
+        "native": {
+          "wall_us": {
+            "count": 50,
+            "median": 15892.877499999999,
+            "p10": 15595.4331,
+            "p90": 16278.509,
+            "mean": 15890.97272,
+            "minimum": 15118.228,
+            "maximum": 16439.302
+          },
+          "binding_wall_us": {
+            "count": 50,
+            "median": 15867.8395,
+            "p10": 15569.42,
+            "p90": 16254.562,
+            "mean": 15865.375,
+            "minimum": 15096.129,
+            "maximum": 16415.383
+          },
+          "native_wrapper_overhead_us": {
+            "count": 50,
+            "median": 24.638999999999214,
+            "p10": 20.7179999999993,
+            "p90": 30.88889999999993,
+            "mean": 25.597719999999825,
+            "minimum": 19.63800000000083,
+            "maximum": 40.0
+          }
+        }
+      }
+    },
+    {
+      "id": "b0_native_diagnostic",
+      "variant": "native",
+      "mode": "diagnostic",
+      "block": 0,
+      "npu_channels": null,
+      "report_path": "jobs/b0_native_diagnostic.json",
+      "report_sha256": "acfb194d7c30e25718035a84c1d072842575bad5cb55ca8f4c76733067799f30",
+      "status": "completed_with_accuracy_deviations",
+      "numerical_passed": false,
+      "acceptance": "report",
+      "modes": {
+        "baseline": {
+          "wall_us": {
+            "count": 10,
+            "median": 22377.2635,
+            "p10": 21867.5552,
+            "p90": 22716.0399,
+            "mean": 22204.4096,
+            "minimum": 20384.177,
+            "maximum": 22763.811
+          },
+          "binding_wall_us": {
+            "count": 10,
+            "median": 22353.544,
+            "p10": 21843.546299999998,
+            "p90": 22694.7059,
+            "mean": 22180.815,
+            "minimum": 20340.378,
+            "maximum": 22736.861
+          },
+          "native_wrapper_overhead_us": {
+            "count": 10,
+            "median": 20.81499999999869,
+            "p10": 18.777800000000934,
+            "p90": 28.634900000000556,
+            "mean": 23.594599999999993,
+            "minimum": 18.487999999997555,
+            "maximum": 43.79899999999907
+          },
+          "down_synchronized_host_us": {
+            "count": 10,
+            "median": 7044.259,
+            "p10": 6884.8343,
+            "p90": 7102.161,
+            "mean": 6968.4847,
+            "minimum": 6284.159,
+            "maximum": 7127.703
+          },
+          "gate_up_synchronized_host_us": {
+            "count": 10,
+            "median": 14511.26,
+            "p10": 13976.0137,
+            "p90": 14788.871000000001,
+            "mean": 14365.5337,
+            "minimum": 13155.796,
+            "maximum": 14813.414
+          },
+          "silu_multiply_synchronized_host_us": {
+            "count": 10,
+            "median": 838.3085000000001,
+            "p10": 820.524,
+            "p90": 888.471,
+            "mean": 846.4726,
+            "minimum": 820.434,
+            "maximum": 899.883
+          }
+        },
+        "native": {
+          "wall_us": {
+            "count": 10,
+            "median": 15854.4745,
+            "p10": 15642.3608,
+            "p90": 16588.435999999998,
+            "mean": 15894.7474,
+            "minimum": 14812.514,
+            "maximum": 16609.46
+          },
+          "binding_wall_us": {
+            "count": 10,
+            "median": 15825.6345,
+            "p10": 15614.2348,
+            "p90": 16564.729,
+            "mean": 15868.7508,
+            "minimum": 14787.385,
+            "maximum": 16584.97
+          },
+          "native_wrapper_overhead_us": {
+            "count": 10,
+            "median": 25.24449999999888,
+            "p10": 23.56199999999917,
+            "p90": 28.84510000000082,
+            "mean": 25.99659999999967,
+            "minimum": 23.040000000000873,
+            "maximum": 32.32000000000153
+          },
+          "down_synchronized_host_us": {
+            "count": 10,
+            "median": 7010.2195,
+            "p10": 6510.3101,
+            "p90": 7230.9717,
+            "mean": 6946.7678,
+            "minimum": 6471.125,
+            "maximum": 7328.358
+          },
+          "gate_up_synchronized_host_us": {
+            "count": 10,
+            "median": 7872.2785,
+            "p10": 7686.0677,
+            "p90": 8845.577,
+            "mean": 8056.7237000000005,
+            "minimum": 7385.978,
+            "maximum": 8880.119
+          },
+          "silu_multiply_synchronized_host_us": {
+            "count": 10,
+            "median": 865.043,
+            "p10": 835.3181,
+            "p90": 890.492,
+            "mean": 864.9713,
+            "minimum": 820.595,
+            "maximum": 910.013
+          }
+        }
+      }
+    }
+  ],
+  "candidate_overlap_comparisons": [
+    {
+      "job": "b0_upstream_p2560_ordinary",
+      "label": "Concurrent/serial ratios paired by iteration; descriptive host intervals, not device slowdown attribution.",
+      "ratios": {
+        "wall_us_ratio": {
+          "count": 50,
+          "median": 0.5321565084005666,
+          "p10": 0.5142228825815858,
+          "p90": 0.5492561906599439,
+          "mean": 0.5326156334872707,
+          "minimum": 0.5089698032761286,
+          "maximum": 0.5792971801456888
+        },
+        "npu_branch_host_wall_us_ratio": {
+          "count": 50,
+          "median": 1.0288281545645561,
+          "p10": 0.948257036267153,
+          "p90": 1.0673277212372891,
+          "mean": 1.0225374831239515,
+          "minimum": 0.9181506137705593,
+          "maximum": 1.1726517319959697
+        },
+        "swiglu_dispatch_wait_us_ratio": {
+          "count": 50,
+          "median": 1.0204730287261263,
+          "p10": 0.934559731461518,
+          "p90": 1.0735614276526546,
+          "mean": 1.014217638654325,
+          "minimum": 0.870408463697293,
+          "maximum": 1.1179569473404483
+        },
+        "down_dispatch_wait_us_ratio": {
+          "count": 50,
+          "median": 1.0237409577943146,
+          "p10": 0.9291028538013497,
+          "p90": 1.1007968347526662,
+          "mean": 1.0180411469816046,
+          "minimum": 0.8002487147105266,
+          "maximum": 1.1826131237935156
+        }
+      }
+    },
+    {
+      "job": "b0_upstream_p2816_ordinary",
+      "label": "Concurrent/serial ratios paired by iteration; descriptive host intervals, not device slowdown attribution.",
+      "ratios": {
+        "wall_us_ratio": {
+          "count": 50,
+          "median": 0.5149092228358274,
+          "p10": 0.5010437662625123,
+          "p90": 0.5342248740287923,
+          "mean": 0.5173591017547954,
+          "minimum": 0.4846456537995663,
+          "maximum": 0.5669570872315739
+        },
+        "npu_branch_host_wall_us_ratio": {
+          "count": 50,
+          "median": 1.011841766922327,
+          "p10": 0.9202490636566629,
+          "p90": 1.0708901463564466,
+          "mean": 1.0032319043849394,
+          "minimum": 0.8675563916371292,
+          "maximum": 1.1159072847235687
+        },
+        "swiglu_dispatch_wait_us_ratio": {
+          "count": 50,
+          "median": 1.0077368204739878,
+          "p10": 0.9472577112334696,
+          "p90": 1.0594995440797577,
+          "mean": 1.002691404843969,
+          "minimum": 0.9136319943066517,
+          "maximum": 1.1198135039879096
+        },
+        "down_dispatch_wait_us_ratio": {
+          "count": 50,
+          "median": 1.0069690584806092,
+          "p10": 0.909034272786644,
+          "p90": 1.1329479086319905,
+          "mean": 1.0035999785119365,
+          "minimum": 0.7880117458702184,
+          "maximum": 1.21646334968107
+        }
+      }
+    },
+    {
+      "job": "b1_upstream_p2816_ordinary",
+      "label": "Concurrent/serial ratios paired by iteration; descriptive host intervals, not device slowdown attribution.",
+      "ratios": {
+        "wall_us_ratio": {
+          "count": 50,
+          "median": 0.5043008201309733,
+          "p10": 0.49203738997043084,
+          "p90": 0.5234920714093035,
+          "mean": 0.5071568409067106,
+          "minimum": 0.4800973836890932,
+          "maximum": 0.5573806522107325
+        },
+        "npu_branch_host_wall_us_ratio": {
+          "count": 50,
+          "median": 1.018999237955264,
+          "p10": 0.9650411729272054,
+          "p90": 1.080875121419804,
+          "mean": 1.0205197459013886,
+          "minimum": 0.9143674969124768,
+          "maximum": 1.161838003341461
+        },
+        "swiglu_dispatch_wait_us_ratio": {
+          "count": 50,
+          "median": 1.0187445605678913,
+          "p10": 0.9361258644108708,
+          "p90": 1.0795740718487294,
+          "mean": 1.0137833904863771,
+          "minimum": 0.8944079461651304,
+          "maximum": 1.1391831455768295
+        },
+        "down_dispatch_wait_us_ratio": {
+          "count": 50,
+          "median": 1.0301756909074888,
+          "p10": 0.9134926913812941,
+          "p90": 1.1144658760275261,
+          "mean": 1.0181833984845114,
+          "minimum": 0.7809910699318066,
+          "maximum": 1.1710062330295876
+        }
+      }
+    },
+    {
+      "job": "b1_upstream_p2560_ordinary",
+      "label": "Concurrent/serial ratios paired by iteration; descriptive host intervals, not device slowdown attribution.",
+      "ratios": {
+        "wall_us_ratio": {
+          "count": 50,
+          "median": 0.5105047268253448,
+          "p10": 0.4926218858096382,
+          "p90": 0.5286319074489295,
+          "mean": 0.5115371765041692,
+          "minimum": 0.4799775311876992,
+          "maximum": 0.558356275087349
+        },
+        "npu_branch_host_wall_us_ratio": {
+          "count": 50,
+          "median": 1.0090670469187644,
+          "p10": 0.9509209110092992,
+          "p90": 1.0900815150377006,
+          "mean": 1.016897022339144,
+          "minimum": 0.9094583897837449,
+          "maximum": 1.1692434079283882
+        },
+        "swiglu_dispatch_wait_us_ratio": {
+          "count": 50,
+          "median": 1.0005761100988102,
+          "p10": 0.9136592195376598,
+          "p90": 1.0877724306076024,
+          "mean": 0.996104581116773,
+          "minimum": 0.8551746711003143,
+          "maximum": 1.1678663447935616
+        },
+        "down_dispatch_wait_us_ratio": {
+          "count": 50,
+          "median": 1.0258270112022894,
+          "p10": 0.9292347052221672,
+          "p90": 1.112019117151407,
+          "mean": 1.026339068417628,
+          "minimum": 0.8341567163320651,
+          "maximum": 1.2728020443692512
+        }
+      }
+    }
+  ]
+}

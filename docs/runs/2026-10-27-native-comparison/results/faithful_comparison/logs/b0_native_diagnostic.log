@@ -1,0 +1,1 @@
+{"status": "completed_with_accuracy_deviations", "stats": {"baseline": {"count": 10, "median_us": 22377.2635, "p10_us": 21867.5552, "p90_us": 22716.0399, "min_us": 20384.177, "max_us": 22763.811}, "native": {"count": 10, "median_us": 15854.4745, "p10_us": 15642.3608, "p90_us": 16588.435999999998, "min_us": 14812.514, "max_us": 16609.46}}, "completed_npu_dispatches": 34}

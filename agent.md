@@ -1,5 +1,34 @@
 # HeteroMega agent continuation guide
 
+## Latest measurement — 2026-10-27: faithful native HeteroMosaic baseline
+
+The user requested reproduction and explicitly permits native numerical
+failures when the implementation remains faithful. Use `--native-accuracy-policy
+report` for that experiment; original error verdicts remain visible, GPU
+controls and structural checks stay strict. Native kernels, binding, dispatcher
+and timer are unchanged. This supersedes the earlier native numerical gate.
+
+**Measured HX370/default, M512/H4096/I14336:** native M256/M256 gate/up with GPU
+down takes 15.81–15.89 ms. Our P2560/P2816 channel partitions take 17.48–18.03 ms,
+10.0–14.1% slower than native, though still 18.8–21.6% faster than GPU-only in
+these blocks. Two reversed 50-sample blocks and separate 10-sample native stage
+profiling confirm the result. Native gate/up diagnostic falls 14.511→7.872 ms;
+down remains about 7.01 ms. Our NPU branch alone is 14.70–15.52 ms.
+
+Read `docs/runs/2026-10-27-native-comparison/README.md` and
+`experiments/ffn_partition/NATIVE_COMPARISON.md`. Native original source is
+pinned 61714a3 plus documented runtime/build compatibility; same binary/hash
+across strict and report phases. Audit passes 1,194 files and 2,126 completed
+dispatches. Original buffers/inputs match all paths. Native errors are retained;
+our candidate checks pass. This is an isolated FFN result, not paper-level
+whole-model reproduction, pretrained accuracy or TTFT.
+
+Branch `codex/native-heteromosaic-ffn-comparison`; report-policy implementation
+`1e30f8a`. Native cloud build `/notebooks/HeteroMosaic-baseline-20261027`, harness
+`/notebooks/HeteroMega-native-comparison-20261027`. Kernel-only PR unchanged.
+Next: remove host/XRT activation staging and measure GPU suffix device times
+before retuning/integrating. Do not claim our path already beats native.
+
 ## Latest measurement — 2026-10-27: GPU + direct-buffer NPU partition
 
 The user requested the GPU+NPU partition test. The new

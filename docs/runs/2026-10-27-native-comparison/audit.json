@@ -1,0 +1,2611 @@
+{
+  "status": "integrity_passed",
+  "evidence_dir": "/tmp/native-faithful-comparison-evidence-20261027",
+  "integrity_errors": [],
+  "reports": {
+    "results/comparison/jobs/b0_native_ordinary.json": {
+      "status": "failed",
+      "error": "native/GPU numerical validation failed; no performance claim is valid",
+      "report_sha256": "d79812f368a1d38b5e12b9a8b78a566247de9661221b517e669c0de4e093d021",
+      "scope": "isolated synthetic W4A16 prefill FFN; not complete model prefill/TTFT",
+      "timed_invocations": 0,
+      "validator_source_sha256": "7df15163fa385f606f9c6f31efbcbafc85c0c7c5d8d5bc5cddfe573460dcc8ea",
+      "runtime_provenance": {
+        "source_files": 14,
+        "binding_binaries": [
+          "native_binding_build/f549898be9574bd5e2cd/heteromega_native_ffn_f549898be9574bd5.so"
+        ]
+      },
+      "kind": "native_ffn",
+      "completed_npu_dispatches": 2,
+      "expected_npu_dispatches": 2,
+      "completion_count_matches_expected": true,
+      "cases": [],
+      "accuracy": {
+        "recorded_check_count": 21,
+        "numerical_failure_count": 9,
+        "structural_failure_count": 0,
+        "rejected_check_count": 9,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.16548882081713134,
+            "check": "run0_input0_native_output_npu_rows"
+          },
+          "max_abs_error": {
+            "value": 0.732421875,
+            "check": "run0_input0_native_vs_gpu_output"
+          },
+          "normalized_max_error": {
+            "value": 0.19450207468879668,
+            "check": "run0_input0_native_vs_gpu_output"
+          },
+          "rms_error": {
+            "value": 0.11282607158623635,
+            "check": "run0_input0_native_output_npu_rows"
+          }
+        },
+        "failed_checks": {
+          "run0_input0_native_gate_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.059491517198144606,
+            "max_abs_error": 0.53125,
+            "structural_failures": []
+          },
+          "run0_input0_native_gate_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.0840846106422685,
+            "max_abs_error": 0.53125,
+            "structural_failures": []
+          },
+          "run0_input0_native_up_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.05907759035305916,
+            "max_abs_error": 0.46875,
+            "structural_failures": []
+          },
+          "run0_input0_native_up_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.08348408848391718,
+            "max_abs_error": 0.46875,
+            "structural_failures": []
+          },
+          "run0_input0_native_output_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.11697596607209645,
+            "max_abs_error": 0.732421875,
+            "structural_failures": []
+          },
+          "run0_input0_native_output_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.16548882081713134,
+            "max_abs_error": 0.732421875,
+            "structural_failures": []
+          },
+          "run0_input0_native_vs_gpu_gate": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.0594917254737904,
+            "max_abs_error": 0.53125,
+            "structural_failures": []
+          },
+          "run0_input0_native_vs_gpu_up": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.059077728804112405,
+            "max_abs_error": 0.46875,
+            "structural_failures": []
+          },
+          "run0_input0_native_vs_gpu_output": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.11696956265768875,
+            "max_abs_error": 0.732421875,
+            "structural_failures": []
+          }
+        }
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "buffer_integrity": {
+        "before": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        },
+        "after": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        }
+      }
+    },
+    "results/comparison/jobs/b0_upstream_p2560_ordinary.json": {
+      "status": "passed",
+      "error": null,
+      "report_sha256": "5f7b37bc2200df92986078eebadb2c9435b9765a060d522275e70b79db2ddde1",
+      "scope": "prefill FFN microbenchmark, not whole-model prefill/TTFT or attention interference",
+      "timed_invocations": 150,
+      "validator_source_sha256": "7df15163fa385f606f9c6f31efbcbafc85c0c7c5d8d5bc5cddfe573460dcc8ea",
+      "runtime_provenance": {
+        "source_files": 42
+      },
+      "kind": "direct_candidate",
+      "completed_npu_dispatches": 228,
+      "accuracy": {
+        "recorded_check_count": 513,
+        "numerical_failure_count": 0,
+        "structural_failure_count": 0,
+        "rejected_check_count": 0,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.017239155582516014,
+            "check": "P2560/validation_1_serial_npu_partial"
+          },
+          "max_abs_error": {
+            "value": 0.0390625,
+            "check": "P2560/validation_3_serial_gpu_baseline"
+          },
+          "normalized_max_error": {
+            "value": 0.017699115044247787,
+            "check": "P2560/validation_3_serial_npu_partial"
+          },
+          "rms_error": {
+            "value": 0.005329800885517117,
+            "check": "P2560/validation_1_serial_gpu_baseline"
+          }
+        },
+        "failed_checks": {}
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "validator": {
+        "status": "passed",
+        "accuracy_passed": true,
+        "accuracy_accepted": true,
+        "accuracy_policy": "report",
+        "completed_npu_dispatches": 228,
+        "timed_invocations": 150,
+        "explicit_checks": 513,
+        "accuracy_status": "within_tolerance",
+        "fixture": {
+          "full_packed_weight_sha256": [
+            "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+            "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+            "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+          ],
+          "input_sha256": [
+            "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+            "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+            "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+          ]
+        }
+      }
+    },
+    "results/comparison/jobs/b0_upstream_p2816_ordinary.json": {
+      "status": "passed",
+      "error": null,
+      "report_sha256": "3a5ef4376fad99d5b14ac2fbe175cc245de12e4435d65c4b4ed519dd8ec3f7b6",
+      "scope": "prefill FFN microbenchmark, not whole-model prefill/TTFT or attention interference",
+      "timed_invocations": 150,
+      "validator_source_sha256": "7df15163fa385f606f9c6f31efbcbafc85c0c7c5d8d5bc5cddfe573460dcc8ea",
+      "runtime_provenance": {
+        "source_files": 42
+      },
+      "kind": "direct_candidate",
+      "completed_npu_dispatches": 228,
+      "accuracy": {
+        "recorded_check_count": 513,
+        "numerical_failure_count": 0,
+        "structural_failure_count": 0,
+        "rejected_check_count": 0,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.017179346158321344,
+            "check": "P2816/validation_1_serial_npu_partial"
+          },
+          "max_abs_error": {
+            "value": 0.0390625,
+            "check": "P2816/validation_3_serial_gpu_baseline"
+          },
+          "normalized_max_error": {
+            "value": 0.01744186046511628,
+            "check": "P2816/validation_3_serial_npu_partial"
+          },
+          "rms_error": {
+            "value": 0.005552076363144844,
+            "check": "P2816/validation_1_serial_gpu_baseline"
+          }
+        },
+        "failed_checks": {}
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "validator": {
+        "status": "passed",
+        "accuracy_passed": true,
+        "accuracy_accepted": true,
+        "accuracy_policy": "report",
+        "completed_npu_dispatches": 228,
+        "timed_invocations": 150,
+        "explicit_checks": 513,
+        "accuracy_status": "within_tolerance",
+        "fixture": {
+          "full_packed_weight_sha256": [
+            "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+            "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+            "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+          ],
+          "input_sha256": [
+            "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+            "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+            "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+          ]
+        }
+      }
+    },
+    "results/comparison/jobs/b1_native_ordinary.json": {
+      "status": "failed",
+      "error": "native/GPU numerical validation failed; no performance claim is valid",
+      "report_sha256": "00a303f4f9b65c1c40d66c8771cd8ce8663be90ed8926445c406be569f3b7769",
+      "scope": "isolated synthetic W4A16 prefill FFN; not complete model prefill/TTFT",
+      "timed_invocations": 0,
+      "validator_source_sha256": "7df15163fa385f606f9c6f31efbcbafc85c0c7c5d8d5bc5cddfe573460dcc8ea",
+      "runtime_provenance": {
+        "source_files": 14,
+        "binding_binaries": [
+          "native_binding_build/f549898be9574bd5e2cd/heteromega_native_ffn_f549898be9574bd5.so"
+        ]
+      },
+      "kind": "native_ffn",
+      "completed_npu_dispatches": 2,
+      "expected_npu_dispatches": 2,
+      "completion_count_matches_expected": true,
+      "cases": [],
+      "accuracy": {
+        "recorded_check_count": 21,
+        "numerical_failure_count": 9,
+        "structural_failure_count": 0,
+        "rejected_check_count": 9,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.16548882081713134,
+            "check": "run0_input0_native_output_npu_rows"
+          },
+          "max_abs_error": {
+            "value": 0.732421875,
+            "check": "run0_input0_native_vs_gpu_output"
+          },
+          "normalized_max_error": {
+            "value": 0.19450207468879668,
+            "check": "run0_input0_native_vs_gpu_output"
+          },
+          "rms_error": {
+            "value": 0.11282607158623635,
+            "check": "run0_input0_native_output_npu_rows"
+          }
+        },
+        "failed_checks": {
+          "run0_input0_native_gate_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.059491517198144606,
+            "max_abs_error": 0.53125,
+            "structural_failures": []
+          },
+          "run0_input0_native_gate_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.0840846106422685,
+            "max_abs_error": 0.53125,
+            "structural_failures": []
+          },
+          "run0_input0_native_up_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.05907759035305916,
+            "max_abs_error": 0.46875,
+            "structural_failures": []
+          },
+          "run0_input0_native_up_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.08348408848391718,
+            "max_abs_error": 0.46875,
+            "structural_failures": []
+          },
+          "run0_input0_native_output_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.11697596607209645,
+            "max_abs_error": 0.732421875,
+            "structural_failures": []
+          },
+          "run0_input0_native_output_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.16548882081713134,
+            "max_abs_error": 0.732421875,
+            "structural_failures": []
+          },
+          "run0_input0_native_vs_gpu_gate": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.0594917254737904,
+            "max_abs_error": 0.53125,
+            "structural_failures": []
+          },
+          "run0_input0_native_vs_gpu_up": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.059077728804112405,
+            "max_abs_error": 0.46875,
+            "structural_failures": []
+          },
+          "run0_input0_native_vs_gpu_output": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.11696956265768875,
+            "max_abs_error": 0.732421875,
+            "structural_failures": []
+          }
+        }
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "buffer_integrity": {
+        "before": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        },
+        "after": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        }
+      }
+    },
+    "results/comparison/jobs/b1_upstream_p2560_ordinary.json": {
+      "status": "passed",
+      "error": null,
+      "report_sha256": "bb9742c999e4396de3dff59da61af83488d706fb3de57375b9c06d312cb50859",
+      "scope": "prefill FFN microbenchmark, not whole-model prefill/TTFT or attention interference",
+      "timed_invocations": 150,
+      "validator_source_sha256": "7df15163fa385f606f9c6f31efbcbafc85c0c7c5d8d5bc5cddfe573460dcc8ea",
+      "runtime_provenance": {
+        "source_files": 42
+      },
+      "kind": "direct_candidate",
+      "completed_npu_dispatches": 228,
+      "accuracy": {
+        "recorded_check_count": 513,
+        "numerical_failure_count": 0,
+        "structural_failure_count": 0,
+        "rejected_check_count": 0,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.017239155582516014,
+            "check": "P2560/validation_1_serial_npu_partial"
+          },
+          "max_abs_error": {
+            "value": 0.0390625,
+            "check": "P2560/validation_3_serial_gpu_baseline"
+          },
+          "normalized_max_error": {
+            "value": 0.017699115044247787,
+            "check": "P2560/validation_3_serial_npu_partial"
+          },
+          "rms_error": {
+            "value": 0.005329800885517117,
+            "check": "P2560/validation_1_serial_gpu_baseline"
+          }
+        },
+        "failed_checks": {}
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "validator": {
+        "status": "passed",
+        "accuracy_passed": true,
+        "accuracy_accepted": true,
+        "accuracy_policy": "report",
+        "completed_npu_dispatches": 228,
+        "timed_invocations": 150,
+        "explicit_checks": 513,
+        "accuracy_status": "within_tolerance",
+        "fixture": {
+          "full_packed_weight_sha256": [
+            "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+            "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+            "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+          ],
+          "input_sha256": [
+            "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+            "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+            "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+          ]
+        }
+      }
+    },
+    "results/comparison/jobs/b1_upstream_p2816_ordinary.json": {
+      "status": "passed",
+      "error": null,
+      "report_sha256": "0ca6cfcd288fe4ac5a2d4ef4466729e5d2706c5a80b83a38abf50f40d08a1826",
+      "scope": "prefill FFN microbenchmark, not whole-model prefill/TTFT or attention interference",
+      "timed_invocations": 150,
+      "validator_source_sha256": "7df15163fa385f606f9c6f31efbcbafc85c0c7c5d8d5bc5cddfe573460dcc8ea",
+      "runtime_provenance": {
+        "source_files": 42
+      },
+      "kind": "direct_candidate",
+      "completed_npu_dispatches": 228,
+      "accuracy": {
+        "recorded_check_count": 513,
+        "numerical_failure_count": 0,
+        "structural_failure_count": 0,
+        "rejected_check_count": 0,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.017179346158321344,
+            "check": "P2816/validation_1_serial_npu_partial"
+          },
+          "max_abs_error": {
+            "value": 0.0390625,
+            "check": "P2816/validation_3_serial_gpu_baseline"
+          },
+          "normalized_max_error": {
+            "value": 0.01744186046511628,
+            "check": "P2816/validation_3_serial_npu_partial"
+          },
+          "rms_error": {
+            "value": 0.005552076363144844,
+            "check": "P2816/validation_1_serial_gpu_baseline"
+          }
+        },
+        "failed_checks": {}
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "validator": {
+        "status": "passed",
+        "accuracy_passed": true,
+        "accuracy_accepted": true,
+        "accuracy_policy": "report",
+        "completed_npu_dispatches": 228,
+        "timed_invocations": 150,
+        "explicit_checks": 513,
+        "accuracy_status": "within_tolerance",
+        "fixture": {
+          "full_packed_weight_sha256": [
+            "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+            "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+            "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+          ],
+          "input_sha256": [
+            "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+            "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+            "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+          ]
+        }
+      }
+    },
+    "results/faithful_comparison/jobs/b0_native_diagnostic.json": {
+      "status": "completed_with_accuracy_deviations",
+      "error": null,
+      "report_sha256": "acfb194d7c30e25718035a84c1d072842575bad5cb55ca8f4c76733067799f30",
+      "scope": "isolated synthetic W4A16 prefill FFN; not complete model prefill/TTFT",
+      "timed_invocations": 20,
+      "validator_source_sha256": "db3402ff43405122eb7190bc3800c0899a46cc898f62e20849a68fd1d016a330",
+      "runtime_provenance": {
+        "source_files": 14,
+        "binding_binaries": [
+          "native_binding_build/f549898be9574bd5e2cd/heteromega_native_ffn_f549898be9574bd5.so"
+        ]
+      },
+      "kind": "native_ffn",
+      "completed_npu_dispatches": 34,
+      "expected_npu_dispatches": 34,
+      "completion_count_matches_expected": true,
+      "cases": [],
+      "accuracy": {
+        "recorded_check_count": 110,
+        "numerical_failure_count": 40,
+        "structural_failure_count": 0,
+        "rejected_check_count": 0,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.16548882081713134,
+            "check": "run3_input0_native_output_npu_rows"
+          },
+          "max_abs_error": {
+            "value": 0.732421875,
+            "check": "warmup_samples/3"
+          },
+          "normalized_max_error": {
+            "value": 0.19450207468879668,
+            "check": "warmup_samples/3"
+          },
+          "rms_error": {
+            "value": 0.11282607158623635,
+            "check": "run3_input0_native_output_npu_rows"
+          }
+        },
+        "failed_checks": {}
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "buffer_integrity": {
+        "before": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        },
+        "after": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        }
+      },
+      "validator": {
+        "completed_npu_dispatches": 34,
+        "timed_invocations": 20,
+        "explicit_checks": 84,
+        "status": "completed_with_accuracy_deviations",
+        "accuracy_policy": "report",
+        "accuracy_passed": false,
+        "accuracy_accepted": true,
+        "accuracy_status": "reported_deviations",
+        "fixture": {
+          "full_packed_weight_sha256": [
+            "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+            "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+            "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+          ],
+          "input_sha256": [
+            "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+            "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+            "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+          ]
+        }
+      }
+    },
+    "results/faithful_comparison/jobs/b0_native_ordinary.json": {
+      "status": "completed_with_accuracy_deviations",
+      "error": null,
+      "report_sha256": "da2d085e4103d4aaf35e51d8fd6ce7513e4277a360b48960397c258e45aa15e7",
+      "scope": "isolated synthetic W4A16 prefill FFN; not complete model prefill/TTFT",
+      "timed_invocations": 100,
+      "validator_source_sha256": "db3402ff43405122eb7190bc3800c0899a46cc898f62e20849a68fd1d016a330",
+      "runtime_provenance": {
+        "source_files": 14,
+        "binding_binaries": [
+          "native_binding_build/f549898be9574bd5e2cd/heteromega_native_ffn_f549898be9574bd5.so"
+        ]
+      },
+      "kind": "native_ffn",
+      "completed_npu_dispatches": 114,
+      "expected_npu_dispatches": 114,
+      "completion_count_matches_expected": true,
+      "cases": [],
+      "accuracy": {
+        "recorded_check_count": 190,
+        "numerical_failure_count": 80,
+        "structural_failure_count": 0,
+        "rejected_check_count": 0,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.16548882081713134,
+            "check": "run3_input0_native_output_npu_rows"
+          },
+          "max_abs_error": {
+            "value": 0.732421875,
+            "check": "warmup_samples/3"
+          },
+          "normalized_max_error": {
+            "value": 0.19450207468879668,
+            "check": "warmup_samples/3"
+          },
+          "rms_error": {
+            "value": 0.11282607158623635,
+            "check": "run3_input0_native_output_npu_rows"
+          }
+        },
+        "failed_checks": {}
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "buffer_integrity": {
+        "before": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        },
+        "after": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        }
+      },
+      "validator": {
+        "completed_npu_dispatches": 114,
+        "timed_invocations": 100,
+        "explicit_checks": 84,
+        "status": "completed_with_accuracy_deviations",
+        "accuracy_policy": "report",
+        "accuracy_passed": false,
+        "accuracy_accepted": true,
+        "accuracy_status": "reported_deviations",
+        "fixture": {
+          "full_packed_weight_sha256": [
+            "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+            "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+            "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+          ],
+          "input_sha256": [
+            "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+            "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+            "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+          ]
+        }
+      }
+    },
+    "results/faithful_comparison/jobs/b0_upstream_p2560_ordinary.json": {
+      "status": "passed",
+      "error": null,
+      "report_sha256": "9c0e1ade666d61e3639704cdc1550649d8ca6f01f39946eedb4e4a47fa7a4d09",
+      "scope": "prefill FFN microbenchmark, not whole-model prefill/TTFT or attention interference",
+      "timed_invocations": 150,
+      "validator_source_sha256": "db3402ff43405122eb7190bc3800c0899a46cc898f62e20849a68fd1d016a330",
+      "runtime_provenance": {
+        "source_files": 42
+      },
+      "kind": "direct_candidate",
+      "completed_npu_dispatches": 228,
+      "accuracy": {
+        "recorded_check_count": 513,
+        "numerical_failure_count": 0,
+        "structural_failure_count": 0,
+        "rejected_check_count": 0,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.017239155582516014,
+            "check": "P2560/validation_1_serial_npu_partial"
+          },
+          "max_abs_error": {
+            "value": 0.0390625,
+            "check": "P2560/validation_3_serial_gpu_baseline"
+          },
+          "normalized_max_error": {
+            "value": 0.017699115044247787,
+            "check": "P2560/validation_3_serial_npu_partial"
+          },
+          "rms_error": {
+            "value": 0.005329800885517117,
+            "check": "P2560/validation_1_serial_gpu_baseline"
+          }
+        },
+        "failed_checks": {}
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "validator": {
+        "status": "passed",
+        "accuracy_passed": true,
+        "accuracy_accepted": true,
+        "accuracy_policy": "report",
+        "completed_npu_dispatches": 228,
+        "timed_invocations": 150,
+        "explicit_checks": 513,
+        "accuracy_status": "within_tolerance",
+        "fixture": {
+          "full_packed_weight_sha256": [
+            "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+            "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+            "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+          ],
+          "input_sha256": [
+            "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+            "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+            "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+          ]
+        }
+      }
+    },
+    "results/faithful_comparison/jobs/b0_upstream_p2816_ordinary.json": {
+      "status": "passed",
+      "error": null,
+      "report_sha256": "bd8c5f58712aea88fc7fb2466d213d48e9079b6a3e0270587735bbdff509b16c",
+      "scope": "prefill FFN microbenchmark, not whole-model prefill/TTFT or attention interference",
+      "timed_invocations": 150,
+      "validator_source_sha256": "db3402ff43405122eb7190bc3800c0899a46cc898f62e20849a68fd1d016a330",
+      "runtime_provenance": {
+        "source_files": 42
+      },
+      "kind": "direct_candidate",
+      "completed_npu_dispatches": 228,
+      "accuracy": {
+        "recorded_check_count": 513,
+        "numerical_failure_count": 0,
+        "structural_failure_count": 0,
+        "rejected_check_count": 0,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.017179346158321344,
+            "check": "P2816/validation_1_serial_npu_partial"
+          },
+          "max_abs_error": {
+            "value": 0.0390625,
+            "check": "P2816/validation_3_serial_gpu_baseline"
+          },
+          "normalized_max_error": {
+            "value": 0.01744186046511628,
+            "check": "P2816/validation_3_serial_npu_partial"
+          },
+          "rms_error": {
+            "value": 0.005552076363144844,
+            "check": "P2816/validation_1_serial_gpu_baseline"
+          }
+        },
+        "failed_checks": {}
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "validator": {
+        "status": "passed",
+        "accuracy_passed": true,
+        "accuracy_accepted": true,
+        "accuracy_policy": "report",
+        "completed_npu_dispatches": 228,
+        "timed_invocations": 150,
+        "explicit_checks": 513,
+        "accuracy_status": "within_tolerance",
+        "fixture": {
+          "full_packed_weight_sha256": [
+            "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+            "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+            "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+          ],
+          "input_sha256": [
+            "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+            "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+            "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+          ]
+        }
+      }
+    },
+    "results/faithful_comparison/jobs/b1_native_ordinary.json": {
+      "status": "completed_with_accuracy_deviations",
+      "error": null,
+      "report_sha256": "0a72461ea397b0fa82b0f61e6fb224b7599d2f1f6e0e008ade8474a6598fea31",
+      "scope": "isolated synthetic W4A16 prefill FFN; not complete model prefill/TTFT",
+      "timed_invocations": 100,
+      "validator_source_sha256": "db3402ff43405122eb7190bc3800c0899a46cc898f62e20849a68fd1d016a330",
+      "runtime_provenance": {
+        "source_files": 14,
+        "binding_binaries": [
+          "native_binding_build/f549898be9574bd5e2cd/heteromega_native_ffn_f549898be9574bd5.so"
+        ]
+      },
+      "kind": "native_ffn",
+      "completed_npu_dispatches": 114,
+      "expected_npu_dispatches": 114,
+      "completion_count_matches_expected": true,
+      "cases": [],
+      "accuracy": {
+        "recorded_check_count": 190,
+        "numerical_failure_count": 80,
+        "structural_failure_count": 0,
+        "rejected_check_count": 0,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.16548882081713134,
+            "check": "run3_input0_native_output_npu_rows"
+          },
+          "max_abs_error": {
+            "value": 0.732421875,
+            "check": "warmup_samples/3"
+          },
+          "normalized_max_error": {
+            "value": 0.19450207468879668,
+            "check": "warmup_samples/3"
+          },
+          "rms_error": {
+            "value": 0.11282607158623635,
+            "check": "run3_input0_native_output_npu_rows"
+          }
+        },
+        "failed_checks": {}
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "buffer_integrity": {
+        "before": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        },
+        "after": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        }
+      },
+      "validator": {
+        "completed_npu_dispatches": 114,
+        "timed_invocations": 100,
+        "explicit_checks": 84,
+        "status": "completed_with_accuracy_deviations",
+        "accuracy_policy": "report",
+        "accuracy_passed": false,
+        "accuracy_accepted": true,
+        "accuracy_status": "reported_deviations",
+        "fixture": {
+          "full_packed_weight_sha256": [
+            "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+            "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+            "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+          ],
+          "input_sha256": [
+            "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+            "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+            "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+          ]
+        }
+      }
+    },
+    "results/faithful_comparison/jobs/b1_upstream_p2560_ordinary.json": {
+      "status": "passed",
+      "error": null,
+      "report_sha256": "94923374d75d21cf6d52f06199943a679d7ac45b1ca6bd7ef8d63d280eccb419",
+      "scope": "prefill FFN microbenchmark, not whole-model prefill/TTFT or attention interference",
+      "timed_invocations": 150,
+      "validator_source_sha256": "db3402ff43405122eb7190bc3800c0899a46cc898f62e20849a68fd1d016a330",
+      "runtime_provenance": {
+        "source_files": 42
+      },
+      "kind": "direct_candidate",
+      "completed_npu_dispatches": 228,
+      "accuracy": {
+        "recorded_check_count": 513,
+        "numerical_failure_count": 0,
+        "structural_failure_count": 0,
+        "rejected_check_count": 0,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.017239155582516014,
+            "check": "P2560/validation_1_serial_npu_partial"
+          },
+          "max_abs_error": {
+            "value": 0.0390625,
+            "check": "P2560/validation_3_serial_gpu_baseline"
+          },
+          "normalized_max_error": {
+            "value": 0.017699115044247787,
+            "check": "P2560/validation_3_serial_npu_partial"
+          },
+          "rms_error": {
+            "value": 0.005329800885517117,
+            "check": "P2560/validation_1_serial_gpu_baseline"
+          }
+        },
+        "failed_checks": {}
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "validator": {
+        "status": "passed",
+        "accuracy_passed": true,
+        "accuracy_accepted": true,
+        "accuracy_policy": "report",
+        "completed_npu_dispatches": 228,
+        "timed_invocations": 150,
+        "explicit_checks": 513,
+        "accuracy_status": "within_tolerance",
+        "fixture": {
+          "full_packed_weight_sha256": [
+            "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+            "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+            "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+          ],
+          "input_sha256": [
+            "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+            "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+            "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+          ]
+        }
+      }
+    },
+    "results/faithful_comparison/jobs/b1_upstream_p2816_ordinary.json": {
+      "status": "passed",
+      "error": null,
+      "report_sha256": "ffbd69bfd83d0ac2368e11ae618de1145e019cf48943f1acde0016a33d946ea1",
+      "scope": "prefill FFN microbenchmark, not whole-model prefill/TTFT or attention interference",
+      "timed_invocations": 150,
+      "validator_source_sha256": "db3402ff43405122eb7190bc3800c0899a46cc898f62e20849a68fd1d016a330",
+      "runtime_provenance": {
+        "source_files": 42
+      },
+      "kind": "direct_candidate",
+      "completed_npu_dispatches": 228,
+      "accuracy": {
+        "recorded_check_count": 513,
+        "numerical_failure_count": 0,
+        "structural_failure_count": 0,
+        "rejected_check_count": 0,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.017179346158321344,
+            "check": "P2816/validation_1_serial_npu_partial"
+          },
+          "max_abs_error": {
+            "value": 0.0390625,
+            "check": "P2816/validation_3_serial_gpu_baseline"
+          },
+          "normalized_max_error": {
+            "value": 0.01744186046511628,
+            "check": "P2816/validation_3_serial_npu_partial"
+          },
+          "rms_error": {
+            "value": 0.005552076363144844,
+            "check": "P2816/validation_1_serial_gpu_baseline"
+          }
+        },
+        "failed_checks": {}
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "validator": {
+        "status": "passed",
+        "accuracy_passed": true,
+        "accuracy_accepted": true,
+        "accuracy_policy": "report",
+        "completed_npu_dispatches": 228,
+        "timed_invocations": 150,
+        "explicit_checks": 513,
+        "accuracy_status": "within_tolerance",
+        "fixture": {
+          "full_packed_weight_sha256": [
+            "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+            "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+            "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+          ],
+          "input_sha256": [
+            "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+            "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+            "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+          ]
+        }
+      }
+    },
+    "results/native_constant_vectors.json": {
+      "status": "failed",
+      "error": "native projection diagnostics contain strict numerical or structural failures; see each case",
+      "report_sha256": "734c44090fe5b587b6e80c4b2bf767f1bea68312bc945cf2642fa65aa7c903e7",
+      "scope": "untimed captured native gate/up projection diagnostics",
+      "timed_invocations": 0,
+      "runtime_provenance": {
+        "source_files": 15,
+        "binding_binaries": [
+          "native_binding_build/f549898be9574bd5e2cd/heteromega_native_ffn_f549898be9574bd5.so"
+        ]
+      },
+      "kind": "native_projection_diagnostic",
+      "completed_npu_dispatches": 4,
+      "expected_npu_dispatches": 4,
+      "completion_count_matches_expected": true,
+      "cases": [
+        {
+          "name": "constant_signed",
+          "status": "failed",
+          "buffers_unchanged": true,
+          "accuracy": {
+            "recorded_check_count": 32,
+            "numerical_failure_count": 16,
+            "structural_failure_count": 0,
+            "rejected_check_count": 16,
+            "worst": {
+              "relative_l2_error": {
+                "value": 0.5434409322921446,
+                "check": "run1_native_up_npu_rows"
+              },
+              "max_abs_error": {
+                "value": 2.9375,
+                "check": "run1_native_vs_gpu_up"
+              },
+              "normalized_max_error": {
+                "value": 0.25405405405405407,
+                "check": "run1_native_vs_gpu_up"
+              },
+              "rms_error": {
+                "value": 2.2251013664758164,
+                "check": "run1_native_up_npu_rows"
+              }
+            },
+            "failed_checks": {
+              "run0_native_gate_all": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_gate_npu_rows": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_up_all": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_up_npu_rows": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_vs_gpu_gate": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_npu_vs_gpu_rows_gate": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_vs_gpu_up": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_npu_vs_gpu_rows_up": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_gate_all": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_gate_npu_rows": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_up_all": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_up_npu_rows": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_vs_gpu_gate": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_npu_vs_gpu_rows_gate": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_vs_gpu_up": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_npu_vs_gpu_rows_up": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              }
+            }
+          }
+        }
+      ],
+      "record_validation": {
+        "complete_records": true,
+        "recorded_completed_dispatches": 4,
+        "cases": [
+          {
+            "name": "constant_signed",
+            "complete_records": true,
+            "recorded_runs": 4,
+            "buffers_unchanged": true,
+            "repeat_output_hashes_stable": true
+          }
+        ]
+      },
+      "accuracy": {
+        "recorded_check_count": 32,
+        "numerical_failure_count": 16,
+        "structural_failure_count": 0,
+        "rejected_check_count": 16,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.5434409322921446,
+            "check": "constant_signed/run1_native_up_npu_rows"
+          },
+          "max_abs_error": {
+            "value": 2.9375,
+            "check": "constant_signed/run1_native_vs_gpu_up"
+          },
+          "normalized_max_error": {
+            "value": 0.25405405405405407,
+            "check": "constant_signed/run1_native_vs_gpu_up"
+          },
+          "rms_error": {
+            "value": 2.2251013664758164,
+            "check": "constant_signed/run1_native_up_npu_rows"
+          }
+        },
+        "failed_checks": {
+          "constant_signed/run0_native_gate_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_gate_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_up_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_up_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_vs_gpu_gate": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_npu_vs_gpu_rows_gate": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_vs_gpu_up": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_npu_vs_gpu_rows_up": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_gate_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_gate_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_up_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_up_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_vs_gpu_gate": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_npu_vs_gpu_rows_gate": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_vs_gpu_up": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_npu_vs_gpu_rows_up": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          }
+        }
+      }
+    },
+    "results/native_projection_diagnostic.json": {
+      "status": "failed",
+      "error": "native projection diagnostics contain strict numerical or structural failures; see each case",
+      "report_sha256": "95a0be10e26788d3e3e70bbcf53eb455a66f86a9734a9f4e4dabda8d73e148af",
+      "scope": "untimed captured native gate/up projection diagnostics",
+      "timed_invocations": 0,
+      "runtime_provenance": {
+        "source_files": 15,
+        "binding_binaries": [
+          "native_binding_build/f549898be9574bd5e2cd/heteromega_native_ffn_f549898be9574bd5.so"
+        ]
+      },
+      "kind": "native_projection_diagnostic",
+      "completed_npu_dispatches": 16,
+      "expected_npu_dispatches": 16,
+      "completion_count_matches_expected": true,
+      "cases": [
+        {
+          "name": "constant_signed",
+          "status": "failed",
+          "buffers_unchanged": true,
+          "accuracy": {
+            "recorded_check_count": 32,
+            "numerical_failure_count": 16,
+            "structural_failure_count": 0,
+            "rejected_check_count": 16,
+            "worst": {
+              "relative_l2_error": {
+                "value": 0.5434409322921446,
+                "check": "run1_native_up_npu_rows"
+              },
+              "max_abs_error": {
+                "value": 2.9375,
+                "check": "run1_native_vs_gpu_up"
+              },
+              "normalized_max_error": {
+                "value": 0.25405405405405407,
+                "check": "run1_native_vs_gpu_up"
+              },
+              "rms_error": {
+                "value": 2.2251013664758164,
+                "check": "run1_native_up_npu_rows"
+              }
+            },
+            "failed_checks": {
+              "run0_native_gate_all": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_gate_npu_rows": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_up_all": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_up_npu_rows": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_vs_gpu_gate": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_npu_vs_gpu_rows_gate": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_vs_gpu_up": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run0_native_npu_vs_gpu_rows_up": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_gate_all": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_gate_npu_rows": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_up_all": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_up_npu_rows": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_vs_gpu_gate": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_npu_vs_gpu_rows_gate": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_vs_gpu_up": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.38427076839811497,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              },
+              "run1_native_npu_vs_gpu_rows_up": {
+                "numerical_passed": false,
+                "structural_passed": true,
+                "accepted": false,
+                "relative_l2_error": 0.5434409322921446,
+                "max_abs_error": 2.9375,
+                "structural_failures": []
+              }
+            }
+          }
+        },
+        {
+          "name": "constant_exact",
+          "status": "passed",
+          "buffers_unchanged": true,
+          "accuracy": {
+            "recorded_check_count": 32,
+            "numerical_failure_count": 0,
+            "structural_failure_count": 0,
+            "rejected_check_count": 0,
+            "worst": {
+              "relative_l2_error": {
+                "value": 0.0,
+                "check": "run1_native_vs_gpu_up"
+              },
+              "max_abs_error": {
+                "value": 0.0,
+                "check": "run1_native_vs_gpu_up"
+              },
+              "normalized_max_error": {
+                "value": 0.0,
+                "check": "run1_native_vs_gpu_up"
+              },
+              "rms_error": {
+                "value": 0.0,
+                "check": "run1_native_vs_gpu_up"
+              }
+            },
+            "failed_checks": {}
+          }
+        },
+        {
+          "name": "onehot_qzeros",
+          "status": "passed",
+          "buffers_unchanged": true,
+          "accuracy": {
+            "recorded_check_count": 32,
+            "numerical_failure_count": 0,
+            "structural_failure_count": 0,
+            "rejected_check_count": 0,
+            "worst": {
+              "relative_l2_error": {
+                "value": 0.0,
+                "check": "run1_native_vs_gpu_up"
+              },
+              "max_abs_error": {
+                "value": 0.0,
+                "check": "run1_native_vs_gpu_up"
+              },
+              "normalized_max_error": {
+                "value": 0.0,
+                "check": "run1_native_vs_gpu_up"
+              },
+              "rms_error": {
+                "value": 0.0,
+                "check": "run1_native_vs_gpu_up"
+              }
+            },
+            "failed_checks": {}
+          }
+        },
+        {
+          "name": "onehot_scales",
+          "status": "passed",
+          "buffers_unchanged": true,
+          "accuracy": {
+            "recorded_check_count": 32,
+            "numerical_failure_count": 0,
+            "structural_failure_count": 0,
+            "rejected_check_count": 0,
+            "worst": {
+              "relative_l2_error": {
+                "value": 0.0,
+                "check": "run1_native_vs_gpu_up"
+              },
+              "max_abs_error": {
+                "value": 0.0,
+                "check": "run1_native_vs_gpu_up"
+              },
+              "normalized_max_error": {
+                "value": 0.0,
+                "check": "run1_native_vs_gpu_up"
+              },
+              "rms_error": {
+                "value": 0.0,
+                "check": "run1_native_vs_gpu_up"
+              }
+            },
+            "failed_checks": {}
+          }
+        }
+      ],
+      "record_validation": {
+        "complete_records": true,
+        "recorded_completed_dispatches": 16,
+        "cases": [
+          {
+            "name": "constant_signed",
+            "complete_records": true,
+            "recorded_runs": 4,
+            "buffers_unchanged": true,
+            "repeat_output_hashes_stable": true
+          },
+          {
+            "name": "constant_exact",
+            "complete_records": true,
+            "recorded_runs": 4,
+            "buffers_unchanged": true,
+            "repeat_output_hashes_stable": true
+          },
+          {
+            "name": "onehot_qzeros",
+            "complete_records": true,
+            "recorded_runs": 4,
+            "buffers_unchanged": true,
+            "repeat_output_hashes_stable": true
+          },
+          {
+            "name": "onehot_scales",
+            "complete_records": true,
+            "recorded_runs": 4,
+            "buffers_unchanged": true,
+            "repeat_output_hashes_stable": true
+          }
+        ]
+      },
+      "accuracy": {
+        "recorded_check_count": 128,
+        "numerical_failure_count": 16,
+        "structural_failure_count": 0,
+        "rejected_check_count": 16,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.5434409322921446,
+            "check": "constant_signed/run1_native_up_npu_rows"
+          },
+          "max_abs_error": {
+            "value": 2.9375,
+            "check": "constant_signed/run1_native_vs_gpu_up"
+          },
+          "normalized_max_error": {
+            "value": 0.25405405405405407,
+            "check": "constant_signed/run1_native_vs_gpu_up"
+          },
+          "rms_error": {
+            "value": 2.2251013664758164,
+            "check": "constant_signed/run1_native_up_npu_rows"
+          }
+        },
+        "failed_checks": {
+          "constant_signed/run0_native_gate_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_gate_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_up_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_up_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_vs_gpu_gate": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_npu_vs_gpu_rows_gate": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_vs_gpu_up": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run0_native_npu_vs_gpu_rows_up": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_gate_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_gate_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_up_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_up_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_vs_gpu_gate": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_npu_vs_gpu_rows_gate": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_vs_gpu_up": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.38427076839811497,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          },
+          "constant_signed/run1_native_npu_vs_gpu_rows_up": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.5434409322921446,
+            "max_abs_error": 2.9375,
+            "structural_failures": []
+          }
+        }
+      }
+    },
+    "results/native_report_smoke.json": {
+      "status": "completed_with_accuracy_deviations",
+      "error": null,
+      "report_sha256": "fb9d1cfe603ab3811f64548e62c966cbfd071a686b8ac5f308a93f6e25c27220",
+      "scope": "isolated synthetic W4A16 prefill FFN; not complete model prefill/TTFT",
+      "timed_invocations": 4,
+      "runtime_provenance": {
+        "source_files": 14,
+        "binding_binaries": [
+          "native_binding_build/f549898be9574bd5e2cd/heteromega_native_ffn_f549898be9574bd5.so"
+        ]
+      },
+      "kind": "native_ffn",
+      "completed_npu_dispatches": 14,
+      "expected_npu_dispatches": 14,
+      "completion_count_matches_expected": true,
+      "cases": [],
+      "accuracy": {
+        "recorded_check_count": 90,
+        "numerical_failure_count": 30,
+        "structural_failure_count": 0,
+        "rejected_check_count": 0,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.16548882081713134,
+            "check": "run3_input0_native_output_npu_rows"
+          },
+          "max_abs_error": {
+            "value": 0.732421875,
+            "check": "samples/1"
+          },
+          "normalized_max_error": {
+            "value": 0.19450207468879668,
+            "check": "samples/1"
+          },
+          "rms_error": {
+            "value": 0.11282607158623635,
+            "check": "run3_input0_native_output_npu_rows"
+          }
+        },
+        "failed_checks": {}
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "buffer_integrity": {
+        "before": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        },
+        "after": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        }
+      },
+      "validator": {
+        "completed_npu_dispatches": 14,
+        "timed_invocations": 4,
+        "explicit_checks": 84,
+        "status": "completed_with_accuracy_deviations",
+        "accuracy_policy": "report",
+        "accuracy_passed": false,
+        "accuracy_accepted": true,
+        "accuracy_status": "reported_deviations",
+        "fixture": {
+          "full_packed_weight_sha256": [
+            "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+            "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+            "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+          ],
+          "input_sha256": [
+            "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+            "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+            "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+          ]
+        }
+      }
+    },
+    "results/native_smoke.json": {
+      "status": "failed",
+      "error": "native/GPU numerical validation failed; no performance claim is valid",
+      "report_sha256": "da2be872495ae4c1183d756d0dc6cdcce80a9de59fadee2ab2864e83277f1cb9",
+      "scope": "isolated synthetic W4A16 prefill FFN; not complete model prefill/TTFT",
+      "timed_invocations": 0,
+      "runtime_provenance": {
+        "source_files": 14,
+        "binding_binaries": [
+          "native_binding_build/f549898be9574bd5e2cd/heteromega_native_ffn_f549898be9574bd5.so"
+        ]
+      },
+      "kind": "native_ffn",
+      "completed_npu_dispatches": 2,
+      "expected_npu_dispatches": 2,
+      "completion_count_matches_expected": true,
+      "cases": [],
+      "accuracy": {
+        "recorded_check_count": 21,
+        "numerical_failure_count": 9,
+        "structural_failure_count": 0,
+        "rejected_check_count": 9,
+        "worst": {
+          "relative_l2_error": {
+            "value": 0.16548882081713134,
+            "check": "run0_input0_native_output_npu_rows"
+          },
+          "max_abs_error": {
+            "value": 0.732421875,
+            "check": "run0_input0_native_vs_gpu_output"
+          },
+          "normalized_max_error": {
+            "value": 0.19450207468879668,
+            "check": "run0_input0_native_vs_gpu_output"
+          },
+          "rms_error": {
+            "value": 0.11282607158623635,
+            "check": "run0_input0_native_output_npu_rows"
+          }
+        },
+        "failed_checks": {
+          "run0_input0_native_gate_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.059491517198144606,
+            "max_abs_error": 0.53125,
+            "structural_failures": []
+          },
+          "run0_input0_native_gate_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.0840846106422685,
+            "max_abs_error": 0.53125,
+            "structural_failures": []
+          },
+          "run0_input0_native_up_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.05907759035305916,
+            "max_abs_error": 0.46875,
+            "structural_failures": []
+          },
+          "run0_input0_native_up_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.08348408848391718,
+            "max_abs_error": 0.46875,
+            "structural_failures": []
+          },
+          "run0_input0_native_output_all": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.11697596607209645,
+            "max_abs_error": 0.732421875,
+            "structural_failures": []
+          },
+          "run0_input0_native_output_npu_rows": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.16548882081713134,
+            "max_abs_error": 0.732421875,
+            "structural_failures": []
+          },
+          "run0_input0_native_vs_gpu_gate": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.0594917254737904,
+            "max_abs_error": 0.53125,
+            "structural_failures": []
+          },
+          "run0_input0_native_vs_gpu_up": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.059077728804112405,
+            "max_abs_error": 0.46875,
+            "structural_failures": []
+          },
+          "run0_input0_native_vs_gpu_output": {
+            "numerical_passed": false,
+            "structural_passed": true,
+            "accepted": false,
+            "relative_l2_error": 0.11696956265768875,
+            "max_abs_error": 0.732421875,
+            "structural_failures": []
+          }
+        }
+      },
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "buffer_integrity": {
+        "before": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        },
+        "after": {
+          "recorded": true,
+          "passed": true,
+          "checks": {
+            "host_weights_match_initial": true,
+            "device_weights_match_initial": true,
+            "host_inputs_match_initial": true,
+            "device_inputs_match_initial": true
+          }
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "results/comparison/comparison_manifest.json": {
+      "status": "failed",
+      "jobs": [
+        {
+          "id": "b0_native_ordinary",
+          "status": "failed",
+          "error": "measurement exited 1; inspect /notebooks/HeteroMega-native-comparison-20261027/results/comparison/logs/b0_native_ordinary.log",
+          "returncode": 1
+        },
+        {
+          "id": "b0_upstream_p2560_ordinary",
+          "status": "passed",
+          "error": null,
+          "returncode": 0
+        },
+        {
+          "id": "b0_upstream_p2816_ordinary",
+          "status": "passed",
+          "error": null,
+          "returncode": 0
+        },
+        {
+          "id": "b1_upstream_p2816_ordinary",
+          "status": "passed",
+          "error": null,
+          "returncode": 0
+        },
+        {
+          "id": "b1_upstream_p2560_ordinary",
+          "status": "passed",
+          "error": null,
+          "returncode": 0
+        },
+        {
+          "id": "b1_native_ordinary",
+          "status": "failed",
+          "error": "measurement exited 1; inspect /notebooks/HeteroMega-native-comparison-20261027/results/comparison/logs/b1_native_ordinary.log",
+          "returncode": 1
+        }
+      ],
+      "summary_verified": true,
+      "validator_source_sha256": "7df15163fa385f606f9c6f31efbcbafc85c0c7c5d8d5bc5cddfe573460dcc8ea",
+      "power_snapshots_verified": 12,
+      "native_failed": true,
+      "admitted_comparisons": [],
+      "full_packed_weights_and_inputs_match": true,
+      "comparison_allowed": false
+    },
+    "results/faithful_comparison/comparison_manifest.json": {
+      "status": "completed_with_accuracy_deviations",
+      "jobs": [
+        {
+          "id": "b0_native_ordinary",
+          "status": "completed_with_accuracy_deviations",
+          "error": null,
+          "returncode": 0
+        },
+        {
+          "id": "b0_upstream_p2560_ordinary",
+          "status": "passed",
+          "error": null,
+          "returncode": 0
+        },
+        {
+          "id": "b0_upstream_p2816_ordinary",
+          "status": "passed",
+          "error": null,
+          "returncode": 0
+        },
+        {
+          "id": "b1_upstream_p2816_ordinary",
+          "status": "passed",
+          "error": null,
+          "returncode": 0
+        },
+        {
+          "id": "b1_upstream_p2560_ordinary",
+          "status": "passed",
+          "error": null,
+          "returncode": 0
+        },
+        {
+          "id": "b1_native_ordinary",
+          "status": "completed_with_accuracy_deviations",
+          "error": null,
+          "returncode": 0
+        },
+        {
+          "id": "b0_native_diagnostic",
+          "status": "completed_with_accuracy_deviations",
+          "error": null,
+          "returncode": 0
+        }
+      ],
+      "summary_verified": true,
+      "validator_source_sha256": "db3402ff43405122eb7190bc3800c0899a46cc898f62e20849a68fd1d016a330",
+      "power_snapshots_verified": 14,
+      "native_failed": false,
+      "admitted_comparisons": [
+        {
+          "block": 0,
+          "npu_channels": 2560,
+          "native_job": "b0_native_ordinary",
+          "candidate_job": "b0_upstream_p2560_ordinary",
+          "native_accuracy_passed": false,
+          "candidate_accuracy_passed": true,
+          "native_accuracy_policy": "report",
+          "candidate_accuracy_policy": "report",
+          "comparison_kind": "experimental_latency_with_numerical_deviations",
+          "native_over_candidate_latency_ratio": 0.8767400254143134,
+          "speedup_vs_native": null,
+          "gpu_control_native_over_candidate": 1.0023727551288528
+        },
+        {
+          "block": 0,
+          "npu_channels": 2816,
+          "native_job": "b0_native_ordinary",
+          "candidate_job": "b0_upstream_p2816_ordinary",
+          "native_accuracy_passed": false,
+          "candidate_accuracy_passed": true,
+          "native_accuracy_policy": "report",
+          "candidate_accuracy_policy": "report",
+          "comparison_kind": "experimental_latency_with_numerical_deviations",
+          "native_over_candidate_latency_ratio": 0.8942571985660728,
+          "speedup_vs_native": null,
+          "gpu_control_native_over_candidate": 1.001725665072385
+        },
+        {
+          "block": 1,
+          "npu_channels": 2816,
+          "native_job": "b1_native_ordinary",
+          "candidate_job": "b1_upstream_p2816_ordinary",
+          "native_accuracy_passed": false,
+          "candidate_accuracy_passed": true,
+          "native_accuracy_policy": "report",
+          "candidate_accuracy_policy": "report",
+          "comparison_kind": "experimental_latency_with_numerical_deviations",
+          "native_over_candidate_latency_ratio": 0.9091334349368662,
+          "speedup_vs_native": null,
+          "gpu_control_native_over_candidate": 1.0038813147391328
+        },
+        {
+          "block": 1,
+          "npu_channels": 2560,
+          "native_job": "b1_native_ordinary",
+          "candidate_job": "b1_upstream_p2560_ordinary",
+          "native_accuracy_passed": false,
+          "candidate_accuracy_passed": true,
+          "native_accuracy_policy": "report",
+          "candidate_accuracy_policy": "report",
+          "comparison_kind": "experimental_latency_with_numerical_deviations",
+          "native_over_candidate_latency_ratio": 0.8994826477548032,
+          "speedup_vs_native": null,
+          "gpu_control_native_over_candidate": 0.9970922502314051
+        }
+      ],
+      "full_packed_weights_and_inputs_match": true,
+      "comparison_allowed": true
+    }
+  },
+  "limitations": [
+    "This audit validates exported bytes and recorded evidence; it does not execute GPU/NPU work.",
+    "Complete FFN output matrices are absent; constant-projection diagnostics retain row vectors. Error magnitudes are retained; tolerance and policy decisions are recalculated.",
+    "A source/binary hash and build log establish a recorded provenance chain, not an independent rebuild.",
+    "Integrity success is separate from native numerical success; failed reports never authorize a speedup.",
+    "Ordinary complete FFN timing and synchronized/untimed diagnostics remain separate; no whole-model claim."
+  ],
+  "checksums": {
+    "SHA256SUMS.json": {
+      "sha256": "9dd5c87fcb7f941a04c7bc253cf0ccc70d182e4a464a96b93a1872c2fbc9b3b7",
+      "verified_files": 1194
+    }
+  },
+  "baseline": {
+    "original_revision": "61714a3147f34857aa5dfef21a28e762777a2df0",
+    "snapshot_git_head": "e55e569cf3af6220a0fc15a5adb19e4ff82749c3",
+    "original_payload_files_verified": 69,
+    "patched_source_files_verified": 67,
+    "compatibility_patch_replay_verified": true,
+    "native_library_sha256": "6fa53d1cb6fd24e87a639b0d2f5a7d007dd0eaac78fed45bca2af4a66b121b8b",
+    "native_library_bytes": 4491800,
+    "build_status": "built_not_executed",
+    "xdna_uapi_revision": "0e6d303b2cc2b3fe1cf10aba0acbf57a422588fb"
+  },
+  "harness_snapshot": {
+    "base_head": "5352fdd7989b99695e1a97b5f018c575a790b341",
+    "resolved_files": 81
+  },
+  "candidate_artifacts": {
+    "artifacts/upstream_bfp16_projection_m512_k2560_n4096_253c4da9c4fdad95/final.xclbin.json": {
+      "manifest_sha256": "fb5d795f085d235ad65becec5163bd7120330d2f9416923c76509df2064eee48",
+      "xclbin_sha256": "c899f0601bb5680da52e5e6650f68eb299ed3f52c7a38ca199f7759682a63eac",
+      "instructions_sha256": "2f4265c54bb90e6cf04160a4cb845b16acd1fb1fab8b3fc5dce00839bd12c857",
+      "dependency_count": 10
+    },
+    "artifacts/upstream_bfp16_projection_m512_k2816_n4096_23fbcb8c25ebbbfa/final.xclbin.json": {
+      "manifest_sha256": "7606f443c2a8f1cc67af0103af320897bf4dadbbed480e17f8dbaa4077f126fa",
+      "xclbin_sha256": "8d9629a7d1b04ae14236ac365ca50b3c8c9de6935bf81056498bd5499feb505e",
+      "instructions_sha256": "243ca44a6ccde10d4a077682774c80beb01215081556394ad34e5bec663ce18b",
+      "dependency_count": 10
+    },
+    "artifacts/upstream_bfp16_swiglu_m512_k4096_n2560_1cfba8242e69e381/final.xclbin.json": {
+      "manifest_sha256": "b8e7fad3abe6c4d5b1cf59c1ed543af4f46e8c8e4bc51090d0b7739f74ac77b4",
+      "xclbin_sha256": "0c139549a2b746e7db6a25bc9cb744731d3d2a180bbb311aed496b7be6f98214",
+      "instructions_sha256": "d0d731e3fa3880beccfa908b2213c9d125b05f6404d6eadbb1f07d4c9e5b0df5",
+      "dependency_count": 10
+    },
+    "artifacts/upstream_bfp16_swiglu_m512_k4096_n2816_227928fb185deb4a/final.xclbin.json": {
+      "manifest_sha256": "d84945d5eb2f04a34150473dc5d5a92db8a088be32596ca5b8455c3402aac7c7",
+      "xclbin_sha256": "d2184c84b8cbd88df40ebc066540e50a4fde02e16653e0aaceca3378868fbfdc",
+      "instructions_sha256": "5445c2575c960e8db499286224be3c3f52c233c6df86573fa6d01b58e39a6212",
+      "dependency_count": 10
+    }
+  },
+  "comparison_validators": {
+    "7df15163fa385f606f9c6f31efbcbafc85c0c7c5d8d5bc5cddfe573460dcc8ea": {
+      "archived_locations": [
+        "heteromega-native-comparison-20261027.tar.gz::experiments/ffn_partition/compare_upstream_native.py"
+      ],
+      "verified_local_dependencies": {
+        "npu/ffn/reference.py": "351923dabc1ec03bc76f11d2d2c941960c5b7d3fb56233be59c66661c82ca631",
+        "experiments/ffn_partition/contract.py": "b1199d8dff1812f972d2e8f4ac5fbfaddc24a7a023ff2aab19585ec13d154a2b",
+        "experiments/ffn_partition/gpu_backend.py": "ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7",
+        "npu/ffn/prefill_reference.py": "24f4218251fc08a0e8969601d477e65074887243035d161e27a38c8f84e52554",
+        "npu/ffn/projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e",
+        "npu/ffn/xrt_runner.py": "68115a215d1deeb5f9af620e7cff56bad0f977d1d20e69276bc9f73a4353d598",
+        "experiments/ffn_partition/npu_backend.py": "ececc53ce31432b2bddfbdb987ce145b5d1dc3d2e0be833027529c309d842fa3",
+        "experiments/ffn_partition/run.py": "fd78edf061418c20d85a941f6454153c26b0979eef0e6895ac2d21f414593751",
+        "npu/ffn/upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+        "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+        "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+        "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+        "npu/ffn/upstream_schedule.py": "37b9dfdec2cbd039dda7eecfcdefd5306ba828394d1fd18176efe6241c023d1b",
+        "experiments/ffn_partition/upstream_npu.py": "0925fef0eef711a9446d3388e4526a114f329659d0dc9d21dd7794f33a924f81",
+        "experiments/ffn_partition/run_upstream_partition.py": "062991575724230af8ec1485285791c662b8d8a7a6386cb59b4671d4bbe4ab3d",
+        "experiments/ffn_partition/sweep_partition.py": "63dafdf7fc35ed13be1f2649181b28952ebf0085abe8759e8c1d064c9cfcff06",
+        "experiments/ffn_partition/compare_native.py": "5db78435964372e2c3222d3c755a59e19490e778ee8c288735cdc9c8aca89e81"
+      }
+    },
+    "db3402ff43405122eb7190bc3800c0899a46cc898f62e20849a68fd1d016a330": {
+      "archived_locations": [
+        "sources/experiments/ffn_partition/compare_upstream_native.py",
+        "native-report-policy-20261027.tar.gz::experiments/ffn_partition/compare_upstream_native.py"
+      ],
+      "verified_local_dependencies": {
+        "npu/ffn/reference.py": "351923dabc1ec03bc76f11d2d2c941960c5b7d3fb56233be59c66661c82ca631",
+        "experiments/ffn_partition/contract.py": "b1199d8dff1812f972d2e8f4ac5fbfaddc24a7a023ff2aab19585ec13d154a2b",
+        "experiments/ffn_partition/gpu_backend.py": "ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7",
+        "npu/ffn/prefill_reference.py": "24f4218251fc08a0e8969601d477e65074887243035d161e27a38c8f84e52554",
+        "npu/ffn/projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e",
+        "npu/ffn/xrt_runner.py": "68115a215d1deeb5f9af620e7cff56bad0f977d1d20e69276bc9f73a4353d598",
+        "experiments/ffn_partition/npu_backend.py": "ececc53ce31432b2bddfbdb987ce145b5d1dc3d2e0be833027529c309d842fa3",
+        "experiments/ffn_partition/run.py": "fd78edf061418c20d85a941f6454153c26b0979eef0e6895ac2d21f414593751",
+        "npu/ffn/upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+        "npu/ffn/prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+        "npu/ffn/prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+        "npu/ffn/prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+        "npu/ffn/upstream_schedule.py": "37b9dfdec2cbd039dda7eecfcdefd5306ba828394d1fd18176efe6241c023d1b",
+        "experiments/ffn_partition/upstream_npu.py": "0925fef0eef711a9446d3388e4526a114f329659d0dc9d21dd7794f33a924f81",
+        "experiments/ffn_partition/run_upstream_partition.py": "062991575724230af8ec1485285791c662b8d8a7a6386cb59b4671d4bbe4ab3d",
+        "experiments/ffn_partition/sweep_partition.py": "63dafdf7fc35ed13be1f2649181b28952ebf0085abe8759e8c1d064c9cfcff06",
+        "experiments/ffn_partition/compare_native.py": "5db78435964372e2c3222d3c755a59e19490e778ee8c288735cdc9c8aca89e81"
+      }
+    }
+  },
+  "totals": {
+    "native_ffn_reports": 7,
+    "completed_npu_dispatches": 2126,
+    "failed_reports": 5,
+    "direct_candidate_reports": 8,
+    "native_projection_diagnostic_reports": 2
+  },
+  "full_ffn_fixture_groups_including_failed_native": [
+    {
+      "fixture": {
+        "full_packed_weight_sha256": [
+          "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+          "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+          "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+        ],
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "reports": [
+        {
+          "report": "results/comparison/jobs/b0_native_ordinary.json",
+          "kind": "native_ffn",
+          "status": "failed"
+        },
+        {
+          "report": "results/comparison/jobs/b0_upstream_p2560_ordinary.json",
+          "kind": "direct_candidate",
+          "status": "passed"
+        },
+        {
+          "report": "results/comparison/jobs/b0_upstream_p2816_ordinary.json",
+          "kind": "direct_candidate",
+          "status": "passed"
+        },
+        {
+          "report": "results/comparison/jobs/b1_native_ordinary.json",
+          "kind": "native_ffn",
+          "status": "failed"
+        },
+        {
+          "report": "results/comparison/jobs/b1_upstream_p2560_ordinary.json",
+          "kind": "direct_candidate",
+          "status": "passed"
+        },
+        {
+          "report": "results/comparison/jobs/b1_upstream_p2816_ordinary.json",
+          "kind": "direct_candidate",
+          "status": "passed"
+        },
+        {
+          "report": "results/faithful_comparison/jobs/b0_native_diagnostic.json",
+          "kind": "native_ffn",
+          "status": "completed_with_accuracy_deviations"
+        },
+        {
+          "report": "results/faithful_comparison/jobs/b0_native_ordinary.json",
+          "kind": "native_ffn",
+          "status": "completed_with_accuracy_deviations"
+        },
+        {
+          "report": "results/faithful_comparison/jobs/b0_upstream_p2560_ordinary.json",
+          "kind": "direct_candidate",
+          "status": "passed"
+        },
+        {
+          "report": "results/faithful_comparison/jobs/b0_upstream_p2816_ordinary.json",
+          "kind": "direct_candidate",
+          "status": "passed"
+        },
+        {
+          "report": "results/faithful_comparison/jobs/b1_native_ordinary.json",
+          "kind": "native_ffn",
+          "status": "completed_with_accuracy_deviations"
+        },
+        {
+          "report": "results/faithful_comparison/jobs/b1_upstream_p2560_ordinary.json",
+          "kind": "direct_candidate",
+          "status": "passed"
+        },
+        {
+          "report": "results/faithful_comparison/jobs/b1_upstream_p2816_ordinary.json",
+          "kind": "direct_candidate",
+          "status": "passed"
+        },
+        {
+          "report": "results/native_report_smoke.json",
+          "kind": "native_ffn",
+          "status": "completed_with_accuracy_deviations"
+        },
+        {
+          "report": "results/native_smoke.json",
+          "kind": "native_ffn",
+          "status": "failed"
+        }
+      ]
+    }
+  ],
+  "cross_backend_full_ffn_fixture_match_including_failed_native": true,
+  "fixture_match_does_not_change_native_acceptance": true,
+  "native_failed_reports": [
+    "results/comparison/jobs/b0_native_ordinary.json",
+    "results/comparison/jobs/b1_native_ordinary.json",
+    "results/native_constant_vectors.json",
+    "results/native_projection_diagnostic.json",
+    "results/native_smoke.json"
+  ],
+  "validator_source_sha256": "db3402ff43405122eb7190bc3800c0899a46cc898f62e20849a68fd1d016a330"
+}

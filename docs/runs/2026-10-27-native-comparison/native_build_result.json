@@ -1,0 +1,8 @@
+{
+  "status": "built_not_executed",
+  "library": "/notebooks/HeteroMosaic-baseline-20261027/build/py/unified_llm_w4a16/unified_llm_w4a16_hetero_libtorch.so",
+  "library_bytes": 4491800,
+  "library_sha256": "6fa53d1cb6fd24e87a639b0d2f5a7d007dd0eaac78fed45bca2af4a66b121b8b",
+  "native_root": "/notebooks/HeteroMosaic-baseline-20261027",
+  "driver_include": "/notebooks/HeteroMosaic-baseline-20261027/libraries/xdna-driver-05-19-25/src/include/uapi/drm_local"
+}

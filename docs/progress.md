@@ -1,5 +1,42 @@
 # HeteroMega progress
 
+## 2026-10-27 — faithful native HeteroMosaic FFN comparison
+
+**Measured:** native HeteroMosaic completes M512/H4096/I14336 FFN in
+15.81–15.89 ms, versus 17.48–18.03 ms for HeteroMega P2560/P2816, across two
+reversed blocks with 50 samples per mode. Our channel partition is 10.0–14.1%
+slower than the native heterogeneous FFN here; it still beats its matched
+GPU-only controls by 18.8–21.6%. Native gains about 29.0% versus its own GPU
+control. This replaces the earlier missing-native-baseline comparison, not
+the preserved GPU-only measurements.
+
+The user explicitly authorized faithful native timing despite numerical
+failure. Native report mode retains errors and original failed tolerances;
+GPU controls and execution/buffer-integrity checks stay strict. The original
+native library, binding and timing body are byte-identical across policies.
+Both paths use identical original packed buffers and inputs. Native's complete
+output relative L2 reaches .116976; candidate checks all pass. This is a latency
+comparison of the implementations, not a model-accuracy result.
+
+The native baseline is rebuilt from pinned 61714a3 with only saved runtime/build
+compatibility fixes. Its M256/M256 gate/up split writes shared HIP buffers and
+keeps down on GPU. A separate synchronized profile gives gate/up 14.511→7.872 ms,
+pointwise .838→.865 ms, and down 7.044→7.010 ms. Our concurrent NPU branch alone
+is 14.70–15.52 ms, plus remaining staging/GPU-completion/reduction. Native offloads
+33.3% of projection MACs, versus our 17.9–19.6%. Host spans overlap; their values
+do not identify device-cycle or bandwidth shares.
+
+The audit verifies 1,194 files, native source/patch/binary provenance, identical
+fixtures, power snapshots and 2,126 completed dispatches across all retained
+runs. 38 focused CPU tests pass. Hardware remains HX370/Radeon 890M/Strix,
+NPU default mode. No host driver/kernel changes or kernel-only PR changes.
+Research branch: `codex/native-heteromosaic-ffn-comparison`; report-policy code
+commit 1e30f8a. [Full report and reproducible evidence](runs/2026-10-27-native-comparison/README.md).
+
+Next: reduce candidate host/XRT activation staging and measure GPU suffix
+execution with device events; then retest against this faithful native baseline.
+Whole-model prefill/TTFT and attention interference remain unmeasured here.
+
 ## 2026-10-27 — direct-buffer GPU + NPU partition measured
 
 **Measured:** complete M512/H4096/I14336 prefill FFN latency is 17.72–17.95 ms

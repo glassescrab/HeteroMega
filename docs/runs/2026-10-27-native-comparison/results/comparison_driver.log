@@ -1,0 +1,13 @@
+nohup: ignoring input
+Starting b0_native_ordinary
+{"job": "b0_native_ordinary", "status": "failed", "error": "measurement exited 1; inspect /notebooks/HeteroMega-native-comparison-20261027/results/comparison/logs/b0_native_ordinary.log"}
+Starting b0_upstream_p2560_ordinary
+{"job": "b0_upstream_p2560_ordinary", "status": "passed", "error": null}
+Starting b0_upstream_p2816_ordinary
+{"job": "b0_upstream_p2816_ordinary", "status": "passed", "error": null}
+Starting b1_upstream_p2816_ordinary
+{"job": "b1_upstream_p2816_ordinary", "status": "passed", "error": null}
+Starting b1_upstream_p2560_ordinary
+{"job": "b1_upstream_p2560_ordinary", "status": "passed", "error": null}
+Starting b1_native_ordinary
+{"job": "b1_native_ordinary", "status": "failed", "error": "measurement exited 1; inspect /notebooks/HeteroMega-native-comparison-20261027/results/comparison/logs/b1_native_ordinary.log"}

@@ -1,0 +1,13 @@
+
+---------------------------
+[0000:66:00.1] : NPU Strix
+---------------------------
+Platform
+  Name                   : NPU Strix 
+  Power Mode             : default 
+  Total Columns          : 8 
+
+Estimated Power          : N/A
+Temperature (C)          : N/A
+
+Successfully wrote the JSON file: /notebooks/HeteroMega-native-comparison-20261027/results/faithful_comparison/power/b1_upstream_p2560_ordinary_before.json

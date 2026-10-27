@@ -1,0 +1,203 @@
+{
+  "status": "verified",
+  "native_binary_and_binding_identities": {
+    "native_library_sha256": [
+      "6fa53d1cb6fd24e87a639b0d2f5a7d007dd0eaac78fed45bca2af4a66b121b8b"
+    ],
+    "binding_library_sha256": [
+      "ca4c9fbdae852fabb2cc755fb62cb30e03cdbce165743415334a311aa688d33a"
+    ],
+    "binding_sha256": [
+      "8e448b2b8a5a45bf046ed2ca7958b4861582676c738e8d5c0ce19e5a28b8fe4d"
+    ],
+    "driver_header_sha256": [
+      "29d583171c7a6c72839c43952297ebe530c7b97392692bc286ea2da3cfb5178e"
+    ]
+  },
+  "native_runtime_reports_verified": 9,
+  "policy_transition_same_initial_numerical_hash_checks": 84,
+  "native_invoke_ast_identical": true,
+  "rows": [
+    {
+      "report": "b0_native_ordinary.json",
+      "block": 0,
+      "npu_channels": null,
+      "stats": {
+        "baseline": {
+          "count": 50,
+          "median_us": 22267.180500000002,
+          "p10_us": 21920.344,
+          "p90_us": 22621.6709
+        },
+        "native": {
+          "count": 50,
+          "median_us": 15811.07,
+          "p10_us": 15371.250100000001,
+          "p90_us": 16308.054900000001
+        }
+      }
+    },
+    {
+      "report": "b0_upstream_p2560_ordinary.json",
+      "block": 0,
+      "npu_channels": 2560,
+      "stats": {
+        "baseline": {
+          "count": 50,
+          "median_us": 22214.471,
+          "p10_us": 21949.804,
+          "p90_us": 22525.9179
+        },
+        "serial": {
+          "count": 50,
+          "median_us": 34025.388999999996,
+          "p10_us": 33466.7481,
+          "p90_us": 34445.3699
+        },
+        "concurrent": {
+          "count": 50,
+          "median_us": 18033.932,
+          "p10_us": 17552.484,
+          "p90_us": 18397.9649
+        }
+      }
+    },
+    {
+      "report": "b0_upstream_p2816_ordinary.json",
+      "block": 0,
+      "npu_channels": 2816,
+      "stats": {
+        "baseline": {
+          "count": 50,
+          "median_us": 22228.821000000004,
+          "p10_us": 21893.583000000002,
+          "p90_us": 22599.392
+        },
+        "serial": {
+          "count": 50,
+          "median_us": 34410.806,
+          "p10_us": 33871.281,
+          "p90_us": 34872.048
+        },
+        "concurrent": {
+          "count": 50,
+          "median_us": 17680.674,
+          "p10_us": 17301.2952,
+          "p90_us": 18303.8729
+        }
+      }
+    },
+    {
+      "report": "b1_native_ordinary.json",
+      "block": 1,
+      "npu_channels": null,
+      "stats": {
+        "baseline": {
+          "count": 50,
+          "median_us": 22381.298000000003,
+          "p10_us": 22068.629,
+          "p90_us": 22715.5048
+        },
+        "native": {
+          "count": 50,
+          "median_us": 15892.877499999999,
+          "p10_us": 15595.4331,
+          "p90_us": 16278.509
+        }
+      }
+    },
+    {
+      "report": "b1_upstream_p2560_ordinary.json",
+      "block": 1,
+      "npu_channels": 2560,
+      "stats": {
+        "baseline": {
+          "count": 50,
+          "median_us": 22446.567000000003,
+          "p10_us": 22115.831000000002,
+          "p90_us": 22771.624
+        },
+        "serial": {
+          "count": 50,
+          "median_us": 34808.2835,
+          "p10_us": 34172.097499999996,
+          "p90_us": 35250.7439
+        },
+        "concurrent": {
+          "count": 50,
+          "median_us": 17668.9095,
+          "p10_us": 17306.697,
+          "p90_us": 18344.121
+        }
+      }
+    },
+    {
+      "report": "b1_upstream_p2816_ordinary.json",
+      "block": 1,
+      "npu_channels": 2816,
+      "stats": {
+        "baseline": {
+          "count": 50,
+          "median_us": 22294.765,
+          "p10_us": 22056.3151,
+          "p90_us": 22572.2618
+        },
+        "serial": {
+          "count": 50,
+          "median_us": 34417.245500000005,
+          "p10_us": 33697.0981,
+          "p90_us": 35511.7039
+        },
+        "concurrent": {
+          "count": 50,
+          "median_us": 17481.3475,
+          "p10_us": 17030.367100000003,
+          "p90_us": 17883.473100000003
+        }
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "block": 0,
+      "npu_channels": 2560,
+      "native_us": 15811.07,
+      "candidate_us": 18033.932,
+      "native_over_candidate_ratio": 0.8767400254143134,
+      "candidate_latency_higher_percent": 14.058896709710345,
+      "candidate_speedup_vs_own_gpu": 1.2318151693152664,
+      "native_latency_ratio_vs_own_gpu": 1.4083285002216803
+    },
+    {
+      "block": 0,
+      "npu_channels": 2816,
+      "native_us": 15811.07,
+      "candidate_us": 17680.674,
+      "native_over_candidate_ratio": 0.8942571985660728,
+      "candidate_latency_higher_percent": 11.824651968525846,
+      "candidate_speedup_vs_own_gpu": 1.2572383270004301,
+      "native_latency_ratio_vs_own_gpu": 1.4083285002216803
+    },
+    {
+      "block": 1,
+      "npu_channels": 2560,
+      "native_us": 15892.877499999999,
+      "candidate_us": 17668.9095,
+      "native_over_candidate_ratio": 0.8994826477548032,
+      "candidate_latency_higher_percent": 11.175018494920153,
+      "candidate_speedup_vs_own_gpu": 1.270399115463238,
+      "native_latency_ratio_vs_own_gpu": 1.4082596433528167
+    },
+    {
+      "block": 1,
+      "npu_channels": 2816,
+      "native_us": 15892.877499999999,
+      "candidate_us": 17481.3475,
+      "native_over_candidate_ratio": 0.9091334349368662,
+      "candidate_latency_higher_percent": 9.994854613332294,
+      "candidate_speedup_vs_own_gpu": 1.2753459079741993,
+      "native_latency_ratio_vs_own_gpu": 1.4082596433528167
+    }
+  ],
+  "scope": "Separate fresh-process ordinary blocks; 50 timed samples per mode per report. Native report-policy numerical deviations retained; native diagnostic excluded."
+}

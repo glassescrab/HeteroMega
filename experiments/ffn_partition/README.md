@@ -1,5 +1,13 @@
 # Prefill GPU–NPU FFN partition experiment
 
+**Faithful native comparison (October 27):** original heterogeneous HeteroMosaic
+finishes in **15.81–15.89 ms**, versus **17.48–18.03 ms** for our direct-buffer
+P2560/P2816 partitions at M512. Our implementation is 10.0–14.1% slower than
+native here, while still faster than GPU-only. Native numerical failures are
+retained under the user's explicit report-policy authorization; its binary,
+dispatcher and timing are unchanged. See [the measured native comparison](../../docs/runs/2026-10-27-native-comparison/README.md)
+and [the comparison harness](NATIVE_COMPARISON.md).
+
 **Current direct-buffer path (October 27):** use
 `python -m experiments.ffn_partition.run_upstream_partition` to pair the
 optimized eight-column BFP16 NPU branch with the complementary GPU FFN.

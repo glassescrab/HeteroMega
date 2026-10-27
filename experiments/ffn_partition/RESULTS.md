@@ -1,5 +1,11 @@
 # Complete-FFN partition measurements — 2026-10-18
 
+For the latest direct-buffer and faithful native comparison, see the
+[October 27 report](../../docs/runs/2026-10-27-native-comparison/README.md):
+native HeteroMosaic takes 15.81–15.89 ms, our channel partitions 17.48–18.03 ms,
+and matched GPU-only controls about 22.2–22.4 ms. The historical results below
+remain unchanged.
+
 For the subsequent eight-column/four-row redesign, see [ARRAY8_RESULTS.md](ARRAY8_RESULTS.md).
 The measurements below preserve the original one-row NPU graph.
 

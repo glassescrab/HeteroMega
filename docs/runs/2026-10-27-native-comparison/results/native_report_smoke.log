@@ -1,0 +1,2 @@
+nohup: ignoring input
+{"status": "completed_with_accuracy_deviations", "stats": {"baseline": {"count": 2, "median_us": 21963.416, "p10_us": 21877.6896, "p90_us": 22049.1424, "min_us": 21856.258, "max_us": 22070.574}, "native": {"count": 2, "median_us": 15845.688999999998, "p10_us": 15310.3594, "p90_us": 16381.0186, "min_us": 15176.527, "max_us": 16514.851}}, "completed_npu_dispatches": 14}
