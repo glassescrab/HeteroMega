@@ -1,0 +1,18 @@
+Building/verifying direct-weight NPU artifacts: M=512 H=4096 P=2560
+[92mSuccessfully preprocessed all matching files.[0m
+Validating full GPU baseline against independent CPU FFN
+Validating/timing direct-weight partition P=2560/14336
+P=2560: completed round -2/10
+P=2560: completed round -1/10
+P=2560: completed round 0/10
+P=2560: completed round 1/10
+P=2560: completed round 2/10
+P=2560: completed round 3/10
+P=2560: completed round 4/10
+P=2560: completed round 5/10
+P=2560: completed round 6/10
+P=2560: completed round 7/10
+P=2560: completed round 8/10
+P=2560: completed round 9/10
+P=2560: completed round 10/10
+{"npu_channels": 2560, "status": "passed", "stats": {"concurrent": {"count": 10, "median_us": 18007.763, "p10_us": 17437.273, "p90_us": 18360.695099999997, "min_us": 17385.109, "max_us": 18423.093}, "serial": {"count": 10, "median_us": 34372.2515, "p10_us": 33809.6677, "p90_us": 34958.3927, "min_us": 33457.702, "max_us": 35138.453}, "baseline": {"count": 10, "median_us": 22071.231, "p10_us": 21785.841099999998, "p90_us": 22310.537800000002, "min_us": 21718.432, "max_us": 22472.059}}, "latency_ratio_vs_gpu_baseline": 1.2256509040017909, "speedup_vs_gpu_baseline": 1.2256509040017909}

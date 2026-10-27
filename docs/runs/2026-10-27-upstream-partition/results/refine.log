@@ -1,0 +1,54 @@
+Building/verifying direct-weight NPU artifacts: M=512 H=4096 P=2304
+Building/verifying direct-weight NPU artifacts: M=512 H=4096 P=2816
+[92mSuccessfully preprocessed all matching files.[0m
+Validating full GPU baseline against independent CPU FFN
+Validating/timing direct-weight partition P=2304/14336
+P=2304: completed round -2/20
+P=2304: completed round -1/20
+P=2304: completed round 0/20
+P=2304: completed round 1/20
+P=2304: completed round 2/20
+P=2304: completed round 3/20
+P=2304: completed round 4/20
+P=2304: completed round 5/20
+P=2304: completed round 6/20
+P=2304: completed round 7/20
+P=2304: completed round 8/20
+P=2304: completed round 9/20
+P=2304: completed round 10/20
+P=2304: completed round 11/20
+P=2304: completed round 12/20
+P=2304: completed round 13/20
+P=2304: completed round 14/20
+P=2304: completed round 15/20
+P=2304: completed round 16/20
+P=2304: completed round 17/20
+P=2304: completed round 18/20
+P=2304: completed round 19/20
+P=2304: completed round 20/20
+{"npu_channels": 2304, "status": "passed", "stats": {"serial": {"count": 20, "median_us": 33986.014500000005, "p10_us": 33466.492900000005, "p90_us": 34755.712, "min_us": 32934.599, "max_us": 34973.881}, "baseline": {"count": 20, "median_us": 22315.2215, "p10_us": 22076.352000000003, "p90_us": 22583.303, "min_us": 22025.971, "max_us": 22720.669}, "concurrent": {"count": 20, "median_us": 18526.9415, "p10_us": 18057.4979, "p90_us": 19120.0647, "min_us": 17406.117, "max_us": 20098.207}}, "latency_ratio_vs_gpu_baseline": 1.2044741167882458, "speedup_vs_gpu_baseline": 1.2044741167882458}
+Validating/timing direct-weight partition P=2816/14336
+P=2816: completed round -2/20
+P=2816: completed round -1/20
+P=2816: completed round 0/20
+P=2816: completed round 1/20
+P=2816: completed round 2/20
+P=2816: completed round 3/20
+P=2816: completed round 4/20
+P=2816: completed round 5/20
+P=2816: completed round 6/20
+P=2816: completed round 7/20
+P=2816: completed round 8/20
+P=2816: completed round 9/20
+P=2816: completed round 10/20
+P=2816: completed round 11/20
+P=2816: completed round 12/20
+P=2816: completed round 13/20
+P=2816: completed round 14/20
+P=2816: completed round 15/20
+P=2816: completed round 16/20
+P=2816: completed round 17/20
+P=2816: completed round 18/20
+P=2816: completed round 19/20
+P=2816: completed round 20/20
+{"npu_channels": 2816, "status": "passed", "stats": {"baseline": {"count": 20, "median_us": 22092.9245, "p10_us": 21880.7321, "p90_us": 22406.5197, "min_us": 20254.963, "max_us": 22798.797}, "concurrent": {"count": 20, "median_us": 17668.367, "p10_us": 17317.7801, "p90_us": 18354.7452, "min_us": 17261.65, "max_us": 19353.611}, "serial": {"count": 20, "median_us": 34802.349, "p10_us": 33626.847200000004, "p90_us": 35190.7802, "min_us": 33537.458, "max_us": 36072.79}}, "latency_ratio_vs_gpu_baseline": 1.250422548954298, "speedup_vs_gpu_baseline": 1.250422548954298}

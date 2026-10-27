@@ -26,6 +26,12 @@ latency versus the optimized native control. All original numerical tolerances
 pass; worst relative L2 versus the CPU oracle is 0.0167717. This is not a
 combined GPU+NPU or model-accuracy result.
 
+The subsequent [direct-buffer GPU+NPU partition experiment](../../docs/runs/2026-10-27-upstream-partition/README.md)
+measures complete isolated FFN latency, including GPU staging and reduction:
+19.1–20.3% lower than matched GPU-only FFN kernels at M512/P2560–2816 in two
+50-sample confirmations. All original tolerances pass. This additional result
+still does not establish full-model prefill acceleration or pretrained accuracy.
+
 ## Historical compact-weight adaptation
 
 **Code-confirmed:** the opt-in `--npu-arithmetic bfp16` path adapts the

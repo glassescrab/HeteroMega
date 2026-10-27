@@ -1,5 +1,15 @@
 # Prefill GPU–NPU FFN partition experiment
 
+**Current direct-buffer path (October 27):** use
+`python -m experiments.ffn_partition.run_upstream_partition` to pair the
+optimized eight-column BFP16 NPU branch with the complementary GPU FFN.
+It accepts full original glassescrab packed buffers unchanged; `run.py`
+below preserves the earlier compact-weight controls. Two 50-sample
+confirmations measure **19.1–20.3% lower complete FFN latency** at M512 with
+P2560–2816, including GPU staging and reduction. All original tolerances pass.
+See [the measured report and reproduction](../../docs/runs/2026-10-27-upstream-partition/README.md).
+This remains an isolated FFN experiment, not complete model prefill.
+
 This microbenchmark measures the complete bias-free SwiGLU FFN from a ready
 GPU input to a ready GPU output. It compares the original HeteroMosaic GPU
 FFN with a channel-partitioned GPU–NPU implementation and a serialized control.

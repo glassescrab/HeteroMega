@@ -1,5 +1,39 @@
 # HeteroMega progress
 
+## 2026-10-27 — direct-buffer GPU + NPU partition measured
+
+**Measured:** complete M512/H4096/I14336 prefill FFN latency is 17.72–17.95 ms
+versus 22.18–22.23 ms with matched HeteroMosaic GPU-only FFN kernels, across
+two reversed-order confirmation runs with 50 samples/mode/partition. P2560
+and P2816 deliver 1.236–1.255× speedup (19.1–20.3% lower latency); their
+ranking reverses, so no unique optimum is established. Six allocations were
+tested. Input/output GPU staging, both NPU launches, layouts, waits and final
+GPU reduction are all inside the complete FFN timing boundary.
+
+The new `experiments/ffn_partition/run_upstream_partition.py` passes full
+original 4352-byte-tile buffers unchanged to the eight-column BFP16 NPU
+adapter and prepares the GPU complement from identical canonical W4A16
+values. It retains strict GPU controls and BFP16 report policy, per-call
+completion/upload counters and exact original-weight hashes. All 3702
+numerical checks pass, with worst relative L2 .0172392 on an NPU partial;
+confirmation complete-output relative L2 is at most .0080541 vs the CPU
+oracle. Independent audit verifies 1656 completed NPU dispatches, 3094
+archived file hashes, 14 NPU artifact pairs and the GPU build provenance.
+All 29 focused CPU tests pass.
+
+The notebook initially denied GPU access; a normal idle-server restart
+restored device allocation. No host driver/kernel changes were made. Hardware
+is HX370/Radeon890M/Strix in NPU `default` mode. Isolated overlay:
+`/notebooks/HeteroMega-upstream-partition-20261027`; implementation commit
+`f3e109e`, branch `codex/upstream-gpu-npu-partition`. Kernel-only PR #3 is
+unchanged. [Results, evidence, commands and limitations](runs/2026-10-27-upstream-partition/README.md).
+
+This is an isolated FFN comparison, using staged original GPU kernels. The
+teammate's fused GPU frontend, native heterogeneous HeteroMosaic baseline,
+attention overlap, real-weight accuracy and full-model prefill remain separate
+work. Next: integrate P2560 as a starting point into the existing causal
+prefill schedule, then measure whether the gain survives attention interference.
+
 ## 2026-10-27 — down-specific BFP16 audit
 
 The request to apply the same treatment to Down is already covered by package

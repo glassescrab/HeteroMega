@@ -1,5 +1,31 @@
 # HeteroMega agent continuation guide
 
+## Latest measurement — 2026-10-27: GPU + direct-buffer NPU partition
+
+The user requested the GPU+NPU partition test. The new
+`experiments/ffn_partition/run_upstream_partition.py` connects the optimized
+direct-original-weight BFP16 NPU branch to the complementary GPU FFN branch,
+with GPU staging and boundary reduction included in wall latency. It keeps
+eight columns, original packed NPU buffers, prefill scope and strict GPU
+controls. Implementation commit `f3e109e` is on
+`codex/upstream-gpu-npu-partition`; the kernel-only PR is unchanged.
+
+**Measured on HX370/default:** two reversed-order 50-sample confirmations at
+M512/H4096/I14336 show 17.72–17.95 ms concurrent versus 22.18–22.23 ms GPU-only
+(1.236–1.255×, 19.1–20.3% lower). P2560 and P2816 form a useful region; their
+ranking reverses. All 3702 numerical checks pass, 1656 NPU dispatches complete,
+and the evidence/source/binary audit passes. Worst NPU-partial relative L2 is
+.0172392; complete confirmation output is ≤.0080541 vs the CPU oracle.
+
+Read `docs/runs/2026-10-27-upstream-partition/README.md` for raw reports,
+reproduction and limits. Overlay: `/notebooks/HeteroMega-upstream-partition-20261027`.
+The initial missing GPU allocation was repaired by a normal idle-notebook
+restart, without host driver/kernel changes. This is complete **FFN** timing,
+not complete model prefill, native heterogeneous HeteroMosaic, attention-overlap
+or pretrained-model accuracy. The teammate's fused GPU frontend was not used.
+Next: integrate into the existing prefill schedule and measure attention
+interference; P2560 is a reasonable starting setting, not a proven global optimum.
+
 ## Latest direction — 2026-10-27: direct-buffer BFP16 MMUL
 
 The user explicitly requested **"use the glasscrab bfp mmul"** after the

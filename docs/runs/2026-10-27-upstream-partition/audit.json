@@ -1,0 +1,1238 @@
+{
+  "status": "passed",
+  "evidence_root": "/tmp/upstream-partition-evidence-20261027",
+  "checksums": {
+    "manifest_sha256": "b43263bc2ffe9b915d259e94f8001e4b5cc1effcc83d43b33314a8447c01667d",
+    "verified_files": 3094,
+    "complete_file_coverage": true
+  },
+  "source_versions": {
+    "npu/ffn/w4a16_upstream.py@fcbd56b0f2c02d0b0197a46b1ad744f7642a26f5aad34b1228995b04195f7399": [
+      "sources/npu/ffn/w4a16_upstream.py",
+      "heteromega-upstream-partition-v2.tar.gz::npu/ffn/w4a16_upstream.py",
+      "heteromega-upstream-partition-v1.tar.gz::npu/ffn/w4a16_upstream.py"
+    ],
+    "npu/ffn/w4a16_prefill_upstream.cc@e343cda2d88bb86c2eddb7b1972f65d6f86bc18be8e3b4d401fda27688f41a55": [
+      "sources/npu/ffn/w4a16_prefill_upstream.cc",
+      "heteromega-upstream-partition-v2.tar.gz::npu/ffn/w4a16_prefill_upstream.cc",
+      "heteromega-upstream-partition-v1.tar.gz::npu/ffn/w4a16_prefill_upstream.cc"
+    ],
+    "npu/ffn/upstream_weights.py@cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02": [
+      "sources/npu/ffn/upstream_weights.py",
+      "heteromega-upstream-partition-v2.tar.gz::npu/ffn/upstream_weights.py",
+      "heteromega-upstream-partition-v1.tar.gz::npu/ffn/upstream_weights.py"
+    ],
+    "npu/ffn/upstream_schedule.py@37b9dfdec2cbd039dda7eecfcdefd5306ba828394d1fd18176efe6241c023d1b": [
+      "sources/npu/ffn/upstream_schedule.py",
+      "heteromega-upstream-partition-v2.tar.gz::npu/ffn/upstream_schedule.py",
+      "heteromega-upstream-partition-v1.tar.gz::npu/ffn/upstream_schedule.py"
+    ],
+    "npu/ffn/upstream_output.py@9429859351f85611394847bd844a38ec38f768991d36d88b3c16a5dc898aa5df": [
+      "sources/npu/ffn/upstream_output.py",
+      "heteromega-upstream-partition-v2.tar.gz::npu/ffn/upstream_output.py",
+      "heteromega-upstream-partition-v1.tar.gz::npu/ffn/upstream_output.py"
+    ],
+    "npu/ffn/prefill_schedule.py@8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011": [
+      "sources/npu/ffn/prefill_schedule.py",
+      "heteromega-upstream-partition-v2.tar.gz::npu/ffn/prefill_schedule.py",
+      "heteromega-upstream-partition-v1.tar.gz::npu/ffn/prefill_schedule.py"
+    ],
+    "npu/ffn/prefill_gate_up_schedule.py@816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674": [
+      "sources/npu/ffn/prefill_gate_up_schedule.py",
+      "heteromega-upstream-partition-v2.tar.gz::npu/ffn/prefill_gate_up_schedule.py",
+      "heteromega-upstream-partition-v1.tar.gz::npu/ffn/prefill_gate_up_schedule.py"
+    ],
+    "npu/ffn/prefill_swiglu_schedule.py@63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0": [
+      "sources/npu/ffn/prefill_swiglu_schedule.py",
+      "heteromega-upstream-partition-v2.tar.gz::npu/ffn/prefill_swiglu_schedule.py",
+      "heteromega-upstream-partition-v1.tar.gz::npu/ffn/prefill_swiglu_schedule.py"
+    ],
+    "npu/ffn/silu_mul.cc@1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc": [
+      "sources/npu/ffn/silu_mul.cc",
+      "heteromega-upstream-partition-v2.tar.gz::npu/ffn/silu_mul.cc",
+      "heteromega-upstream-partition-v1.tar.gz::npu/ffn/silu_mul.cc"
+    ],
+    "npu/ffn/projection_arithmetic.py@8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e": [
+      "sources/npu/ffn/projection_arithmetic.py",
+      "heteromega-upstream-partition-v2.tar.gz::npu/ffn/projection_arithmetic.py",
+      "heteromega-upstream-partition-v1.tar.gz::npu/ffn/projection_arithmetic.py"
+    ],
+    "experiments/ffn_partition/benchmark_upstream_pipeline.py@bb87fa642dd11109504627ff07552afbb1d7bc4d9b0a7c8513d54730f7434583": [
+      "sources/experiments/ffn_partition/benchmark_upstream_pipeline.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/benchmark_upstream_pipeline.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/benchmark_upstream_pipeline.py"
+    ],
+    "experiments/ffn_partition/test_npu_backend.py@1f1927cb38a535b6d2d19c54cf2d1cdbe675b24344b977e5475ef5742524c6b9": [
+      "sources/experiments/ffn_partition/test_npu_backend.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_npu_backend.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_npu_backend.py"
+    ],
+    "experiments/ffn_partition/check_swiglu.py@1c00b80dad4d59e008bbb9472c1f089d846f1fb6eb8086b2da0425bba9031bff": [
+      "sources/experiments/ffn_partition/check_swiglu.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/check_swiglu.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/check_swiglu.py"
+    ],
+    "experiments/ffn_partition/run_upstream_partition.py@062991575724230af8ec1485285791c662b8d8a7a6386cb59b4671d4bbe4ab3d": [
+      "sources/experiments/ffn_partition/run_upstream_partition.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/run_upstream_partition.py"
+    ],
+    "experiments/ffn_partition/test_bfp_accuracy.py@2b82ba0edb7445d91626890bebe2e11da376de29fd7c63a204aaa418ec087085": [
+      "sources/experiments/ffn_partition/test_bfp_accuracy.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_bfp_accuracy.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_bfp_accuracy.py"
+    ],
+    "experiments/ffn_partition/analyze_bottleneck.py@78ce4827294e2cfb589861ce34c9b10c8331076424f46d2c6ce6468caca5e4f6": [
+      "sources/experiments/ffn_partition/analyze_bottleneck.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/analyze_bottleneck.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/analyze_bottleneck.py"
+    ],
+    "experiments/ffn_partition/check_gate_up.py@2c06e00c24e6f12d77dd16388e11508c1d3797c2f6fee9685fc2dfef2a6a6d95": [
+      "sources/experiments/ffn_partition/check_gate_up.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/check_gate_up.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/check_gate_up.py"
+    ],
+    "experiments/ffn_partition/test_upstream_gpu_contract.py@027b5781ff9f76564ee4fa6b42a927376b645e737c0c62f0ac3a2b0e36442e32": [
+      "sources/experiments/ffn_partition/test_upstream_gpu_contract.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_upstream_gpu_contract.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_upstream_gpu_contract.py"
+    ],
+    "experiments/ffn_partition/compare_native.py@5db78435964372e2c3222d3c755a59e19490e778ee8c288735cdc9c8aca89e81": [
+      "sources/experiments/ffn_partition/compare_native.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/compare_native.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/compare_native.py"
+    ],
+    "experiments/ffn_partition/test_plot_partition_sweep.py@215e6d9f8c0b8ebc66ea3f702d9f7f89b07942f5332c4b02c4495b35664a4a54": [
+      "sources/experiments/ffn_partition/test_plot_partition_sweep.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_plot_partition_sweep.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_plot_partition_sweep.py"
+    ],
+    "experiments/ffn_partition/test_contract.py@4b569223d9fd18f5c14ae2da0c55031fb9ef1fd2e2f3b7525e5016cb8dee6b84": [
+      "sources/experiments/ffn_partition/test_contract.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_contract.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_contract.py"
+    ],
+    "experiments/ffn_partition/npu_backend.py@ececc53ce31432b2bddfbdb987ce145b5d1dc3d2e0be833027529c309d842fa3": [
+      "sources/experiments/ffn_partition/npu_backend.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/npu_backend.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/npu_backend.py"
+    ],
+    "experiments/ffn_partition/test_gpu_packing.py@0e73f412742d37a683c018a9881fcbe252d6faaf1c4a2fb9f5b70807443a6769": [
+      "sources/experiments/ffn_partition/test_gpu_packing.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_gpu_packing.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_gpu_packing.py"
+    ],
+    "experiments/ffn_partition/diagnose.py@818801784357b5a5d1948a45be63784f3e67ef6d4c72e8c16eb64bd8eeca5397": [
+      "sources/experiments/ffn_partition/diagnose.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/diagnose.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/diagnose.py"
+    ],
+    "experiments/ffn_partition/upstream_npu.py@0925fef0eef711a9446d3388e4526a114f329659d0dc9d21dd7794f33a924f81": [
+      "sources/experiments/ffn_partition/upstream_npu.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/upstream_npu.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/upstream_npu.py"
+    ],
+    "experiments/ffn_partition/test_upstream_arithmetic_benchmark.py@ee09320d3bcb28253bd41176d6b99c9c895f3a30736434459dbb63fd46ac72a3": [
+      "sources/experiments/ffn_partition/test_upstream_arithmetic_benchmark.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_upstream_arithmetic_benchmark.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_upstream_arithmetic_benchmark.py"
+    ],
+    "experiments/ffn_partition/benchmark_upstream_arithmetic.py@7c2200048143dc355d56972d897f2e52b90d4bbf40794abfabca4ca5c3ab5adc": [
+      "sources/experiments/ffn_partition/benchmark_upstream_arithmetic.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/benchmark_upstream_arithmetic.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/benchmark_upstream_arithmetic.py"
+    ],
+    "experiments/ffn_partition/benchmark_upstream_optimizations.py@5e7da2d0d8f48ee54b5ec2f4551ace05273bc2f53704eaeb945dbb6b7d91ef0f": [
+      "sources/experiments/ffn_partition/benchmark_upstream_optimizations.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/benchmark_upstream_optimizations.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/benchmark_upstream_optimizations.py"
+    ],
+    "experiments/ffn_partition/test_sweep_partition.py@c92f2565f9cc82e3781a88a78a283da6bfd53e267b94ed7c6dd625bd101619f5": [
+      "sources/experiments/ffn_partition/test_sweep_partition.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_sweep_partition.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_sweep_partition.py"
+    ],
+    "experiments/ffn_partition/test_compare_native.py@6723b36bf21a93d5fc801ddd1a6e07af29ae7732144ef4611f93d5e29029201c": [
+      "sources/experiments/ffn_partition/test_compare_native.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_compare_native.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_compare_native.py"
+    ],
+    "experiments/ffn_partition/test_swiglu.py@63442beec1d91ca0a2cdf877a9ad1bd98db590ed18049d7e742b69a352793542": [
+      "sources/experiments/ffn_partition/test_swiglu.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_swiglu.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_swiglu.py"
+    ],
+    "experiments/ffn_partition/test_upstream_optimizations.py@82556d032b13733f3b9a5ce3db2a6b7a98fbf9d22c2022dea4dae1f4139e4c57": [
+      "sources/experiments/ffn_partition/test_upstream_optimizations.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_upstream_optimizations.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_upstream_optimizations.py"
+    ],
+    "experiments/ffn_partition/test_profile_timeline.py@e88c390872bc03ce85186369d7ee45efba9c2aab2644d0df329f1d482e06b4b0": [
+      "sources/experiments/ffn_partition/test_profile_timeline.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_profile_timeline.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_profile_timeline.py"
+    ],
+    "experiments/ffn_partition/test_analyze_bottleneck.py@aaf79cfc1a56e5d064e8287d68addfd4320ebca3bbe72eda2207b2ad28a31f58": [
+      "sources/experiments/ffn_partition/test_analyze_bottleneck.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_analyze_bottleneck.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_analyze_bottleneck.py"
+    ],
+    "experiments/ffn_partition/profile_contexts.py@56dcd2bc5b389c8657b801b03ce2117f63ae0ab213fab91c72718021ed1271d0": [
+      "sources/experiments/ffn_partition/profile_contexts.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/profile_contexts.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/profile_contexts.py"
+    ],
+    "experiments/ffn_partition/native_heteromosaic.py@fd064360198764db99acefc5b7821f7c710db4e6354c737c6f550a4de41cc270": [
+      "sources/experiments/ffn_partition/native_heteromosaic.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/native_heteromosaic.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/native_heteromosaic.py"
+    ],
+    "experiments/ffn_partition/profile_timeline.py@a38a93b42fc9076dcb9ad24a9697baa2246b5ba4157ff171ddd07649563c5bb2": [
+      "sources/experiments/ffn_partition/profile_timeline.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/profile_timeline.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/profile_timeline.py"
+    ],
+    "experiments/ffn_partition/test_upstream_partition.py@27c0b29ee5c8eff0b5ee500234767c5c4b16db08b114535389d26223060e0872": [
+      "sources/experiments/ffn_partition/test_upstream_partition.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_upstream_partition.py"
+    ],
+    "experiments/ffn_partition/sweep_partition.py@63dafdf7fc35ed13be1f2649181b28952ebf0085abe8759e8c1d064c9cfcff06": [
+      "sources/experiments/ffn_partition/sweep_partition.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/sweep_partition.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/sweep_partition.py"
+    ],
+    "experiments/ffn_partition/test_native_heteromosaic.py@b8fb8cef98223d7553b97ee3be09231b5d5fb18ee5216cce126607dad2814b71": [
+      "sources/experiments/ffn_partition/test_native_heteromosaic.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_native_heteromosaic.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_native_heteromosaic.py"
+    ],
+    "experiments/ffn_partition/run.py@fd78edf061418c20d85a941f6454153c26b0979eef0e6895ac2d21f414593751": [
+      "sources/experiments/ffn_partition/run.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/run.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/run.py"
+    ],
+    "experiments/ffn_partition/plot_partition_sweep.py@7eb25496bb74375f136c7a073c266339fabb66028f24b7b073721952451bb538": [
+      "sources/experiments/ffn_partition/plot_partition_sweep.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/plot_partition_sweep.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/plot_partition_sweep.py"
+    ],
+    "experiments/ffn_partition/gpu_backend.py@ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7": [
+      "sources/experiments/ffn_partition/gpu_backend.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/gpu_backend.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/gpu_backend.py"
+    ],
+    "experiments/ffn_partition/contract.py@b1199d8dff1812f972d2e8f4ac5fbfaddc24a7a023ff2aab19585ec13d154a2b": [
+      "sources/experiments/ffn_partition/contract.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/contract.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/contract.py"
+    ],
+    "experiments/ffn_partition/check_upstream.py@87020bbd6dd3f4da815134f52be9a1f5366005f40cf1f46cb5e8f4bc9c20d919": [
+      "sources/experiments/ffn_partition/check_upstream.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/check_upstream.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/check_upstream.py"
+    ],
+    "experiments/ffn_partition/test_upstream_npu.py@fffeed629af09ac28203ad6d84dadb7319bf7cd8d485786c888e2489d943a1a3": [
+      "sources/experiments/ffn_partition/test_upstream_npu.py",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/test_upstream_npu.py",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/test_upstream_npu.py"
+    ],
+    "experiments/ffn_partition/gpu_bindings.cpp@98a1e34dbd38cc49a488d4f2db861dd9d8bbf527996a1642f5b55d0a069cda6a": [
+      "sources/experiments/ffn_partition/gpu_bindings.cpp",
+      "heteromega-upstream-partition-v2.tar.gz::experiments/ffn_partition/gpu_bindings.cpp",
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/gpu_bindings.cpp"
+    ],
+    "src/hipkernels/w4a16_gemm_packed.cu@c506049e90326636e00bf151532f2e06809e3a6cdce5f203a3345149e4c930f1": [
+      "sources/src/hipkernels/w4a16_gemm_packed.cu",
+      "heteromega-upstream-partition-v2.tar.gz::src/hipkernels/w4a16_gemm_packed.cu",
+      "heteromega-upstream-partition-v1.tar.gz::src/hipkernels/w4a16_gemm_packed.cu"
+    ],
+    "include/hipkernels/w4a16_gemm_packed.hpp@303816dff302f91facfa5dbda283bd76c0dc1c6dc084aa3e0fced47c2bca5d2b": [
+      "sources/include/hipkernels/w4a16_gemm_packed.hpp",
+      "heteromega-upstream-partition-v2.tar.gz::include/hipkernels/w4a16_gemm_packed.hpp",
+      "heteromega-upstream-partition-v1.tar.gz::include/hipkernels/w4a16_gemm_packed.hpp"
+    ],
+    "experiments/ffn_partition/run_upstream_partition.py@cec8a1fb4ef0f99a5d6c6aada97603ea8169635130d64357a9e0e51d24f57a91": [
+      "heteromega-upstream-partition-v1.tar.gz::experiments/ffn_partition/run_upstream_partition.py"
+    ]
+  },
+  "artifacts": {
+    "artifacts/upstream_bfp16_projection_m128_k512_n256_4cdf0a5118546bd8": {
+      "xclbin_sha256": "f19162af699b47a54c1f9c559cf62d28f57c3fc1227a21fad889c17bcff13b19",
+      "instructions_sha256": "541a3a83785868a3aba37dadaedaeb459241db7fa32efef76a289708cfe3f6ef",
+      "shape": {
+        "m": 128,
+        "k": 512,
+        "n": 256,
+        "weight_k": 1024,
+        "weight_n": 256
+      },
+      "mode": "projection",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    },
+    "artifacts/upstream_bfp16_projection_m512_k1024_n4096_f13a93f04a9528fd": {
+      "xclbin_sha256": "6c3303c3869912980571ec298eaecfae77571c2a667f31591287d277237c3b1b",
+      "instructions_sha256": "52afde7157b965dc3642fff272b949a0ebfef721348c9807e546d97fd24473cb",
+      "shape": {
+        "m": 512,
+        "k": 1024,
+        "n": 4096,
+        "weight_k": 14336,
+        "weight_n": 4096
+      },
+      "mode": "projection",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    },
+    "artifacts/upstream_bfp16_projection_m512_k1792_n4096_e524d83a96b55b0d": {
+      "xclbin_sha256": "38e7b3c4e6543881d1c8ebc86879c6bc6cff95acab7ca4b0b3fb55d25fd04c38",
+      "instructions_sha256": "e549ec6bc9537d0cff15f7e11c2245398b6b6201c3b94214408889cdd5feb309",
+      "shape": {
+        "m": 512,
+        "k": 1792,
+        "n": 4096,
+        "weight_k": 14336,
+        "weight_n": 4096
+      },
+      "mode": "projection",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    },
+    "artifacts/upstream_bfp16_projection_m512_k2304_n4096_71726d10ffbf1f69": {
+      "xclbin_sha256": "d9aed8b56a5c7fe5d287ca2aaf22eb5b7eef6555eef7aafb563b6ba03a2d0a53",
+      "instructions_sha256": "3eb4b9e442ef580218fa631c790f6ac159a910f3ad4bb4fe740f8fd4839f4007",
+      "shape": {
+        "m": 512,
+        "k": 2304,
+        "n": 4096,
+        "weight_k": 14336,
+        "weight_n": 4096
+      },
+      "mode": "projection",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    },
+    "artifacts/upstream_bfp16_projection_m512_k2560_n4096_253c4da9c4fdad95": {
+      "xclbin_sha256": "c899f0601bb5680da52e5e6650f68eb299ed3f52c7a38ca199f7759682a63eac",
+      "instructions_sha256": "2f4265c54bb90e6cf04160a4cb845b16acd1fb1fab8b3fc5dce00839bd12c857",
+      "shape": {
+        "m": 512,
+        "k": 2560,
+        "n": 4096,
+        "weight_k": 14336,
+        "weight_n": 4096
+      },
+      "mode": "projection",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    },
+    "artifacts/upstream_bfp16_projection_m512_k2816_n4096_23fbcb8c25ebbbfa": {
+      "xclbin_sha256": "8d9629a7d1b04ae14236ac365ca50b3c8c9de6935bf81056498bd5499feb505e",
+      "instructions_sha256": "243ca44a6ccde10d4a077682774c80beb01215081556394ad34e5bec663ce18b",
+      "shape": {
+        "m": 512,
+        "k": 2816,
+        "n": 4096,
+        "weight_k": 14336,
+        "weight_n": 4096
+      },
+      "mode": "projection",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    },
+    "artifacts/upstream_bfp16_projection_m512_k3072_n4096_005a85768f6e790d": {
+      "xclbin_sha256": "a124da58a4def35d32a616ee8146656406bd960ecd947a5d1be24a04e1e5070f",
+      "instructions_sha256": "c91138aab74db91141dfbab6e6de5ef20e5064b644a5928d81eb08528fa6d333",
+      "shape": {
+        "m": 512,
+        "k": 3072,
+        "n": 4096,
+        "weight_k": 14336,
+        "weight_n": 4096
+      },
+      "mode": "projection",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    },
+    "artifacts/upstream_bfp16_swiglu_m128_k256_n512_45ea7923f1dcbf11": {
+      "xclbin_sha256": "a15a8d81a5fb78190c7b18ae8ef7feaf823dc8de723e6067f713cf13520a5aac",
+      "instructions_sha256": "3ece1793e7650b070b061a9b47cef29d1f943bf43a7c5ef226c70b78fdc0a4f8",
+      "shape": {
+        "m": 128,
+        "k": 256,
+        "n": 512,
+        "weight_k": 256,
+        "weight_n": 1024
+      },
+      "mode": "swiglu",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    },
+    "artifacts/upstream_bfp16_swiglu_m512_k4096_n1024_3aa10a5c859c8d13": {
+      "xclbin_sha256": "8ba703eccb5cf688a1ff5f06c5fc48934e6cbadac5dabefe138d1998265faef3",
+      "instructions_sha256": "3a736ffc4a1a5f1fb7aec8c716a26cae613a2a0120ff917290de9b34ae83e4cb",
+      "shape": {
+        "m": 512,
+        "k": 4096,
+        "n": 1024,
+        "weight_k": 4096,
+        "weight_n": 14336
+      },
+      "mode": "swiglu",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    },
+    "artifacts/upstream_bfp16_swiglu_m512_k4096_n1792_c6f8a41d632dfd6e": {
+      "xclbin_sha256": "24768bff936bfab2fc804ccc1a6e9a11fbc099788e784c1e4a1148f873c814ba",
+      "instructions_sha256": "343265538b25a2bcfa7dca901d9f91c854743c1cd99138db3312b3e95f881b90",
+      "shape": {
+        "m": 512,
+        "k": 4096,
+        "n": 1792,
+        "weight_k": 4096,
+        "weight_n": 14336
+      },
+      "mode": "swiglu",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    },
+    "artifacts/upstream_bfp16_swiglu_m512_k4096_n2304_a0de7c8026131ed1": {
+      "xclbin_sha256": "cd1967740e4d0cef38653c19c12289aad8846af90f920165584ad6cad67f68f6",
+      "instructions_sha256": "596b9d0f67a7e5e1773384ea4505bafc1b2e47009e5bd7d33f9619f0f1022a22",
+      "shape": {
+        "m": 512,
+        "k": 4096,
+        "n": 2304,
+        "weight_k": 4096,
+        "weight_n": 14336
+      },
+      "mode": "swiglu",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    },
+    "artifacts/upstream_bfp16_swiglu_m512_k4096_n2560_1cfba8242e69e381": {
+      "xclbin_sha256": "0c139549a2b746e7db6a25bc9cb744731d3d2a180bbb311aed496b7be6f98214",
+      "instructions_sha256": "d0d731e3fa3880beccfa908b2213c9d125b05f6404d6eadbb1f07d4c9e5b0df5",
+      "shape": {
+        "m": 512,
+        "k": 4096,
+        "n": 2560,
+        "weight_k": 4096,
+        "weight_n": 14336
+      },
+      "mode": "swiglu",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    },
+    "artifacts/upstream_bfp16_swiglu_m512_k4096_n2816_227928fb185deb4a": {
+      "xclbin_sha256": "d2184c84b8cbd88df40ebc066540e50a4fde02e16653e0aaceca3378868fbfdc",
+      "instructions_sha256": "5445c2575c960e8db499286224be3c3f52c233c6df86573fa6d01b58e39a6212",
+      "shape": {
+        "m": 512,
+        "k": 4096,
+        "n": 2816,
+        "weight_k": 4096,
+        "weight_n": 14336
+      },
+      "mode": "swiglu",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    },
+    "artifacts/upstream_bfp16_swiglu_m512_k4096_n3072_686211f4bbcc5ce7": {
+      "xclbin_sha256": "f05b29037c4bf342b94a62a5f5e1a3b13e8cc25c972afa36884fa4f0754c1512",
+      "instructions_sha256": "62b2a3a116083cdd37f6f7e5818d45515302a792ededbc96ad833804bdf53e1f",
+      "shape": {
+        "m": 512,
+        "k": 4096,
+        "n": 3072,
+        "weight_k": 4096,
+        "weight_n": 14336
+      },
+      "mode": "swiglu",
+      "arithmetic": "bfp16",
+      "source_and_contract_verified": true
+    }
+  },
+  "gpu_builds": {
+    "f100a2d5ff3396753379afebdb7f564e29336d2d17b8f9e23642a1e6bbe141c8": {
+      "extension": "gpu_build/f100a2d5ff3396753379/heteromega_ffn_gpu_f100a2d5ff339675.so",
+      "extension_sha256": "67bdd6b18c66d21f9447a2ae7000a536956bccbe3ce34b55767312235e2e7353",
+      "build_ninja_sha256": "2145c81eccb27cbc433f925e9b6e0b6d36ab03d416fb7e9e722dc8d83d56f767",
+      "source_fingerprint_verified": true
+    }
+  },
+  "reports": {
+    "confirm_a.json": {
+      "status": "passed",
+      "shape": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336
+      },
+      "seed": 12832,
+      "arithmetic": "bfp16",
+      "accuracy_policy": "report",
+      "partitions": [
+        {
+          "npu_channels": 2560,
+          "status": "passed",
+          "stats": {
+            "baseline": {
+              "count": 50,
+              "median_us": 22178.6405,
+              "p10_us": 21934.158000000003,
+              "p90_us": 22453.0649,
+              "min_us": 21657.876,
+              "max_us": 22749.185
+            },
+            "serial": {
+              "count": 50,
+              "median_us": 34751.251000000004,
+              "p10_us": 33894.340200000006,
+              "p90_us": 35438.173800000004,
+              "min_us": 32373.616,
+              "max_us": 36113.535
+            },
+            "concurrent": {
+              "count": 50,
+              "median_us": 17947.184999999998,
+              "p10_us": 17616.628,
+              "p90_us": 18658.9188,
+              "min_us": 17296.337,
+              "max_us": 20239.023
+            }
+          },
+          "accuracy": {
+            "passed": true,
+            "accepted": true,
+            "check_count": 509,
+            "outside_tolerance_count": 0,
+            "accuracy_status": "within_tolerance"
+          },
+          "max_relative_l2": {
+            "output": 0.0077225275485600636,
+            "baseline": 0.007790543891514676,
+            "gpu": 0.0008882470897945853,
+            "npu": 0.017239155582516014
+          },
+          "completed_npu_dispatches": 228,
+          "latency_ratio_vs_gpu_baseline": 1.235772657383317,
+          "latency_ratio_vs_serial_partition": 1.9363065015488505,
+          "reduction_vs_gpu_percent": 19.078966990785595,
+          "zero_repeat_changed_and_mode_hashes_verified": true
+        },
+        {
+          "npu_channels": 2816,
+          "status": "passed",
+          "stats": {
+            "baseline": {
+              "count": 50,
+              "median_us": 22232.648500000003,
+              "p10_us": 21987.758299999998,
+              "p90_us": 22519.824,
+              "min_us": 20503.557,
+              "max_us": 22764.434
+            },
+            "serial": {
+              "count": 50,
+              "median_us": 34276.0535,
+              "p10_us": 33836.7851,
+              "p90_us": 35118.6498,
+              "min_us": 32269.457,
+              "max_us": 35860.659
+            },
+            "concurrent": {
+              "count": 50,
+              "median_us": 17720.8485,
+              "p10_us": 17191.273999999998,
+              "p90_us": 18256.6379,
+              "min_us": 17071.731,
+              "max_us": 18903.217
+            }
+          },
+          "accuracy": {
+            "passed": true,
+            "accepted": true,
+            "check_count": 509,
+            "outside_tolerance_count": 0,
+            "accuracy_status": "within_tolerance"
+          },
+          "max_relative_l2": {
+            "output": 0.008054103019061492,
+            "baseline": 0.008115442870231061,
+            "gpu": 0.000884968344288275,
+            "npu": 0.017179346158321344
+          },
+          "completed_npu_dispatches": 228,
+          "latency_ratio_vs_gpu_baseline": 1.2546040614251628,
+          "latency_ratio_vs_serial_partition": 1.9342219138096013,
+          "reduction_vs_gpu_percent": 20.29357860805474,
+          "zero_repeat_changed_and_mode_hashes_verified": true
+        }
+      ],
+      "report_sha256": "a6043ae3cb858130b26a3fba8e8426304a431ea27a4035d021320b0e277f7b7e"
+    },
+    "confirm_b.json": {
+      "status": "passed",
+      "shape": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336
+      },
+      "seed": 12832,
+      "arithmetic": "bfp16",
+      "accuracy_policy": "report",
+      "partitions": [
+        {
+          "npu_channels": 2816,
+          "status": "passed",
+          "stats": {
+            "baseline": {
+              "count": 50,
+              "median_us": 22199.889000000003,
+              "p10_us": 21885.841,
+              "p90_us": 22567.860999999997,
+              "min_us": 20503.195,
+              "max_us": 22953.89
+            },
+            "serial": {
+              "count": 50,
+              "median_us": 34445.6195,
+              "p10_us": 33679.0883,
+              "p90_us": 35295.2699,
+              "min_us": 32686.387,
+              "max_us": 35734.02
+            },
+            "concurrent": {
+              "count": 50,
+              "median_us": 17896.534,
+              "p10_us": 17175.991,
+              "p90_us": 18578.7319,
+              "min_us": 16951.763,
+              "max_us": 19461.185
+            }
+          },
+          "accuracy": {
+            "passed": true,
+            "accepted": true,
+            "check_count": 509,
+            "outside_tolerance_count": 0,
+            "accuracy_status": "within_tolerance"
+          },
+          "max_relative_l2": {
+            "output": 0.008054103019061492,
+            "baseline": 0.008115442870231061,
+            "gpu": 0.000884968344288275,
+            "npu": 0.017179346158321344
+          },
+          "completed_npu_dispatches": 228,
+          "latency_ratio_vs_gpu_baseline": 1.2404574539405229,
+          "latency_ratio_vs_serial_partition": 1.9247089687869172,
+          "reduction_vs_gpu_percent": 19.384578904876516,
+          "zero_repeat_changed_and_mode_hashes_verified": true
+        },
+        {
+          "npu_channels": 2560,
+          "status": "passed",
+          "stats": {
+            "baseline": {
+              "count": 50,
+              "median_us": 22218.7385,
+              "p10_us": 21888.7471,
+              "p90_us": 22619.585900000002,
+              "min_us": 21764.282,
+              "max_us": 22817.641
+            },
+            "serial": {
+              "count": 50,
+              "median_us": 34472.123,
+              "p10_us": 33574.189099999996,
+              "p90_us": 35288.7791,
+              "min_us": 32912.613,
+              "max_us": 36144.802
+            },
+            "concurrent": {
+              "count": 50,
+              "median_us": 17888.379999999997,
+              "p10_us": 17453.7391,
+              "p90_us": 18479.0131,
+              "min_us": 17299.536,
+              "max_us": 19119.271
+            }
+          },
+          "accuracy": {
+            "passed": true,
+            "accepted": true,
+            "check_count": 509,
+            "outside_tolerance_count": 0,
+            "accuracy_status": "within_tolerance"
+          },
+          "max_relative_l2": {
+            "output": 0.0077225275485600636,
+            "baseline": 0.007790543891514676,
+            "gpu": 0.0008882470897945853,
+            "npu": 0.017239155582516014
+          },
+          "completed_npu_dispatches": 228,
+          "latency_ratio_vs_gpu_baseline": 1.2420766162167844,
+          "latency_ratio_vs_serial_partition": 1.9270679066522516,
+          "reduction_vs_gpu_percent": 19.489668596621733,
+          "zero_repeat_changed_and_mode_hashes_verified": true
+        }
+      ],
+      "report_sha256": "442e20d0edce7ec27026a7c673f940d61e883bedaaf1e3aed7c3fa7351afa48a"
+    },
+    "p2560_first.json": {
+      "status": "passed",
+      "shape": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336
+      },
+      "seed": 12832,
+      "arithmetic": "bfp16",
+      "accuracy_policy": "report",
+      "partitions": [
+        {
+          "npu_channels": 2560,
+          "status": "passed",
+          "stats": {
+            "baseline": {
+              "count": 10,
+              "median_us": 22071.231,
+              "p10_us": 21785.841099999998,
+              "p90_us": 22310.537800000002,
+              "min_us": 21718.432,
+              "max_us": 22472.059
+            },
+            "serial": {
+              "count": 10,
+              "median_us": 34372.2515,
+              "p10_us": 33809.6677,
+              "p90_us": 34958.3927,
+              "min_us": 33457.702,
+              "max_us": 35138.453
+            },
+            "concurrent": {
+              "count": 10,
+              "median_us": 18007.763,
+              "p10_us": 17437.273,
+              "p90_us": 18360.695099999997,
+              "min_us": 17385.109,
+              "max_us": 18423.093
+            }
+          },
+          "accuracy": {
+            "passed": true,
+            "accepted": true,
+            "check_count": 149,
+            "outside_tolerance_count": 0,
+            "accuracy_status": "within_tolerance"
+          },
+          "max_relative_l2": {
+            "output": 0.0077225275485600636,
+            "baseline": 0.007790543891514676,
+            "gpu": 0.0008882470897945853,
+            "npu": 0.017239155582516014
+          },
+          "completed_npu_dispatches": 68,
+          "latency_ratio_vs_gpu_baseline": 1.2256509040017909,
+          "latency_ratio_vs_serial_partition": 1.9087463279031383,
+          "reduction_vs_gpu_percent": 18.41069943040332,
+          "zero_repeat_changed_and_mode_hashes_verified": true
+        }
+      ],
+      "report_sha256": "ecf38f122859057368156ab7f34f38996a87b8dc0102adb1e6966705a0797c7a"
+    },
+    "refine.json": {
+      "status": "passed",
+      "shape": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336
+      },
+      "seed": 12832,
+      "arithmetic": "bfp16",
+      "accuracy_policy": "report",
+      "partitions": [
+        {
+          "npu_channels": 2304,
+          "status": "passed",
+          "stats": {
+            "baseline": {
+              "count": 20,
+              "median_us": 22315.2215,
+              "p10_us": 22076.352000000003,
+              "p90_us": 22583.303,
+              "min_us": 22025.971,
+              "max_us": 22720.669
+            },
+            "serial": {
+              "count": 20,
+              "median_us": 33986.014500000005,
+              "p10_us": 33466.492900000005,
+              "p90_us": 34755.712,
+              "min_us": 32934.599,
+              "max_us": 34973.881
+            },
+            "concurrent": {
+              "count": 20,
+              "median_us": 18526.9415,
+              "p10_us": 18057.4979,
+              "p90_us": 19120.0647,
+              "min_us": 17406.117,
+              "max_us": 20098.207
+            }
+          },
+          "accuracy": {
+            "passed": true,
+            "accepted": true,
+            "check_count": 239,
+            "outside_tolerance_count": 0,
+            "accuracy_status": "within_tolerance"
+          },
+          "max_relative_l2": {
+            "output": 0.00736629030686069,
+            "baseline": 0.007446912532735063,
+            "gpu": 0.0008944260244533319,
+            "npu": 0.01722747087706264
+          },
+          "completed_npu_dispatches": 108,
+          "latency_ratio_vs_gpu_baseline": 1.2044741167882458,
+          "latency_ratio_vs_serial_partition": 1.834410417931098,
+          "reduction_vs_gpu_percent": 16.97621509156877,
+          "zero_repeat_changed_and_mode_hashes_verified": true
+        },
+        {
+          "npu_channels": 2816,
+          "status": "passed",
+          "stats": {
+            "baseline": {
+              "count": 20,
+              "median_us": 22092.9245,
+              "p10_us": 21880.7321,
+              "p90_us": 22406.5197,
+              "min_us": 20254.963,
+              "max_us": 22798.797
+            },
+            "serial": {
+              "count": 20,
+              "median_us": 34802.349,
+              "p10_us": 33626.847200000004,
+              "p90_us": 35190.7802,
+              "min_us": 33537.458,
+              "max_us": 36072.79
+            },
+            "concurrent": {
+              "count": 20,
+              "median_us": 17668.367,
+              "p10_us": 17317.7801,
+              "p90_us": 18354.7452,
+              "min_us": 17261.65,
+              "max_us": 19353.611
+            }
+          },
+          "accuracy": {
+            "passed": true,
+            "accepted": true,
+            "check_count": 239,
+            "outside_tolerance_count": 0,
+            "accuracy_status": "within_tolerance"
+          },
+          "max_relative_l2": {
+            "output": 0.008054103019061492,
+            "baseline": 0.008115442870231061,
+            "gpu": 0.000884968344288275,
+            "npu": 0.017179346158321344
+          },
+          "completed_npu_dispatches": 108,
+          "latency_ratio_vs_gpu_baseline": 1.250422548954298,
+          "latency_ratio_vs_serial_partition": 1.9697547034199598,
+          "reduction_vs_gpu_percent": 20.027033994526178,
+          "zero_repeat_changed_and_mode_hashes_verified": true
+        }
+      ],
+      "report_sha256": "8467e00f5b1362a87e87a32dbb250bdf859138e65d37cfeab3838bef0cf7e3b0"
+    },
+    "smoke.json": {
+      "status": "passed",
+      "shape": {
+        "m": 128,
+        "hidden": 256,
+        "intermediate": 1024
+      },
+      "seed": 12832,
+      "arithmetic": "bfp16",
+      "accuracy_policy": "report",
+      "partitions": [
+        {
+          "npu_channels": 512,
+          "status": "passed",
+          "stats": {
+            "baseline": {
+              "count": 2,
+              "median_us": 381.80899999999997,
+              "p10_us": 378.365,
+              "p90_us": 385.253,
+              "min_us": 377.504,
+              "max_us": 386.114
+            },
+            "serial": {
+              "count": 2,
+              "median_us": 6055.368,
+              "p10_us": 5345.952,
+              "p90_us": 6764.784,
+              "min_us": 5168.598,
+              "max_us": 6942.138
+            },
+            "concurrent": {
+              "count": 2,
+              "median_us": 5153.639,
+              "p10_us": 5069.4078,
+              "p90_us": 5237.8702,
+              "min_us": 5048.35,
+              "max_us": 5258.928
+            }
+          },
+          "accuracy": {
+            "passed": true,
+            "accepted": true,
+            "check_count": 59,
+            "outside_tolerance_count": 0,
+            "accuracy_status": "within_tolerance"
+          },
+          "max_relative_l2": {
+            "output": 0.012146185443422495,
+            "baseline": 0.012185525273813719,
+            "gpu": 0.0001523024264879131,
+            "npu": 0.017238098311375155
+          },
+          "completed_npu_dispatches": 28,
+          "latency_ratio_vs_gpu_baseline": 0.07408532107118872,
+          "latency_ratio_vs_serial_partition": 1.1749693760079043,
+          "reduction_vs_gpu_percent": -1249.7950545953606,
+          "zero_repeat_changed_and_mode_hashes_verified": true
+        }
+      ],
+      "report_sha256": "a29cf70bdd22dcda56edc567795a88568bfd847d1537d131aea56346fb63f159"
+    },
+    "sweep.json": {
+      "status": "passed",
+      "shape": {
+        "m": 512,
+        "hidden": 4096,
+        "intermediate": 14336
+      },
+      "seed": 12832,
+      "arithmetic": "bfp16",
+      "accuracy_policy": "report",
+      "partitions": [
+        {
+          "npu_channels": 1024,
+          "status": "passed",
+          "stats": {
+            "baseline": {
+              "count": 20,
+              "median_us": 22352.472999999998,
+              "p10_us": 22122.613,
+              "p90_us": 22577.38,
+              "min_us": 22093.627,
+              "max_us": 23813.346
+            },
+            "serial": {
+              "count": 20,
+              "median_us": 32198.6785,
+              "p10_us": 31180.661500000002,
+              "p90_us": 33123.840899999996,
+              "min_us": 30762.339,
+              "max_us": 33756.596
+            },
+            "concurrent": {
+              "count": 20,
+              "median_us": 20657.1885,
+              "p10_us": 20167.3181,
+              "p90_us": 21230.5345,
+              "min_us": 20036.655,
+              "max_us": 22206.985
+            }
+          },
+          "accuracy": {
+            "passed": true,
+            "accepted": true,
+            "check_count": 239,
+            "outside_tolerance_count": 0,
+            "accuracy_status": "within_tolerance"
+          },
+          "max_relative_l2": {
+            "output": 0.005257293781292907,
+            "baseline": 0.005422701566459934,
+            "gpu": 0.000902011752632988,
+            "npu": 0.01717646679962122
+          },
+          "completed_npu_dispatches": 108,
+          "latency_ratio_vs_gpu_baseline": 1.082067533052719,
+          "latency_ratio_vs_serial_partition": 1.558715432160577,
+          "reduction_vs_gpu_percent": 7.58432635171955,
+          "zero_repeat_changed_and_mode_hashes_verified": true
+        },
+        {
+          "npu_channels": 1792,
+          "status": "passed",
+          "stats": {
+            "baseline": {
+              "count": 20,
+              "median_us": 22146.111,
+              "p10_us": 21882.1141,
+              "p90_us": 22453.04,
+              "min_us": 21825.702,
+              "max_us": 22545.778
+            },
+            "serial": {
+              "count": 20,
+              "median_us": 34225.7805,
+              "p10_us": 32595.9017,
+              "p90_us": 35076.4908,
+              "min_us": 31933.598,
+              "max_us": 35280.476
+            },
+            "concurrent": {
+              "count": 20,
+              "median_us": 18782.472999999998,
+              "p10_us": 18460.0924,
+              "p90_us": 19230.4436,
+              "min_us": 18199.808,
+              "max_us": 20981.697
+            }
+          },
+          "accuracy": {
+            "passed": true,
+            "accepted": true,
+            "check_count": 239,
+            "outside_tolerance_count": 0,
+            "accuracy_status": "within_tolerance"
+          },
+          "max_relative_l2": {
+            "output": 0.006596682080817458,
+            "baseline": 0.006701585222324757,
+            "gpu": 0.000897567408374017,
+            "npu": 0.017156937132775642
+          },
+          "completed_npu_dispatches": 108,
+          "latency_ratio_vs_gpu_baseline": 1.1790838725017734,
+          "latency_ratio_vs_serial_partition": 1.822219070939168,
+          "reduction_vs_gpu_percent": 15.188391316199946,
+          "zero_repeat_changed_and_mode_hashes_verified": true
+        },
+        {
+          "npu_channels": 2560,
+          "status": "passed",
+          "stats": {
+            "baseline": {
+              "count": 20,
+              "median_us": 22150.2155,
+              "p10_us": 21857.9391,
+              "p90_us": 22554.5119,
+              "min_us": 21719.113,
+              "max_us": 22601.027
+            },
+            "serial": {
+              "count": 20,
+              "median_us": 34724.496,
+              "p10_us": 33459.788700000005,
+              "p90_us": 35765.6745,
+              "min_us": 33033.676,
+              "max_us": 36033.502
+            },
+            "concurrent": {
+              "count": 20,
+              "median_us": 17749.651,
+              "p10_us": 17409.8821,
+              "p90_us": 18786.9708,
+              "min_us": 17133.027,
+              "max_us": 20974.217
+            }
+          },
+          "accuracy": {
+            "passed": true,
+            "accepted": true,
+            "check_count": 239,
+            "outside_tolerance_count": 0,
+            "accuracy_status": "within_tolerance"
+          },
+          "max_relative_l2": {
+            "output": 0.0077225275485600636,
+            "baseline": 0.007790543891514676,
+            "gpu": 0.0008882470897945853,
+            "npu": 0.017239155582516014
+          },
+          "completed_npu_dispatches": 108,
+          "latency_ratio_vs_gpu_baseline": 1.2479240014352957,
+          "latency_ratio_vs_serial_partition": 1.9563480994640399,
+          "reduction_vs_gpu_percent": 19.866915064550938,
+          "zero_repeat_changed_and_mode_hashes_verified": true
+        },
+        {
+          "npu_channels": 3072,
+          "status": "passed",
+          "stats": {
+            "baseline": {
+              "count": 20,
+              "median_us": 22187.769,
+              "p10_us": 21985.6781,
+              "p90_us": 22577.2789,
+              "min_us": 21937.659,
+              "max_us": 22799.452
+            },
+            "serial": {
+              "count": 20,
+              "median_us": 35077.748,
+              "p10_us": 33870.6512,
+              "p90_us": 35954.0288,
+              "min_us": 33608.855,
+              "max_us": 36126.949
+            },
+            "concurrent": {
+              "count": 20,
+              "median_us": 18072.654499999997,
+              "p10_us": 17509.4342,
+              "p90_us": 18977.070000000003,
+              "min_us": 16844.843,
+              "max_us": 19080.251
+            }
+          },
+          "accuracy": {
+            "passed": true,
+            "accepted": true,
+            "check_count": 239,
+            "outside_tolerance_count": 0,
+            "accuracy_status": "within_tolerance"
+          },
+          "max_relative_l2": {
+            "output": 0.008361846851021447,
+            "baseline": 0.008416369963256834,
+            "gpu": 0.0008892289288699015,
+            "npu": 0.01710548337154128
+          },
+          "completed_npu_dispatches": 108,
+          "latency_ratio_vs_gpu_baseline": 1.2276983992583936,
+          "latency_ratio_vs_serial_partition": 1.940929485483165,
+          "reduction_vs_gpu_percent": 18.546770069582042,
+          "zero_repeat_changed_and_mode_hashes_verified": true
+        }
+      ],
+      "report_sha256": "34e2df969d46b0126b19088a48ec2c698ff5118b352628d44205068009a63822"
+    }
+  },
+  "retained_nonbenchmark_reports": [
+    "contexts_after.json",
+    "contexts_before.json",
+    "platform_after.json",
+    "platform_before.json"
+  ],
+  "retained_failed_reports": {},
+  "fixture_groups": {
+    "512/4096/14336/12832": {
+      "fixture": {
+        "weights": {
+          "gate": {
+            "k": 4096,
+            "n": 14336,
+            "bytes": 31195136,
+            "sha256": "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+            "readonly": true
+          },
+          "up": {
+            "k": 4096,
+            "n": 14336,
+            "bytes": 31195136,
+            "sha256": "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+            "readonly": true
+          },
+          "down": {
+            "k": 14336,
+            "n": 4096,
+            "bytes": 31195136,
+            "sha256": "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db",
+            "readonly": true
+          }
+        },
+        "input_sha256": [
+          "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+          "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+          "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+        ]
+      },
+      "reports": [
+        "confirm_a.json",
+        "confirm_b.json",
+        "p2560_first.json",
+        "refine.json",
+        "sweep.json"
+      ]
+    },
+    "128/256/1024/12832": {
+      "fixture": {
+        "weights": {
+          "gate": {
+            "k": 256,
+            "n": 1024,
+            "bytes": 139264,
+            "sha256": "aac52bce3267eab370baf865bbac8930d475c797da532b97609cdc16d572767a",
+            "readonly": true
+          },
+          "up": {
+            "k": 256,
+            "n": 1024,
+            "bytes": 139264,
+            "sha256": "cbd4b615f38a0002b2f596902b46f3fb929e78904a89a0014fbf6b8a9a71a3a2",
+            "readonly": true
+          },
+          "down": {
+            "k": 1024,
+            "n": 256,
+            "bytes": 139264,
+            "sha256": "95763b9baafa082331a01cda1145efe9202641fa1835e3d89e809b43339994b2",
+            "readonly": true
+          }
+        },
+        "input_sha256": [
+          "3f3f12754934ddb29660284f3d2aa58223ffa64640bcc5fa00b96f4fc36ed514",
+          "164e6a7a6938cfe4547fc7c45cadc2439889995d6fc659946cbd92e8488e48c3",
+          "fa43239bcee7b97ca62f007cc68487560a39e19f74f3dde7486db3f98df8e471"
+        ]
+      },
+      "reports": [
+        "smoke.json"
+      ]
+    }
+  },
+  "totals": {
+    "partitions": 12,
+    "npu_completions": 1656,
+    "timed_invocations": 996,
+    "candidate_validation_calls": 96,
+    "warmup_invocations": 102,
+    "original_tolerance_checks": 3702,
+    "successful_reports": 6
+  },
+  "limitations": [
+    "No hardware work is repeated by this audit.",
+    "Raw output arrays are not exported; error magnitudes are retained, while tolerance/policy decisions are recalculated.",
+    "Combined-output and timed-GPU hashes are checked independently; partial GPU/NPU repeat/zero evidence consists of recorded structural checks without partial hashes.",
+    "Initial input hashes can be compared across reports; the driver does not export final input hashes.",
+    "GPU extension files are archive-hashed and source-fingerprint matched; the runtime report does not contain a loaded .so byte hash.",
+    "Host launch/wait and overlapping staging intervals are not device phase measurements.",
+    "This is synthetic complete-FFN evidence, not whole-model or attention-overlap inference."
+  ],
+  "numerical_summary": {
+    "check_count": 3702,
+    "original_tolerance_failures": 0,
+    "structural_failure_count": 0,
+    "max_relative_l2": 0.017239155582516014,
+    "max_absolute_error": 0.09375
+  },
+  "outer_archive": {
+    "filename": "hardware-evidence.tar.gz",
+    "bytes": 10254467,
+    "sha256": "7dce9df12b0cac63ed9196cf1c510e1450c00adcff393ba48c21fbeef6b4d4d8"
+  }
+}

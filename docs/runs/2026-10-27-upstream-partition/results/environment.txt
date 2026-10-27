@@ -1,0 +1,14 @@
+Tue Oct 27 06:34:59 PM UTC 2026
+Linux 36550fe87506 6.17.0-42-generic #42-Ubuntu SMP PREEMPT_DYNAMIC Thu Jul 23 19:56:28 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+crw-rw---- 1 root aup  235, 0 Oct 27 18:31 /dev/kfd
+
+/dev/accel:
+total 0
+crw-rw-rw- 1 root systemd-resolve 261, 0 Oct 27 18:31 accel0
+
+/dev/dri:
+total 0
+crw-rw---- 1 root aup 226,   0 Oct 27 18:31 card0
+crw-rw---- 1 root aup 226, 128 Oct 27 18:31 renderD128
+2.11.0+rocm7.2 7.2.26015 1.26.4
+_CudaDeviceProperties(name='AMD Radeon 890M', major=11, minor=5, gcnArchName='gfx1150', total_memory=11818MB, multi_processor_count=8, uuid=58580000-0000-0000-0000-000000000000, pci_bus_id=101, pci_device_id=0, pci_domain_id=0, L2_cache_size=2MB)
