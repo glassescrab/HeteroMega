@@ -7,7 +7,8 @@ import numpy as np
 
 from experiments.ffn_partition.contract import bf16
 from experiments.ffn_partition.diagnose_native_projection import (
-    CASES, fixture_hashes, make_fixture, projection_reference, representative_k_indices)
+    CASES, constant_projection_values, fixture_hashes, make_fixture,
+    projection_reference, representative_k_indices)
 
 
 class NativeProjectionDiagnosticTests(unittest.TestCase):
@@ -63,6 +64,25 @@ class NativeProjectionDiagnosticTests(unittest.TestCase):
             make_fixture("unknown")
         with self.assertRaises(ValueError):
             representative_k_indices(129)
+
+    def test_constant_projection_evidence_retains_all_rows_and_column_spread(self):
+        actual = np.array([[1, 1, 1], [-2, -3, -1], [4, 4, 4]], np.float32)
+        expected = np.repeat(np.array([[1], [-2], [4]], np.float32), 3, axis=1)
+        evidence = constant_projection_values(actual, expected)
+        self.assertEqual(evidence["actual_first_column"], [1, -2, 4])
+        self.assertEqual(evidence["expected_first_column"], [1, -2, 4])
+        self.assertEqual(evidence["actual_row_min"], [1, -3, 4])
+        self.assertEqual(evidence["actual_row_max"], [1, -1, 4])
+        self.assertFalse(evidence["all_columns_identical_per_row"])
+        self.assertEqual(evidence["nonfinite_values"], 0)
+        self.assertEqual(json.loads(json.dumps(evidence, allow_nan=False)), evidence)
+
+    def test_nonfinite_constant_evidence_remains_json_serializable(self):
+        actual = np.array([[np.nan, 1], [np.inf, 0]], np.float32)
+        evidence = constant_projection_values(actual, np.zeros_like(actual))
+        self.assertEqual(evidence["actual_first_column"], [None, None])
+        self.assertEqual(evidence["nonfinite_values"], 2)
+        json.dumps(evidence, allow_nan=False)
 
 
 if __name__ == "__main__":

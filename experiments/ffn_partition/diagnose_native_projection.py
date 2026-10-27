@@ -99,6 +99,24 @@ def fixture_hashes(weights, x):
         for name, weight in zip(("gate", "up", "down"), (weights.gate, weights.up, weights.down))})
 
 
+def constant_projection_values(actual, expected):
+    """Small raw-value evidence for constant-W reduction diagnostics."""
+    actual, expected = np.asarray(actual), np.asarray(expected)
+    if actual.ndim != 2 or actual.shape != expected.shape or not actual.size:
+        raise ValueError("constant projection evidence requires matching nonempty matrices")
+
+    def serializable(values):
+        return [float(value) if np.isfinite(value) else None for value in values]
+
+    minimum, maximum = np.min(actual, axis=1), np.max(actual, axis=1)
+    return dict(actual_first_column=serializable(actual[:, 0]),
+                expected_first_column=serializable(expected[:, 0]),
+                actual_row_min=serializable(minimum), actual_row_max=serializable(maximum),
+                all_columns_identical_per_row=bool(np.all(minimum == maximum)),
+                nonfinite_values=int(np.count_nonzero(~np.isfinite(actual))),
+                shape=list(actual.shape))
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--native-root", type=Path, default=ROOT)
@@ -179,8 +197,13 @@ def main(argv=None):
                     if count != (2 if mode == "native" else 0):
                         raise RuntimeError("native diagnostic did not complete its two NPU projections")
                     actuals[mode] = {stage: result[stage].float().cpu().numpy() for stage in ("gate", "up")}
-                    entry["runs"].append(dict(repetition=repetition, mode=mode, completed_npu_dispatches=count,
-                        output_sha256={stage: array_hash(value) for stage, value in actuals[mode].items()}))
+                    record = dict(repetition=repetition, mode=mode, completed_npu_dispatches=count,
+                        output_sha256={stage: array_hash(value) for stage, value in actuals[mode].items()})
+                    if name.startswith("constant"):
+                        record["constant_projection_values"] = {
+                            stage: constant_projection_values(value, references[stage])
+                            for stage, value in actuals[mode].items()}
+                    entry["runs"].append(record)
                     for stage, actual in actuals[mode].items():
                         for owner, rows in (("all", slice(None)), ("gpu_rows", slice(0, 256)), ("npu_rows", slice(256, None))):
                             label = f"run{repetition}_{mode}_{stage}_{owner}"
