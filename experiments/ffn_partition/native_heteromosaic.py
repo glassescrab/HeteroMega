@@ -22,7 +22,7 @@ import traceback
 
 import numpy as np
 
-from .contract import (OutputIntegrity, accuracy_metrics, benchmark_stats, bf16,
+from .contract import (OutputIntegrity, accuracy_metrics, accuracy_summary, benchmark_stats, bf16,
                        random_weights, silu_multiply)
 from .gpu_backend import PACKED_LAYOUT, pack_heteromosaic_weights
 
@@ -83,8 +83,15 @@ def reference_stages(x, weights):
     return {"gate": gate, "up": up, "output": bf16(z @ weights.down.dequantize(True).T)}
 
 
-def checked_metrics(actual, expected, integrity=None, input_id=None):
-    metrics = accuracy_metrics(actual, expected, "strict", integrity, input_id)
+def accuracy_policy_for(mode, requested):
+    """The original GPU control remains strict under native report mode."""
+    if requested not in ("strict", "report") or mode not in ("baseline", "native", "native_vs_gpu"):
+        raise ValueError("unknown native accuracy policy or comparison mode")
+    return "strict" if mode == "baseline" else requested
+
+
+def checked_metrics(actual, expected, integrity=None, input_id=None, policy="strict"):
+    metrics = accuracy_metrics(actual, expected, policy, integrity, input_id)
     metrics["numerical_passed"] = metrics["passed"]
     metrics["structural_passed"] = not metrics["structural_failures"]
     if not metrics["accepted"]:
@@ -97,6 +104,20 @@ def checked_metrics(actual, expected, integrity=None, input_id=None):
     metrics["actual_sha256"] = array_hash(actual)
     metrics["expected_sha256"] = array_hash(expected)
     return metrics
+
+
+def finish_accuracy_report(report):
+    """Keep experimental latency ratios separate from validated speedup."""
+    metrics = list(report["correctness"].values()) + [
+        sample["accuracy"] for sample in report["warmup_samples"] + report["samples"]]
+    summary = accuracy_summary(metrics)
+    report["accuracy"] = summary
+    if not summary["accepted"]:
+        raise RuntimeError("native/GPU validation was not accepted; timing report cannot complete")
+    ratio = report["stats"]["baseline"]["median_us"] / report["stats"]["native"]["median_us"]
+    report["latency_ratio_native_vs_gpu"] = ratio
+    report["speedup_native_vs_gpu"] = ratio if summary["passed"] else None
+    report["status"] = "passed" if summary["passed"] else "completed_with_accuracy_deviations"
 
 
 def record_buffer_integrity(report, packed, inputs, gpu_weights, gpu_inputs, phase):
@@ -189,6 +210,8 @@ def main(argv=None):
                           ("npu-rows", 256), ("seed", 12832), ("iterations", 30), ("warmup", 3)):
         parser.add_argument("--" + name, type=int, default=default)
     parser.add_argument("--mode", choices=("latency", "diagnostic"), default="latency")
+    parser.add_argument("--accuracy-policy", choices=("strict", "report"), default="strict",
+                        help="native only: report retains numerical failures while allowing timing; GPU controls and structural checks remain strict")
     parser.add_argument("--native-root", type=Path, default=ROOT)
     parser.add_argument("--native-library", type=Path, default=os.environ.get("HETEROMOSAIC_NATIVE_LIBRARY"))
     parser.add_argument("--driver-include", type=Path)
@@ -298,13 +321,15 @@ def main(argv=None):
                     for owner, rows in (("all", slice(None)), ("gpu_rows", slice(0, 256)), ("npu_rows", slice(256, None))):
                         label = f"run{repetition}_input{index}_{mode}_{stage}_{owner}"
                         report["correctness"][label] = checked_metrics(actual[rows], reference[rows],
-                            integrity[(mode, stage, owner)], index)
+                            integrity[(mode, stage, owner)], index,
+                            policy=accuracy_policy_for(mode, args.accuracy_policy))
             for stage in ("gate", "up", "output"):
                 report["correctness"][f"run{repetition}_input{index}_native_vs_gpu_{stage}"] = checked_metrics(
-                    values["native"][stage], values["baseline"][stage])
+                    values["native"][stage], values["baseline"][stage],
+                    policy=accuracy_policy_for("native_vs_gpu", args.accuracy_policy))
             save(report, args.output)
-            if not all(item["passed"] for item in report["correctness"].values()):
-                raise RuntimeError("native/GPU numerical validation failed; no performance claim is valid")
+            if not all(item["accepted"] for item in report["correctness"].values()):
+                raise RuntimeError("native/GPU validation was not accepted; no performance claim is valid")
 
         order = random.Random(args.seed)
         modes = ["baseline", "native"]
@@ -315,12 +340,13 @@ def main(argv=None):
                 result = invoke(mode, index, diagnostic=args.mode == "diagnostic")
                 actual = output.float().cpu().numpy()
                 metrics = checked_metrics(actual, references[index]["output"],
-                                          integrity[(mode, "output", "all")], index)
+                                          integrity[(mode, "output", "all")], index,
+                                          policy=accuracy_policy_for(mode, args.accuracy_policy))
                 sample = dict(result, mode=mode, iteration=iteration, input_index=index,
-                              correctness_passed=bool(metrics["passed"]), accuracy=metrics,
+                              correctness_passed=bool(metrics["passed"]), accepted=bool(metrics["accepted"]), accuracy=metrics,
                               output_sha256=metrics["actual_sha256"])
                 report["samples" if iteration >= 0 else "warmup_samples"].append(sample)
-                if not metrics["passed"]:
+                if not metrics["accepted"]:
                     report["correctness"][f"timed_{iteration}_{mode}"] = metrics
                     raise RuntimeError(f"reused-buffer correctness failed: iteration={iteration} mode={mode}")
             save(report, args.output)
@@ -335,8 +361,7 @@ def main(argv=None):
                                      for mode in ("baseline", "native")}
         if report["completed_npu_dispatches"] != report["expected_npu_dispatches"]:
             raise RuntimeError("total NPU completion count mismatch")
-        report["speedup_native_vs_gpu"] = report["stats"]["baseline"]["median_us"] / report["stats"]["native"]["median_us"]
-        report["status"] = "passed"
+        finish_accuracy_report(report)
     except Exception as error:
         if module is not None:
             report["completed_npu_dispatches"] = int(module.completed_npu_dispatches())

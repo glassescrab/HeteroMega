@@ -77,6 +77,13 @@ user's plan. Follow later explicit user scope changes.
   failures remain failures. Preserve native BF16 and strict GPU controls.
   This supersedes historical instructions that block all BFP16 timing on the
   previous error tolerance; it does not establish model accuracy.
+- The 2026-10-27 user request explicitly allows timing native HeteroMosaic
+  despite numerical failures, provided its implementation is faithful. Use
+  explicit native report policy; preserve the original kernels, dispatcher,
+  packed weights and timing boundary, and retain numerical errors and original
+  tolerance verdicts. Numerical differences do not block this performance
+  comparison. Execution, stale-output and buffer-integrity failures still fail;
+  GPU controls remain strict. This supersedes the earlier native accuracy gate.
 - Do not infer NPU execution from `--backend hetero`, a config entry, or a
   firmware directory. Check the selected runtime path and successful completion.
 - Distinguish logical partition ownership, shared DRAM buffers, and NPU on-chip

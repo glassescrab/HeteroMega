@@ -33,7 +33,7 @@ def native_report(args, job):
     fixture = fixtures()
     report = dict(status="passed", config=dict(m=512, hidden=4096, intermediate=14336, npu_rows=256,
         seed=12832, warmup=args.warmup, iterations=job["iterations"],
-        mode="latency" if job["mode"] == "ordinary" else "diagnostic"),
+        mode="latency" if job["mode"] == "ordinary" else "diagnostic", accuracy_policy=args.native_accuracy_policy),
         correctness={}, samples=[], warmup_samples=[], native_packed_weight_sha256=fixture["full_packed_weight_sha256"],
         input_sha256=fixture["input_sha256"], completed_npu_dispatches=2 * (4 + args.warmup + job["iterations"]),
         expected_npu_dispatches=2 * (4 + args.warmup + job["iterations"]))
@@ -41,22 +41,22 @@ def native_report(args, job):
         for mode in ("baseline", "native"):
             for stage in ("gate", "up", "output"):
                 for owner in ("all", "gpu_rows", "npu_rows"):
-                    value = metric(zero=idx == 2)
+                    value = metric("strict" if mode == "baseline" else args.native_accuracy_policy, zero=idx == 2)
                     value.update(numerical_passed=True, structural_passed=True, actual_sha256=(
                         driver.zero_hash(512 if owner == "all" else 256, 4096 if stage == "output" else 14336)
                         if idx == 2 else "12"[idx] * 64))
                     report["correctness"][f"run{run}_input{idx}_{mode}_{stage}_{owner}"] = value
         for stage in ("gate", "up", "output"):
             report["correctness"][f"run{run}_input{idx}_native_vs_gpu_{stage}"] = dict(
-                metric(zero=idx == 2), numerical_passed=True, structural_passed=True)
+                metric(args.native_accuracy_policy, zero=idx == 2), numerical_passed=True, structural_passed=True)
     for iteration in range(-args.warmup, job["iterations"]):
         for mode in ("baseline", "native"):
-            value = dict(metric(), actual_sha256="12"[iteration % 2] * 64,
+            value = dict(metric("strict" if mode == "baseline" else args.native_accuracy_policy), actual_sha256="12"[iteration % 2] * 64,
                          numerical_passed=True, structural_passed=True)
             sample = dict(mode=mode, iteration=iteration, input_index=iteration % 2,
                 wall_us=22000 if mode == "baseline" else 20000, correctness_passed=True,
                 completed_npu_dispatches=2 if mode == "native" else 0, accuracy=value,
-                output_sha256=value["actual_sha256"])
+                output_sha256=value["actual_sha256"], accepted=True)
             report["samples" if iteration >= 0 else "warmup_samples"].append(sample)
     integrity = dict(host_packed_weight_sha256=fixture["full_packed_weight_sha256"],
         device_packed_weight_sha256=fixture["full_packed_weight_sha256"], host_input_sha256=fixture["input_sha256"],
@@ -64,7 +64,20 @@ def native_report(args, job):
         checks=dict(host_weights_match_initial=True, device_weights_match_initial=True,
                     host_inputs_match_initial=True, device_inputs_match_initial=True))
     report.update(buffer_integrity_before=copy.deepcopy(integrity), buffer_integrity_after=copy.deepcopy(integrity))
+    refresh_native_accuracy(report)
     return report
+
+
+def refresh_native_accuracy(report):
+    report["accuracy"] = accuracy_summary([*report["correctness"].values(),
+        *[s["accuracy"] for s in report["warmup_samples"] + report["samples"]]])
+    report["status"] = "passed" if report["accuracy"]["passed"] else "completed_with_accuracy_deviations"
+
+
+def native_deviation(report):
+    value = report["correctness"]["run0_input0_native_gate_npu_rows"]
+    value.update(accuracy_metrics(np.full(2, 2, np.float32), np.ones(2, np.float32), "report"), numerical_passed=False)
+    refresh_native_accuracy(report)
 
 
 def candidate_report(args, job):
@@ -142,8 +155,61 @@ class UpstreamNativeComparisonTests(unittest.TestCase):
                 self.assertIn("/iron/python", job["command"])
                 self.assertEqual(job["accuracy_policy"], "report")
             else:
-                self.assertNotIn("--accuracy-policy", job["command"])
+                self.assertEqual(job["command"][job["command"].index("--accuracy-policy") + 1], "strict")
                 self.assertEqual(job["accuracy_policy"], "strict")
+
+    def test_native_report_policy_forwards_and_preserves_numeric_failure(self):
+        args = arguments("/output")
+        args.native_accuracy_policy = "report"
+        job = driver.build_jobs(args)[0]
+        self.assertEqual(job["command"][job["command"].index("--accuracy-policy") + 1], "report")
+        report = native_report(args, job)
+        native_deviation(report)
+        result = driver.validate_native(report, job, args)
+        self.assertFalse(result["accuracy_passed"])
+        self.assertTrue(result["accuracy_accepted"])
+        self.assertEqual(result["status"], "completed_with_accuracy_deviations")
+        mutations = [lambda r: r["correctness"]["run0_input0_native_gate_npu_rows"].update(structural_failures=["stale"]),
+            lambda r: r["correctness"]["run0_input0_baseline_gate_npu_rows"].update(accuracy_policy="report"),
+            lambda r: r["correctness"]["run0_input0_baseline_gate_npu_rows"].update(
+                accuracy_metrics(np.full(2, 2, np.float32), np.ones(2, np.float32), "strict"), numerical_passed=False),
+            lambda r: r["samples"][1].update(output_sha256="0" * 64),
+            lambda r: r["samples"][1].update(accepted=False),
+            lambda r: r["samples"][1]["accuracy"].update(structural_passed=False),
+            lambda r: r["buffer_integrity_after"]["device_packed_weight_sha256"].__setitem__(0, "0" * 64),
+            lambda r: r.update(completed_npu_dispatches=0), lambda r: r.update(status="passed")]
+        for mutation in mutations:
+            bad = copy.deepcopy(report)
+            mutation(bad)
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                driver.validate_native(bad, job, args)
+        strict = arguments("/output")
+        with self.assertRaises(ValueError):
+            driver.validate_native(report, driver.build_jobs(strict)[0], strict)
+
+    def test_native_report_summary_labels_latency_without_validated_speedup(self):
+        with tempfile.TemporaryDirectory() as directory:
+            args = arguments(directory)
+            args.native_accuracy_policy = "report"
+            jobs = driver.build_jobs(args)[:2]
+            for job in jobs:
+                report = native_report(args, job) if job["variant"] == "native" else candidate_report(args, job)
+                if job["variant"] == "native":
+                    native_deviation(report)
+                evidence = driver.validate_native(report, job, args) if job["variant"] == "native" else driver.validate_candidate(report, job, args)
+                path = args.output_dir / job["report_path"]
+                driver.save_json(path, report)
+                evidence["report_sha256"] = driver.file_hash(path)
+                job.update(evidence=evidence, status=report["status"], power_before_summary={"mode": "default"}, power_after_summary={"mode": "default"})
+            summary = driver.summarize(dict(status="completed_with_accuracy_deviations", jobs=jobs), args.output_dir)
+            self.assertFalse(summary["native_failed"])
+            comparison = summary["comparisons"][0]
+            self.assertEqual(comparison["comparison_kind"], "experimental_latency_with_numerical_deviations")
+            self.assertFalse(comparison["native_accuracy_passed"])
+            self.assertTrue(comparison["candidate_accuracy_passed"])
+            self.assertIsNone(comparison["speedup_vs_native"])
+            self.assertAlmostEqual(comparison["native_over_candidate_latency_ratio"], 20 / 18)
+            self.assertIsNone(summary["ordinary"][0]["speedup_vs_own_gpu"])
 
     def test_native_requires_strict_numerics_and_actual_device_fixture_integrity(self):
         args = arguments("/output")

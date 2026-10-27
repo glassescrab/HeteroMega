@@ -7,7 +7,8 @@ import unittest
 import numpy as np
 
 from experiments.ffn_partition.contract import OutputIntegrity, bf16, random_weights, reference_full
-from experiments.ffn_partition.native_heteromosaic import (array_hash, checked_metrics, main, native_config,
+from experiments.ffn_partition.native_heteromosaic import (accuracy_policy_for, array_hash, checked_metrics,
+                                                         finish_accuracy_report, main, native_config,
                                                          record_buffer_integrity, reference_stages,
                                                          seeded_inputs)
 
@@ -73,6 +74,78 @@ class NativeContractTest(unittest.TestCase):
         self.assertEqual(metrics["l2_limit"], .02)
         json.dumps(metrics, allow_nan=False)
 
+    def test_report_accepts_native_numerical_failure_without_changing_verdict(self):
+        expected = np.ones((2, 2), np.float32)
+        actual = expected * 2
+        for mode in ("native", "native_vs_gpu"):
+            metrics = checked_metrics(actual, expected, policy=accuracy_policy_for(mode, "report"))
+            self.assertFalse(metrics["passed"])
+            self.assertFalse(metrics["numerical_passed"])
+            self.assertTrue(metrics["accepted"])
+            self.assertTrue(metrics["structural_passed"])
+            self.assertEqual(metrics["accuracy_status"], "reported_deviation")
+            self.assertEqual((metrics["rtol"], metrics["atol"], metrics["l2_limit"]), (.03, .05, .02))
+        self.assertFalse(checked_metrics(actual, expected)["accepted"])
+
+    def test_report_keeps_gpu_control_strict(self):
+        expected = np.ones((2, 2), np.float32)
+        metrics = checked_metrics(expected * 2, expected,
+                                  policy=accuracy_policy_for("baseline", "report"))
+        self.assertEqual(metrics["accuracy_policy"], "strict")
+        self.assertFalse(metrics["accepted"])
+        self.assertFalse(metrics["passed"])
+        for mode, policy in (("unknown", "report"), ("native", "unknown")):
+            with self.assertRaises(ValueError):
+                accuracy_policy_for(mode, policy)
+
+    def test_report_never_accepts_structural_failures(self):
+        expected = np.ones((2, 2), np.float32)
+        for actual, reference in ((np.full_like(expected, np.nan), expected),
+                                  (np.zeros_like(expected), expected),
+                                  (expected, np.zeros_like(expected))):
+            metrics = checked_metrics(actual, reference, policy="report")
+            self.assertFalse(metrics["accepted"])
+            self.assertFalse(metrics["structural_passed"])
+            self.assertFalse(metrics["passed"])
+        for changed_id in (0, 1):
+            integrity = OutputIntegrity()
+            checked_metrics(expected, expected, integrity, 0, policy="report")
+            actual = expected + .001 if changed_id == 0 else expected
+            metrics = checked_metrics(actual, expected + .001, integrity, changed_id, policy="report")
+            self.assertTrue(metrics["numerical_passed"])
+            self.assertFalse(metrics["accepted"])
+            self.assertFalse(metrics["structural_passed"])
+            self.assertFalse(metrics["passed"])
+
+    def test_report_finish_separates_latency_ratio_from_validated_speedup(self):
+        expected = np.ones((2, 2), np.float32)
+        baseline = checked_metrics(expected, expected)
+        native = checked_metrics(expected * 2, expected, policy="report")
+        report = dict(correctness={"baseline": baseline, "native": native},
+                      warmup_samples=[dict(accuracy=native)], samples=[dict(accuracy=native)],
+                      stats={"baseline": {"median_us": 30}, "native": {"median_us": 20}})
+        finish_accuracy_report(report)
+        self.assertEqual(report["status"], "completed_with_accuracy_deviations")
+        self.assertTrue(report["accuracy"]["accepted"])
+        self.assertFalse(report["accuracy"]["passed"])
+        self.assertEqual(report["accuracy"]["check_count"], 4)
+        self.assertEqual(report["accuracy"]["outside_tolerance_count"], 3)
+        self.assertEqual(report["latency_ratio_native_vs_gpu"], 1.5)
+        self.assertIsNone(report["speedup_native_vs_gpu"])
+        report["correctness"]["baseline"] = checked_metrics(expected * 2, expected)
+        with self.assertRaises(RuntimeError):
+            finish_accuracy_report(report)
+
+    def test_strict_finish_retains_validated_speedup(self):
+        value = np.ones((2, 2), np.float32)
+        report = dict(correctness={"baseline": checked_metrics(value, value)},
+                      warmup_samples=[], samples=[],
+                      stats={"baseline": {"median_us": 30}, "native": {"median_us": 20}})
+        finish_accuracy_report(report)
+        self.assertEqual(report["status"], "passed")
+        self.assertEqual(report["speedup_native_vs_gpu"], 1.5)
+        self.assertEqual(report["latency_ratio_native_vs_gpu"], 1.5)
+
     def test_exact_repeat_guard_rejects_within_tolerance_change(self):
         reference = np.ones((2, 2), np.float32)
         integrity = OutputIntegrity()
@@ -134,6 +207,7 @@ class NativeContractTest(unittest.TestCase):
             self.assertEqual(report["completed_npu_dispatches"], 0)
             self.assertEqual(report["expected_npu_dispatches"], 0)
             self.assertEqual(report["samples"], [])
+            self.assertEqual(report["config"]["accuracy_policy"], "strict")
             self.assertTrue(output.with_suffix(".native_config.json").exists())
             self.assertEqual(json.loads(output.read_text()), report)
 

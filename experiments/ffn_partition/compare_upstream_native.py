@@ -2,7 +2,8 @@
 
 Two reversed blocks retain each implementation's own interleaved GPU control.
 Native diagnostics, when requested, are a separate process and never latency.
-No numerical failure of the native baseline can authorize a speedup claim.
+Native accuracy defaults to strict; explicit report mode retains numerical
+failures while admitting faithful implementation latency with structural checks.
 """
 
 import argparse
@@ -15,7 +16,6 @@ from pathlib import Path
 import subprocess
 import sys
 
-from .compare_native import validate_native as _validate_native
 from .contract import accuracy_summary, benchmark_stats
 from .run_upstream_partition import selected_options
 from .sweep_partition import (COMPLETED_STATUSES, ROOT, comma_ints, completed_status,
@@ -59,7 +59,7 @@ def build_jobs(args):
             if variant == "native":
                 command = [sys.executable, "-m", "experiments.ffn_partition.native_heteromosaic", *common,
                            "--npu-rows", "256", "--mode", "latency" if mode == "ordinary" else "diagnostic",
-                           "--native-root", str(args.native_root)]
+                           "--native-root", str(args.native_root), "--accuracy-policy", args.native_accuracy_policy]
                 for name in ("native_library", "driver_include"):
                     if getattr(args, name):
                         command += ["--" + name.replace("_", "-"), str(getattr(args, name))]
@@ -73,7 +73,7 @@ def build_jobs(args):
                     command += ["--no-build"]
             jobs.append(dict(id=tag, variant=variant, mode=mode, block=block, npu_channels=p,
                 iterations=iterations, npu_arithmetic="bfp16" if p else "native_unmodified",
-                accuracy_policy="report" if p else "strict", command=command, report_path=report_path,
+                accuracy_policy="report" if p else args.native_accuracy_policy, command=command, report_path=report_path,
                 log_path=f"logs/{tag}.log", status="planned", power_before=f"power/{tag}_before.json",
                 power_after=f"power/{tag}_after.json"))
     return jobs
@@ -127,10 +127,27 @@ def validate_metric(value, policy=None):
 
 
 def validate_native(report, job, args):
-    evidence = _validate_native(report, job, args)
-    for metric in report["correctness"].values():
-        validate_metric(metric, "strict")
-        require(metric.get("numerical_passed") is True and metric.get("structural_passed") is True,
+    policy = getattr(args, "native_accuracy_policy", "strict")
+    require(policy in ("strict", "report") and job.get("accuracy_policy", "strict") == policy,
+            "native accuracy policy differs from planned comparison")
+    require(report.get("status") in COMPLETED_STATUSES and
+            (policy == "report" or report["status"] == "passed"), "native report did not complete under requested policy")
+    expected = dict(m=512, hidden=4096, intermediate=14336, npu_rows=256,
+                    seed=args.seed, warmup=args.warmup, iterations=job["iterations"],
+                    mode="latency" if job["mode"] == "ordinary" else "diagnostic")
+    config = report.get("config", {})
+    require(all(config.get(k) == v for k, v in expected.items()) and
+            config.get("accuracy_policy", "strict") == policy, "native configuration differs")
+    required = {f"run{run}_input{idx}_{mode}_{stage}_{owner}" for run, idx in enumerate((0, 1, 2, 0))
+                for mode in ("baseline", "native") for stage in ("gate", "up", "output")
+                for owner in ("all", "gpu_rows", "npu_rows")}
+    required.update(f"run{run}_input{idx}_native_vs_gpu_{stage}" for run, idx in enumerate((0, 1, 2, 0))
+                    for stage in ("gate", "up", "output"))
+    checks = report.get("correctness", {})
+    require(required.issubset(checks), "native initial numerical checks missing")
+    for name, metric in checks.items():
+        passed = validate_metric(metric, "strict" if "_baseline_" in name or name.endswith("_baseline") else policy)
+        require(metric.get("numerical_passed") is passed and metric.get("structural_passed") is True,
                 "native numerical/structural evidence missing")
     # The native runner stores output hashes for its initial stage controls.
     for mode in ("baseline", "native"):
@@ -142,16 +159,19 @@ def validate_native(report, job, args):
                 require(hashes[2] == zero_hash(512 if owner == "all" else 256, 4096 if stage == "output" else 14336),
                         "native zero output hash failed")
     warmups = report.get("warmup_samples", [])
-    require(len(warmups) == 2 * args.warmup, "native warmup samples missing")
-    for mode in ("baseline", "native"):
-        records = [s for s in warmups if s.get("mode") == mode]
-        require(sorted(s.get("iteration") for s in records) == list(range(-args.warmup, 0)), "native warmup coverage failed")
-        for s in records:
-            benchmark_stats([s["wall_us"]])
-            require(s.get("correctness_passed") is True and s.get("input_index") == s["iteration"] % 2 and
-                    s.get("completed_npu_dispatches") == (2 if mode == "native" else 0), "native warmup validation failed")
-    for s in warmups + report["samples"]:
-        validate_metric(s.get("accuracy", {}), "strict")
+    samples = report.get("samples", [])
+    require(len(warmups) == 2 * args.warmup and len(samples) == 2 * job["iterations"], "native samples missing")
+    for group, indexes in ((warmups, range(-args.warmup, 0)), (samples, range(job["iterations"]))):
+        for mode in ("baseline", "native"):
+            require(sorted(s.get("iteration") for s in group if s.get("mode") == mode) == list(indexes),
+                    "native missing or duplicate iteration")
+    for s in warmups + samples:
+        benchmark_stats([s["wall_us"]])
+        passed = validate_metric(s.get("accuracy", {}), "strict" if s["mode"] == "baseline" else policy)
+        require(s.get("correctness_passed") is passed and s["accuracy"].get("numerical_passed") is passed and
+                s["accuracy"].get("structural_passed") is True and s.get("accepted", True) is True and
+                s.get("input_index") == s["iteration"] % 2 and
+                s.get("completed_npu_dispatches") == (2 if s["mode"] == "native" else 0), "native timed validation failed")
         expected = report["correctness"][f"run{s['input_index']}_input{s['input_index']}_{s['mode']}_output_all"]["actual_sha256"]
         require(s.get("output_sha256") == s["accuracy"].get("actual_sha256") == expected,
                 "native timed output hash differs from initial control")
@@ -163,8 +183,17 @@ def validate_native(report, job, args):
         require(integrity.get("host_packed_weight_sha256") == integrity.get("device_packed_weight_sha256") ==
                 report.get("native_packed_weight_sha256") and integrity.get("host_input_sha256") ==
                 integrity.get("device_input_sha256") == report.get("input_sha256"), "native host/device fixture bytes changed")
-    evidence["fixture"] = fixture_identity(report, "native")
-    return evidence
+    completed = 2 * (4 + args.warmup + job["iterations"])
+    require(report.get("completed_npu_dispatches") == report.get("expected_npu_dispatches") == completed,
+            "native total completion count mismatch")
+    accuracy = accuracy_summary([*checks.values(), *[s["accuracy"] for s in warmups + samples]])
+    status = "passed" if accuracy["passed"] else "completed_with_accuracy_deviations"
+    require(report["status"] == status, "native numerical status was relabeled")
+    if policy == "report" or "accuracy" in report:
+        require(report.get("accuracy") == accuracy, "native numerical summary differs")
+    return dict(completed_npu_dispatches=completed, timed_invocations=len(samples), explicit_checks=len(checks),
+                status=status, accuracy_policy=policy, accuracy_passed=accuracy["passed"], accuracy_accepted=True,
+                accuracy_status=accuracy["accuracy_status"], fixture=fixture_identity(report, "native"))
 
 
 def validate_candidate(report, job, args):
@@ -274,10 +303,13 @@ def summarize(manifest, output_dir):
         for native in (r for r in rows if r["variant"] == "native"):
             for candidate in (r for r in rows if r["variant"] == "upstream" and r["block"] == native["block"]):
                 ratio = native["candidate_us"]["median_us"] / candidate["candidate_us"]["median_us"]
+                numerical_pass = native["accuracy_passed"] and candidate["accuracy_passed"]
                 comparisons.append(dict(block=native["block"], npu_channels=candidate["npu_channels"],
                     native_job=native["job"], candidate_job=candidate["job"],
-                    comparison_kind="within_original_tolerance" if candidate["accuracy_passed"] else "experimental_latency_with_numerical_deviations",
-                    native_over_candidate_latency_ratio=ratio, speedup_vs_native=ratio if candidate["accuracy_passed"] else None,
+                    native_accuracy_passed=native["accuracy_passed"], candidate_accuracy_passed=candidate["accuracy_passed"],
+                    native_accuracy_policy=native["accuracy_policy"], candidate_accuracy_policy=candidate["accuracy_policy"],
+                    comparison_kind="within_original_tolerance" if numerical_pass else "experimental_latency_with_numerical_deviations",
+                    native_over_candidate_latency_ratio=ratio, speedup_vs_native=ratio if numerical_pass else None,
                     gpu_control_native_over_candidate=native["baseline_us"]["median_us"] / candidate["baseline_us"]["median_us"]))
     return dict(status=manifest["status"], ordinary=rows, comparisons=comparisons,
         native_failed=native_failed, full_packed_weights_and_inputs_match=same_fixtures, common_power_mode=same_power,
@@ -287,6 +319,7 @@ def summarize(manifest, output_dir):
                "Native and candidate use different host wrappers, with their own fresh GPU controls.",
                "Native ordinary timing has a conservative redundant readiness sync inside its binding.",
                "Power snapshots are boundary observations, not continuous clock telemetry.",
+               "Report-mode native numerical deviations retain an experimental latency ratio, not a tolerance-validated speedup.",
                "No native comparison is admitted after a failed native job, mismatched fixtures, or mismatched power."])
 
 
@@ -295,6 +328,8 @@ def parse_args(argv=None):
     parser.add_argument("--native-root", type=Path, required=True)
     parser.add_argument("--native-library", type=Path)
     parser.add_argument("--driver-include", type=Path)
+    parser.add_argument("--native-accuracy-policy", choices=("strict", "report"), default="strict",
+                        help="report permits native numerical deviations; GPU controls and structural checks remain strict")
     parser.add_argument("--npu-channels", type=comma_ints, default=[2560, 2816])
     parser.add_argument("--iterations", type=int, default=50)
     parser.add_argument("--warmup", type=int, default=3)
@@ -337,7 +372,7 @@ def main(argv=None):
         config={k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
         source_sha256=sources, jobs=build_jobs(args),
         scope="M512/H4096/I14336 seed12832 synthetic complete FFN; two reversed fresh-process blocks",
-        acceptance="native and GPU strict; direct BFP16 candidate report policy with structural hard failures")
+        acceptance=f"native {args.native_accuracy_policy}; GPU strict; direct BFP16 candidate report; structural hard failures")
     manifest_path = args.output_dir / "comparison_manifest.json"
     save_json(manifest_path, manifest)
     if args.plan_only:
