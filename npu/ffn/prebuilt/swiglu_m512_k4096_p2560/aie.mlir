@@ -143,10 +143,10 @@ module {
     %direct_acc0_0_0 = aie.buffer(%logical_core) {sym_name = "direct_acc0_0_0"} : memref<1024xf32> 
     %direct_acc1_0_0 = aie.buffer(%logical_core) {sym_name = "direct_acc1_0_0"} : memref<1024xf32> 
     %direct_dequant_0_0 = aie.buffer(%logical_core) {sym_name = "direct_dequant_0_0"} : memref<4096xbf16> 
-    func.func private @w4a16_prefill_reuse_init(memref<1024xf32>) attributes {link_with = "w4a16_prefill_reuse_bf16_ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2_vectorzero1_mmulmreuse1.o"}
-    func.func private @w4a16_prefill_reuse_accumulate_low(memref<4096xbf16>, memref<4352xui8>, memref<1024xf32>, memref<4096xbf16>) attributes {link_with = "w4a16_prefill_reuse_bf16_ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2_vectorzero1_mmulmreuse1.o"}
-    func.func private @w4a16_prefill_reuse_accumulate_high(memref<4096xbf16>, memref<4352xui8>, memref<1024xf32>, memref<4096xbf16>) attributes {link_with = "w4a16_prefill_reuse_bf16_ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2_vectorzero1_mmulmreuse1.o"}
-    func.func private @w4a16_prefill_reuse_finish(memref<1024xf32>, memref<1024xbf16>) attributes {link_with = "w4a16_prefill_reuse_bf16_ae5f247810852e3383db19e4c483279db195c480c498c002eaa0d0e4053609d7_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2_vectorzero1_mmulmreuse1.o"}
+    func.func private @w4a16_prefill_reuse_init(memref<1024xf32>) attributes {link_with = "w4a16_prefill_reuse_bfp16_e343cda2d88bb86c2eddb7b1972f65d6f86bc18be8e3b4d401fda27688f41a55_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2_vectorzero1_mmulmreuse1.o"}
+    func.func private @w4a16_prefill_reuse_accumulate_low(memref<4096xbf16>, memref<4352xui8>, memref<1024xf32>, memref<4096xbf16>) attributes {link_with = "w4a16_prefill_reuse_bfp16_e343cda2d88bb86c2eddb7b1972f65d6f86bc18be8e3b4d401fda27688f41a55_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2_vectorzero1_mmulmreuse1.o"}
+    func.func private @w4a16_prefill_reuse_accumulate_high(memref<4096xbf16>, memref<4352xui8>, memref<1024xf32>, memref<4096xbf16>) attributes {link_with = "w4a16_prefill_reuse_bfp16_e343cda2d88bb86c2eddb7b1972f65d6f86bc18be8e3b4d401fda27688f41a55_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2_vectorzero1_mmulmreuse1.o"}
+    func.func private @w4a16_prefill_reuse_finish(memref<1024xf32>, memref<1024xbf16>) attributes {link_with = "w4a16_prefill_reuse_bfp16_e343cda2d88bb86c2eddb7b1972f65d6f86bc18be8e3b4d401fda27688f41a55_8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e_r2_vectorzero1_mmulmreuse1.o"}
     %direct_acc0_0_1 = aie.buffer(%logical_core_0) {sym_name = "direct_acc0_0_1"} : memref<1024xf32> 
     %direct_acc1_0_1 = aie.buffer(%logical_core_0) {sym_name = "direct_acc1_0_1"} : memref<1024xf32> 
     %direct_dequant_0_1 = aie.buffer(%logical_core_0) {sym_name = "direct_dequant_0_1"} : memref<4096xbf16> 
@@ -499,7 +499,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_0_3 = aie.core(%logical_core_0) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -742,7 +742,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_0_4 = aie.core(%logical_core_1) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -985,7 +985,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_0_5 = aie.core(%logical_core_2) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -1228,7 +1228,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_1_2 = aie.core(%logical_core_3) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -1551,7 +1551,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_1_3 = aie.core(%logical_core_4) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -1874,7 +1874,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_1_4 = aie.core(%logical_core_5) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -2197,7 +2197,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_1_5 = aie.core(%logical_core_6) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -2520,7 +2520,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_2_2 = aie.core(%logical_core_7) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -2763,7 +2763,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_2_3 = aie.core(%logical_core_8) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -3006,7 +3006,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_2_4 = aie.core(%logical_core_9) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -3249,7 +3249,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_2_5 = aie.core(%logical_core_10) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -3492,7 +3492,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_3_2 = aie.core(%logical_core_11) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -3815,7 +3815,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_3_3 = aie.core(%logical_core_12) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -4138,7 +4138,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_3_4 = aie.core(%logical_core_13) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -4461,7 +4461,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_3_5 = aie.core(%logical_core_14) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -4784,7 +4784,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_4_2 = aie.core(%logical_core_15) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -5027,7 +5027,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_4_3 = aie.core(%logical_core_16) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -5270,7 +5270,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_4_4 = aie.core(%logical_core_17) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -5513,7 +5513,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_4_5 = aie.core(%logical_core_18) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -5756,7 +5756,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_5_2 = aie.core(%logical_core_19) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -6079,7 +6079,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_5_3 = aie.core(%logical_core_20) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -6402,7 +6402,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_5_4 = aie.core(%logical_core_21) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -6725,7 +6725,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_5_5 = aie.core(%logical_core_22) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -7048,7 +7048,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_6_2 = aie.core(%logical_core_23) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -7291,7 +7291,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_6_3 = aie.core(%logical_core_24) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -7534,7 +7534,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_6_4 = aie.core(%logical_core_25) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -7777,7 +7777,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_6_5 = aie.core(%logical_core_26) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -8020,7 +8020,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_7_2 = aie.core(%logical_core_27) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -8343,7 +8343,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_7_3 = aie.core(%logical_core_28) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -8666,7 +8666,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_7_4 = aie.core(%logical_core_29) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -8989,7 +8989,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     %core_7_5 = aie.core(%logical_core_30) {
       %c0 = arith.constant 0 : index
       %c9223372036854775807 = arith.constant 9223372036854775807 : index
@@ -9312,7 +9312,7 @@ module {
         }
       }
       aie.end
-    } {dynamic_objfifo_lowering = true, stack_size = 2048 : i32}
+    } {dynamic_objfifo_lowering = true, stack_size = 4096 : i32}
     aie.runtime_sequence(%arg0: memref<2097152xbf16>, %arg1: memref<31195136xui8>, %arg2: memref<31195136xui8>, %arg3: memref<1310720xbf16>) {
       %0 = aiex.dma_configure_task_for @direct_y_host_1 {
         aie.dma_bd(%arg3 : memref<1310720xbf16> offset = 0 len = 4096 sizes = [2, 8, 4, 128] strides = [128, 40960, 512, 1])
