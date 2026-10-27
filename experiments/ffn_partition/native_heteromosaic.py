@@ -22,7 +22,8 @@ import traceback
 
 import numpy as np
 
-from .contract import benchmark_stats, bf16, error_metrics, random_weights, silu_multiply
+from .contract import (OutputIntegrity, accuracy_metrics, benchmark_stats, bf16,
+                       random_weights, silu_multiply)
 from .gpu_backend import PACKED_LAYOUT, pack_heteromosaic_weights
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -82,8 +83,12 @@ def reference_stages(x, weights):
     return {"gate": gate, "up": up, "output": bf16(z @ weights.down.dequantize(True).T)}
 
 
-def checked_metrics(actual, expected):
-    metrics = error_metrics(actual, expected)
+def checked_metrics(actual, expected, integrity=None, input_id=None):
+    metrics = accuracy_metrics(actual, expected, "strict", integrity, input_id)
+    metrics["numerical_passed"] = metrics["passed"]
+    metrics["structural_passed"] = not metrics["structural_failures"]
+    if not metrics["accepted"]:
+        metrics.update(passed=False, correctness="failed")
     if metrics["finite"]:
         index = np.unravel_index(np.argmax(np.abs(actual.astype(np.float64) - expected)), expected.shape)
         metrics["max_error_index"] = [int(i) for i in index]
@@ -92,6 +97,22 @@ def checked_metrics(actual, expected):
     metrics["actual_sha256"] = array_hash(actual)
     metrics["expected_sha256"] = array_hash(expected)
     return metrics
+
+
+def record_buffer_integrity(report, packed, inputs, gpu_weights, gpu_inputs, phase):
+    """Outside all timing, check original host and actual device input bytes."""
+    hashes = dict(host_packed_weight_sha256=[array_hash(value) for value in packed],
+                  device_packed_weight_sha256=[array_hash(value.detach().cpu().numpy())
+                                               for value in gpu_weights],
+                  host_input_sha256=[array_hash(value) for value in inputs],
+                  device_input_sha256=[array_hash(value.detach().float().cpu().numpy())
+                                       for value in gpu_inputs])
+    checks = dict(host_weights_match_initial=hashes["host_packed_weight_sha256"] == report["native_packed_weight_sha256"],
+                  device_weights_match_initial=hashes["device_packed_weight_sha256"] == report["native_packed_weight_sha256"],
+                  host_inputs_match_initial=hashes["host_input_sha256"] == report["input_sha256"],
+                  device_inputs_match_initial=hashes["device_input_sha256"] == report["input_sha256"])
+    report["buffer_integrity_" + phase] = dict(**hashes, checks=checks, passed=all(checks.values()))
+    return all(checks.values())
 
 
 def find_driver_include(native_root, explicit=None):
@@ -196,6 +217,7 @@ def main(argv=None):
               "packed_layout": PACKED_LAYOUT, "native_config": config,
               "provenance": source_provenance(args.native_root)}
     module = None
+    buffers_ready = False
     config_path = args.output.with_suffix(".native_config.json").resolve()
     save(config, config_path)
     report["native_config_path"] = str(config_path)
@@ -232,12 +254,18 @@ def main(argv=None):
         up = torch.empty_like(gate)
         output = torch.empty((args.m, args.hidden), dtype=torch.bfloat16, device="cuda")
         torch.cuda.synchronize()
+        buffers_ready = True
+        if not record_buffer_integrity(report, packed, inputs, gpu_weights, gpu_inputs, "before"):
+            raise RuntimeError("native input or packed-weight upload differs from original source bytes")
         report["selected_native_configs"] = module.initialize(str(config_path), args.npu_rows)
         # Keep all imported allocations alive until process exit; native caches
         # pointers globally and has no lifetime invalidation API.
         imported = gpu_inputs + gpu_weights[:2] + [gate, up]
         report["imported_handles"] = [int(module.import_tensor(value)) for value in imported]
         references = [reference_stages(value, weights) for value in inputs]
+        integrity = {(mode, stage, owner): OutputIntegrity()
+                     for mode in ("baseline", "native") for stage in ("gate", "up", "output")
+                     for owner in ("all", "gpu_rows", "npu_rows")}
         save(report, args.output)
 
         def invoke(mode, index, diagnostic=False, capture=False):
@@ -269,7 +297,8 @@ def main(argv=None):
                     actual, reference = values[mode][stage], references[index][stage]
                     for owner, rows in (("all", slice(None)), ("gpu_rows", slice(0, 256)), ("npu_rows", slice(256, None))):
                         label = f"run{repetition}_input{index}_{mode}_{stage}_{owner}"
-                        report["correctness"][label] = checked_metrics(actual[rows], reference[rows])
+                        report["correctness"][label] = checked_metrics(actual[rows], reference[rows],
+                            integrity[(mode, stage, owner)], index)
             for stage in ("gate", "up", "output"):
                 report["correctness"][f"run{repetition}_input{index}_native_vs_gpu_{stage}"] = checked_metrics(
                     values["native"][stage], values["baseline"][stage])
@@ -285,14 +314,18 @@ def main(argv=None):
             for mode in modes:
                 result = invoke(mode, index, diagnostic=args.mode == "diagnostic")
                 actual = output.float().cpu().numpy()
-                metrics = checked_metrics(actual, references[index]["output"])
+                metrics = checked_metrics(actual, references[index]["output"],
+                                          integrity[(mode, "output", "all")], index)
                 sample = dict(result, mode=mode, iteration=iteration, input_index=index,
-                              correctness_passed=bool(metrics["passed"]))
+                              correctness_passed=bool(metrics["passed"]), accuracy=metrics,
+                              output_sha256=metrics["actual_sha256"])
                 report["samples" if iteration >= 0 else "warmup_samples"].append(sample)
                 if not metrics["passed"]:
                     report["correctness"][f"timed_{iteration}_{mode}"] = metrics
                     raise RuntimeError(f"reused-buffer correctness failed: iteration={iteration} mode={mode}")
             save(report, args.output)
+        if not record_buffer_integrity(report, packed, inputs, gpu_weights, gpu_inputs, "after"):
+            raise RuntimeError("native inputs or packed weights changed during execution")
         report["stats"] = {mode: benchmark_stats([sample["wall_us"] for sample in report["samples"] if sample["mode"] == mode])
                            for mode in ("baseline", "native")}
         if args.mode == "diagnostic":
@@ -307,6 +340,11 @@ def main(argv=None):
     except Exception as error:
         if module is not None:
             report["completed_npu_dispatches"] = int(module.completed_npu_dispatches())
+        if buffers_ready and "buffer_integrity_after" not in report:
+            try:
+                record_buffer_integrity(report, packed, inputs, gpu_weights, gpu_inputs, "after")
+            except Exception as integrity_error:
+                report["buffer_integrity_error"] = str(integrity_error)
         report.update(status="failed", error=str(error), traceback=traceback.format_exc())
         save(report, args.output)
         raise

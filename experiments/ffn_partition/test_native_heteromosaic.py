@@ -6,9 +6,28 @@ import unittest
 
 import numpy as np
 
-from experiments.ffn_partition.contract import bf16, random_weights, reference_full
-from experiments.ffn_partition.native_heteromosaic import (checked_metrics, main, native_config,
-                                                         reference_stages, seeded_inputs)
+from experiments.ffn_partition.contract import OutputIntegrity, bf16, random_weights, reference_full
+from experiments.ffn_partition.native_heteromosaic import (array_hash, checked_metrics, main, native_config,
+                                                         record_buffer_integrity, reference_stages,
+                                                         seeded_inputs)
+
+
+class FakeDeviceTensor:
+    """Copies stand in for device buffers; this is not a hardware test."""
+    def __init__(self, value):
+        self.value = value.copy()
+
+    def detach(self):
+        return self
+
+    def cpu(self):
+        return self
+
+    def float(self):
+        return FakeDeviceTensor(self.value.astype(np.float32))
+
+    def numpy(self):
+        return self.value
 
 
 class NativeContractTest(unittest.TestCase):
@@ -53,6 +72,59 @@ class NativeContractTest(unittest.TestCase):
         self.assertEqual(metrics["atol"], .05)
         self.assertEqual(metrics["l2_limit"], .02)
         json.dumps(metrics, allow_nan=False)
+
+    def test_exact_repeat_guard_rejects_within_tolerance_change(self):
+        reference = np.ones((2, 2), np.float32)
+        integrity = OutputIntegrity()
+        self.assertTrue(checked_metrics(reference, reference, integrity, 0)["passed"])
+        repeated = reference.copy()
+        repeated[0, 0] += .001
+        metrics = checked_metrics(repeated, reference, integrity, 0)
+        self.assertTrue(metrics["numerical_passed"])
+        self.assertFalse(metrics["passed"])
+        self.assertFalse(metrics["accepted"])
+        self.assertEqual(metrics["structural_failures"], ["repeated_input_changed_output"])
+        self.assertEqual((metrics["rtol"], metrics["atol"], metrics["l2_limit"]), (.03, .05, .02))
+
+    def test_changed_input_guard_rejects_stale_within_tolerance_output(self):
+        original = np.ones((2, 2), np.float32)
+        changed = original + .001
+        integrity = OutputIntegrity()
+        checked_metrics(original, original, integrity, 0)
+        metrics = checked_metrics(original, changed, integrity, 1)
+        self.assertTrue(metrics["numerical_passed"])
+        self.assertFalse(metrics["passed"])
+        self.assertEqual(metrics["structural_failures"], ["distinct_inputs_identical_output"])
+
+    def test_nonfinite_and_zero_remain_fatal_and_json_serializable(self):
+        for actual, expected, failure in (
+                (np.array([np.nan], np.float32), np.ones(1, np.float32), "nonfinite_output"),
+                (np.ones(1, np.float32), np.zeros(1, np.float32), "zero_reference_nonzero_output")):
+            with self.subTest(failure=failure):
+                metrics = checked_metrics(actual, expected)
+                self.assertFalse(metrics["passed"])
+                self.assertFalse(metrics["structural_passed"])
+                self.assertIn(failure, metrics["structural_failures"])
+                json.dumps(metrics, allow_nan=False)
+
+    def test_final_buffer_checks_detect_device_weights_and_host_input_changes(self):
+        packed = [np.array([1, 2, 3], np.uint8)]
+        inputs = [np.array([[1, 2]], np.float32)]
+        device_weights = [FakeDeviceTensor(value) for value in packed]
+        device_inputs = [FakeDeviceTensor(value) for value in inputs]
+        report = dict(native_packed_weight_sha256=[array_hash(value) for value in packed],
+                      input_sha256=[array_hash(value) for value in inputs])
+        self.assertTrue(record_buffer_integrity(report, packed, inputs, device_weights, device_inputs, "before"))
+        device_weights[0].value[0] = 9
+        inputs[0][0, 0] = 3
+        self.assertFalse(record_buffer_integrity(report, packed, inputs, device_weights, device_inputs, "after"))
+        checks = report["buffer_integrity_after"]["checks"]
+        self.assertFalse(checks["device_weights_match_initial"])
+        self.assertFalse(checks["host_inputs_match_initial"])
+        self.assertTrue(checks["host_weights_match_initial"])
+        self.assertTrue(checks["device_inputs_match_initial"])
+        self.assertTrue(report["buffer_integrity_before"]["passed"])
+        json.dumps(report, allow_nan=False)
 
     def test_prepare_never_claims_hardware_pass(self):
         with tempfile.TemporaryDirectory() as directory:
