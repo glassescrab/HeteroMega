@@ -1,5 +1,30 @@
 # HeteroMega progress
 
+## 2026-10-27: first-launch assembly breakdown
+
+- **Inspected, no kernel changes or new hardware run:** selected `fc0b255`
+  SwiGLU gate/up ELFs for M512/H4096/P2560 and their actual disassembly.
+  Existing measured first-launch host dispatch/wait is 11.73–11.81 ms;
+  including BO I/O it is 12.42–12.50 ms.
+- **Compiler-confirmed:** each native BF16 4×8×8 API MAC lowers to eight
+  `vmac.f`; four API MACs form 32 instructions in a 36-bundle repeated K8
+  body. Prologue/loop/epilogue accounting gives 335,544,320 projection
+  `vmac.f` across 32 workers, 10,485,760 per worker, with no selected MMUL
+  accumulator spills. Gate/up arithmetic is 21.475 GFLOPs.
+- **Code/compiler-confirmed:** 81,920 half-tile dequantizations finish before
+  their MMUL work. Logical local scratch traffic is 640 MiB written and
+  2,560 MiB read; FP32 partial sums are loaded/stored at every K128 boundary.
+  These local operand counts are not DRAM traffic or measured bandwidth.
+- **Secondary cost:** SiLU uses a vector linear LUT without scalar exp/libm
+  or reciprocal calls, but its 16-element loop has 71 encoded bundles and
+  repeated stack-object bookkeeping. There are 5,120 such iterations per
+  up worker. FIFO locks and DMA can also stall; no phase percentages follow
+  from assembly counts. Native BF16 MAC volume is the strongest structural
+  explanation, with serialized dequant/scratch work adding overhead.
+- **Next measurement:** split dequant/MMUL event regions and record device
+  clock plus FIFO/DMA stalls before claiming a cycle breakdown. Existing
+  markers combine dequantization and MMUL. [Assembly report](runs/2026-10-27-swiglu-assembly/README.md).
+
 ## 2026-10-25: native BF16 reuse and activation-layout optimization pass
 
 - **Implemented:** vector zero metadata, down M reuse four with core A FIFO

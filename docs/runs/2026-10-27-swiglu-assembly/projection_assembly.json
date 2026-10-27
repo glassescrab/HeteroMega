@@ -1,0 +1,378 @@
+{
+  "classification": "compiled-artifact-confirmed plus source-derived dynamic operation counts",
+  "scope": "First selected SwiGLU launch only, M512/H4096/P2560, both gate/up projections; excludes the second down-projection launch.",
+  "manifest": "/tmp/kernel-opt-bf16-evidence-20261025/prebuilt/selected/swiglu/final.xclbin.json",
+  "manifest_sha256": "1625b6e9ee2ac1f09d29ee7d3ddfefaf9c50ff3f6886915f52f750d406045a53",
+  "instruction_match_evidence": "/tmp/final_kernel_audit.json verifies each visible disassembly instruction against matching ELF bytes.",
+  "halves": [
+    {
+      "projection": "gate",
+      "half": "low",
+      "function": "w4a16_prefill_reuse_accumulate_low",
+      "function_start": "0x20d0",
+      "function_end_exclusive": "0x26b0",
+      "function_size_bytes": 1504,
+      "static_visible_bundle_count_in_entire_function": 212,
+      "disassembly": "/tmp/compiler_final/selected/swiglu/elfs_main_core_0_2.elf.dis",
+      "disassembly_sha256": "7231758c77b3339bab81ab9dbe9add087fbb1f1e799cdf7de7f48fa89222a2eb",
+      "elf": "/tmp/kernel-opt-bf16-evidence-20261025/prebuilt/selected/swiglu/final.prj/elfs_main_core_0_2/elfs_main_core_0_2.elf",
+      "elf_sha256": "19ea9b5c1964e46f2457ce5f51566a93a0bb4877ef19bcfee0ddba93ad76b731",
+      "hardware_loops": [
+        {
+          "kind": "dequant",
+          "inclusive_start": "0x2200",
+          "inclusive_end": "0x2250",
+          "first_line": 1754,
+          "last_line": 1768,
+          "decoded_bundles_per_hardware_iteration": 13,
+          "hardware_loop_iterations": 14,
+          "vmac_f_per_iteration": 0,
+          "vmul_f_per_iteration": 1,
+          "stack_vector_loads_per_iteration": 0,
+          "stack_vector_stores_per_iteration": 0,
+          "vmac_f_before_loop": 0,
+          "vmac_f_after_loop": 64,
+          "loop_setup_evidence": [
+            {
+              "address": "0x2176",
+              "line": 1734,
+              "instruction": "2176: 24 fe e0 1a 3c b6    \tadd\t r24, r22, r30;\t\tadd.nc\tlc, r0, #-0x2"
+            },
+            {
+              "address": "0x2180",
+              "line": 1736,
+              "instruction": "2180: 3a 10 00 79 08 00 00 10 03 02\tvldb.unpack\t x6, unpacksign0, [p1, dj0];\t\tmovxm\tls, #0x2200"
+            },
+            {
+              "address": "0x218a",
+              "line": 1737,
+              "instruction": "218a: 3a 10 28 b9 09 00 00 20 94 06\tvunpack\tx8, wl6, unpacksign0;\t\tmovxm\tle, #0x2250"
+            }
+          ]
+        },
+        {
+          "kind": "mmul",
+          "inclusive_start": "0x2490",
+          "inclusive_end": "0x25c0",
+          "first_line": 1864,
+          "last_line": 1901,
+          "decoded_bundles_per_hardware_iteration": 36,
+          "hardware_loop_iterations": 15,
+          "vmac_f_per_iteration": 32,
+          "vmul_f_per_iteration": 0,
+          "stack_vector_loads_per_iteration": 0,
+          "stack_vector_stores_per_iteration": 0,
+          "vmac_f_before_loop": 19,
+          "vmac_f_after_loop": 13,
+          "loop_setup_evidence": [
+            {
+              "address": "0x23be",
+              "line": 1833,
+              "instruction": "23be: 14 ff e0 7a ab e0    \tvlda\t x5, [p7, #0x0];\t\tadd.nc\tlc, r0, #-0x1"
+            },
+            {
+              "address": "0x23c4",
+              "line": 1834,
+              "instruction": "23c4: 44 20 e9 21 00 00    \tmovxm\tls, #0x2490"
+            },
+            {
+              "address": "0x23ca",
+              "line": 1835,
+              "instruction": "23ca: 44 80 eb 26 00 00    \tmovxm\tle, #0x25c0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "projection": "gate",
+      "half": "high",
+      "function": "w4a16_prefill_reuse_accumulate_high",
+      "function_start": "0x26b0",
+      "function_end_exclusive": "0x2c90",
+      "function_size_bytes": 1504,
+      "static_visible_bundle_count_in_entire_function": 212,
+      "disassembly": "/tmp/compiler_final/selected/swiglu/elfs_main_core_0_2.elf.dis",
+      "disassembly_sha256": "7231758c77b3339bab81ab9dbe9add087fbb1f1e799cdf7de7f48fa89222a2eb",
+      "elf": "/tmp/kernel-opt-bf16-evidence-20261025/prebuilt/selected/swiglu/final.prj/elfs_main_core_0_2/elfs_main_core_0_2.elf",
+      "elf_sha256": "19ea9b5c1964e46f2457ce5f51566a93a0bb4877ef19bcfee0ddba93ad76b731",
+      "hardware_loops": [
+        {
+          "kind": "dequant",
+          "inclusive_start": "0x27e0",
+          "inclusive_end": "0x2830",
+          "first_line": 1986,
+          "last_line": 2000,
+          "decoded_bundles_per_hardware_iteration": 13,
+          "hardware_loop_iterations": 14,
+          "vmac_f_per_iteration": 0,
+          "vmul_f_per_iteration": 1,
+          "stack_vector_loads_per_iteration": 0,
+          "stack_vector_stores_per_iteration": 0,
+          "vmac_f_before_loop": 0,
+          "vmac_f_after_loop": 64,
+          "loop_setup_evidence": [
+            {
+              "address": "0x2756",
+              "line": 1966,
+              "instruction": "2756: 24 fe e0 1a fc 9d    \tadd\t r23, r19, r30;\t\tadd.nc\tlc, r0, #-0x2"
+            },
+            {
+              "address": "0x2760",
+              "line": 1968,
+              "instruction": "2760: 3a 10 f0 7b 08 00 00 10 03 02\tvldb.unpack\t x6, unpacksign0, [p1, dj0];\t\tmovxm\tls, #0x27e0"
+            },
+            {
+              "address": "0x276a",
+              "line": 1969,
+              "instruction": "276a: 3a 10 18 bc 09 00 00 20 94 06\tvunpack\tx8, wl6, unpacksign0;\t\tmovxm\tle, #0x2830"
+            }
+          ]
+        },
+        {
+          "kind": "mmul",
+          "inclusive_start": "0x2a70",
+          "inclusive_end": "0x2ba0",
+          "first_line": 2096,
+          "last_line": 2133,
+          "decoded_bundles_per_hardware_iteration": 36,
+          "hardware_loop_iterations": 15,
+          "vmac_f_per_iteration": 32,
+          "vmul_f_per_iteration": 0,
+          "stack_vector_loads_per_iteration": 0,
+          "stack_vector_stores_per_iteration": 0,
+          "vmac_f_before_loop": 19,
+          "vmac_f_after_loop": 13,
+          "loop_setup_evidence": [
+            {
+              "address": "0x299e",
+              "line": 2065,
+              "instruction": "299e: 14 ff e0 7a ab e0    \tvlda\t x5, [p7, #0x0];\t\tadd.nc\tlc, r0, #-0x1"
+            },
+            {
+              "address": "0x29a4",
+              "line": 2066,
+              "instruction": "29a4: 44 e0 f4 21 00 00    \tmovxm\tls, #0x2a70"
+            },
+            {
+              "address": "0x29aa",
+              "line": 2067,
+              "instruction": "29aa: 44 40 f7 26 00 00    \tmovxm\tle, #0x2ba0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "projection": "up",
+      "half": "low",
+      "function": "w4a16_prefill_reuse_accumulate_low",
+      "function_start": "0x2490",
+      "function_end_exclusive": "0x2a70",
+      "function_size_bytes": 1504,
+      "static_visible_bundle_count_in_entire_function": 212,
+      "disassembly": "/tmp/compiler_final/selected/swiglu/elfs_main_core_1_2.elf.dis",
+      "disassembly_sha256": "17572f9f85199f611890615549fa58fc24f5ae555a360512ad0cff5a98ad6802",
+      "elf": "/tmp/kernel-opt-bf16-evidence-20261025/prebuilt/selected/swiglu/final.prj/elfs_main_core_1_2/elfs_main_core_1_2.elf",
+      "elf_sha256": "a598bd95ecf69c3d4eceaf8bc57e4bee2dd5ab518ae4f44f350eb25be09ca39a",
+      "hardware_loops": [
+        {
+          "kind": "dequant",
+          "inclusive_start": "0x25c0",
+          "inclusive_end": "0x2610",
+          "first_line": 1946,
+          "last_line": 1960,
+          "decoded_bundles_per_hardware_iteration": 13,
+          "hardware_loop_iterations": 14,
+          "vmac_f_per_iteration": 0,
+          "vmul_f_per_iteration": 1,
+          "stack_vector_loads_per_iteration": 0,
+          "stack_vector_stores_per_iteration": 0,
+          "vmac_f_before_loop": 0,
+          "vmac_f_after_loop": 64,
+          "loop_setup_evidence": [
+            {
+              "address": "0x2536",
+              "line": 1926,
+              "instruction": "2536: 24 fe e0 1a 3c b6    \tadd\t r24, r22, r30;\t\tadd.nc\tlc, r0, #-0x2"
+            },
+            {
+              "address": "0x2540",
+              "line": 1928,
+              "instruction": "2540: 3a 10 e0 7a 08 00 00 10 03 02\tvldb.unpack\t x6, unpacksign0, [p1, dj0];\t\tmovxm\tls, #0x25c0"
+            },
+            {
+              "address": "0x254a",
+              "line": 1929,
+              "instruction": "254a: 3a 10 08 bb 09 00 00 20 94 06\tvunpack\tx8, wl6, unpacksign0;\t\tmovxm\tle, #0x2610"
+            }
+          ]
+        },
+        {
+          "kind": "mmul",
+          "inclusive_start": "0x2850",
+          "inclusive_end": "0x2980",
+          "first_line": 2056,
+          "last_line": 2093,
+          "decoded_bundles_per_hardware_iteration": 36,
+          "hardware_loop_iterations": 15,
+          "vmac_f_per_iteration": 32,
+          "vmul_f_per_iteration": 0,
+          "stack_vector_loads_per_iteration": 0,
+          "stack_vector_stores_per_iteration": 0,
+          "vmac_f_before_loop": 19,
+          "vmac_f_after_loop": 13,
+          "loop_setup_evidence": [
+            {
+              "address": "0x277e",
+              "line": 2025,
+              "instruction": "277e: 14 ff e0 7a ab e0    \tvlda\t x5, [p7, #0x0];\t\tadd.nc\tlc, r0, #-0x1"
+            },
+            {
+              "address": "0x2784",
+              "line": 2026,
+              "instruction": "2784: 44 a0 f0 21 00 00    \tmovxm\tls, #0x2850"
+            },
+            {
+              "address": "0x278a",
+              "line": 2027,
+              "instruction": "278a: 44 00 f3 26 00 00    \tmovxm\tle, #0x2980"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "projection": "up",
+      "half": "high",
+      "function": "w4a16_prefill_reuse_accumulate_high",
+      "function_start": "0x2a70",
+      "function_end_exclusive": "0x3050",
+      "function_size_bytes": 1504,
+      "static_visible_bundle_count_in_entire_function": 212,
+      "disassembly": "/tmp/compiler_final/selected/swiglu/elfs_main_core_1_2.elf.dis",
+      "disassembly_sha256": "17572f9f85199f611890615549fa58fc24f5ae555a360512ad0cff5a98ad6802",
+      "elf": "/tmp/kernel-opt-bf16-evidence-20261025/prebuilt/selected/swiglu/final.prj/elfs_main_core_1_2/elfs_main_core_1_2.elf",
+      "elf_sha256": "a598bd95ecf69c3d4eceaf8bc57e4bee2dd5ab518ae4f44f350eb25be09ca39a",
+      "hardware_loops": [
+        {
+          "kind": "dequant",
+          "inclusive_start": "0x2ba0",
+          "inclusive_end": "0x2bf0",
+          "first_line": 2178,
+          "last_line": 2192,
+          "decoded_bundles_per_hardware_iteration": 13,
+          "hardware_loop_iterations": 14,
+          "vmac_f_per_iteration": 0,
+          "vmul_f_per_iteration": 1,
+          "stack_vector_loads_per_iteration": 0,
+          "stack_vector_stores_per_iteration": 0,
+          "vmac_f_before_loop": 0,
+          "vmac_f_after_loop": 64,
+          "loop_setup_evidence": [
+            {
+              "address": "0x2b16",
+              "line": 2158,
+              "instruction": "2b16: 24 fe e0 1a fc 9d    \tadd\t r23, r19, r30;\t\tadd.nc\tlc, r0, #-0x2"
+            },
+            {
+              "address": "0x2b20",
+              "line": 2160,
+              "instruction": "2b20: 3a 10 d0 7d 08 00 00 10 03 02\tvldb.unpack\t x6, unpacksign0, [p1, dj0];\t\tmovxm\tls, #0x2ba0"
+            },
+            {
+              "address": "0x2b2a",
+              "line": 2161,
+              "instruction": "2b2a: 3a 10 f8 bd 09 00 00 20 94 06\tvunpack\tx8, wl6, unpacksign0;\t\tmovxm\tle, #0x2bf0"
+            }
+          ]
+        },
+        {
+          "kind": "mmul",
+          "inclusive_start": "0x2e30",
+          "inclusive_end": "0x2f60",
+          "first_line": 2288,
+          "last_line": 2325,
+          "decoded_bundles_per_hardware_iteration": 36,
+          "hardware_loop_iterations": 15,
+          "vmac_f_per_iteration": 32,
+          "vmul_f_per_iteration": 0,
+          "stack_vector_loads_per_iteration": 0,
+          "stack_vector_stores_per_iteration": 0,
+          "vmac_f_before_loop": 19,
+          "vmac_f_after_loop": 13,
+          "loop_setup_evidence": [
+            {
+              "address": "0x2d5e",
+              "line": 2257,
+              "instruction": "2d5e: 14 ff e0 7a ab e0    \tvlda\t x5, [p7, #0x0];\t\tadd.nc\tlc, r0, #-0x1"
+            },
+            {
+              "address": "0x2d64",
+              "line": 2258,
+              "instruction": "2d64: 44 60 fc 21 00 00    \tmovxm\tls, #0x2e30"
+            },
+            {
+              "address": "0x2d6a",
+              "line": 2259,
+              "instruction": "2d6a: 44 c0 fe 26 00 00    \tmovxm\tle, #0x2f60"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "per_k128_n32_call": {
+    "m_reuse": 2,
+    "m_rows": 32,
+    "output_register_blocks": 8,
+    "k8_groups": 16,
+    "api_mac_per_k8_per_block": 4,
+    "native_4x8x8_api_mac_scalar_products": 256,
+    "vmac_f_per_api_mac": 8,
+    "vmac_f_per_register_block": "19 + 15 * 32 + 13 = 512",
+    "vmac_f_per_call": 4096,
+    "source_scratch_bf16_write_bytes": 8192,
+    "source_scratch_bf16_read_bytes": 32768,
+    "source_activation_read_bytes": 16384,
+    "source_fp32_partial_read_bytes": 4096,
+    "source_fp32_partial_write_bytes": 4096,
+    "source_quantized_weight_read_bytes": 2048,
+    "source_scale_read_bytes": 64,
+    "source_zero_metadata_read_bytes": 64,
+    "dequantized_bf16_weights": 4096,
+    "vector_dequant_groups_of_64_weights": 64,
+    "mmul_steady_loop_bundles_per_block": 540,
+    "mmul_steady_loop_bundles_per_call": 4320,
+    "note": "The 4320 steady-loop bundles exclude software-pipeline prologues, epilogues, outer-loop control, dequantization and function overhead. Source access counts describe logical local accesses, not measured DRAM traffic."
+  },
+  "entire_first_launch": {
+    "workers": 32,
+    "half_calls_per_worker": 2560,
+    "half_calls_total": 81920,
+    "vmac_f_per_worker": 10485760,
+    "vmac_f_total": 335544320,
+    "scalar_bf16_multiply_accumulate_products": 10737418240,
+    "source_scratch_write_mib": 640,
+    "source_scratch_read_mib": 2560,
+    "source_activation_read_mib": 1280,
+    "source_fp32_partial_read_plus_write_mib": 640,
+    "half_call_derivation": "2 projections * (512 / 32 M-row groups) * (2560 / 32 output-channel halves) * (4096 / 128 K groups) = 81920",
+    "first_launch_includes": "Both matrix projections, FIFO/DMA/lock handling, gate transfer and up-worker SiLU/multiply; only projection instruction work is counted here."
+  },
+  "interpretation": [
+    "Native BF16 arithmetic expansion is a strong plausible compute cost: each API 4x8x8 MAC lowers to eight vmac.f, giving 10.49 million vmac.f instructions per worker for the two first-launch projections.",
+    "The MMUL steady loop contains 32 vmac.f instructions in 36 decoded bundles and no accumulator stack spills. Increasing logical accumulator reuse is not needed to remove spilling in this selected implementation.",
+    "Each low/high helper finishes dequantizing its whole K128/N32 half to an 8 KiB BF16 scratch tile before starting MMUL. Four output register blocks per M16 lane and reuse2 reread that scratch four times.",
+    "The original packed W4 layout is consumed directly. Dequantization consists of packed loads, unpack/bit construction, subtraction, scale multiplication and BF16 conversion/stores; there are no software scalar integer-to-float calls.",
+    "Dequantization, MMUL, local scratch traffic, FP32 partial loads/stores and graph synchronization all add work. Static instructions alone cannot establish their measured latency shares or whether the worker is compute-bound, memory-stalled or waiting for data."
+  ],
+  "limits": [
+    "No clock frequency or hardware cycle trace was recorded in this audit.",
+    "Decoded bundle counts are not measured cycles: issue rules, pipeline overlap, memory latency, bank conflicts and DMA/lock stalls are not timed.",
+    "These are per-worker and aggregate-work counts; aggregate instructions across32 parallel workers must not be treated as serial elapsed work.",
+    "Global shared-memory bandwidth saturation is not established by the local scratch access counts."
+  ],
+  "reproduce_script": "/home/adam/Documents/ChatGPT/HeteroMega/docs/runs/2026-10-27-swiglu-assembly/analyze_projection.py",
+  "reproduce_script_sha256": "35e59852b472968366ee0686209767efa3fb72aa8cdfa94b11139ee3eb326d72"
+}

@@ -1,0 +1,178 @@
+{
+  "status": "passed",
+  "evidence_kind": "binary_cross_checked_static_assembly_counts_not_device_cycles",
+  "elf": {
+    "path": "/tmp/kernel-opt-bf16-evidence-20261025/prebuilt/selected/swiglu/final.prj/elfs_main_core_1_2/elfs_main_core_1_2.elf",
+    "sha256": "a598bd95ecf69c3d4eceaf8bc57e4bee2dd5ab518ae4f44f350eb25be09ca39a"
+  },
+  "disassembly": {
+    "path": "/tmp/compiler_final/selected/swiglu/elfs_main_core_1_2.elf.dis",
+    "sha256": "17572f9f85199f611890615549fa58fc24f5ae555a360512ad0cff5a98ad6802"
+  },
+  "function_range": {
+    "start": "0x3120",
+    "end_exclusive": "0x3360"
+  },
+  "hardware_loop": {
+    "start": "0x3220",
+    "end_bundle": "0x3330",
+    "end_exclusive": "0x3340",
+    "elements_per_iteration": 16,
+    "iterations_per_call": 64,
+    "tile_elements": 1024,
+    "printed_bundles": 67,
+    "hidden_nop_bundles": 4,
+    "total_encoded_bundles_per_iteration": 71,
+    "printed_standalone_nops": 19,
+    "total_standalone_nops": 23,
+    "hidden_zero_regions": [
+      {
+        "start": "0x32c2",
+        "end_exclusive": "0x32ca",
+        "byte_count": 8,
+        "elf_bytes_hex": "0000000000000000",
+        "zero_halfword_nops": 4
+      }
+    ],
+    "printed_opcode_counts": {
+      "nopa": 2,
+      "vldb": 6,
+      "nopxm": 2,
+      "nop": 19,
+      "lda": 11,
+      "vmax_lt.bf16": 1,
+      "vmin_ge.bf16": 1,
+      "vst": 2,
+      "movs": 2,
+      "paddb": 1,
+      "sub": 1,
+      "mov": 2,
+      "vfloor.s32.bf16": 1,
+      "vbcst.32": 2,
+      "vmax_lt.32": 1,
+      "vsel.32": 1,
+      "vmin_ge.32": 1,
+      "vadd.32": 1,
+      "vldb.4x64.lo": 2,
+      "vldb.4x64.hi": 2,
+      "paddb.2d": 1,
+      "st": 4,
+      "vshuffle": 2,
+      "vmov": 1,
+      "vadd.f": 1,
+      "vconv.fp32.bf16": 1,
+      "vmac.f": 1,
+      "vconv.bf16.fp32": 3,
+      "vlt.bf16": 1,
+      "vge.bf16": 1,
+      "vsel.16": 2,
+      "vmul.f": 2,
+      "padda.2d": 1,
+      "nopb": 1,
+      "vst.conv.bf16.fp32": 1,
+      "nopv": 1
+    }
+  },
+  "method": "Parse ELF32 little-endian section headers, map virtual addresses through .text, compare every printed function bundle byte-for-byte, and inspect gaps between printed loop bundles. Eight zero bytes at 0x32c2..0x32c9 encode four 16-bit nop instructions suppressed by objdump ellipsis. Count bundled instructions once per address; counts do not assert elapsed cycles.",
+  "arithmetic": {
+    "approximation": "128 width-0.25 segments; BF16 slope and FP32 intercept; vector linear sigmoid approximation",
+    "clamp": "[-16,15.875] before LUT; output sigmoid forced zero for gate<-16 and one for gate>=16",
+    "sigmoid_mac": "0x32da",
+    "silu_multiply": "0x3302",
+    "bf16_silu_narrow": "0x3314",
+    "up_multiply": "0x331a",
+    "final_bf16_store": "0x3330",
+    "external_helper_calls": 0,
+    "scalar_exp_calls": 0,
+    "reciprocal_or_division_calls": 0,
+    "lut_gather_addresses": [
+      "0x32a2",
+      "0x32a6",
+      "0x32ae",
+      "0x32b4"
+    ]
+  },
+  "local_object_traffic_per_16_elements": {
+    "stack_frame_bytes": 512,
+    "stack_adjust_address": "0x314e",
+    "base": "B = sp after allocation - 512; p3 = B + 408 throughout loop",
+    "scalar_load_count": 11,
+    "scalar_load_bytes": 44,
+    "scalar_load_addresses": [
+      "0x3230",
+      "0x3250",
+      "0x325c",
+      "0x3260",
+      "0x3270",
+      "0x3276",
+      "0x3280",
+      "0x3286",
+      "0x328c",
+      "0x329a",
+      "0x330c"
+    ],
+    "scalar_store_count": 4,
+    "scalar_store_bytes": 16,
+    "scalar_store_addresses": [
+      "0x32ae",
+      "0x32b4",
+      "0x3324",
+      "0x3328"
+    ],
+    "vector_load_count": 4,
+    "vector_load_bytes": 224,
+    "vector_load_addresses": [
+      "0x3254:64",
+      "0x3258:64",
+      "0x32ba:32",
+      "0x32be:64"
+    ],
+    "vector_store_count": 2,
+    "vector_store_bytes": 96,
+    "vector_store_addresses": [
+      "0x3244:32",
+      "0x332c:64"
+    ],
+    "total_bytes": 380,
+    "note": "Pointer-relative state and vector scratch traffic within this function frame, not literal [sp] instructions. This includes materialized LUT abstraction state; it is not evidence of MMUL accumulator spilling. Prologue/epilogue traffic is excluded."
+  },
+  "other_local_traffic_per_16_elements": {
+    "gate_read_bytes": 32,
+    "up_read_bytes": 32,
+    "output_store_bytes": 32,
+    "lut_gather_bytes": 128,
+    "lut_gather_count": 4
+  },
+  "fullshape": {
+    "m": 512,
+    "channels": 2560,
+    "up_workers": 16,
+    "calls_per_upworker": 80,
+    "derivation": "4 M waves x 10 N64 segments x 2 N32 half calls; each call processes reuse2 x M16 x N32 = 1024 elements",
+    "vector_iterations_per_upworker": 5120,
+    "encoded_loop_bundles_per_upworker": 363520,
+    "object_traffic_bytes_per_upworker": 1945600,
+    "total_processed_elements": 1310720
+  },
+  "limitations": [
+    "Static local operand bytes are not shared-DRAM bandwidth or device-cycle measurements.",
+    "512 bytes is the entire SiLU function frame, not exclusively LUT coefficient storage. LUT coefficient banks themselves occupy 4096 bytes outside the frame.",
+    "First-launch timings include both matrix projections, pointwise, device scheduling and host synchronization."
+  ],
+  "selected_timing": {
+    "confirm_selected_abba.json": {
+      "samples": 100,
+      "report_sha256": "c8ef03819d615b866fa2383238fb9300f0d2fb6e5fd9c2c473fb1247527a72cb",
+      "swiglu_host_launch_and_wait_median_us": 11810.64,
+      "swiglu_with_host_io_median_us": 12497.917000000001,
+      "branch_wall_median_us": 22589.629999999997
+    },
+    "confirm_selected_baab.json": {
+      "samples": 100,
+      "report_sha256": "03024e744a258becc08b526a9c2be3f091dc705e03d7c975e19aa8c7dc9f49b8",
+      "swiglu_host_launch_and_wait_median_us": 11730.376499999998,
+      "swiglu_with_host_io_median_us": 12424.878,
+      "branch_wall_median_us": 22489.991
+    }
+  }
+}

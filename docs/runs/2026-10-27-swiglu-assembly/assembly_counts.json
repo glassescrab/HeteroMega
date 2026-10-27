@@ -1,0 +1,104 @@
+{
+  "classification": "compiled-artifact-confirmed counts; measured host timing; no new device run",
+  "scope": {
+    "m": 512,
+    "k": 4096,
+    "n": 2560,
+    "cols": 8,
+    "workers": 32,
+    "m_reuse": 2,
+    "arithmetic": "bf16"
+  },
+  "timing": {
+    "abba": {
+      "report": "docs/runs/2026-10-25-kernel-optimizations/confirm_selected_abba.json",
+      "report_sha256": "c8ef03819d615b866fa2383238fb9300f0d2fb6e5fd9c2c473fb1247527a72cb",
+      "launch_wait_us": {
+        "count": 100,
+        "median_us": 11810.64,
+        "mean_us": 11820.888289999997,
+        "min_us": 11027.74,
+        "max_us": 12402.663,
+        "p10_us": 11512.3469,
+        "p90_us": 12123.878999999999
+      },
+      "swiglu_including_bo_io_median_us": 12497.917000000001,
+      "projection_effective_tflops_inclusive_launch_wait": 1.8182618791191674
+    },
+    "baab": {
+      "report": "docs/runs/2026-10-25-kernel-optimizations/confirm_selected_baab.json",
+      "report_sha256": "03024e744a258becc08b526a9c2be3f091dc705e03d7c975e19aa8c7dc9f49b8",
+      "launch_wait_us": {
+        "count": 100,
+        "median_us": 11730.376499999998,
+        "mean_us": 11677.63962,
+        "min_us": 11048.849,
+        "max_us": 12078.48,
+        "p10_us": 11327.304,
+        "p90_us": 11903.230000000001
+      },
+      "swiglu_including_bo_io_median_us": 12424.878,
+      "projection_effective_tflops_inclusive_launch_wait": 1.8307030878335409
+    }
+  },
+  "assembly": {
+    "0": {
+      "disassembly_sha256": "7231758c77b3339bab81ab9dbe9add087fbb1f1e799cdf7de7f48fa89222a2eb",
+      "dequant_repeated_body": {
+        "start": "0x2200",
+        "end_inclusive": "0x2250",
+        "encoded_bundles": 13,
+        "opcode_counts": {
+          "nopa": 1,
+          "nopb": 1,
+          "nopx": 1,
+          "vconv.bf16.fp32": 2,
+          "nop": 1,
+          "vmul.f": 1,
+          "add": 3,
+          "vbor": 2,
+          "mov": 5,
+          "vldb.unpack": 1,
+          "vconv.fp32.bf16": 2,
+          "vsub.f": 1,
+          "vst.conv.bf16.fp32": 2,
+          "lshl": 1,
+          "vunpack": 2,
+          "movs": 1,
+          "padda": 1,
+          "nops": 1,
+          "nopv": 1
+        },
+        "first_line": 1754,
+        "last_line": 1768
+      },
+      "mmul_repeated_body": {
+        "start": "0x2490",
+        "end_inclusive": "0x25c0",
+        "encoded_bundles": 36,
+        "opcode_counts": {
+          "nopa": 2,
+          "nopb": 3,
+          "movs": 6,
+          "add": 5,
+          "vextbcst.128": 16,
+          "vmac.f": 32,
+          "lshl": 2,
+          "vextbcstshfl.64": 16,
+          "vldb": 3,
+          "padda": 1,
+          "vlda": 3,
+          "paddb": 1,
+          "vshuffle": 2,
+          "nops": 1,
+          "nopx": 1
+        },
+        "first_line": 1864,
+        "last_line": 1901
+      }
+    },
+    "1": {
+      "disassembly_sha256": "17572f9f85199f611890615549fa58fc24f5ae555a360512ad0cff5a98ad6802"
+    }
+  }
+}
