@@ -75,9 +75,10 @@ def load_teammate_gpu_extension(device="cuda", verbose=False):
     os.environ.update(ROCM_HOME=str(rocm), ROCM_PATH=str(rocm), PYTORCH_ROCM_ARCH=arch)
     from torch.utils import cpp_extension
     cpp_extension.ROCM_HOME, cpp_extension.IS_HIP_EXTENSION = str(rocm), True
+    autotune = 1 if os.environ.get("HETEROMEGA_GPU_AUTOTUNE", "0") == "1" else 0
     metadata = dict(source_sha256=source_hashes(), torch_version=str(torch.__version__),
                     hip_version=str(torch.version.hip), gpu_arch=arch, rocm_path=str(rocm),
-                    pytorch_rocm_arch=arch, packed_layout=PACKED_LAYOUT, gemm_autotune=0)
+                    pytorch_rocm_arch=arch, packed_layout=PACKED_LAYOUT, gemm_autotune=autotune)
     fingerprint = sha256(json.dumps(metadata, sort_keys=True).encode()).hexdigest()
     cache = Path(os.environ.get("HETEROMEGA_TEAMMATE_GPU_BUILD_ROOT",
                                 Path.home() / ".cache/heteromega/ffn_teammate_gpu")) / fingerprint[:20]
@@ -89,7 +90,7 @@ def load_teammate_gpu_extension(device="cuda", verbose=False):
         extra_include_paths=[str(ROOT / "include"), str(ROOT / "kernels/gpu/include")],
         extra_cflags=["-O3", "-std=c++17", "-D__HIP_PLATFORM_AMD__=1", include_flag],
         extra_cuda_cflags=["-O3", "-std=c++17", "-ffast-math", "-D__HIP_PLATFORM_AMD__=1",
-                          "-DRDNA3=1", "-DAUTOTUNE=0", f"--offload-arch={arch}", include_flag,
+                          "-DRDNA3=1", f"-DAUTOTUNE={autotune}", f"--offload-arch={arch}", include_flag,
                           f"--hip-path={rocm}", f"--rocm-path={rocm}"],
         extra_ldflags=[f"-L{rocm / 'lib'}", f"-Wl,-rpath,{rocm / 'lib'}", "-lamdhip64"],
         build_directory=str(cache), verbose=verbose, with_cuda=True)
@@ -157,7 +158,7 @@ class TeammateGPUBranch:
             activation="teammate_fp32_silu_times_up_single_bf16_rounding",
             gate_up_layout="interleaved_64_channels", kernels_per_prefill=3,
             setup_transform="byte-preserving packed tile gather/merge; no dequantization",
-            prefill_gemm="original HeteroMosaic packed GEMM, AUTOTUNE=0")
+            prefill_gemm=f"original HeteroMosaic packed GEMM, AUTOTUNE={metadata.get('gemm_autotune', 0)}")
         self._has_run = False
 
     def enqueue(self, x_gpu, stream=None):

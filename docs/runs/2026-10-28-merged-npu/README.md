@@ -136,3 +136,7 @@ comparison, with `--mode latency --npu-rows 256 --accuracy-policy report`.
 - The next optimization is a DMA-BUF/zero-copy output for the merged kernel to
   remove the remaining NPU-output H2D copy, then retune P. A deeper fused Z
   residency or down-weight prefetch is a further step, not demonstrated here.
+- GPU-side follow-up experiments are in
+  [2026-10-28-gpu-suffix](../2026-10-28-gpu-suffix/README.md): GEMM autotune
+  selects the existing generic kernel, and a pre-dequantized PyTorch BF16 suffix
+  is faster in isolation but slower under NPU concurrency.

@@ -1,0 +1,22 @@
+{
+  "base_commit": "cc5b9ac",
+  "variant": "gpu_suffix_autotune_torch_bf16_negative",
+  "files": {
+    "experiments/ffn_partition/teammate_gpu.py": "308eb21be895f4773f7c75326fd23d5afc4ebde79411fbef20010a3e97aaa3cb",
+    "experiments/ffn_partition/torch_gpu.py": "23164326278dbae3cb14f220191fc75cb189d818d05ca5477bf591f24eca0926",
+    "experiments/ffn_partition/run_merged_partition.py": "0761b38bf6b683fdbc04cb9e7162d13953e010bdde78b591e0f173eb9562c775",
+    "docs/runs/2026-10-28-gpu-suffix/README.md": "80934ffa07a32c7b6970eb4194e68176847914141ee02bef1d972f236ea859c4",
+    "docs/runs/2026-10-28-gpu-suffix/audit.py": "e8ac5eee47a5e572ce7f268f4e6aa5782f31573e410148fb3e44e5f0f558c34b",
+    "docs/progress.md": "6d9bffcbc70892d4dccbd81c6d6973a68e39e62a4e9645ff8a6f4e0856b6a04d",
+    "agent.md": "97f17956fb3b9c1937ac2369576ba75af680534bb9cb1cebe96a6360e3076724"
+  },
+  "evidence": {
+    "README.md": "80934ffa07a32c7b6970eb4194e68176847914141ee02bef1d972f236ea859c4",
+    "__pycache__/audit.cpython-314.pyc": "8af9c220c779e2ca3e9744af81f07f2e2bcd7a5f5551b25e93b21e488cb55626",
+    "audit.py": "e8ac5eee47a5e572ce7f268f4e6aa5782f31573e410148fb3e44e5f0f558c34b",
+    "autotune.log": "4ed10959f3237d24ed93e55f421f70dc9b162979fbc991dbf92e1a759d73a8ca",
+    "autotune_p6400.json": "8e31306c98d3159a4733ad68822a70e302e2ced2476eb9abb7e0ba547c55e389",
+    "teammate_p6400_reference.json": "f484b689bfc51a2c501deb5d5fb26c038c10d4c15a7646c54ccf4c007abe81a2",
+    "torch_bf16_p6400.json": "74f330d272e90a95449c7a56d562f850c1b49a6b15547bc8bb7ee17b7be257b9"
+  }
+}

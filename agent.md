@@ -19,6 +19,13 @@ outside per 100-sample job. The P4352/6144/6400/6656 sweep was
 15.569/14.184/13.867/14.348 ms; P6400 is selected. This is an isolated synthetic
 FFN result, not model prefill/TTFT, attention interference or accuracy.
 
+GPU-side follow-up: packed-GEMM autotune selected generic for both shapes (no
+gain); a pre-dequantized PyTorch BF16 suffix was faster serialized but slower
+concurrent (14.805 versus 13.867 ms) because its 4x weight traffic contends with
+the NPU. See `docs/runs/2026-10-28-gpu-suffix/`. The next role specialization is
+NPU gate/up + GPU full down with an external Z buffer; the gate/up planner's
+P<=8192 local-N cap constrains it.
+
 Read `docs/runs/2026-10-28-merged-npu/README.md`, the four 100-sample job JSONs
 and `p4352_exact_compare.json`. Cloud root
 `/notebooks/HeteroMega-direct-output-20261027`; new files:

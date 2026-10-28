@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "checks": [
+    "7 source and 7 evidence hashes",
+    "autotune selected generic for gate/up and down",
+    "torch BF16 faster serialized but slower concurrent",
+    "production defaults unchanged"
+  ],
+  "autotune": {
+    "gate_up_generic_ms": 7.90882,
+    "gate_up_selected": "generic",
+    "down_generic_ms": 3.98001,
+    "down_selected": "generic",
+    "complete_ms": 14517.228
+  },
+  "torch_bf16": {
+    "serial_ms": 24069.997,
+    "concurrent_ms": 14805.061,
+    "teammate_serial_ms": 26390.695,
+    "teammate_concurrent_ms": 13866.815
+  },
+  "scope": "isolated synthetic FFN; report-policy deviations; not model accuracy"
+}

@@ -1,0 +1,36 @@
+[92mSuccessfully preprocessed all matching files.[0m
+[92mSuccessfully preprocessed all matching files.[0m
+[w4a16_gemm_fused_packed] autotune K=4096 M=512 N=15872 generic=7.90882ms k2048=8.8847ms n64=9.08372ms selected=generic
+[w4a16_gemm_fused_packed] autotune K=7936 M=512 N=4096 generic=3.98001ms k2048=4.05746ms n64=4.66939ms selected=generic
+P=6400: completed round 0/1
+P=6400: completed round 1/1
+{
+  "stats": {
+    "baseline": {
+      "count": 1,
+      "median_us": 22140.172,
+      "p10_us": 22140.172,
+      "p90_us": 22140.172,
+      "min_us": 22140.172,
+      "max_us": 22140.172
+    },
+    "serial": {
+      "count": 1,
+      "median_us": 27344.414,
+      "p10_us": 27344.414,
+      "p90_us": 27344.414,
+      "min_us": 27344.414,
+      "max_us": 27344.414
+    },
+    "concurrent": {
+      "count": 1,
+      "median_us": 14865.969,
+      "p10_us": 14865.969,
+      "p90_us": 14865.969,
+      "min_us": 14865.969,
+      "max_us": 14865.969
+    }
+  },
+  "status": "completed_with_accuracy_deviations",
+  "latency_ratio_vs_gpu_baseline": 1.4893191288102376
+}

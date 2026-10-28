@@ -32,9 +32,22 @@ records, sweep data and reproduction are in
 [docs/runs/2026-10-28-merged-npu](runs/2026-10-28-merged-npu/README.md). Branch:
 `codex/npu-merged-kernel-parallel`. Changes are committed only; no push/PR.
 
+### GPU suffix follow-up
+
+Two GPU-side optimizations were tested at P6400 and both were rejected. Enabling
+the packed-GEMM autotune selected the generic 128x128 variant for both shapes
+(gate/up 7.909 ms versus 8.885/9.084 ms; down 3.980 ms versus 4.057/4.669 ms),
+so it produced no gain. A pre-dequantized PyTorch BF16 suffix was 2.3 ms faster
+in serialized GPU+NPU execution (24.07 versus 26.39 ms) but 0.94 ms slower in the
+concurrent complete FFN (14.805 versus 13.867 ms): its 4x larger BF16 weight
+traffic contends with the NPU. The packed W4A16 teammate suffix remains selected.
+The next role specialization is NPU gate/up plus GPU full down with an external
+Z buffer; the gate/up planner's P<=8192 local-N cap constrains that split.
+See [docs/runs/2026-10-28-gpu-suffix](runs/2026-10-28-gpu-suffix/README.md).
+
 Next: add a DMA-BUF/zero-copy output to the merged kernel to remove the remaining
-NPU-output H2D copy, then retune P around 6400. Deeper on-chip Z residency and
-down-weight prefetch remain unproven follow-ups.
+NPU-output H2D copy, then retune P around 6400. Deeper on-chip Z residency,
+down-weight prefetch and the role-specialized split-Z design remain follow-ups.
 
 ## 2026-10-28 — DMA-BUF output P4352 beats faithful native FFN
 

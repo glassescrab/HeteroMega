@@ -27,7 +27,7 @@ def main():
     ap.add_argument('--artifact-root', type=Path, default=Path('artifacts'))
     ap.add_argument('--iron-python')
     ap.add_argument('--no-build', action='store_true')
-    ap.add_argument('--gpu-variant', choices=('original', 'teammate'), default='teammate')
+    ap.add_argument('--gpu-variant', choices=('original', 'teammate', 'torch_bf16'), default='teammate')
     ap.add_argument('--accuracy-policy', choices=('strict', 'report'), default='report')
     ap.add_argument('--output', type=Path, required=True)
     args = ap.parse_args()
@@ -46,6 +46,9 @@ def main():
         gpu = TeammateGPUBranch.from_upstream(*(w.data for w in original),
             args.hidden, args.intermediate, args.npu_channels, args.intermediate,
             args.m, verbose_build=False)
+    elif args.gpu_variant == 'torch_bf16':
+        from .torch_gpu import TorchBF16GPUBranch
+        gpu = TorchBF16GPUBranch.from_weights(suffix, args.m)
     else:
         gpu = GPUBranch(suffix.gate, suffix.up, suffix.down, args.m, verbose_build=False)
     device = gpu.device
