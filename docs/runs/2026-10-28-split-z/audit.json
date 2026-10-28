@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "checks": [
+    "10 source and 3 evidence hashes",
+    "both split variants are slower than P6400 and pass tolerance"
+  ],
+  "merged_p6400_ms": 13866.815,
+  "split": {
+    "torch_bf16_p8192.json": {
+      "wall_ms": 19191.146,
+      "serial_ms": 23944.176,
+      "baseline_ms": 22090.011,
+      "npu_branch_ms": 11451.0886,
+      "output_stage_ms": 6299.272,
+      "backend": "torch_bf16_split_down_gpu_ffn"
+    },
+    "packed_p8192.json": {
+      "wall_ms": 21588.29,
+      "serial_ms": 27291.001,
+      "baseline_ms": 22391.675,
+      "npu_branch_ms": 12181.7628,
+      "output_stage_ms": 8145.2012,
+      "backend": "packed_w4a16_split_down_gpu_ffn"
+    }
+  },
+  "scope": "isolated synthetic FFN; split-Z rejected on latency"
+}

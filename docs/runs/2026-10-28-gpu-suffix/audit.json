@@ -1,7 +1,7 @@
 {
   "passed": true,
   "checks": [
-    "7 source and 7 evidence hashes",
+    "8 source and 7 evidence hashes",
     "autotune selected generic for gate/up and down",
     "torch BF16 faster serialized but slower concurrent",
     "production defaults unchanged"

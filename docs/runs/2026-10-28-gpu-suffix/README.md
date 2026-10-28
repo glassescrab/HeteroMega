@@ -55,6 +55,11 @@ graph and a GPU down with an external Z buffer. The current gate/up planner's
 P<=8192 local-N cap limits the how far that split can go; extending it or
 splitting the gate/up phase is a prerequisite for a larger win.
 
+The role-specialized follow-up was then implemented and rejected: P8192 NPU
+gate/up-only + GPU full down measured 19.191 ms (torch BF16) or 21.588 ms
+(packed) versus 13.867 ms for the merged P6400 split. See
+[2026-10-28-split-z](../2026-10-28-split-z/README.md).
+
 The present P6400 channel split therefore remains the selected configuration.
 No production default was changed: autotune is opt-in
 (`HETEROMEGA_GPU_AUTOTUNE=1`), and `torch_bf16` is an explicit CLI choice.

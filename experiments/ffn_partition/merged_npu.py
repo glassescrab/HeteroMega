@@ -255,3 +255,145 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+GATE_UP_GRAPH = 'w4a16_merged_gate_up.py'
+GATE_UP_DEPENDENCIES = (GATE_UP_GRAPH, 'w4a16_upstream.py', SOURCE,
+                        'upstream_weights.py', 'upstream_schedule.py',
+                        'upstream_output.py', 'prefill_schedule.py',
+                        'prefill_gate_up_schedule.py', 'prefill_swiglu_schedule.py',
+                        'silu_mul.cc', 'projection_arithmetic.py')
+
+
+def _gate_up_source_contract():
+    return {name: sha256((KERNEL_ROOT / name).read_bytes()).hexdigest()
+            for name in GATE_UP_DEPENDENCIES}
+
+
+def merged_gate_up_spec(m, hidden, channels, gate, up, down, root):
+    if not all(isinstance(w, UpstreamWeightBuffer) for w in (gate, up)):
+        raise TypeError('gate/up NPU requires UpstreamWeightBuffer objects')
+    m, hidden, channels = int(m), int(hidden), int(channels)
+    if m % 128 or hidden % 128 or channels % 256 or channels > 8192:
+        raise ValueError('gate/up NPU requires M/H multiples of 128 and 256 <= P <= 8192')
+    gate.validate_slice(0, 0, hidden, channels)
+    up.validate_slice(0, 0, hidden, channels)
+    dependency = _gate_up_source_contract()
+    expected = dict(kind='w4a16_upstream_merged_gate_up', mode='merged_gate_up',
+        m=m, hidden=hidden, channels=channels, weight_k=gate.k, weight_n=gate.n,
+        cols=8, worker_count=32, compute_rows=4, m_reuse=4,
+        activation_m_reuse=2, weight_tile_bytes=4352,
+        segment_pipeline_depth=2, activation_fifo_depth=2,
+        z_output_fifo_depth=1, bfp16_native_layout=True, split_m32_a=True,
+        preconvert_b=True, preconvert_a=False, vector_zero=True,
+        mmul_m_reuse=1, input_layout='row_major', output_layout='row_major',
+        intermediate_layout='row_major', arithmetic='bfp16',
+        compute_format='bfp16', accumulator_format='bf16',
+        source_sha256=dependency[SOURCE],
+        graph_sha256=dependency[GATE_UP_GRAPH],
+        weight_layout_sha256=dependency['upstream_weights.py'],
+        schedule_sha256=dependency['upstream_schedule.py'],
+        dependency_sha256=dependency, target_mlir_aie_commit=TARGET_COMMIT)
+    fingerprint = sha256(json.dumps(expected, sort_keys=True).encode()).hexdigest()[:16]
+    directory = Path(root).resolve() / f"upstream_merged_gate_up_bfp16_m{m}_h{hidden}_p{channels}_{fingerprint}"
+    arguments = ['-M', str(m), '-K', str(hidden), '-N', str(channels),
+                 '--weight-k', str(gate.k), '--weight-n', str(gate.n),
+                 '-co', '8', '--max-reuse', '4', '--segment-pipeline-depth', '2',
+                 '--activation-fifo-depth', '2', '--z-output-fifo-depth', '1',
+                 '--vector-zero']
+    return {'directory': directory, 'expected': expected, 'arguments': arguments,
+            'source_sha256': dependency}
+
+
+def _validate_gate_up_manifest(spec):
+    directory = spec['directory']
+    manifest = load_manifest(directory / 'final.xclbin', directory / 'insts.bin',
+                             spec['expected']['kind'])
+    for key, expected in spec['expected'].items():
+        if manifest.get(key) != expected:
+            raise ValueError(f'{directory}: manifest {key}={manifest.get(key)!r}, expected {expected!r}')
+    return manifest
+
+
+def _load_gate_up_artifact(spec):
+    manifest = _validate_gate_up_manifest(spec)
+    return {'xclbin': str(spec['directory'] / 'final.xclbin'),
+            'insts': str(spec['directory'] / 'insts.bin'), 'manifest': manifest}
+
+
+def build_merged_gate_up_artifact(m, hidden, channels, gate, up, down, root, python_executable=None):
+    spec = merged_gate_up_spec(m, hidden, channels, gate, up, down, root)
+    try:
+        return _load_gate_up_artifact(spec)
+    except (FileNotFoundError, ValueError, KeyError):
+        pass
+    directory = spec['directory']
+    directory.mkdir(parents=True, exist_ok=True)
+    command = [str(python_executable or sys.executable), str(KERNEL_ROOT / GATE_UP_GRAPH),
+               *spec['arguments'], '--xclbin-path', str(directory / 'final.xclbin'),
+               '--insts-path', str(directory / 'insts.bin'),
+               '--pdi-path', str(directory / 'final.pdi')]
+    log = directory / 'compile.log'
+    with log.open('w') as output:
+        result = subprocess.run(command, cwd=KERNEL_ROOT, stdout=output,
+                                stderr=subprocess.STDOUT, check=False)
+    if result.returncode:
+        raise RuntimeError(f'gate/up merged graph compilation failed ({result.returncode}); see {log}')
+    _validate_gate_up_manifest(spec)
+    (directory / 'build_contract.json').write_text(json.dumps(
+        {'version': 1, 'source_sha256': spec['source_sha256'],
+         'expected_manifest': spec['expected']}, indent=2) + '\n')
+    return _load_gate_up_artifact(spec)
+
+
+class MergedGateUpNpuFFN:
+    """One merged gate/up+SiLU NPU launch; returns row-major NPU Z."""
+
+    def __init__(self, m, hidden, channels, gate, up, down, artifact_root, *,
+                 python_executable=None, build=True):
+        if build:
+            artifact = build_merged_gate_up_artifact(m, hidden, channels, gate, up, down,
+                                                     artifact_root, python_executable)
+        else:
+            artifact = _load_gate_up_artifact(merged_gate_up_spec(
+                m, hidden, channels, gate, up, down, artifact_root))
+        self.m, self.hidden, self.channels = int(m), int(hidden), int(channels)
+        self.weights = (gate, up, down)
+        self.artifacts = {'gate_up': artifact}
+        specs = [((m * hidden,), np.uint16), ((gate.nbytes,), np.uint8),
+                 ((up.nbytes,), np.uint8), ((m * channels,), np.uint16)]
+        self.runner = PersistentXrtRunner(artifact['xclbin'], artifact['insts'], specs,
+                                          output_count=1)
+        self.runner.write_input(1, gate.data)
+        self.runner.write_input(2, up.data)
+        self.last_output = None
+        self.last_diagnostics = {}
+        self.metadata = dict(backend='mlir_aie_xrt_upstream_merged_gate_up',
+            arithmetic='bfp16', npu_arithmetic='bfp16', compute_format='bfp16',
+            merged_kernel=True, gate_up_only=True, launches_per_run=1,
+            m=self.m, hidden=self.hidden, channels=self.channels,
+            weight_layout='upstream_4352', weight_tile_bytes=4352,
+            weight_repacking=False, full_weight_buffers=True,
+            input_layout='row_major', output_layout='row_major',
+            intermediate_layout='row_major', artifact=artifact)
+
+    def run(self, x_bits):
+        x_bits = np.asarray(x_bits)
+        if x_bits.dtype != np.uint16 or x_bits.shape != (self.m, self.hidden):
+            raise ValueError(f'input must be uint16 BF16 bits with shape {(self.m, self.hidden)}')
+        if np.any((x_bits & 0x7F80) == 0x7F80):
+            raise ValueError('input must contain finite BF16 values')
+        start = time.perf_counter_ns()
+        self.runner.write_input(0, np.ascontiguousarray(x_bits).reshape(-1))
+        waits = self.runner.dispatch_wait()
+        z = self.runner.output_bits(index=0, copy=True).reshape(self.m, self.channels)
+        elapsed = (time.perf_counter_ns() - start) / 1000.0
+        self.last_output = z.copy()
+        self.last_diagnostics = dict(branch_host_wall_us=elapsed,
+            dispatch_wait_us={'gate_up': waits},
+            completed_dispatches_total=self.runner.completed_dispatches,
+            merged_kernel=True, gate_up_only=True, launches_per_run=1,
+            input_write_counts={'x': self.runner.input_write_counts[0],
+                                'gate': self.runner.input_write_counts[1],
+                                'up': self.runner.input_write_counts[2]})
+        return z.copy()

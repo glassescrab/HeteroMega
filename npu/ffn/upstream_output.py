@@ -109,3 +109,28 @@ def upstream_down_activation_tap(direct, col, group, segment, bfp16_native_layou
                    m_start * m_stride + channel_offset(local_nt),
                    (count, plan.compute_rows * plan.m_reuse, row_blocks, block_elements),
                    (n_stride, m_stride, 2048 // row_blocks, 1))
+
+def upstream_swiglu_row_major_output_tap(direct, col, group, segment):
+    """Row-major Z scatter for an odd SwiGLU output column."""
+    if direct.mode != 'swiglu':
+        raise ValueError('SwiGLU row-major output requires a swiglu schedule')
+    if (isinstance(col, bool) or not isinstance(col, Integral)
+            or not 0 <= col < 8 or col % 2 != 1):
+        raise ValueError('only odd SwiGLU output columns can drain Z')
+    if (isinstance(segment, bool) or not isinstance(segment, Integral)
+            or not 0 <= segment < direct.segment_count):
+        raise ValueError('segment must lie within the direct upstream schedule')
+    plan = direct.base
+    logical = direct.logical_column(int(col))
+    m_start = plan.group_m_start(logical, group)
+    item = direct.segments[int(col)][int(segment)]
+    count = len(item.halves)
+    if count not in (1, 2):
+        raise ValueError('a direct upstream segment must contain one or two N32 halves')
+    n_tiles = direct.n // 32
+    local_nt = plan.n_start(logical) % n_tiles + item.first_local_tile
+    if local_nt + count > n_tiles:
+        raise ValueError('segment output leaves the selected FFN channel slice')
+    return TapSpec(plan.m * direct.n, m_start * 16 * direct.n + local_nt * 32,
+                   (1, count, plan.compute_rows * plan.m_reuse * 16, 32),
+                   (0, 32, direct.n, 1))

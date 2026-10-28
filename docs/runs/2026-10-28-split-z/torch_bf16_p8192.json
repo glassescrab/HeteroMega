@@ -1,0 +1,1886 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "config": {
+    "m": 512,
+    "hidden": 4096,
+    "intermediate": 14336,
+    "npu_channels": 8192,
+    "seed": 12832,
+    "warmup": 2,
+    "iterations": 5,
+    "artifact_root": "artifacts",
+    "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+    "no_build": false,
+    "accuracy_policy": "report",
+    "output": "results/split_z_p8192.json"
+  },
+  "scope": "role-specialized split-Z FFN microbenchmark; experimental, not model prefill",
+  "provenance": {
+    "started_at_utc": "2026-10-28T01:36:50.292957+00:00",
+    "git_head": "9b51ecfa0a64fdf6e3a002ad3c62e971c1177108",
+    "git_branch": "codex/native8-direct-output-v10",
+    "git_status": "M experiments/ffn_partition/compare_upstream_native.py\n M experiments/ffn_partition/dmabuf_output.py\n M experiments/ffn_partition/hip_dmabuf_bindings.cpp\n M experiments/ffn_partition/npu_backend.py\n M experiments/ffn_partition/run_upstream_partition.py\n M experiments/ffn_partition/teammate_gpu.py\n M experiments/ffn_partition/test_dmabuf_integration.py\n M experiments/ffn_partition/test_dmabuf_output.py\n M experiments/ffn_partition/xrt_dmabuf_bindings.cpp\n M npu/ffn/upstream_output.py\n?? artifacts/\n?? docs/\n?? experiments/ffn_partition/__pycache__/\n?? experiments/ffn_partition/dmabuf_input.py\n?? experiments/ffn_partition/merged_npu.py\n?? experiments/ffn_partition/run_merged_partition.py\n?? experiments/ffn_partition/run_split_z.py\n?? experiments/ffn_partition/torch_gpu.py\n?? kernels/gpu/src/gemv_w4a16.hip\n?? kernels/gpu/src/silu_mul.hip\n?? npu/ffn/__pycache__/\n?? npu/ffn/w4a16_merged_gate_up.py\n?? npu/ffn/w4a16_merged_upstream.py\n?? results/\n?? source_manifest_v11.json\n?? source_manifest_v12.json\n?? src/hipkernels/w4a16_gemm_packed.hip\n?? src/hipkernels/w4a16_gemv_packed.hip",
+    "source_sha256": {
+      "experiments/ffn_partition/teammate_gpu.py": "308eb21be895f4773f7c75326fd23d5afc4ebde79411fbef20010a3e97aaa3cb",
+      "experiments/ffn_partition/benchmark_upstream_pipeline.py": "bb87fa642dd11109504627ff07552afbb1d7bc4d9b0a7c8513d54730f7434583",
+      "experiments/ffn_partition/dmabuf_output.py": "e71ff8cf93a56dca88dd1e738bece47ba57fe3c33a642b97c6f68c31f46c4d8c",
+      "experiments/ffn_partition/test_npu_backend.py": "1f1927cb38a535b6d2d19c54cf2d1cdbe675b24344b977e5475ef5742524c6b9",
+      "experiments/ffn_partition/diagnose_native_projection.py": "37fb47b548efcb0414e04f3a42ab32e17d8c4fc6be64179b865b5986ecec3a6e",
+      "experiments/ffn_partition/check_swiglu.py": "1c00b80dad4d59e008bbb9472c1f089d846f1fb6eb8086b2da0425bba9031bff",
+      "experiments/ffn_partition/run_split_z.py": "9b228cc64986495ac2a91614cb564ff432e2aa416c97a03df9e5dec8e56f26fa",
+      "experiments/ffn_partition/shared_npu.py": "b424ddf18b2f2089fd54c4926d7412174da43effbfb2a3d98207bbaba2539c32",
+      "experiments/ffn_partition/test_teammate_gpu.py": "d57114756c63597f691e456a94d388e9a5d962b77dcb80a102e07236f3d50767",
+      "experiments/ffn_partition/run_upstream_partition.py": "dcb4db975b261f617863a737cf797dcb56738690e5dd9b8a9cc643b199fd36c6",
+      "experiments/ffn_partition/test_bfp_accuracy.py": "2b82ba0edb7445d91626890bebe2e11da376de29fd7c63a204aaa418ec087085",
+      "experiments/ffn_partition/dmabuf_input.py": "9e2472f28a09f1f59b973b79a5d52fb2dbd66a4fdd8d4320fe1856f26957cf8b",
+      "experiments/ffn_partition/analyze_bottleneck.py": "78ce4827294e2cfb589861ce34c9b10c8331076424f46d2c6ce6468caca5e4f6",
+      "experiments/ffn_partition/check_gate_up.py": "2c06e00c24e6f12d77dd16388e11508c1d3797c2f6fee9685fc2dfef2a6a6d95",
+      "experiments/ffn_partition/test_upstream_gpu_contract.py": "027b5781ff9f76564ee4fa6b42a927376b645e737c0c62f0ac3a2b0e36442e32",
+      "experiments/ffn_partition/compare_native.py": "5db78435964372e2c3222d3c755a59e19490e778ee8c288735cdc9c8aca89e81",
+      "experiments/ffn_partition/torch_gpu.py": "00b401635589235ccacd7df00d23efeb7d88ad3ed7f78a07214590d6d562cb79",
+      "experiments/ffn_partition/test_plot_partition_sweep.py": "215e6d9f8c0b8ebc66ea3f702d9f7f89b07942f5332c4b02c4495b35664a4a54",
+      "experiments/ffn_partition/test_contract.py": "4b569223d9fd18f5c14ae2da0c55031fb9ef1fd2e2f3b7525e5016cb8dee6b84",
+      "experiments/ffn_partition/npu_backend.py": "a8736691a8dcbde204bbfdbc1b90466a647d3764895a943090fac9843db1cb07",
+      "experiments/ffn_partition/test_gpu_packing.py": "0e73f412742d37a683c018a9881fcbe252d6faaf1c4a2fb9f5b70807443a6769",
+      "experiments/ffn_partition/diagnose.py": "818801784357b5a5d1948a45be63784f3e67ef6d4c72e8c16eb64bd8eeca5397",
+      "experiments/ffn_partition/upstream_npu.py": "a5f14020d1810be131457cf1d65a73799fd7aec600c9297d16f33a24b8db6810",
+      "experiments/ffn_partition/test_upstream_arithmetic_benchmark.py": "ee09320d3bcb28253bd41176d6b99c9c895f3a30736434459dbb63fd46ac72a3",
+      "experiments/ffn_partition/timed_shared.py": "ebb850330a3ffb15902675e15bf605fafef278b33de490cac6bb85b99372df56",
+      "experiments/ffn_partition/test_dmabuf_output.py": "5b68c015166b1c0b75f4aeb8067df9b1b265d22ee61920764d2af999ed197ba9",
+      "experiments/ffn_partition/benchmark_upstream_arithmetic.py": "7c2200048143dc355d56972d897f2e52b90d4bbf40794abfabca4ca5c3ab5adc",
+      "experiments/ffn_partition/test_diagnose_native_projection.py": "cfbdddb163a576d738f990a58b722ec3b982b066c5c2f685485f25d90c84445c",
+      "experiments/ffn_partition/benchmark_upstream_optimizations.py": "5e7da2d0d8f48ee54b5ec2f4551ace05273bc2f53704eaeb945dbb6b7d91ef0f",
+      "experiments/ffn_partition/test_shared_npu.py": "e1284d4a558b392f9e1e44cb55e3720d12a7bca75c54efc18def311ba2e89f87",
+      "experiments/ffn_partition/test_sweep_partition.py": "c92f2565f9cc82e3781a88a78a283da6bfd53e267b94ed7c6dd625bd101619f5",
+      "experiments/ffn_partition/test_compare_native.py": "6723b36bf21a93d5fc801ddd1a6e07af29ae7732144ef4611f93d5e29029201c",
+      "experiments/ffn_partition/test_swiglu.py": "63442beec1d91ca0a2cdf877a9ad1bd98db590ed18049d7e742b69a352793542",
+      "experiments/ffn_partition/test_upstream_optimizations.py": "82556d032b13733f3b9a5ce3db2a6b7a98fbf9d22c2022dea4dae1f4139e4c57",
+      "experiments/ffn_partition/test_profile_timeline.py": "e88c390872bc03ce85186369d7ee45efba9c2aab2644d0df329f1d482e06b4b0",
+      "experiments/ffn_partition/test_analyze_bottleneck.py": "aaf79cfc1a56e5d064e8287d68addfd4320ebca3bbe72eda2207b2ad28a31f58",
+      "experiments/ffn_partition/profile_contexts.py": "56dcd2bc5b389c8657b801b03ce2117f63ae0ab213fab91c72718021ed1271d0",
+      "experiments/ffn_partition/native_heteromosaic.py": "1123c580a7268e60413ec7dbfd651cc5a76914f6379921a1a125cf8ca032062f",
+      "experiments/ffn_partition/test_compare_upstream_native.py": "8702acf9ccba9b4aef6db174430c1b7afe62f277f502f5de79e2303e5c2f4b26",
+      "experiments/ffn_partition/compare_upstream_native.py": "7554621eaae666815e1520004f55ad3625dc7e8ccfc912ab5e0723cafe967be0",
+      "experiments/ffn_partition/profile_timeline.py": "a38a93b42fc9076dcb9ad24a9697baa2246b5ba4157ff171ddd07649563c5bb2",
+      "experiments/ffn_partition/test_upstream_partition.py": "27c0b29ee5c8eff0b5ee500234767c5c4b16db08b114535389d26223060e0872",
+      "experiments/ffn_partition/test_dmabuf_integration.py": "e25ae959f6c9771874618367f0f0dec045efd4a2c836910607b5790ff23a0c98",
+      "experiments/ffn_partition/gpu_diagnostics.py": "45f22d4b9dce959ffd9c21617c95a741272ae3823e2183ae2bbfd195556e3c5e",
+      "experiments/ffn_partition/sweep_partition.py": "63dafdf7fc35ed13be1f2649181b28952ebf0085abe8759e8c1d064c9cfcff06",
+      "experiments/ffn_partition/test_native_heteromosaic.py": "2ce10e2c161b183256da1dbe94d0a2c5d76ecda23ee8cd471c977dee1976aa55",
+      "experiments/ffn_partition/run.py": "fd78edf061418c20d85a941f6454153c26b0979eef0e6895ac2d21f414593751",
+      "experiments/ffn_partition/test_split_m32_integration.py": "ab5f6dd46ced119689f931eaf4aaef4c8e0d6dccef03a56c9d9369818bd72986",
+      "experiments/ffn_partition/test_gpu_diagnostics.py": "0bcaa4462a3c3687e137b35c545113ad9a8487e6c7d0b1f7cf95a7126576979a",
+      "experiments/ffn_partition/test_native8_integration.py": "e0a9b10d3a7d31b73740cae68ffcef88f74c47b686346fd65fb27f384f062b01",
+      "experiments/ffn_partition/plot_partition_sweep.py": "7eb25496bb74375f136c7a073c266339fabb66028f24b7b073721952451bb538",
+      "experiments/ffn_partition/shared_gpu.py": "fa5884afbd6ca771be481603c1cbe866a13946510c80efcbd086a746e6711d3c",
+      "experiments/ffn_partition/gpu_backend.py": "ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7",
+      "experiments/ffn_partition/contract.py": "b1199d8dff1812f972d2e8f4ac5fbfaddc24a7a023ff2aab19585ec13d154a2b",
+      "experiments/ffn_partition/check_upstream.py": "87020bbd6dd3f4da815134f52be9a1f5366005f40cf1f46cb5e8f4bc9c20d919",
+      "experiments/ffn_partition/test_upstream_npu.py": "0f22748ad573a6ffba8fe6c6e6366fc8e8a76f9b888148d67c1ba219b986c924",
+      "experiments/ffn_partition/run_merged_partition.py": "0761b38bf6b683fdbc04cb9e7162d13953e010bdde78b591e0f173eb9562c775",
+      "experiments/ffn_partition/merged_npu.py": "04e58dea5adffe3a1d1ca505384c8f64bd293649c0ec3a3b78e7b2b0e3892091",
+      "experiments/ffn_partition/gpu_bindings.cpp": "98a1e34dbd38cc49a488d4f2db861dd9d8bbf527996a1642f5b55d0a069cda6a",
+      "src/hipkernels/w4a16_gemm_packed.cu": "c506049e90326636e00bf151532f2e06809e3a6cdce5f203a3345149e4c930f1"
+    },
+    "platform": "Linux-6.17.0-42-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "numpy": "1.26.4",
+    "cpu_model": "AMD Ryzen AI 9 HX 370 w/ Radeon 890M",
+    "environment": {
+      "HETEROMEGA_ROCM_PATH": "/opt/rocm-7.2.0",
+      "ROCM_PATH": "/opt/rocm-7.2.0",
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "HSA_OVERRIDE_GFX_VERSION": null
+    }
+  },
+  "correctness": {},
+  "samples": [
+    {
+      "iteration": 0,
+      "order_index": 0,
+      "input_index": 0,
+      "mode": "baseline",
+      "wall_us": 22090.011,
+      "output_sha256": "882b3eb7c5dd9bad158b8431692514dcc41d9907d663bb9937cd0dd3973a1578",
+      "diagnostics": {},
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.015625,
+        "relative_l2_error": 0.0009048862494384088,
+        "normalized_max_error": 0.004149377593360996,
+        "rms_error": 0.000617160185852417,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "strict",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 0,
+      "order_index": 1,
+      "input_index": 0,
+      "mode": "serial",
+      "wall_us": 23723.989,
+      "output_sha256": "e03fbbe0339bbcc41a100ea0f47260e523b742fab8b3018409c659b494fabb20",
+      "diagnostics": {
+        "input_gpu_to_host_us": 129.328,
+        "npu_branch_us": 10919.433,
+        "output_stage_and_boundary_wait_us": 6539.785,
+        "npu": {
+          "branch_host_wall_us": 10919.433,
+          "dispatch_wait_us": {
+            "gate_up": 9556.729
+          },
+          "completed_dispatches_total": 13,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 13,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0546875,
+        "relative_l2_error": 0.012958653287890217,
+        "normalized_max_error": 0.014522821576763486,
+        "rms_error": 0.008838199139963516,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 0.9999995231628418,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 0,
+      "order_index": 2,
+      "input_index": 0,
+      "mode": "concurrent",
+      "wall_us": 19109.227,
+      "output_sha256": "e03fbbe0339bbcc41a100ea0f47260e523b742fab8b3018409c659b494fabb20",
+      "diagnostics": {
+        "input_gpu_to_host_us": 267.005,
+        "npu_branch_us": 11591.229,
+        "output_stage_and_boundary_wait_us": 6156.273,
+        "npu": {
+          "branch_host_wall_us": 11591.229,
+          "dispatch_wait_us": {
+            "gate_up": 10210.866
+          },
+          "completed_dispatches_total": 14,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 14,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0546875,
+        "relative_l2_error": 0.012958653287890217,
+        "normalized_max_error": 0.014522821576763486,
+        "rms_error": 0.008838199139963516,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 0.9999995231628418,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 1,
+      "order_index": 0,
+      "input_index": 1,
+      "mode": "baseline",
+      "wall_us": 22054.581,
+      "output_sha256": "15b42c1f52925945b337e78e379df647cbcd83bd2947ca70c15b44834a2c687c",
+      "diagnostics": {},
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.015625,
+        "relative_l2_error": 0.0008933590405591628,
+        "normalized_max_error": 0.003703703703703704,
+        "rms_error": 0.0006112022422539525,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 4.21875,
+        "max_error_limit": 0.1765625,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "strict",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 1,
+      "order_index": 1,
+      "input_index": 1,
+      "mode": "concurrent",
+      "wall_us": 19191.146,
+      "output_sha256": "0b43569e67752f4de375913fdd7594e7f49e360d2420921deb901fe30f9a3436",
+      "diagnostics": {
+        "input_gpu_to_host_us": 279.665,
+        "npu_branch_us": 11293.336,
+        "output_stage_and_boundary_wait_us": 6503.006,
+        "npu": {
+          "branch_host_wall_us": 11293.336,
+          "dispatch_wait_us": {
+            "gate_up": 9880.603
+          },
+          "completed_dispatches_total": 15,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 15,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.05078125,
+        "relative_l2_error": 0.01296445005053054,
+        "normalized_max_error": 0.012037037037037037,
+        "rms_error": 0.008869783122711758,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 4.21875,
+        "max_error_limit": 0.1765625,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 1,
+      "order_index": 2,
+      "input_index": 1,
+      "mode": "serial",
+      "wall_us": 25512.846,
+      "output_sha256": "0b43569e67752f4de375913fdd7594e7f49e360d2420921deb901fe30f9a3436",
+      "diagnostics": {
+        "input_gpu_to_host_us": 138.437,
+        "npu_branch_us": 12116.16,
+        "output_stage_and_boundary_wait_us": 6514.326,
+        "npu": {
+          "branch_host_wall_us": 12116.16,
+          "dispatch_wait_us": {
+            "gate_up": 10748.186
+          },
+          "completed_dispatches_total": 16,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 16,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.05078125,
+        "relative_l2_error": 0.01296445005053054,
+        "normalized_max_error": 0.012037037037037037,
+        "rms_error": 0.008869783122711758,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 4.21875,
+        "max_error_limit": 0.1765625,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 2,
+      "order_index": 0,
+      "input_index": 0,
+      "mode": "serial",
+      "wall_us": 23890.667,
+      "output_sha256": "e03fbbe0339bbcc41a100ea0f47260e523b742fab8b3018409c659b494fabb20",
+      "diagnostics": {
+        "input_gpu_to_host_us": 130.838,
+        "npu_branch_us": 11226.497,
+        "output_stage_and_boundary_wait_us": 6441.658,
+        "npu": {
+          "branch_host_wall_us": 11226.497,
+          "dispatch_wait_us": {
+            "gate_up": 9814.063
+          },
+          "completed_dispatches_total": 17,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 17,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0546875,
+        "relative_l2_error": 0.012958653287890217,
+        "normalized_max_error": 0.014522821576763486,
+        "rms_error": 0.008838199139963516,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 0.9999995231628418,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 2,
+      "order_index": 1,
+      "input_index": 0,
+      "mode": "concurrent",
+      "wall_us": 19493.26,
+      "output_sha256": "e03fbbe0339bbcc41a100ea0f47260e523b742fab8b3018409c659b494fabb20",
+      "diagnostics": {
+        "input_gpu_to_host_us": 269.335,
+        "npu_branch_us": 11882.075,
+        "output_stage_and_boundary_wait_us": 6261.76,
+        "npu": {
+          "branch_host_wall_us": 11882.075,
+          "dispatch_wait_us": {
+            "gate_up": 10446.903
+          },
+          "completed_dispatches_total": 18,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 18,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0546875,
+        "relative_l2_error": 0.012958653287890217,
+        "normalized_max_error": 0.014522821576763486,
+        "rms_error": 0.008838199139963516,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 0.9999995231628418,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 2,
+      "order_index": 2,
+      "input_index": 0,
+      "mode": "baseline",
+      "wall_us": 22252.587,
+      "output_sha256": "882b3eb7c5dd9bad158b8431692514dcc41d9907d663bb9937cd0dd3973a1578",
+      "diagnostics": {},
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.015625,
+        "relative_l2_error": 0.0009048862494384088,
+        "normalized_max_error": 0.004149377593360996,
+        "rms_error": 0.000617160185852417,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "strict",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 3,
+      "order_index": 0,
+      "input_index": 1,
+      "mode": "serial",
+      "wall_us": 23944.176,
+      "output_sha256": "0b43569e67752f4de375913fdd7594e7f49e360d2420921deb901fe30f9a3436",
+      "diagnostics": {
+        "input_gpu_to_host_us": 141.877,
+        "npu_branch_us": 11163.818,
+        "output_stage_and_boundary_wait_us": 6655.864,
+        "npu": {
+          "branch_host_wall_us": 11163.818,
+          "dispatch_wait_us": {
+            "gate_up": 9797.043
+          },
+          "completed_dispatches_total": 19,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 19,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.05078125,
+        "relative_l2_error": 0.01296445005053054,
+        "normalized_max_error": 0.012037037037037037,
+        "rms_error": 0.008869783122711758,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 4.21875,
+        "max_error_limit": 0.1765625,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 3,
+      "order_index": 1,
+      "input_index": 1,
+      "mode": "baseline",
+      "wall_us": 21915.564,
+      "output_sha256": "15b42c1f52925945b337e78e379df647cbcd83bd2947ca70c15b44834a2c687c",
+      "diagnostics": {},
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.015625,
+        "relative_l2_error": 0.0008933590405591628,
+        "normalized_max_error": 0.003703703703703704,
+        "rms_error": 0.0006112022422539525,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 4.21875,
+        "max_error_limit": 0.1765625,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "strict",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 3,
+      "order_index": 2,
+      "input_index": 1,
+      "mode": "concurrent",
+      "wall_us": 19358.662,
+      "output_sha256": "0b43569e67752f4de375913fdd7594e7f49e360d2420921deb901fe30f9a3436",
+      "diagnostics": {
+        "input_gpu_to_host_us": 266.545,
+        "npu_branch_us": 11941.623,
+        "output_stage_and_boundary_wait_us": 6071.285,
+        "npu": {
+          "branch_host_wall_us": 11941.623,
+          "dispatch_wait_us": {
+            "gate_up": 10842.344
+          },
+          "completed_dispatches_total": 20,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 20,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.05078125,
+        "relative_l2_error": 0.01296445005053054,
+        "normalized_max_error": 0.012037037037037037,
+        "rms_error": 0.008869783122711758,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 4.21875,
+        "max_error_limit": 0.1765625,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 4,
+      "order_index": 0,
+      "input_index": 0,
+      "mode": "serial",
+      "wall_us": 24091.253,
+      "output_sha256": "e03fbbe0339bbcc41a100ea0f47260e523b742fab8b3018409c659b494fabb20",
+      "diagnostics": {
+        "input_gpu_to_host_us": 136.478,
+        "npu_branch_us": 11607.89,
+        "output_stage_and_boundary_wait_us": 6187.583,
+        "npu": {
+          "branch_host_wall_us": 11607.89,
+          "dispatch_wait_us": {
+            "gate_up": 10408.303
+          },
+          "completed_dispatches_total": 21,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 21,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0546875,
+        "relative_l2_error": 0.012958653287890217,
+        "normalized_max_error": 0.014522821576763486,
+        "rms_error": 0.008838199139963516,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 0.9999995231628418,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 4,
+      "order_index": 1,
+      "input_index": 0,
+      "mode": "baseline",
+      "wall_us": 22212.148,
+      "output_sha256": "882b3eb7c5dd9bad158b8431692514dcc41d9907d663bb9937cd0dd3973a1578",
+      "diagnostics": {},
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.015625,
+        "relative_l2_error": 0.0009048862494384088,
+        "normalized_max_error": 0.004149377593360996,
+        "rms_error": 0.000617160185852417,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "strict",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": 4,
+      "order_index": 2,
+      "input_index": 0,
+      "mode": "concurrent",
+      "wall_us": 18548.808,
+      "output_sha256": "e03fbbe0339bbcc41a100ea0f47260e523b742fab8b3018409c659b494fabb20",
+      "diagnostics": {
+        "input_gpu_to_host_us": 284.065,
+        "npu_branch_us": 10547.18,
+        "output_stage_and_boundary_wait_us": 6504.036,
+        "npu": {
+          "branch_host_wall_us": 10547.18,
+          "dispatch_wait_us": {
+            "gate_up": 9429.601
+          },
+          "completed_dispatches_total": 22,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 22,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0546875,
+        "relative_l2_error": 0.012958653287890217,
+        "normalized_max_error": 0.014522821576763486,
+        "rms_error": 0.008838199139963516,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 0.9999995231628418,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    }
+  ],
+  "warmup_samples": [
+    {
+      "iteration": -2,
+      "order_index": 0,
+      "input_index": 0,
+      "mode": "serial",
+      "wall_us": 24954.226,
+      "output_sha256": "e03fbbe0339bbcc41a100ea0f47260e523b742fab8b3018409c659b494fabb20",
+      "diagnostics": {
+        "input_gpu_to_host_us": 133.948,
+        "npu_branch_us": 10720.346,
+        "output_stage_and_boundary_wait_us": 6296.491,
+        "npu": {
+          "branch_host_wall_us": 10720.346,
+          "dispatch_wait_us": {
+            "gate_up": 9449.57
+          },
+          "completed_dispatches_total": 9,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 9,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0546875,
+        "relative_l2_error": 0.012958653287890217,
+        "normalized_max_error": 0.014522821576763486,
+        "rms_error": 0.008838199139963516,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 0.9999995231628418,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": -2,
+      "order_index": 1,
+      "input_index": 0,
+      "mode": "baseline",
+      "wall_us": 26590.506,
+      "output_sha256": "882b3eb7c5dd9bad158b8431692514dcc41d9907d663bb9937cd0dd3973a1578",
+      "diagnostics": {},
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.015625,
+        "relative_l2_error": 0.0009048862494384088,
+        "normalized_max_error": 0.004149377593360996,
+        "rms_error": 0.000617160185852417,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "strict",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": -2,
+      "order_index": 2,
+      "input_index": 0,
+      "mode": "concurrent",
+      "wall_us": 20502.621,
+      "output_sha256": "e03fbbe0339bbcc41a100ea0f47260e523b742fab8b3018409c659b494fabb20",
+      "diagnostics": {
+        "input_gpu_to_host_us": 269.455,
+        "npu_branch_us": 12071.591,
+        "output_stage_and_boundary_wait_us": 6858.86,
+        "npu": {
+          "branch_host_wall_us": 12071.591,
+          "dispatch_wait_us": {
+            "gate_up": 10705.007
+          },
+          "completed_dispatches_total": 10,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 10,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0546875,
+        "relative_l2_error": 0.012958653287890217,
+        "normalized_max_error": 0.014522821576763486,
+        "rms_error": 0.008838199139963516,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 0.9999995231628418,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": -1,
+      "order_index": 0,
+      "input_index": 1,
+      "mode": "concurrent",
+      "wall_us": 19551.609,
+      "output_sha256": "0b43569e67752f4de375913fdd7594e7f49e360d2420921deb901fe30f9a3436",
+      "diagnostics": {
+        "input_gpu_to_host_us": 270.325,
+        "npu_branch_us": 11491.363,
+        "output_stage_and_boundary_wait_us": 6618.283,
+        "npu": {
+          "branch_host_wall_us": 11491.363,
+          "dispatch_wait_us": {
+            "gate_up": 9988.032
+          },
+          "completed_dispatches_total": 11,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 11,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.05078125,
+        "relative_l2_error": 0.01296445005053054,
+        "normalized_max_error": 0.012037037037037037,
+        "rms_error": 0.008869783122711758,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 4.21875,
+        "max_error_limit": 0.1765625,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": -1,
+      "order_index": 1,
+      "input_index": 1,
+      "mode": "baseline",
+      "wall_us": 22174.899,
+      "output_sha256": "15b42c1f52925945b337e78e379df647cbcd83bd2947ca70c15b44834a2c687c",
+      "diagnostics": {},
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.015625,
+        "relative_l2_error": 0.0008933590405591628,
+        "normalized_max_error": 0.003703703703703704,
+        "rms_error": 0.0006112022422539525,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 4.21875,
+        "max_error_limit": 0.1765625,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "strict",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "iteration": -1,
+      "order_index": 2,
+      "input_index": 1,
+      "mode": "serial",
+      "wall_us": 23917.376,
+      "output_sha256": "0b43569e67752f4de375913fdd7594e7f49e360d2420921deb901fe30f9a3436",
+      "diagnostics": {
+        "input_gpu_to_host_us": 141.237,
+        "npu_branch_us": 11282.696,
+        "output_stage_and_boundary_wait_us": 6205.962,
+        "npu": {
+          "branch_host_wall_us": 11282.696,
+          "dispatch_wait_us": {
+            "gate_up": 9957.691
+          },
+          "completed_dispatches_total": 12,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 12,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "accuracy": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.05078125,
+        "relative_l2_error": 0.01296445005053054,
+        "normalized_max_error": 0.012037037037037037,
+        "rms_error": 0.008869783122711758,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 4.21875,
+        "max_error_limit": 0.1765625,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    }
+  ],
+  "validation_runs": [
+    {
+      "run": 0,
+      "input_index": 0,
+      "mode": "serial",
+      "wall_us": 224600.347,
+      "output_sha256": "e03fbbe0339bbcc41a100ea0f47260e523b742fab8b3018409c659b494fabb20",
+      "diagnostics": {
+        "input_gpu_to_host_us": 5429.687,
+        "npu_branch_us": 137283.794,
+        "output_stage_and_boundary_wait_us": 35304.53,
+        "npu": {
+          "branch_host_wall_us": 137283.794,
+          "dispatch_wait_us": {
+            "gate_up": 135753.693
+          },
+          "completed_dispatches_total": 1,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 1,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "output_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0546875,
+        "relative_l2_error": 0.012958653287890217,
+        "normalized_max_error": 0.014522821576763486,
+        "rms_error": 0.008838199139963516,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 0.9999995231628418,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      },
+      "npu_z_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.3125,
+        "relative_l2_error": 0.016841711169514367,
+        "normalized_max_error": 0.02040816326530612,
+        "rms_error": 0.011038767362680097,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 15.3125,
+        "max_error_limit": 0.509375,
+        "elementwise_close_fraction": 0.9998579025268555,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "run": 0,
+      "input_index": 0,
+      "mode": "concurrent",
+      "wall_us": 20472.761,
+      "output_sha256": "e03fbbe0339bbcc41a100ea0f47260e523b742fab8b3018409c659b494fabb20",
+      "diagnostics": {
+        "input_gpu_to_host_us": 1118.638,
+        "npu_branch_us": 12032.071,
+        "output_stage_and_boundary_wait_us": 6157.913,
+        "npu": {
+          "branch_host_wall_us": 12032.071,
+          "dispatch_wait_us": {
+            "gate_up": 10660.018
+          },
+          "completed_dispatches_total": 2,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 2,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "output_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0546875,
+        "relative_l2_error": 0.012958653287890217,
+        "normalized_max_error": 0.014522821576763486,
+        "rms_error": 0.008838199139963516,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 0.9999995231628418,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      },
+      "npu_z_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.3125,
+        "relative_l2_error": 0.016841711169514367,
+        "normalized_max_error": 0.02040816326530612,
+        "rms_error": 0.011038767362680097,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 15.3125,
+        "max_error_limit": 0.509375,
+        "elementwise_close_fraction": 0.9998579025268555,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "run": 1,
+      "input_index": 1,
+      "mode": "serial",
+      "wall_us": 24953.126,
+      "output_sha256": "0b43569e67752f4de375913fdd7594e7f49e360d2420921deb901fe30f9a3436",
+      "diagnostics": {
+        "input_gpu_to_host_us": 183.607,
+        "npu_branch_us": 10839.124,
+        "output_stage_and_boundary_wait_us": 6171.253,
+        "npu": {
+          "branch_host_wall_us": 10839.124,
+          "dispatch_wait_us": {
+            "gate_up": 9537.269
+          },
+          "completed_dispatches_total": 3,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 3,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "output_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.05078125,
+        "relative_l2_error": 0.01296445005053054,
+        "normalized_max_error": 0.012037037037037037,
+        "rms_error": 0.008869783122711758,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 4.21875,
+        "max_error_limit": 0.1765625,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      },
+      "npu_z_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.40625,
+        "relative_l2_error": 0.016794621116620927,
+        "normalized_max_error": 0.022569444444444444,
+        "rms_error": 0.011042606707960563,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 18.0,
+        "max_error_limit": 0.5900000000000001,
+        "elementwise_close_fraction": 0.9998552799224854,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "run": 1,
+      "input_index": 1,
+      "mode": "concurrent",
+      "wall_us": 20634.048,
+      "output_sha256": "0b43569e67752f4de375913fdd7594e7f49e360d2420921deb901fe30f9a3436",
+      "diagnostics": {
+        "input_gpu_to_host_us": 1087.3,
+        "npu_branch_us": 11663.999,
+        "output_stage_and_boundary_wait_us": 6334.27,
+        "npu": {
+          "branch_host_wall_us": 11663.999,
+          "dispatch_wait_us": {
+            "gate_up": 9434.981
+          },
+          "completed_dispatches_total": 4,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 4,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "output_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.05078125,
+        "relative_l2_error": 0.01296445005053054,
+        "normalized_max_error": 0.012037037037037037,
+        "rms_error": 0.008869783122711758,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 4.21875,
+        "max_error_limit": 0.1765625,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      },
+      "npu_z_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.40625,
+        "relative_l2_error": 0.016794621116620927,
+        "normalized_max_error": 0.022569444444444444,
+        "rms_error": 0.011042606707960563,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 18.0,
+        "max_error_limit": 0.5900000000000001,
+        "elementwise_close_fraction": 0.9998552799224854,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "run": 2,
+      "input_index": 2,
+      "mode": "serial",
+      "wall_us": 23224.669,
+      "output_sha256": "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74",
+      "diagnostics": {
+        "input_gpu_to_host_us": 160.747,
+        "npu_branch_us": 10793.576,
+        "output_stage_and_boundary_wait_us": 6129.033,
+        "npu": {
+          "branch_host_wall_us": 10793.576,
+          "dispatch_wait_us": {
+            "gate_up": 9474.621
+          },
+          "completed_dispatches_total": 5,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 5,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "output_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0,
+        "relative_l2_error": 0.0,
+        "normalized_max_error": 0.0,
+        "rms_error": 0.0,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 0.0,
+        "max_error_limit": 0.05,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      },
+      "npu_z_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0,
+        "relative_l2_error": 0.0,
+        "normalized_max_error": 0.0,
+        "rms_error": 0.0,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 0.0,
+        "max_error_limit": 0.05,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "run": 2,
+      "input_index": 2,
+      "mode": "concurrent",
+      "wall_us": 20706.927,
+      "output_sha256": "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74",
+      "diagnostics": {
+        "input_gpu_to_host_us": 1117.548,
+        "npu_branch_us": 11458.452,
+        "output_stage_and_boundary_wait_us": 6425.298,
+        "npu": {
+          "branch_host_wall_us": 11458.452,
+          "dispatch_wait_us": {
+            "gate_up": 9979.601
+          },
+          "completed_dispatches_total": 6,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 6,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "output_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0,
+        "relative_l2_error": 0.0,
+        "normalized_max_error": 0.0,
+        "rms_error": 0.0,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 0.0,
+        "max_error_limit": 0.05,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      },
+      "npu_z_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0,
+        "relative_l2_error": 0.0,
+        "normalized_max_error": 0.0,
+        "rms_error": 0.0,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 0.0,
+        "max_error_limit": 0.05,
+        "elementwise_close_fraction": 1.0,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "run": 3,
+      "input_index": 0,
+      "mode": "serial",
+      "wall_us": 24384.737,
+      "output_sha256": "e03fbbe0339bbcc41a100ea0f47260e523b742fab8b3018409c659b494fabb20",
+      "diagnostics": {
+        "input_gpu_to_host_us": 165.087,
+        "npu_branch_us": 10622.629,
+        "output_stage_and_boundary_wait_us": 6149.913,
+        "npu": {
+          "branch_host_wall_us": 10622.629,
+          "dispatch_wait_us": {
+            "gate_up": 9598.288
+          },
+          "completed_dispatches_total": 7,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 7,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "output_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0546875,
+        "relative_l2_error": 0.012958653287890217,
+        "normalized_max_error": 0.014522821576763486,
+        "rms_error": 0.008838199139963516,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 0.9999995231628418,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      },
+      "npu_z_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.3125,
+        "relative_l2_error": 0.016841711169514367,
+        "normalized_max_error": 0.02040816326530612,
+        "rms_error": 0.011038767362680097,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 15.3125,
+        "max_error_limit": 0.509375,
+        "elementwise_close_fraction": 0.9998579025268555,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    },
+    {
+      "run": 3,
+      "input_index": 0,
+      "mode": "concurrent",
+      "wall_us": 20879.294,
+      "output_sha256": "e03fbbe0339bbcc41a100ea0f47260e523b742fab8b3018409c659b494fabb20",
+      "diagnostics": {
+        "input_gpu_to_host_us": 274.935,
+        "npu_branch_us": 12731.229,
+        "output_stage_and_boundary_wait_us": 6392.949,
+        "npu": {
+          "branch_host_wall_us": 12731.229,
+          "dispatch_wait_us": {
+            "gate_up": 10510.98
+          },
+          "completed_dispatches_total": 8,
+          "merged_kernel": true,
+          "gate_up_only": true,
+          "launches_per_run": 1,
+          "input_write_counts": {
+            "x": 8,
+            "gate": 1,
+            "up": 1
+          }
+        },
+        "gpu_diagnostics": {
+          "z_suffix_shape": [
+            512,
+            6144
+          ],
+          "z_full_shape": [
+            512,
+            14336
+          ],
+          "p1": 8192
+        }
+      },
+      "output_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0546875,
+        "relative_l2_error": 0.012958653287890217,
+        "normalized_max_error": 0.014522821576763486,
+        "rms_error": 0.008838199139963516,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 3.765625,
+        "max_error_limit": 0.16296875,
+        "elementwise_close_fraction": 0.9999995231628418,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      },
+      "npu_z_check": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.3125,
+        "relative_l2_error": 0.016841711169514367,
+        "normalized_max_error": 0.02040816326530612,
+        "rms_error": 0.011038767362680097,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 15.3125,
+        "max_error_limit": 0.509375,
+        "elementwise_close_fraction": 0.9998579025268555,
+        "accuracy_policy": "report",
+        "accepted": true,
+        "structural_failures": [],
+        "accuracy_status": "within_tolerance"
+      }
+    }
+  ],
+  "original_weight_buffers": {
+    "gate": {
+      "k": 4096,
+      "n": 14336,
+      "sha256": "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe"
+    },
+    "up": {
+      "k": 4096,
+      "n": 14336,
+      "sha256": "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709"
+    },
+    "down": {
+      "k": 14336,
+      "n": 4096,
+      "sha256": "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+    }
+  },
+  "gpu": {
+    "backend": "torch_bf16_split_down_gpu_ffn",
+    "m": 512,
+    "hidden": 4096,
+    "p1": 8192,
+    "suffix_channels": 6144,
+    "weight_bytes": 134217728,
+    "weight_layout": "predequantized_bf16_contiguous",
+    "activation": "torch_bfloat16_silu_times_up",
+    "kernels_per_prefill": 4,
+    "down_scope": "full [0,I)",
+    "gate_up_scope": "[8192,14336)",
+    "setup": "dequantize W4A16 to BF16 once; excluded from timing"
+  },
+  "npu": {
+    "backend": "mlir_aie_xrt_upstream_merged_gate_up",
+    "arithmetic": "bfp16",
+    "npu_arithmetic": "bfp16",
+    "compute_format": "bfp16",
+    "merged_kernel": true,
+    "gate_up_only": true,
+    "launches_per_run": 1,
+    "m": 512,
+    "hidden": 4096,
+    "channels": 8192,
+    "weight_layout": "upstream_4352",
+    "weight_tile_bytes": 4352,
+    "weight_repacking": false,
+    "full_weight_buffers": true,
+    "input_layout": "row_major",
+    "output_layout": "row_major",
+    "intermediate_layout": "row_major",
+    "artifact": {
+      "xclbin": "/notebooks/HeteroMega-direct-output-20261027/artifacts/upstream_merged_gate_up_bfp16_m512_h4096_p8192_64f00769d1a1190a/final.xclbin",
+      "insts": "/notebooks/HeteroMega-direct-output-20261027/artifacts/upstream_merged_gate_up_bfp16_m512_h4096_p8192_64f00769d1a1190a/insts.bin",
+      "manifest": {
+        "kind": "w4a16_upstream_merged_gate_up",
+        "mode": "merged_gate_up",
+        "m": 512,
+        "hidden": 4096,
+        "channels": 8192,
+        "weight_k": 4096,
+        "weight_n": 14336,
+        "cols": 8,
+        "worker_count": 32,
+        "compute_rows": 4,
+        "m_reuse": 4,
+        "activation_m_reuse": 2,
+        "weight_tile_bytes": 4352,
+        "segment_pipeline_depth": 2,
+        "activation_fifo_depth": 2,
+        "z_output_fifo_depth": 1,
+        "bfp16_native_layout": true,
+        "split_m32_a": true,
+        "preconvert_b": true,
+        "preconvert_a": false,
+        "vector_zero": true,
+        "mmul_m_reuse": 1,
+        "input_layout": "row_major",
+        "output_layout": "row_major",
+        "intermediate_layout": "row_major",
+        "arithmetic": "bfp16",
+        "compute_format": "bfp16",
+        "accumulator_format": "bf16",
+        "worker_stack_size": 4096,
+        "source_sha256": "97e89c740464861182858917cdd113504327912e6dd791367f5c5473ec84f225",
+        "graph_sha256": "bb9617d41afe1cd5f6075fae68e00f55ccb3233e9029beba2fac41640f2c72ed",
+        "weight_layout_sha256": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+        "schedule_sha256": "d20c154ee474bfb0a1f73076b4dce6a78331ff2e869ecd9e5af2dda88c1b86a8",
+        "dependency_sha256": {
+          "w4a16_merged_gate_up.py": "bb9617d41afe1cd5f6075fae68e00f55ccb3233e9029beba2fac41640f2c72ed",
+          "w4a16_upstream.py": "84958fdbe660e9b7c21635e1b7cf6864d65d63032aef376e9d25c3211afefd51",
+          "w4a16_prefill_upstream.cc": "97e89c740464861182858917cdd113504327912e6dd791367f5c5473ec84f225",
+          "upstream_weights.py": "cca5e35a7c81e569a3effd1f5f4caf7a9ccf7f20d4cd70e19511a99499a64f02",
+          "upstream_schedule.py": "d20c154ee474bfb0a1f73076b4dce6a78331ff2e869ecd9e5af2dda88c1b86a8",
+          "upstream_output.py": "5d6b6494206e54e541e6ad6c0f11ced617ddcccce8d260a86afbbdba255405d7",
+          "prefill_schedule.py": "8878ac6db10a2b206a268bb39aee2f22c43c907249d2c4ae6bcfe8feab4b3011",
+          "prefill_gate_up_schedule.py": "816f7f4dc74f35bed16b2ec8d794b364b5e9157eb1b2db11d4d31458691c3674",
+          "prefill_swiglu_schedule.py": "63369268a42c066f20a5775fe924a164f4c01a02b2bcc04a26359a8f8b745df0",
+          "silu_mul.cc": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+          "projection_arithmetic.py": "8768ada43abd02bde39395e8d826206ab8ad6324d0ee0b067733fbe76a2f290e"
+        },
+        "upstream_kernel_commit": "121dd54abc68f84d89a7074372ebf82be2db62d5",
+        "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+        "xclbin_sha256": "8605f7dc9caa2b9920bf4d0ea557ce161b7d8788a847c00d3b3f69c5d6199086",
+        "insts_sha256": "61d1cf0d8ac03c455bd953385ba40a88ba92fb61d94c99ec63b1b1d1cc6e320e"
+      }
+    }
+  },
+  "baseline_gpu": {
+    "source_sha256": {
+      "src/hipkernels/w4a16_gemm_packed.cu": "c506049e90326636e00bf151532f2e06809e3a6cdce5f203a3345149e4c930f1",
+      "include/hipkernels/w4a16_gemm_packed.hpp": "303816dff302f91facfa5dbda283bd76c0dc1c6dc084aa3e0fced47c2bca5d2b",
+      "experiments/ffn_partition/gpu_bindings.cpp": "98a1e34dbd38cc49a488d4f2db861dd9d8bbf527996a1642f5b55d0a069cda6a",
+      "experiments/ffn_partition/gpu_backend.py": "ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7"
+    },
+    "torch_version": "2.11.0+rocm7.2",
+    "hip_version": "7.2.26015",
+    "gpu_arch": "gfx1150",
+    "rocm_path": "/opt/rocm-7.2.0",
+    "pytorch_rocm_arch": "gfx1150",
+    "packed_layout": "heteromosaic_k128_n64_zigzag8_v1",
+    "build_fingerprint": "f100a2d5ff3396753379afebdb7f564e29336d2d17b8f9e23642a1e6bbe141c8",
+    "backend": "heteromosaic_original_gpu_packed",
+    "m": 512,
+    "hidden": 4096,
+    "channels": 14336,
+    "weight_bytes": 93585408,
+    "scratch_bytes": 33554432,
+    "activation": "separate_bf16_silu_then_multiply"
+  },
+  "stats": {
+    "serial": {
+      "count": 5,
+      "median_us": 23944.176,
+      "p10_us": 23790.660200000002,
+      "p90_us": 24944.2088,
+      "min_us": 23723.989,
+      "max_us": 25512.846
+    },
+    "baseline": {
+      "count": 5,
+      "median_us": 22090.011,
+      "p10_us": 21971.1708,
+      "p90_us": 22236.4114,
+      "min_us": 21915.564,
+      "max_us": 22252.587
+    },
+    "concurrent": {
+      "count": 5,
+      "median_us": 19191.146,
+      "p10_us": 18772.9756,
+      "p90_us": 19439.4208,
+      "min_us": 18548.808,
+      "max_us": 19493.26
+    }
+  },
+  "accuracy": {
+    "passed": true,
+    "accepted": true,
+    "check_count": 37,
+    "outside_tolerance_count": 0,
+    "accuracy_status": "within_tolerance"
+  },
+  "latency_ratio_vs_gpu_baseline": 1.1510522091802124,
+  "latency_ratio_vs_serial_partition": 1.2476678568335626,
+  "speedup_vs_gpu_baseline": 1.1510522091802124,
+  "speedup_vs_serial_partition": 1.2476678568335626
+}

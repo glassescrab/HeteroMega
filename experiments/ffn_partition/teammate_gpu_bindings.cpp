@@ -49,6 +49,25 @@ void forward(torch::Tensor output, const torch::Tensor &input,
         weights, input, buffers, output,
         reinterpret_cast<hipStream_t>(static_cast<uintptr_t>(stream_handle)));
 }
+
+torch::Tensor linear(torch::Tensor out, const torch::Tensor &in,
+                     const torch::Tensor &packed, int64_t k, int64_t n,
+                     int64_t packed_k, int64_t packed_n, uint64_t stream_handle) {
+    heteromega::LinearOptions opt;
+    opt.packed_k = packed_k;
+    opt.packed_n = packed_n;
+    heteromega::packed_linear(out, in, packed, k, n,
+                              reinterpret_cast<hipStream_t>(static_cast<uintptr_t>(stream_handle)), opt);
+    return out;
+}
+
+torch::Tensor silu_mul(torch::Tensor gate_up, torch::Tensor act, int64_t layout,
+                       uint64_t stream_handle) {
+    heteromega::silu_mul(gate_up, act,
+                         reinterpret_cast<hipStream_t>(static_cast<uintptr_t>(stream_handle)),
+                         static_cast<heteromega::GateUpLayout>(layout));
+    return act;
+}
 } // namespace
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
@@ -56,4 +75,8 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
           "Gather original packed tiles into the teammate interleaved GPU FFN slice");
     m.def("forward", &forward, pybind11::call_guard<pybind11::gil_scoped_release>(),
           "Enqueue teammate merged gate/up, fused SiLU*up and down projection");
+    m.def("linear", &linear, pybind11::call_guard<pybind11::gil_scoped_release>(),
+          "Enqueue one packed W4A16 linear projection");
+    m.def("silu_mul", &silu_mul, pybind11::call_guard<pybind11::gil_scoped_release>(),
+          "Enqueue fused SiLU*up for an interleaved gate/up buffer");
 }

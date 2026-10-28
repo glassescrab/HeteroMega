@@ -1,0 +1,21 @@
+{
+  "base_commit": "bc96549",
+  "variant": "role_specialized_split_z_rejected",
+  "files": {
+    "npu/ffn/w4a16_merged_gate_up.py": "bb9617d41afe1cd5f6075fae68e00f55ccb3233e9029beba2fac41640f2c72ed",
+    "npu/ffn/upstream_output.py": "5d6b6494206e54e541e6ad6c0f11ced617ddcccce8d260a86afbbdba255405d7",
+    "experiments/ffn_partition/merged_npu.py": "04e58dea5adffe3a1d1ca505384c8f64bd293649c0ec3a3b78e7b2b0e3892091",
+    "experiments/ffn_partition/torch_gpu.py": "dee5dbc0c039e1c2abc5dad731f2a6aaeee551e2895a6f7963514be2159c4b92",
+    "experiments/ffn_partition/run_split_z.py": "e07db21a876b4a69a224554256351344c4cbcd4ebd5cde10f297508895d02868",
+    "experiments/ffn_partition/teammate_gpu_bindings.cpp": "864b358a8cf89c253b02a66e7f30137c3a329c223bdccffbfae1c027046e66f5",
+    "docs/runs/2026-10-28-split-z/README.md": "f13373658f7c1a675394f273ba0310337ec2ada6195237557c75438479b44e41",
+    "docs/runs/2026-10-28-split-z/audit.py": "d7dd4513e3f79d39e3e9863a2f59c18bb118ac0294dc79857fe50eaf405fdf86",
+    "docs/progress.md": "468c0530a6e1da37288b5fef40df4762806e3389b27a61cacd510f683c01659d",
+    "agent.md": "f45722807a530a061d75e555df980857a794b1d7e4622ecd8e3f5cee8b3e1064"
+  },
+  "evidence": {
+    "torch_bf16_p8192.json": "b1d9a1baa71b89542d97474dc65bd35c5990599014821dfdbbe2f4bd657d1330",
+    "packed_p8192.json": "213844ab0593b10ea570cfe8a945c94d70f64704402c286de988e533c6e9adad",
+    "merged_p6400_reference.json": "f484b689bfc51a2c501deb5d5fb26c038c10d4c15a7646c54ccf4c007abe81a2"
+  }
+}

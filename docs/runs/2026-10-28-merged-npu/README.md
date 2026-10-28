@@ -139,4 +139,6 @@ comparison, with `--mode latency --npu-rows 256 --accuracy-policy report`.
 - GPU-side follow-up experiments are in
   [2026-10-28-gpu-suffix](../2026-10-28-gpu-suffix/README.md): GEMM autotune
   selects the existing generic kernel, and a pre-dequantized PyTorch BF16 suffix
-  is faster in isolation but slower under NPU concurrency.
+  is faster in isolation but slower under NPU concurrency. The follow-up
+  role-specialized split-Z prototype is also rejected (19.191/21.588 ms versus
+  13.867 ms); see [the split-Z report](../2026-10-28-split-z/README.md).

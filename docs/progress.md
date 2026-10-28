@@ -43,6 +43,13 @@ concurrent complete FFN (14.805 versus 13.867 ms): its 4x larger BF16 weight
 traffic contends with the NPU. The packed W4A16 teammate suffix remains selected.
 The next role specialization is NPU gate/up plus GPU full down with an external
 Z buffer; the gate/up planner's P<=8192 local-N cap constrains that split.
+The role-specialized split-Z follow-up was implemented and rejected: P8192 NPU
+gate/up-only plus GPU full down measured 19.191 ms (PyTorch BF16) and 21.588 ms
+(packed W4A16) concurrent, versus 13.867 ms for the merged P6400 channel split.
+Both split outputs pass the original tolerance, but the GPU full down costs more
+than the NPU down it removes. See
+[docs/runs/2026-10-28-split-z](runs/2026-10-28-split-z/README.md).
+
 See [docs/runs/2026-10-28-gpu-suffix](runs/2026-10-28-gpu-suffix/README.md).
 
 Next: add a DMA-BUF/zero-copy output to the merged kernel to remove the remaining

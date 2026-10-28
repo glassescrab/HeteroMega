@@ -24,7 +24,11 @@ gain); a pre-dequantized PyTorch BF16 suffix was faster serialized but slower
 concurrent (14.805 versus 13.867 ms) because its 4x weight traffic contends with
 the NPU. See `docs/runs/2026-10-28-gpu-suffix/`. The next role specialization is
 NPU gate/up + GPU full down with an external Z buffer; the gate/up planner's
-P<=8192 local-N cap constrains it.
+P<=8192 local-N cap constrains it. The split-Z prototype was then rejected:
+NPU gate/up-only P8192 + GPU full down measured 19.191/21.588 ms (torch BF16 /
+packed) versus 13.867 ms merged P6400; both split outputs pass tolerance, but the
+GPU full down costs more than the NPU down it removes. See
+`docs/runs/2026-10-28-split-z/`.
 
 Read `docs/runs/2026-10-28-merged-npu/README.md`, the four 100-sample job JSONs
 and `p4352_exact_compare.json`. Cloud root
