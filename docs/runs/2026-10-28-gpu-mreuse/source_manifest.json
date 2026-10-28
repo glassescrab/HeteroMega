@@ -2,12 +2,12 @@
   "base_commit": "259c69f",
   "variant": "gpu_packed_mreuse2_rejected",
   "files": {
-    "src/hipkernels/w4a16_gemm_packed.cu": "2734c01e96fe749f782201e5953c81e7c5d6ff6a4d916133e9e2260b3415e20d",
-    "experiments/ffn_partition/teammate_gpu.py": "bf8c1553b3cbe6038f28565f7bada0dc7c70664c96e77a427d12a19ae8714b53",
+    "src/hipkernels/w4a16_gemm_packed.cu": "a71b9d8fa57391bdfd7fed61eaba4c3d282307544f4688a8791589f06da0d4aa",
+    "experiments/ffn_partition/teammate_gpu.py": "f533fab36ae57ec51f0247f8942a50bc6d7974ffc16a10fbf8b57f22f2db16ce",
     "docs/runs/2026-10-28-gpu-mreuse/README.md": "218b5802053056786f649154b6f20810f29b9fb8e996a39e35ccaf62f06d39d4",
     "docs/runs/2026-10-28-gpu-mreuse/audit.py": "0bc8d0081f40b3ecb4cc9ed02f7c30e563a5c92b1647734058dfc76686130629",
-    "docs/progress.md": "8cbfd040550d41d7dff2c34659a494d1a84b7adaed8ef4be0c17da0c1b72b8f6",
-    "agent.md": "839e109808e62c47f7c820459a0d22cf0306cf9e6354f2e3e293ce418b19e4fd"
+    "docs/progress.md": "db09c40cfe70f0070fb7694ca6d3cb2bfa0886496ed16b0e46b88a653a887fa9",
+    "agent.md": "42b413ce7b89f72b41118c3f61b1f39c90d024f559fb1296484e72a3d74d08e7"
   },
   "evidence": {
     "mreuse2_p6400.json": "bf155b4c016c6d35026fbabe34ca49f4bffb15c2bed9ab2d26bb986578bd7d14",

@@ -377,7 +377,7 @@ using FragA = fragment<matrix_a, 16, 16, 16, bfloat16_t, row_major>;
 using FragB_Row = fragment<matrix_b, 16, 16, 16, bfloat16_t, row_major>;
 using FragC = fragment<accumulator, 16, 16, 16, float>;
 
-template <bool AlignedMN>
+template <bool AlignedMN, bool FUSE_ACT = false>
 __global__ void __launch_bounds__(256) w4a16_gemm_rocwmma_packed(
     bfloat16_t *__restrict__ output, const bfloat16_t *__restrict__ input,
     const uint8_t *__restrict__ packed_params, const int M, const int K,
@@ -546,31 +546,63 @@ __global__ void __launch_bounds__(256) w4a16_gemm_rocwmma_packed(
 
         int offset = tid * 8;
         if (offset < 2048) {
-            for (int slot = 0; slot < 4; ++slot) {
-                int w = base_w + slot;
-                int r_base = global_m_start + (w / 2) * 32;
-                int c_base = global_n_start + (w % 2) * 64;
-                const float *tile_ptr = &smem_F32[slot * 2048];
-                if constexpr (AlignedMN) {
+            if constexpr (FUSE_ACT) {
+                // gate/up are interleaved in 64-column groups: slots 2r and
+                // 2r+1 hold the gate/up halves of the same 32 rows. Round the
+                // accumulators to BF16 before SiLU to match silu_mul exactly.
+                const int act_N = N / 2;
+                for (int pair = 0; pair < 2; ++pair) {
+                    const int gate_slot = pair * 2;
+                    const int up_slot = gate_slot + 1;
+                    const int row_group = base_w / 2 + pair;
+                    const int r_base = global_m_start + row_group * 32;
+                    const float *gate_ptr = &smem_F32[gate_slot * 2048];
+                    const float *up_ptr = &smem_F32[up_slot * 2048];
                     for (int k = 0; k < 8; k += 2) {
                         int lr = (offset + k) / 64;
                         int lc = (offset + k) % 64;
                         int gr = r_base + lr;
-                        int gc = c_base + lc;
-                        float2 f2;
-                        f2.x = tile_ptr[lr * 64 + lc];
-                        f2.y = tile_ptr[lr * 64 + lc + 1];
-                        __bf16_2 bf2 = __float22bfloat162_rn(f2);
-                        *reinterpret_cast<__bf16_2 *>(&output[gr * N + gc]) = bf2;
+                        int gc = bx * 64 + lc;
+                        float g0 = bf16_to_float(float_to_bf16(gate_ptr[lr * 64 + lc]));
+                        float u0 = bf16_to_float(float_to_bf16(up_ptr[lr * 64 + lc]));
+                        float g1 = bf16_to_float(float_to_bf16(gate_ptr[lr * 64 + lc + 1]));
+                        float u1 = bf16_to_float(float_to_bf16(up_ptr[lr * 64 + lc + 1]));
+                        float o0 = g0 / (1.0f + __expf(-g0)) * u0;
+                        float o1 = g1 / (1.0f + __expf(-g1)) * u1;
+                        float2 of2;
+                        of2.x = o0;
+                        of2.y = o1;
+                        __bf16_2 obf = __float22bfloat162_rn(of2);
+                        *reinterpret_cast<__bf16_2 *>(&output[gr * act_N + gc]) = obf;
                     }
-                } else {
-                    for (int k = 0; k < 8; ++k) {
-                        int lr = (offset + k) / 64;
-                        int lc = (offset + k) % 64;
-                        int gr = r_base + lr;
-                        int gc = c_base + lc;
-                        if (gr < M && gc < N) {
-                            output[gr * N + gc] = float_to_bf16(tile_ptr[lr * 64 + lc]);
+                }
+            } else {
+                for (int slot = 0; slot < 4; ++slot) {
+                    int w = base_w + slot;
+                    int r_base = global_m_start + (w / 2) * 32;
+                    int c_base = global_n_start + (w % 2) * 64;
+                    const float *tile_ptr = &smem_F32[slot * 2048];
+                    if constexpr (AlignedMN) {
+                        for (int k = 0; k < 8; k += 2) {
+                            int lr = (offset + k) / 64;
+                            int lc = (offset + k) % 64;
+                            int gr = r_base + lr;
+                            int gc = c_base + lc;
+                            float2 f2;
+                            f2.x = tile_ptr[lr * 64 + lc];
+                            f2.y = tile_ptr[lr * 64 + lc + 1];
+                            __bf16_2 bf2 = __float22bfloat162_rn(f2);
+                            *reinterpret_cast<__bf16_2 *>(&output[gr * N + gc]) = bf2;
+                        }
+                    } else {
+                        for (int k = 0; k < 8; ++k) {
+                            int lr = (offset + k) / 64;
+                            int lc = (offset + k) % 64;
+                            int gr = r_base + lr;
+                            int gc = c_base + lc;
+                            if (gr < M && gc < N) {
+                                output[gr * N + gc] = float_to_bf16(tile_ptr[lr * 64 + lc]);
+                            }
                         }
                     }
                 }
@@ -1173,7 +1205,7 @@ void w4a16_gemm_fused_packed(torch::Tensor &output, const torch::Tensor &input,
 void w4a16_gemm_fused_packed_tiles(torch::Tensor &output, const torch::Tensor &input,
                                    const torch::Tensor &packed_params, int64_t in_features,
                                    int64_t out_features, int64_t packed_tiles_k, int64_t packed_tiles_n,
-                                   hipStream_t stream) {
+                                   hipStream_t stream, bool fuse_activation) {
     const int M = input.numel() / in_features;
     const int K = in_features;
     const int N = out_features;
@@ -1191,6 +1223,7 @@ void w4a16_gemm_fused_packed_tiles(torch::Tensor &output, const torch::Tensor &i
     if (!cache_config_set) {
         (void)hipFuncSetCacheConfig((const void *)w4a16_gemm_rocwmma_packed<true>, hipFuncCachePreferShared);
         (void)hipFuncSetCacheConfig((const void *)w4a16_gemm_rocwmma_packed<false>, hipFuncCachePreferShared);
+        (void)hipFuncSetCacheConfig((const void *)w4a16_gemm_rocwmma_packed<true, true>, hipFuncCachePreferShared);
         (void)hipFuncSetCacheConfig((const void *)w4a16_gemm_rocwmma_packed_k2048<true>, hipFuncCachePreferL1);
         (void)hipFuncSetCacheConfig((const void *)w4a16_gemm_rocwmma_packed_k2048<false>, hipFuncCachePreferL1);
         (void)hipFuncSetCacheConfig((const void *)w4a16_gemm_rocwmma_packed_n64<true>, hipFuncCachePreferShared);
@@ -1199,6 +1232,19 @@ void w4a16_gemm_fused_packed_tiles(torch::Tensor &output, const torch::Tensor &i
     }
 
     const bool aligned_mn = ((M & 127) == 0) && ((N & 127) == 0);
+    if (fuse_activation) {
+        if (!aligned_mn || (N & 127) || (M & 127))
+            throw std::runtime_error("w4a16_gemm_fused_packed_tiles: fused activation requires aligned M/N");
+        dim3 block(256);
+        dim3 grid(N / 128, M / 128);
+        hipLaunchKernelGGL((w4a16_gemm_rocwmma_packed<true, true>), grid, block, 0, stream,
+                           (bfloat16_t *)output.data_ptr(), (const bfloat16_t *)input.data_ptr(),
+                           packed_params.data_ptr<uint8_t>(), M, K, N, num_tiles_k, num_tiles_n);
+        const hipError_t err = hipGetLastError();
+        if (err != hipSuccess)
+            throw std::runtime_error(std::string("HIP error: ") + hipGetErrorString(err));
+        return;
+    }
     auto launch_generic128 = [&]() {
         dim3 block(256);
         if (aligned_mn) {

@@ -52,10 +52,12 @@ void forward(torch::Tensor output, const torch::Tensor &input,
 
 torch::Tensor linear(torch::Tensor out, const torch::Tensor &in,
                      const torch::Tensor &packed, int64_t k, int64_t n,
-                     int64_t packed_k, int64_t packed_n, uint64_t stream_handle) {
+                     int64_t packed_k, int64_t packed_n, uint64_t stream_handle,
+                     bool fuse_activation) {
     heteromega::LinearOptions opt;
     opt.packed_k = packed_k;
     opt.packed_n = packed_n;
+    opt.fuse_activation = fuse_activation;
     heteromega::packed_linear(out, in, packed, k, n,
                               reinterpret_cast<hipStream_t>(static_cast<uintptr_t>(stream_handle)), opt);
     return out;
@@ -76,6 +78,10 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
     m.def("forward", &forward, pybind11::call_guard<pybind11::gil_scoped_release>(),
           "Enqueue teammate merged gate/up, fused SiLU*up and down projection");
     m.def("linear", &linear, pybind11::call_guard<pybind11::gil_scoped_release>(),
+          pybind11::arg("out"), pybind11::arg("in"), pybind11::arg("packed"),
+          pybind11::arg("k"), pybind11::arg("n"), pybind11::arg("packed_k"),
+          pybind11::arg("packed_n"), pybind11::arg("stream_handle"),
+          pybind11::arg("fuse_activation") = false,
           "Enqueue one packed W4A16 linear projection");
     m.def("silu_mul", &silu_mul, pybind11::call_guard<pybind11::gil_scoped_release>(),
           "Enqueue fused SiLU*up for an interleaved gate/up buffer");

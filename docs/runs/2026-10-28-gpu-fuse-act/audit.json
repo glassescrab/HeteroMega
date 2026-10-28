@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "checks": [
+    "11 source and 3 evidence hashes",
+    "fused epilogue is bit-exact to silu_mul",
+    "fused epilogue is slower concurrent and serialized",
+    "fusion is opt-in and generic default remains"
+  ],
+  "generic_ms": {
+    "concurrent": 13866.815,
+    "serial": 26390.695
+  },
+  "fused_ms": {
+    "concurrent": 14870.336,
+    "serial": 26738.189
+  },
+  "debug": {
+    "exact": true,
+    "mismatch_count": 0
+  },
+  "scope": "isolated synthetic FFN; fused GPU epilogue experiment; not model accuracy"
+}

@@ -60,7 +60,9 @@ gate/up-only + GPU full down measured 19.191 ms (torch BF16) or 21.588 ms
 (packed) versus 13.867 ms for the merged P6400 split. See
 [2026-10-28-split-z](../2026-10-28-split-z/README.md). A packed-GEMM M-reuse-2
 kernel was also correct but slower (15.055 versus 13.867 ms); see
-[2026-10-28-gpu-mreuse](../2026-10-28-gpu-mreuse/README.md).
+[2026-10-28-gpu-mreuse](../2026-10-28-gpu-mreuse/README.md). A fused gate/up
+epilogue activation was bit-exact but slower (14.870 versus 13.867 ms); see
+[2026-10-28-gpu-fuse-act](../2026-10-28-gpu-fuse-act/README.md).
 
 The present P6400 channel split therefore remains the selected configuration.
 No production default was changed: autotune is opt-in

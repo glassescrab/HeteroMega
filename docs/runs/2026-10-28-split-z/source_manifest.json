@@ -7,11 +7,15 @@
     "experiments/ffn_partition/merged_npu.py": "04e58dea5adffe3a1d1ca505384c8f64bd293649c0ec3a3b78e7b2b0e3892091",
     "experiments/ffn_partition/torch_gpu.py": "dee5dbc0c039e1c2abc5dad731f2a6aaeee551e2895a6f7963514be2159c4b92",
     "experiments/ffn_partition/run_split_z.py": "e07db21a876b4a69a224554256351344c4cbcd4ebd5cde10f297508895d02868",
-    "experiments/ffn_partition/teammate_gpu_bindings.cpp": "864b358a8cf89c253b02a66e7f30137c3a329c223bdccffbfae1c027046e66f5",
+    "experiments/ffn_partition/teammate_gpu_bindings.cpp": "01b7ca3eb88869f9822aca34f97d744527fbd66873cd6f2e874326e420261440",
+    "kernels/gpu/include/heteromega/gpu_ffn.hpp": "8f8f5004379dc9e77755a53b3a55be850a19ca923769fc2795cb1762a3b63f71",
+    "kernels/gpu/src/gpu_ffn.cpp": "26607a94ef527fa174c0f29652fe23eaeaa9bfdc135f5a7109eabec79df0d00f",
+    "include/hipkernels/w4a16_gemm_packed.hpp": "a98cbbb956bcca65ba4b10000a0f4faeb624b63be490ad0d17aa5264beabac9e",
+    "src/hipkernels/w4a16_gemm_packed.cu": "a71b9d8fa57391bdfd7fed61eaba4c3d282307544f4688a8791589f06da0d4aa",
     "docs/runs/2026-10-28-split-z/README.md": "f13373658f7c1a675394f273ba0310337ec2ada6195237557c75438479b44e41",
     "docs/runs/2026-10-28-split-z/audit.py": "d7dd4513e3f79d39e3e9863a2f59c18bb118ac0294dc79857fe50eaf405fdf86",
-    "docs/progress.md": "8cbfd040550d41d7dff2c34659a494d1a84b7adaed8ef4be0c17da0c1b72b8f6",
-    "agent.md": "839e109808e62c47f7c820459a0d22cf0306cf9e6354f2e3e293ce418b19e4fd"
+    "docs/progress.md": "db09c40cfe70f0070fb7694ca6d3cb2bfa0886496ed16b0e46b88a653a887fa9",
+    "agent.md": "42b413ce7b89f72b41118c3f61b1f39c90d024f559fb1296484e72a3d74d08e7"
   },
   "evidence": {
     "torch_bf16_p8192.json": "b1d9a1baa71b89542d97474dc65bd35c5990599014821dfdbbe2f4bd657d1330",

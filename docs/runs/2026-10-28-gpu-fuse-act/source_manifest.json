@@ -1,0 +1,22 @@
+{
+  "base_commit": "65722f9",
+  "variant": "gpu_fused_epilogue_activation_rejected",
+  "files": {
+    "docs/runs/2026-10-28-gpu-fuse-act/README.md": "f47c2b4b33ba2bf3c9730e468891be00e7dad2055d38bea659a3a7b59456a2fb",
+    "docs/runs/2026-10-28-gpu-fuse-act/audit.py": "212e913fd08fbed0a827d16b721e4befc241f2d0779b5ad095f1903db64c2f07",
+    "experiments/ffn_partition/debug_fused_gpu.py": "dc4a0fb39210259fe1028fe2b7275fb1e0d83a4c62df14f6e036355be04083db",
+    "docs/progress.md": "db09c40cfe70f0070fb7694ca6d3cb2bfa0886496ed16b0e46b88a653a887fa9",
+    "agent.md": "42b413ce7b89f72b41118c3f61b1f39c90d024f559fb1296484e72a3d74d08e7",
+    "src/hipkernels/w4a16_gemm_packed.cu": "a71b9d8fa57391bdfd7fed61eaba4c3d282307544f4688a8791589f06da0d4aa",
+    "include/hipkernels/w4a16_gemm_packed.hpp": "a98cbbb956bcca65ba4b10000a0f4faeb624b63be490ad0d17aa5264beabac9e",
+    "kernels/gpu/include/heteromega/gpu_ffn.hpp": "8f8f5004379dc9e77755a53b3a55be850a19ca923769fc2795cb1762a3b63f71",
+    "kernels/gpu/src/gpu_ffn.cpp": "26607a94ef527fa174c0f29652fe23eaeaa9bfdc135f5a7109eabec79df0d00f",
+    "experiments/ffn_partition/teammate_gpu.py": "f533fab36ae57ec51f0247f8942a50bc6d7974ffc16a10fbf8b57f22f2db16ce",
+    "experiments/ffn_partition/teammate_gpu_bindings.cpp": "01b7ca3eb88869f9822aca34f97d744527fbd66873cd6f2e874326e420261440"
+  },
+  "evidence": {
+    "fused_p6400.json": "90c448329d4ffc553dfecda20f028ab7d04dfcd01d1944f13e5a1d623b5aef2b",
+    "debug_epilogue.json": "829ac6244fbb7b4649568cbd036458a48b773f2a35311329087d4d5ab8f67982",
+    "generic_p6400_reference.json": "f484b689bfc51a2c501deb5d5fb26c038c10d4c15a7646c54ccf4c007abe81a2"
+  }
+}

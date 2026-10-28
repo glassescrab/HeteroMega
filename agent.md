@@ -31,7 +31,10 @@ GPU full down costs more than the NPU down it removes. See
 `docs/runs/2026-10-28-split-z/`. A packed-GEMM M-reuse-2 kernel (256x128,
 512 threads) was also correct but slower: 15.055 ms concurrent versus 13.867
 for the generic kernel; occupancy loss outweighs halved dequantization. See
-`docs/runs/2026-10-28-gpu-mreuse/`.
+`docs/runs/2026-10-28-gpu-mreuse/`. A fused gate/up
+epilogue activation was also bit-exact but slower (14.870 versus 13.867 ms);
+the per-block epilogue serialized work the standalone silu_mul did efficiently.
+See `docs/runs/2026-10-28-gpu-fuse-act/`.
 
 Read `docs/runs/2026-10-28-merged-npu/README.md`, the four 100-sample job JSONs
 and `p4352_exact_compare.json`. Cloud root

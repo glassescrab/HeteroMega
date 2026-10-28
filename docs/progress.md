@@ -57,6 +57,12 @@ for the generic 128x128 256-thread kernel. The occupancy loss outweighs the
 halved dequantization. See
 [docs/runs/2026-10-28-gpu-mreuse](runs/2026-10-28-gpu-mreuse/README.md).
 
+A fused gate/up epilogue that writes SiLU*up directly is bit-exact to the
+separate `silu_mul` path but slower: 14.870 ms concurrent and 26.738 ms
+serialized versus 13.867/26.391. The per-block epilogue serializes work the
+standalone vectorized activation kernel did more efficiently. See
+[docs/runs/2026-10-28-gpu-fuse-act](runs/2026-10-28-gpu-fuse-act/README.md).
+
 See [docs/runs/2026-10-28-gpu-suffix](runs/2026-10-28-gpu-suffix/README.md).
 
 Next: add a DMA-BUF/zero-copy output to the merged kernel to remove the remaining

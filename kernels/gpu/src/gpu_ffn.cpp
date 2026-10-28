@@ -2,6 +2,10 @@
 
 #include "hipkernels/w4a16_gemm_packed.hpp"
 
+#ifndef HETEROMEGA_GPU_FUSE_ACT
+#define HETEROMEGA_GPU_FUSE_ACT 0
+#endif
+
 namespace heteromega {
 namespace {
 
@@ -27,8 +31,11 @@ void packed_linear(torch::Tensor &out, const torch::Tensor &in, const torch::Ten
     TORCH_CHECK(m > 0, "packed_linear: M must be > 0");
     TORCH_CHECK(k % kTileK == 0 && n % kTileN == 0, "packed_linear: k must be a multiple of 128 and n of 64");
     TORCH_CHECK(m == 1 || k <= 1024 || n % 128 == 0, "packed_linear: the GEMM needs n % 128 == 0 when k > 1024");
-    TORCH_CHECK(out.dim() == 2 && out.size(0) == in.size(0) && out.size(1) == n && out.is_contiguous(),
-                "packed_linear: output must be contiguous [M, ", n, "]");
+    const int64_t out_n = opt.fuse_activation ? n / 2 : n;
+    TORCH_CHECK(!opt.fuse_activation || (m > 1 && (n & 1) == 0),
+                "packed_linear: fused activation requires a GEMM and an even gate/up width");
+    TORCH_CHECK(out.dim() == 2 && out.size(0) == in.size(0) && out.size(1) == out_n && out.is_contiguous(),
+                "packed_linear: output must be contiguous [M, ", out_n, "]");
     TORCH_CHECK(in.scalar_type() == torch::kBFloat16 && out.scalar_type() == torch::kBFloat16, "packed_linear: expected bf16");
     TORCH_CHECK(k <= pk && n <= pn && pk % kTileK == 0 && pn % kTileN == 0, "packed_linear: packed matrix [", pk, ", ", pn,
                 "] does not contain [", k, ", ", n, "]");
@@ -43,7 +50,8 @@ void packed_linear(torch::Tensor &out, const torch::Tensor &in, const torch::Ten
     } else {
         TORCH_CHECK(storage_has_rows(in, padded_rows(m)), "packed_linear: input storage must hold ", padded_rows(m),
                     " rows for M = ", m, " (the GEMM reads whole 128-row tiles)");
-        hipkernels::w4a16_gemm_fused_packed_tiles(out, in, packed, k, n, pk / kTileK, pn / kTileN, stream);
+        hipkernels::w4a16_gemm_fused_packed_tiles(out, in, packed, k, n,
+            pk / kTileK, pn / kTileN, stream, opt.fuse_activation);
     }
 }
 
@@ -79,8 +87,13 @@ void gpu_ffn_slice_forward(const FfnSliceWeights &w, const torch::Tensor &x_norm
     LinearOptions gate_up_opt, down_opt;
     gate_up_opt.packed_n = 2 * stored;
     down_opt.packed_k = stored;
+#if HETEROMEGA_GPU_FUSE_ACT
+    gate_up_opt.fuse_activation = true;
+    packed_linear(act, x, w.gate_up, h, 2 * n, stream, gate_up_opt);
+#else
     packed_linear(gate_up, x, w.gate_up, h, 2 * n, stream, gate_up_opt);
     silu_mul(gate_up, act, stream, w.layout);
+#endif
     packed_linear(y, act, w.down, n, h, stream, down_opt);
 }
 

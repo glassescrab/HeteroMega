@@ -135,6 +135,7 @@ struct LinearOptions {
     int64_t packed_n = 0; // columns of the whole packed matrix; 0 means n
     GemvKernel gemv = GemvKernel::kHeteroMega;
     int gemv_split_k = 0; // see gemv_w4a16
+    bool fuse_activation = false; // gate/up only: write SiLU(gate)*up [M,n/2]
 };
 
 // Packed matmul: out[M, n] = in[M, k] @ W[:k, :n]. GEMV for M == 1, GEMM otherwise.

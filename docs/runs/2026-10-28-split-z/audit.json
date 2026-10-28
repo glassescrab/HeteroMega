@@ -1,7 +1,7 @@
 {
   "passed": true,
   "checks": [
-    "10 source and 3 evidence hashes",
+    "14 source and 3 evidence hashes",
     "both split variants are slower than P6400 and pass tolerance"
   ],
   "merged_p6400_ms": 13866.815,
