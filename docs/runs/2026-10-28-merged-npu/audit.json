@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "checks": [
+    "25 source and 13 evidence hashes",
+    "job config/accepted deviations/fixtures",
+    "two reversed confirmation blocks favor merged by >8% with matched controls",
+    "P4352 merged output bit-exact to two-launch",
+    "P sweep minimum at P6400"
+  ],
+  "medians": {
+    "native_b0": 15851.461,
+    "merged_b0": 14273.801,
+    "merged_b1": 14584.5305,
+    "native_b1": 15874.341
+  },
+  "ratios": {
+    "block0": 1.1105283729260342,
+    "block1": 1.0884368886609
+  },
+  "controls": {
+    "block0": 0.992749200581418,
+    "block1": 0.9965126893858958
+  },
+  "sweep_ms": {
+    "4352": 15569.431,
+    "6144": 14184.088,
+    "6400": 13866.815,
+    "6656": 14348.476
+  },
+  "scope": "synthetic complete prefill FFN; report-policy numerical deviations; not model accuracy"
+}

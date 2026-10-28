@@ -1,5 +1,41 @@
 # HeteroMega progress
 
+## 2026-10-28 — single-dispatch merged NPU FFN
+
+**Measured:** an experimental single-dispatch NPU graph now fuses gate/up+SiLU
+and down on the same 32 workers. With P6400 and the teammate GPU suffix, two
+reversed 100-sample confirmation blocks complete the synthetic M512/H4096/I14336
+FFN in **14.274 ms** and **14.585 ms**, versus faithful native HeteroMosaic
+**15.851 ms** and **15.874 ms**. The merged candidate is **9.95%/8.12%** faster.
+An earlier repeat measured 11.1%/12.5%; the retained confirmation uses corrected
+NPU-partial validation. Matched GPU controls are 22.331/22.275 ms versus native
+22.169/22.197 ms, so the candidate control is only 0.35–0.73% slower; the FFN
+advantage is not control drift.
+
+The merged graph keeps the same 32 workers (8 columns × 4 rows) for both
+phases, reuses the A/W ObjectFifos, uses row-major x/Z, and reuses one output
+join per column for Z in phase 1 and Y in phase 2. It is **one XRT launch**
+instead of two. The NPU branch is 12.47–12.72 ms at P6400; the GPU suffix is
+13.5–13.8 ms and remains the critical path. A five-sample sweep measured
+15.569/14.184/13.867/14.348 ms at P4352/6144/6400/6656; P6400 is selected.
+
+At P4352 the merged output is **bit-exact** to the existing two-launch candidate
+on both alternating inputs. At P6400 the complete-output and partial checks are
+accepted under explicit report policy; six validation checks fall outside the
+original tolerance. Native has 132 outside-tolerance checks per 100-sample job.
+This remains an isolated synthetic FFN result, not whole-model prefill/TTFT,
+attention interference or pretrained accuracy.
+
+The merged graph is an experimental sibling of the production two-launch path;
+`npu/ffn/w4a16_upstream.py` is unchanged. Full source, job JSONs, exact-compare
+records, sweep data and reproduction are in
+[docs/runs/2026-10-28-merged-npu](runs/2026-10-28-merged-npu/README.md). Branch:
+`codex/npu-merged-kernel-parallel`. Changes are committed only; no push/PR.
+
+Next: add a DMA-BUF/zero-copy output to the merged kernel to remove the remaining
+NPU-output H2D copy, then retune P around 6400. Deeper on-chip Z residency and
+down-weight prefetch remain unproven follow-ups.
+
 ## 2026-10-28 — DMA-BUF output P4352 beats faithful native FFN
 
 **Measured:** the selected HeteroMega configuration completes the synthetic

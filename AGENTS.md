@@ -2,13 +2,15 @@
 
 ## Start here
 
-- Read the **2026-10-28 DMA-BUF output measurement at the top of `agent.md`
-  first**, plus `docs/runs/2026-10-27-dmabuf-output/README.md` and its audit.
-  The selected P4352 configuration now beats the faithful native FFN by
-  0.90%/1.05% in two reversed 100-sample blocks, with report-policy numerical
-  deviations retained. Then read the older 2026-10-22 optimization/PR update,
-  `npu/ffn/BFP16_ADAPTATION.md`, the original user-provided FFN-prefill plan
-  and separately labeled review recommendations.
+- Read the **latest 2026-10-28 merged-NPU exploration at the top of
+  `agent.md` first**, plus `docs/runs/2026-10-28-merged-npu/README.md`. The
+  experimental single-dispatch P6400 graph measures 14.274/14.585 ms versus
+  native 15.851/15.874 ms in reversed 100-sample confirmation blocks
+  (9.95%/8.12% faster; an earlier repeat measured 11.1%/12.5%),
+  with report-policy numerical deviations retained and bit-exact parity to the
+  two-launch candidate. Then read the earlier DMA-BUF output result in
+  `docs/runs/2026-10-27-dmabuf-output/`, the 2026-10-22 optimization/PR update,
+  `npu/ffn/BFP16_ADAPTATION.md`, and the original FFN-prefill plan.
 - Read `docs/project-plan.md` for the baseline architecture and build/run notes;
   its earlier broad research scope and milestones are historical.
 - Read `docs/progress.md` for the latest verified state and open questions.

@@ -1,5 +1,34 @@
 # HeteroMega agent continuation guide
 
+## Latest exploration — 2026-10-28: single-dispatch merged NPU FFN
+
+A new branch, `codex/npu-merged-kernel-parallel`, fuses gate/up+SiLU and down
+into one NPU dispatch on the same 32 workers. It reuses the A/W FIFOs, uses
+row-major x/Z, and reuses one output join per column for Z and Y. **Measured**
+100-sample reversed confirmation blocks at P6400: **14.274/14.585 ms** versus
+faithful native **15.851/15.874 ms**, a **9.95%/8.12%** win. An earlier repeat
+measured 11.1%/12.5%; the retained confirmation uses corrected NPU-partial
+validation. Matched GPU controls differ by only 0.35–0.73% (candidate slower),
+so the result is not control drift. The NPU branch is 12.47–12.72 ms; the GPU
+suffix is 13.5–13.8 ms and remains critical.
+
+The merged output is **bit-exact** to the two-launch candidate at P4352 on both
+inputs. At P6400 all complete-output/partial checks are accepted under report
+policy; six validation checks are outside original tolerance. Native has 132
+outside per 100-sample job. The P4352/6144/6400/6656 sweep was
+15.569/14.184/13.867/14.348 ms; P6400 is selected. This is an isolated synthetic
+FFN result, not model prefill/TTFT, attention interference or accuracy.
+
+Read `docs/runs/2026-10-28-merged-npu/README.md`, the four 100-sample job JSONs
+and `p4352_exact_compare.json`. Cloud root
+`/notebooks/HeteroMega-direct-output-20261027`; new files:
+`npu/ffn/w4a16_merged_upstream.py`,
+`experiments/ffn_partition/merged_npu.py`,
+`experiments/ffn_partition/run_merged_partition.py`. The production two-launch
+graph is unchanged. **Next:** add DMA-BUF output to the merged kernel to remove
+the H2D copy, then retune P around 6400; on-chip Z residency/down-weight prefetch
+are future work. Committed only; no push/PR.
+
 ## Latest measurement — 2026-10-28: DMA-BUF output P4352 beats native FFN
 
 The user asked to continue the optimization and beat original HeteroMosaic. The
