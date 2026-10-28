@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "checks": [
+    "6 source and 2 evidence hashes",
+    "M-reuse 2 is slower concurrent and serialized",
+    "M-reuse is opt-in and generic default remains"
+  ],
+  "generic_ms": {
+    "concurrent": 13866.815,
+    "serial": 26390.695
+  },
+  "mreuse2_ms": {
+    "concurrent": 15054.912,
+    "serial": 27196.591
+  },
+  "controls_ms": {
+    "generic": 22457.829,
+    "mreuse2": 22306.978
+  },
+  "scope": "isolated synthetic FFN; packed GPU kernel experiment; not model accuracy"
+}

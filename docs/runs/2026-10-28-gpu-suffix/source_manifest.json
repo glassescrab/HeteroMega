@@ -2,17 +2,18 @@
   "base_commit": "cc5b9ac",
   "variant": "gpu_suffix_autotune_torch_bf16_negative",
   "files": {
-    "experiments/ffn_partition/teammate_gpu.py": "308eb21be895f4773f7c75326fd23d5afc4ebde79411fbef20010a3e97aaa3cb",
+    "experiments/ffn_partition/teammate_gpu.py": "bf8c1553b3cbe6038f28565f7bada0dc7c70664c96e77a427d12a19ae8714b53",
     "experiments/ffn_partition/teammate_gpu_bindings.cpp": "864b358a8cf89c253b02a66e7f30137c3a329c223bdccffbfae1c027046e66f5",
     "experiments/ffn_partition/torch_gpu.py": "dee5dbc0c039e1c2abc5dad731f2a6aaeee551e2895a6f7963514be2159c4b92",
     "experiments/ffn_partition/run_merged_partition.py": "0761b38bf6b683fdbc04cb9e7162d13953e010bdde78b591e0f173eb9562c775",
-    "docs/runs/2026-10-28-gpu-suffix/README.md": "14ae62cb6485a6f758469b30f002ac5a312f1f12577ca0169905b6c2b8e31ea3",
+    "src/hipkernels/w4a16_gemm_packed.cu": "2734c01e96fe749f782201e5953c81e7c5d6ff6a4d916133e9e2260b3415e20d",
+    "docs/runs/2026-10-28-gpu-suffix/README.md": "a4f0d9dcdedf56fe49c57d56f8f09b3b188e1bc5a49aedd336ad65a7eb790ee4",
     "docs/runs/2026-10-28-gpu-suffix/audit.py": "e8ac5eee47a5e572ce7f268f4e6aa5782f31573e410148fb3e44e5f0f558c34b",
-    "docs/progress.md": "468c0530a6e1da37288b5fef40df4762806e3389b27a61cacd510f683c01659d",
-    "agent.md": "f45722807a530a061d75e555df980857a794b1d7e4622ecd8e3f5cee8b3e1064"
+    "docs/progress.md": "8cbfd040550d41d7dff2c34659a494d1a84b7adaed8ef4be0c17da0c1b72b8f6",
+    "agent.md": "839e109808e62c47f7c820459a0d22cf0306cf9e6354f2e3e293ce418b19e4fd"
   },
   "evidence": {
-    "README.md": "14ae62cb6485a6f758469b30f002ac5a312f1f12577ca0169905b6c2b8e31ea3",
+    "README.md": "a4f0d9dcdedf56fe49c57d56f8f09b3b188e1bc5a49aedd336ad65a7eb790ee4",
     "__pycache__/audit.cpython-314.pyc": "8af9c220c779e2ca3e9744af81f07f2e2bcd7a5f5551b25e93b21e488cb55626",
     "audit.py": "e8ac5eee47a5e572ce7f268f4e6aa5782f31573e410148fb3e44e5f0f558c34b",
     "autotune.log": "4ed10959f3237d24ed93e55f421f70dc9b162979fbc991dbf92e1a759d73a8ca",

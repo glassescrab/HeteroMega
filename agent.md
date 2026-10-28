@@ -28,7 +28,10 @@ P<=8192 local-N cap constrains it. The split-Z prototype was then rejected:
 NPU gate/up-only P8192 + GPU full down measured 19.191/21.588 ms (torch BF16 /
 packed) versus 13.867 ms merged P6400; both split outputs pass tolerance, but the
 GPU full down costs more than the NPU down it removes. See
-`docs/runs/2026-10-28-split-z/`.
+`docs/runs/2026-10-28-split-z/`. A packed-GEMM M-reuse-2 kernel (256x128,
+512 threads) was also correct but slower: 15.055 ms concurrent versus 13.867
+for the generic kernel; occupancy loss outweighs halved dequantization. See
+`docs/runs/2026-10-28-gpu-mreuse/`.
 
 Read `docs/runs/2026-10-28-merged-npu/README.md`, the four 100-sample job JSONs
 and `p4352_exact_compare.json`. Cloud root

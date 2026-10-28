@@ -10,8 +10,8 @@
     "experiments/ffn_partition/teammate_gpu_bindings.cpp": "864b358a8cf89c253b02a66e7f30137c3a329c223bdccffbfae1c027046e66f5",
     "docs/runs/2026-10-28-split-z/README.md": "f13373658f7c1a675394f273ba0310337ec2ada6195237557c75438479b44e41",
     "docs/runs/2026-10-28-split-z/audit.py": "d7dd4513e3f79d39e3e9863a2f59c18bb118ac0294dc79857fe50eaf405fdf86",
-    "docs/progress.md": "468c0530a6e1da37288b5fef40df4762806e3389b27a61cacd510f683c01659d",
-    "agent.md": "f45722807a530a061d75e555df980857a794b1d7e4622ecd8e3f5cee8b3e1064"
+    "docs/progress.md": "8cbfd040550d41d7dff2c34659a494d1a84b7adaed8ef4be0c17da0c1b72b8f6",
+    "agent.md": "839e109808e62c47f7c820459a0d22cf0306cf9e6354f2e3e293ce418b19e4fd"
   },
   "evidence": {
     "torch_bf16_p8192.json": "b1d9a1baa71b89542d97474dc65bd35c5990599014821dfdbbe2f4bd657d1330",

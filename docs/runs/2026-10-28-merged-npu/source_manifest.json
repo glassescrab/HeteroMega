@@ -3,8 +3,8 @@
   "variant": "single_dispatch_merged_npu_p6400",
   "files": {
     "AGENTS.md": "64320b11ce2f5f24bf86cbcf9ecca1295d198fee83719b8364ee7e933c883de2",
-    "agent.md": "f45722807a530a061d75e555df980857a794b1d7e4622ecd8e3f5cee8b3e1064",
-    "docs/progress.md": "468c0530a6e1da37288b5fef40df4762806e3389b27a61cacd510f683c01659d",
+    "agent.md": "839e109808e62c47f7c820459a0d22cf0306cf9e6354f2e3e293ce418b19e4fd",
+    "docs/progress.md": "8cbfd040550d41d7dff2c34659a494d1a84b7adaed8ef4be0c17da0c1b72b8f6",
     "npu/ffn/w4a16_merged_upstream.py": "be46415046003403d7baa074f2036226627f2d85c771674e09da35c220b365b0",
     "npu/ffn/w4a16_upstream.py": "84958fdbe660e9b7c21635e1b7cf6864d65d63032aef376e9d25c3211afefd51",
     "npu/ffn/w4a16_prefill_upstream.cc": "97e89c740464861182858917cdd113504327912e6dd791367f5c5473ec84f225",
@@ -24,8 +24,9 @@
     "experiments/ffn_partition/run_upstream_partition.py": "dcb4db975b261f617863a737cf797dcb56738690e5dd9b8a9cc643b199fd36c6",
     "experiments/ffn_partition/upstream_npu.py": "a5f14020d1810be131457cf1d65a73799fd7aec600c9297d16f33a24b8db6810",
     "experiments/ffn_partition/gpu_backend.py": "ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7",
-    "experiments/ffn_partition/teammate_gpu.py": "308eb21be895f4773f7c75326fd23d5afc4ebde79411fbef20010a3e97aaa3cb",
+    "experiments/ffn_partition/teammate_gpu.py": "bf8c1553b3cbe6038f28565f7bada0dc7c70664c96e77a427d12a19ae8714b53",
     "experiments/ffn_partition/torch_gpu.py": "dee5dbc0c039e1c2abc5dad731f2a6aaeee551e2895a6f7963514be2159c4b92",
+    "src/hipkernels/w4a16_gemm_packed.cu": "2734c01e96fe749f782201e5953c81e7c5d6ff6a4d916133e9e2260b3415e20d",
     "docs/runs/2026-10-28-merged-npu/README.md": "22ed869e6bb6558f06d4862cfa6531ad5deb4e20c48683affbb075552449919b",
     "docs/runs/2026-10-28-merged-npu/audit.py": "ba4ab8197c61fab866f34a6cb646f4429d163c5ff9a7501c07dafdfe6bb90640"
   },

@@ -50,6 +50,13 @@ Both split outputs pass the original tolerance, but the GPU full down costs more
 than the NPU down it removes. See
 [docs/runs/2026-10-28-split-z](runs/2026-10-28-split-z/README.md).
 
+A packed-GEMM M-reuse-2 kernel (256x128 output, 512 threads, one dequantized
+weight tile per two M tiles) was also implemented and rejected: it is correct
+but measures 15.055 ms concurrent and 27.197 ms serialized versus 13.867/26.391
+for the generic 128x128 256-thread kernel. The occupancy loss outweighs the
+halved dequantization. See
+[docs/runs/2026-10-28-gpu-mreuse](runs/2026-10-28-gpu-mreuse/README.md).
+
 See [docs/runs/2026-10-28-gpu-suffix](runs/2026-10-28-gpu-suffix/README.md).
 
 Next: add a DMA-BUF/zero-copy output to the merged kernel to remove the remaining

@@ -1,7 +1,7 @@
 {
   "passed": true,
   "checks": [
-    "26 source and 13 evidence hashes",
+    "27 source and 13 evidence hashes",
     "job config/accepted deviations/fixtures",
     "two reversed confirmation blocks favor merged by >8% with matched controls",
     "P4352 merged output bit-exact to two-launch",
