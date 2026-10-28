@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "checks": [
+    "53 source hashes and 40 evidence hashes",
+    "selected configuration",
+    "reports, power, fixtures, dispatches and uploads",
+    "both reversed blocks favor the candidate"
+  ],
+  "config": {
+    "native_root": "/notebooks/HeteroMosaic-baseline-20261027",
+    "native_library": "/notebooks/HeteroMosaic-baseline-20261027/build/py/unified_llm_w4a16/unified_llm_w4a16_hetero_libtorch.so",
+    "driver_include": "/notebooks/HeteroMosaic-baseline-20261027/libraries/xdna-driver-05-19-25/src/include/uapi/drm_local",
+    "native_accuracy_policy": "report",
+    "npu_channels": [
+      4352
+    ],
+    "iterations": 100,
+    "warmup": 5,
+    "native_diagnostic": false,
+    "shared_intermediate": true,
+    "mapped_npu_output": false,
+    "dmabuf_gpu_output": true,
+    "dmabuf_gpu_input": false,
+    "down_output_layout": "row_major",
+    "swiglu_reuse": 4,
+    "bfp16_native_layout": true,
+    "split_m32_a": true,
+    "preconvert_b": true,
+    "preconvert_a": false,
+    "gpu_variant": "teammate",
+    "diagnostic_iterations": 10,
+    "artifact_root": "/notebooks/HeteroMega-direct-output-20261027/artifacts",
+    "iron_python": null,
+    "no_build_candidate": true,
+    "output_dir": "/notebooks/HeteroMega-direct-output-20261027/results/dmabuf_p4352_100",
+    "xrt_smi": "/opt/xilinx/xrt/bin/xrt-smi",
+    "power_device": "0000:66:00.1",
+    "required_power_mode": "default",
+    "job_timeout": 7200,
+    "plan_only": false,
+    "keep_going": false,
+    "seed": 12832
+  },
+  "medians": {
+    "b0_native_ordinary": 16031.221000000001,
+    "b0_upstream_p4352_ordinary": 15887.194,
+    "b1_upstream_p4352_ordinary": 15779.5715,
+    "b1_native_ordinary": 15946.8875
+  },
+  "ratios": {
+    "0": 1.0090656034035967,
+    "1": 1.01060332975455
+  },
+  "scope": "synthetic complete prefill FFN only; not model prefill/TTFT or pretrained accuracy"
+}

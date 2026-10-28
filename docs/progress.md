@@ -1,5 +1,49 @@
 # HeteroMega progress
 
+## 2026-10-28 — DMA-BUF output P4352 beats faithful native FFN
+
+**Measured:** the selected HeteroMega configuration completes the synthetic
+M512/H4096/I14336 prefill FFN in **15.887 ms** and **15.780 ms** in two reversed
+100-sample blocks. Unchanged native HeteroMosaic completes the same blocks in
+**16.031 ms** and **15.947 ms**. Candidate medians are **0.90%** and **1.05%**
+lower; both blocks agree, but the distributions overlap and the margin is small.
+Matched GPU-only controls are 22.310/22.365 ms versus native's 22.248/22.258 ms,
+so the candidate's own GPU control is 0.28–0.48% slower. The complete-FFN
+advantage is therefore small and must not be generalized.
+
+The selected configuration is P4352 NPU channels, eight columns/32 workers,
+BFP16 native layout, split-M32 A prefetch, preconverted B, shared SwiGLU/down
+intermediate, row-major final output, imported HIP-owned output BO and the
+teammate three-kernel GPU suffix. The NPU branch median is about 14.39 ms; a
+separate GPU-event diagnostic measured about 15.03 ms for the GPU suffix. The
+GPU suffix is the critical path at this partition. Input staging (0.27 ms) and
+the output/boundary interval (0.44–0.48 ms) are host spans and are not additive
+with the NPU branch.
+
+Both implementations run under the explicit `report` numerical policy and retain
+failed original tolerances: native has 132 outside-tolerance checks per 100
+samples in block 0; each candidate job has 216. Structural, completion and
+buffer-integrity checks pass. This is an isolated synthetic complete-FFN latency
+comparison, not whole-model prefill/TTFT, attention interference, or pretrained
+accuracy. The candidate completes 436 NPU dispatches per job; native completes
+218. No host driver/kernel changes were made.
+
+Rejected variants are retained: the original GPU suffix was 16.026 ms at P4352
+(20 samples); preconvert-A was 19.988 ms (10 samples); a GPU-owned DMA-BUF input
+passed an H512/P512 smoke but was slower (6.530 versus 5.431 ms for output-only)
+because NPU input reads became slower. The 10-sample partition sweep gave 15.879
+ms at P4096, 15.432 ms at P4352, and 16.080 ms at P4608; the earlier 50-sample
+paired P4352 run was mixed, which the 100-sample confirmation resolves.
+
+[Full report, evidence, audit and reproduction](runs/2026-10-27-dmabuf-output/README.md).
+Cloud root: `/notebooks/HeteroMega-direct-output-20261027`. Branch:
+`codex/shared-buffer-ffn-optimization`. Changes are committed only; no push/PR.
+
+Next: integrate this FFN into the causal model schedule and measure attention
+interference before any whole-model prefill or TTFT claim. Further gains require
+shortening the GPU suffix or improving NPU efficiency enough to shift the
+partition balance; input DMA-BUF staging is not the bottleneck.
+
 ## 2026-10-27 — faithful native HeteroMosaic FFN comparison
 
 **Measured:** native HeteroMosaic completes M512/H4096/I14336 FFN in

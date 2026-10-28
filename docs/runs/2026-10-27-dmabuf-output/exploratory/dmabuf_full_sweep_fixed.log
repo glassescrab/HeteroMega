@@ -1,0 +1,73 @@
+Building/verifying direct-weight NPU artifacts: M=512 H=4096 P=4096
+Building/verifying direct-weight NPU artifacts: M=512 H=4096 P=4352
+Building/verifying direct-weight NPU artifacts: M=512 H=4096 P=4608
+/notebooks/HeteroMega-direct-output-20261027/include/hipkernels/w4a16_gemm_packed.hpp -> /notebooks/HeteroMega-direct-output-20261027/include/hipkernels/w4a16_gemm_packed.hpp [skipped, no changes]
+/notebooks/HeteroMega-direct-output-20261027/experiments/ffn_partition/gpu_bindings.cpp -> /notebooks/HeteroMega-direct-output-20261027/experiments/ffn_partition/gpu_bindings.cpp [skipped, no changes]
+/notebooks/HeteroMega-direct-output-20261027/src/hipkernels/w4a16_gemm_packed.cu -> /notebooks/HeteroMega-direct-output-20261027/src/hipkernels/w4a16_gemm_packed.hip [skipped, already hipified]
+/notebooks/HeteroMega-direct-output-20261027/include/hipkernels/w4a16_gemm_packed.hpp -> /notebooks/HeteroMega-direct-output-20261027/include/hipkernels/w4a16_gemm_packed.hpp [skipped, no changes]
+[92mSuccessfully preprocessed all matching files.[0m
+Total number of unsupported CUDA function calls: 0
+
+
+Total number of replaced kernel launches: 0
+[1/1] c++ w4a16_gemm_packed.cuda.o gpu_bindings.o -shared -L/opt/rocm-7.2.0/lib -Wl,-rpath,/opt/rocm-7.2.0/lib -lamdhip64 -L/notebooks/heteromega-ffn-venv/lib/python3.12/site-packages/torch/lib -lc10 -lc10_hip -ltorch_cpu -ltorch_hip -ltorch -ltorch_python -L/opt/rocm-7.2.0/lib -lamdhip64 -o heteromega_ffn_gpu_f100a2d5ff339675.so
+Validating full GPU baseline against independent CPU FFN
+Validating/timing direct-weight partition P=4096/14336
+/notebooks/HeteroMega-direct-output-20261027/kernels/gpu/include/heteromega/gpu_ffn.hpp -> /notebooks/HeteroMega-direct-output-20261027/kernels/gpu/include/heteromega/gpu_ffn.hpp [skipped, no changes]
+/notebooks/HeteroMega-direct-output-20261027/experiments/ffn_partition/teammate_gpu_bindings.cpp -> /notebooks/HeteroMega-direct-output-20261027/experiments/ffn_partition/teammate_gpu_bindings.cpp [skipped, no changes]
+/notebooks/HeteroMega-direct-output-20261027/kernels/gpu/src/gpu_ffn.cpp -> /notebooks/HeteroMega-direct-output-20261027/kernels/gpu/src/gpu_ffn.cpp [skipped, no changes]
+/notebooks/HeteroMega-direct-output-20261027/kernels/gpu/src/pack_w4a16.cpp -> /notebooks/HeteroMega-direct-output-20261027/kernels/gpu/src/pack_w4a16.cpp [skipped, no changes]
+/notebooks/HeteroMega-direct-output-20261027/kernels/gpu/src/silu_mul.cu -> /notebooks/HeteroMega-direct-output-20261027/kernels/gpu/src/silu_mul.hip [skipped, already hipified]
+/notebooks/HeteroMega-direct-output-20261027/kernels/gpu/src/gemv_w4a16.cu -> /notebooks/HeteroMega-direct-output-20261027/kernels/gpu/src/gemv_w4a16.hip [skipped, already hipified]
+/notebooks/HeteroMega-direct-output-20261027/src/hipkernels/w4a16_gemm_packed.cu -> /notebooks/HeteroMega-direct-output-20261027/src/hipkernels/w4a16_gemm_packed.hip [skipped, already hipified]
+/notebooks/HeteroMega-direct-output-20261027/src/hipkernels/w4a16_gemv_packed.cu -> /notebooks/HeteroMega-direct-output-20261027/src/hipkernels/w4a16_gemv_packed.hip [skipped, already hipified]
+/notebooks/HeteroMega-direct-output-20261027/include/hipkernels/w4a16_gemm_packed.hpp -> /notebooks/HeteroMega-direct-output-20261027/include/hipkernels/w4a16_gemm_packed.hpp [skipped, no changes]
+/notebooks/HeteroMega-direct-output-20261027/kernels/gpu/include/heteromega/gpu_ffn.hpp -> /notebooks/HeteroMega-direct-output-20261027/kernels/gpu/include/heteromega/gpu_ffn.hpp [skipped, no changes]
+[92mSuccessfully preprocessed all matching files.[0m
+Total number of unsupported CUDA function calls: 0
+
+
+Total number of replaced kernel launches: 1
+[1/1] c++ pack_w4a16.o w4a16_gemm_packed.cuda.o teammate_gpu_bindings.o silu_mul.cuda.o gemv_w4a16.cuda.o w4a16_gemv_packed.cuda.o gpu_ffn.o -shared -L/opt/rocm-7.2.0/lib -Wl,-rpath,/opt/rocm-7.2.0/lib -lamdhip64 -L/notebooks/heteromega-ffn-venv/lib/python3.12/site-packages/torch/lib -lc10 -lc10_hip -ltorch_cpu -ltorch_hip -ltorch -ltorch_python -L/opt/rocm-7.2.0/lib -lamdhip64 -o heteromega_teammate_ffn_f8a01ca1c6c841ec.so
+ninja: no work to do.
+P=4096: completed round -1/10
+P=4096: completed round 0/10
+P=4096: completed round 1/10
+P=4096: completed round 2/10
+P=4096: completed round 3/10
+P=4096: completed round 4/10
+P=4096: completed round 5/10
+P=4096: completed round 6/10
+P=4096: completed round 7/10
+P=4096: completed round 8/10
+P=4096: completed round 9/10
+P=4096: completed round 10/10
+{"npu_channels": 4096, "status": "completed_with_accuracy_deviations", "stats": {"concurrent": {"count": 10, "median_us": 15878.921, "p10_us": 15576.8133, "p90_us": 16294.3577, "min_us": 15453.939, "max_us": 16447.751}, "baseline": {"count": 10, "median_us": 22168.912, "p10_us": 21816.6691, "p90_us": 22662.907199999998, "min_us": 21740.8, "max_us": 23033.826}, "serial": {"count": 10, "median_us": 30556.944499999998, "p10_us": 29799.3623, "p90_us": 31335.3053, "min_us": 29140.691, "max_us": 31654.133}}, "latency_ratio_vs_gpu_baseline": 1.3961220664804617, "speedup_vs_gpu_baseline": null}
+Validating/timing direct-weight partition P=4352/14336
+P=4352: completed round -1/10
+P=4352: completed round 0/10
+P=4352: completed round 1/10
+P=4352: completed round 2/10
+P=4352: completed round 3/10
+P=4352: completed round 4/10
+P=4352: completed round 5/10
+P=4352: completed round 6/10
+P=4352: completed round 7/10
+P=4352: completed round 8/10
+P=4352: completed round 9/10
+P=4352: completed round 10/10
+{"npu_channels": 4352, "status": "completed_with_accuracy_deviations", "stats": {"baseline": {"count": 10, "median_us": 22247.7605, "p10_us": 21955.835, "p90_us": 22472.206899999997, "min_us": 21907.127, "max_us": 22511.896}, "concurrent": {"count": 10, "median_us": 15432.229, "p10_us": 15005.2363, "p90_us": 15641.2605, "min_us": 14832.97, "max_us": 15855.591}, "serial": {"count": 10, "median_us": 29880.7075, "p10_us": 29499.6031, "p90_us": 30078.1629, "min_us": 28961.134, "max_us": 30638.142}}, "latency_ratio_vs_gpu_baseline": 1.4416427140888073, "speedup_vs_gpu_baseline": null}
+Validating/timing direct-weight partition P=4608/14336
+P=4608: completed round -1/10
+P=4608: completed round 0/10
+P=4608: completed round 1/10
+P=4608: completed round 2/10
+P=4608: completed round 3/10
+P=4608: completed round 4/10
+P=4608: completed round 5/10
+P=4608: completed round 6/10
+P=4608: completed round 7/10
+P=4608: completed round 8/10
+P=4608: completed round 9/10
+P=4608: completed round 10/10
+{"npu_channels": 4608, "status": "completed_with_accuracy_deviations", "stats": {"concurrent": {"count": 10, "median_us": 16079.9465, "p10_us": 15663.638200000001, "p90_us": 16862.193, "min_us": 15557.656, "max_us": 16889.652}, "baseline": {"count": 10, "median_us": 22191.506999999998, "p10_us": 21940.5961, "p90_us": 22701.8598, "min_us": 21872.188, "max_us": 23243.532}, "serial": {"count": 10, "median_us": 30722.345500000003, "p10_us": 29139.3544, "p90_us": 31236.8258, "min_us": 28956.604, "max_us": 31803.41}}, "latency_ratio_vs_gpu_baseline": 1.3800734349458188, "speedup_vs_gpu_baseline": null}

@@ -1,0 +1,167 @@
+{
+  "status": "completed_with_accuracy_deviations",
+  "ordinary": [
+    {
+      "job": "b0_native_ordinary",
+      "block": 0,
+      "variant": "native",
+      "npu_channels": null,
+      "accuracy_passed": false,
+      "accuracy_policy": "report",
+      "baseline_us": {
+        "count": 50,
+        "median_us": 22257.6095,
+        "p10_us": 21957.926,
+        "p90_us": 22612.275,
+        "min_us": 21865.406,
+        "max_us": 23050.074
+      },
+      "candidate_us": {
+        "count": 50,
+        "median_us": 15852.720000000001,
+        "p10_us": 15378.511100000002,
+        "p90_us": 16273.735900000001,
+        "min_us": 14965.077,
+        "max_us": 16621.926
+      },
+      "latency_ratio_vs_own_gpu": 1.4040246405664136,
+      "speedup_vs_own_gpu": null,
+      "report_path": "jobs/b0_native_ordinary.json"
+    },
+    {
+      "job": "b0_upstream_p4352_ordinary",
+      "block": 0,
+      "variant": "upstream",
+      "npu_channels": 4352,
+      "accuracy_passed": false,
+      "accuracy_policy": "report",
+      "baseline_us": {
+        "count": 50,
+        "median_us": 22200.3305,
+        "p10_us": 21879.281899999998,
+        "p90_us": 22544.874900000003,
+        "min_us": 21706.759,
+        "max_us": 22765.199
+      },
+      "candidate_us": {
+        "count": 50,
+        "median_us": 15450.043000000001,
+        "p10_us": 15028.180999999999,
+        "p90_us": 15834.879,
+        "min_us": 14993.216,
+        "max_us": 16458.409
+      },
+      "latency_ratio_vs_own_gpu": 1.4369105963006057,
+      "speedup_vs_own_gpu": null,
+      "report_path": "jobs/b0_upstream_p4352_ordinary.json"
+    },
+    {
+      "job": "b1_upstream_p4352_ordinary",
+      "block": 1,
+      "variant": "upstream",
+      "npu_channels": 4352,
+      "accuracy_passed": false,
+      "accuracy_policy": "report",
+      "baseline_us": {
+        "count": 50,
+        "median_us": 22308.953,
+        "p10_us": 21978.7771,
+        "p90_us": 22645.374,
+        "min_us": 20971.244,
+        "max_us": 23091.063
+      },
+      "candidate_us": {
+        "count": 50,
+        "median_us": 15882.2195,
+        "p10_us": 15183.063100000001,
+        "p90_us": 16679.569,
+        "min_us": 14870.758,
+        "max_us": 16911.07
+      },
+      "latency_ratio_vs_own_gpu": 1.404649583139183,
+      "speedup_vs_own_gpu": null,
+      "report_path": "jobs/b1_upstream_p4352_ordinary.json"
+    },
+    {
+      "job": "b1_native_ordinary",
+      "block": 1,
+      "variant": "native",
+      "npu_channels": null,
+      "accuracy_passed": false,
+      "accuracy_policy": "report",
+      "baseline_us": {
+        "count": 50,
+        "median_us": 22252.894,
+        "p10_us": 21931.924,
+        "p90_us": 22595.1331,
+        "min_us": 21690.71,
+        "max_us": 22963.985
+      },
+      "candidate_us": {
+        "count": 50,
+        "median_us": 15715.757,
+        "p10_us": 15433.4871,
+        "p90_us": 16023.611,
+        "min_us": 14548.655,
+        "max_us": 17200.784
+      },
+      "latency_ratio_vs_own_gpu": 1.415960682008509,
+      "speedup_vs_own_gpu": null,
+      "report_path": "jobs/b1_native_ordinary.json"
+    }
+  ],
+  "comparisons": [
+    {
+      "block": 0,
+      "npu_channels": 4352,
+      "native_job": "b0_native_ordinary",
+      "candidate_job": "b0_upstream_p4352_ordinary",
+      "native_accuracy_passed": false,
+      "candidate_accuracy_passed": false,
+      "native_accuracy_policy": "report",
+      "candidate_accuracy_policy": "report",
+      "comparison_kind": "experimental_latency_with_numerical_deviations",
+      "native_over_candidate_latency_ratio": 1.0260631637076998,
+      "speedup_vs_native": null,
+      "gpu_control_native_over_candidate": 1.0025800967242355
+    },
+    {
+      "block": 1,
+      "npu_channels": 4352,
+      "native_job": "b1_native_ordinary",
+      "candidate_job": "b1_upstream_p4352_ordinary",
+      "native_accuracy_passed": false,
+      "candidate_accuracy_passed": false,
+      "native_accuracy_policy": "report",
+      "candidate_accuracy_policy": "report",
+      "comparison_kind": "experimental_latency_with_numerical_deviations",
+      "native_over_candidate_latency_ratio": 0.9895189397174621,
+      "speedup_vs_native": null,
+      "gpu_control_native_over_candidate": 0.9974871523553794
+    }
+  ],
+  "native_failed": false,
+  "full_packed_weights_and_inputs_match": true,
+  "common_power_mode": true,
+  "fixture": {
+    "full_packed_weight_sha256": [
+      "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+      "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+      "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+    ],
+    "input_sha256": [
+      "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+      "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+      "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+    ]
+  },
+  "claim_scope": "synthetic complete prefill FFN only; not model prefill/TTFT or pretrained accuracy",
+  "notes": [
+    "Raw ordinary wall samples determine medians; native diagnostics are excluded.",
+    "Native and candidate use different host wrappers, with their own fresh GPU controls.",
+    "Native ordinary timing has a conservative redundant readiness sync inside its binding.",
+    "Power snapshots are boundary observations, not continuous clock telemetry.",
+    "Report-mode native numerical deviations retain an experimental latency ratio, not a tolerance-validated speedup.",
+    "No native comparison is admitted after a failed native job, mismatched fixtures, or mismatched power."
+  ]
+}

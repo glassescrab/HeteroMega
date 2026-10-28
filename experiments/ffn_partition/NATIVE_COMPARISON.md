@@ -1,5 +1,14 @@
 # Native HeteroMosaic W4A16 FFN comparison
 
+**Update, October 28:** the P4352 DMA-BUF-output configuration now **beats**
+this native baseline on the same isolated FFN: 15.887/15.780 ms versus
+16.031/15.947 ms in two reversed 100-sample blocks. This supersedes the
+"10–14% slower" result only for the new selected configuration. Both paths
+retain report-policy numerical deviations. See
+[the DMA-BUF output report](../../docs/runs/2026-10-27-dmabuf-output/README.md).
+The October 27 result below remains the historical native baseline and
+P2560/P2816 comparison.
+
 **Measured on HX370, October 27:** native HeteroMosaic takes 15.81–15.89 ms
 versus 17.48–18.03 ms for our P2560/P2816 channel partitions at M512/H4096/I14336.
 Our path is 10.0–14.1% slower than native in the paired blocks, while still

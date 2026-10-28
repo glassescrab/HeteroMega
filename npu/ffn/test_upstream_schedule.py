@@ -12,8 +12,9 @@ import unittest
 
 import numpy as np
 
-from upstream_schedule import (plan_upstream, segment_pipeline_actions,
-                               validate_activation_fifo_depth, validate_kernel_tuning,
+from upstream_schedule import (plan_upstream, segment_pipeline_actions, core_segment_runs,
+                               validate_activation_fifo_depth, validate_output_fifo_depth,
+                               validate_kernel_tuning,
                                validate_upstream_buffering, upstream_worker_stack_size)
 
 
@@ -37,14 +38,112 @@ def _cases():
             yield dict(m=m, k=256, n=n, mode=mode, weight_k=512,
                        weight_n=((n + start + 63) // 64 + 9) * 64,
                        k_start=128, n_start=start)
-    for m, n, start in ((512, 128, 32), (512, 1152, 32), (512, 4096, 128),
-                        (128, 512, 0)):
-        yield dict(m=m, k=256, n=n, mode='projection', weight_k=512,
-                   weight_n=((n + start + 63) // 64 + 9) * 64,
-                   k_start=128, n_start=start, max_reuse=4)
+    for mode in ('projection', 'swiglu'):
+        for m, n, start in ((512, 128, 32), (512, 1152, 32), (512, 4096, 128),
+                            (128, 512, 0)):
+            yield dict(m=m, k=256, n=n, mode=mode, weight_k=512,
+                       weight_n=((n + start + 63) // 64 + 9) * 64,
+                       k_start=128, n_start=start, max_reuse=4)
 
 
 class UpstreamScheduleTests(unittest.TestCase):
+    def test_core_runs_preserve_all_segment_halves_and_bound_generated_bodies(self):
+        cases = list(_cases()) + [
+            dict(m=512, k=4096, n=2816, mode='swiglu', max_reuse=4),
+            dict(m=512, k=4096, n=2816, mode='swiglu', max_reuse=4,
+                 weight_n=14336, n_start=32),
+            dict(m=4096, k=16384, n=8192, mode='swiglu', max_reuse=4),
+        ]
+        for kwargs in cases:
+            direct = plan_upstream(**kwargs)
+            for col, segments in enumerate(direct.segments):
+                with self.subTest(**kwargs, col=col):
+                    runs = core_segment_runs(segments)
+                    self.assertTrue(all(run.count > 0 for run in runs))
+                    self.assertLessEqual(len(runs), 3)
+                    self.assertEqual([run.halves for run in runs for _ in range(run.count)],
+                                     [segment.halves for segment in segments])
+                    self.assertTrue(all(a.halves != b.halves for a, b in zip(runs, runs[1:])))
+        full = plan_upstream(512, 4096, 2816, mode='swiglu', max_reuse=4)
+        self.assertEqual(full.segment_count, 11)
+        for segments in full.segments:
+            runs = core_segment_runs(segments)
+            self.assertEqual([(run.halves, run.count) for run in runs], [((0, 1), 11)])
+
+    def test_actual_compressed_core_preserves_every_fifo_and_kernel_event(self):
+        # Execute the real graph factories with ordinary Python range as the
+        # runtime-loop stand-in. Reference tokens are indexed by the original
+        # uncompressed DMA segments, independently of the run representation.
+        source = Path(__file__).with_name('w4a16_upstream.py').read_text()
+        design = next(n for n in ast.parse(source).body
+                      if isinstance(n, ast.FunctionDef) and n.name == '_design')
+        factories = [n for n in design.body if isinstance(n, ast.FunctionDef)
+                     and n.name in ('producer_fn', 'consumer_fn')]
+        code = compile(ast.Module(body=factories, type_ignores=[]), '<core factories>', 'exec')
+        cases = [
+            dict(m=512, k=4096, n=2816, mode='swiglu', max_reuse=4),
+            dict(m=512, k=256, n=2816, mode='swiglu', max_reuse=4,
+                 weight_n=14336, n_start=32),
+            dict(m=512, k=256, n=1152, mode='swiglu', max_reuse=2),
+            dict(m=128, k=256, n=128, mode='projection', max_reuse=4),
+        ]
+        for kwargs in cases:
+            direct = plan_upstream(**kwargs)
+            environment = dict(plan=direct.base, range_=range, core_segment_runs=core_segment_runs)
+            exec(code, environment)
+            for segments in direct.segments:
+                for consumer in (False, True):
+                    events = []
+                    class Fifo:
+                        def __init__(self, label):
+                            self.label, self.index, self.active = label, -1, False
+                        def acquire(self, count):
+                            assert count == 1 and not self.active
+                            self.index += 1
+                            self.active = True
+                            events.append(('acquire', self.label, self.index))
+                            return (self.label, self.index)
+                        def release(self, count):
+                            assert count == 1 and self.active
+                            events.append(('release', self.label, self.index))
+                            self.active = False
+                    a, w, y, gate = [Fifo(label) for label in ('A', 'W', 'Y', 'gate')]
+                    zero = lambda c: events.append(('zero', c))
+                    low = lambda a, w, c, b: events.append(('mac', 0, a, w, c))
+                    high = lambda a, w, c, b: events.append(('mac', 1, a, w, c))
+                    store = lambda c, target: events.append(('store', c, target))
+                    activate = lambda g, u, z: events.append(('activate', g, u, z))
+                    if consumer:
+                        environment['consumer_fn'](segments)(a, w, gate, y, 'c0', 'c1', 'B',
+                                                             'up', zero, low, high, store, activate)
+                    else:
+                        environment['producer_fn'](segments)(a, w, y, 'c0', 'c1', 'B',
+                                                             zero, low, high, store)
+                    expected, output_index = [], 0
+                    for group in range(direct.base.groups_per_column):
+                        for segment_index, segment in enumerate(segments):
+                            for index in range(len(segment.halves)):
+                                expected.append(('zero', f'c{index}'))
+                            for kg in range(direct.base.kb):
+                                index = (group * len(segments) + segment_index) * direct.base.kb + kg
+                                expected.extend([('acquire', 'A', index), ('acquire', 'W', index)])
+                                expected.extend(('mac', half, ('A', index), ('W', index), f'c{c}')
+                                                for c, half in enumerate(segment.halves))
+                                expected.extend([('release', 'A', index), ('release', 'W', index)])
+                            for c in range(len(segment.halves)):
+                                if consumer:
+                                    expected.extend([('store', f'c{c}', 'up'),
+                                        ('acquire', 'gate', output_index), ('acquire', 'Y', output_index),
+                                        ('activate', ('gate', output_index), 'up', ('Y', output_index)),
+                                        ('release', 'gate', output_index), ('release', 'Y', output_index)])
+                                else:
+                                    expected.extend([('acquire', 'Y', output_index),
+                                        ('store', f'c{c}', ('Y', output_index)), ('release', 'Y', output_index)])
+                                output_index += 1
+                    with self.subTest(**kwargs, halves=[s.halves for s in segments], consumer=consumer):
+                        self.assertEqual(events, expected)
+                        self.assertTrue(all(not fifo.active for fifo in (a, w, y, gate)))
+
     def test_paired_m_stack_reservation_and_reuse_four_raw_memory_budget(self):
         self.assertEqual(upstream_worker_stack_size(1), 2048)
         self.assertEqual(upstream_worker_stack_size(2), 4096)
@@ -75,6 +174,43 @@ class UpstreamScheduleTests(unittest.TestCase):
                     validate_kernel_tuning(False, 1, arithmetic)
                 with self.assertRaisesRegex(ValueError, 'arithmetic must be'):
                     upstream_worker_stack_size(1, arithmetic)
+
+    def test_swiglu_reuse_four_raw_budget_requires_single_z_buffer(self):
+        reuse = plan_upstream(512, 4096, 2560, mode='swiglu', max_reuse=4).base.m_reuse
+        # Observed compiled placement keeps the shared gate pool on the
+        # even tile only. These are raw allocations, not a linker proof.
+        common = (reuse * 2048 * 2 + 2 * 4352 + 2 * reuse * 512 * 4
+                  + 4096 * 2 + upstream_worker_stack_size(1, 'bfp16'))
+        gate = common + 2 * reuse * 512 * 2
+        up_z2 = common + reuse * 512 * 2 + 2 * reuse * 512 * 2
+        up_z1 = common + reuse * 512 * 2 + reuse * 512 * 2
+        self.assertEqual((gate, up_z2, up_z1), (61952, 66048, 61952))
+        self.assertGreater(up_z2, 65536)
+        self.assertLess(up_z1, 65536)
+        # Native8 experimental BF16 partials halve the two C arrays.
+        partial_savings = 2 * reuse * 512 * (4 - 2)
+        self.assertEqual((gate - partial_savings, up_z2 - partial_savings), (53760, 57856))
+
+    def test_swiglu_reuse_four_halves_segments_and_dequant_without_changing_mac_volume(self):
+        traffic = []
+        for reuse in (2, 4):
+            direct = plan_upstream(512, 4096, 2560, mode='swiglu',
+                                   weight_n=14336, max_reuse=reuse)
+            base = direct.base
+            a_bytes = 2 * sum(direct.activation_tap(lane, group).element_count
+                              for lane in range(base.m_column_groups * 4)
+                              for group in range(base.groups_per_column)) * direct.segment_count
+            w_bytes = sum(direct.weight_tap(col, segment).element_count
+                          for col in range(8) for segment in range(direct.segment_count)) \
+                * base.groups_per_column
+            calls = sum(len(item.halves) for items in direct.segments for item in items) \
+                * base.kb * 4 * base.groups_per_column
+            tasks = base.groups_per_column * direct.segment_count
+            # One call computes M16*reuse x K128 x N32 MACs.
+            macs = calls * 16 * reuse * 128 * 32
+            traffic.append((a_bytes, w_bytes, calls, tasks, macs))
+        self.assertEqual(traffic, [(41943040, 44564480, 81920, 40, 10737418240),
+                                   (41943040, 22282240, 40960, 20, 10737418240)])
 
     def test_reuse_four_projection_halves_weight_work_without_changing_a_bytes(self):
         plans = [plan_upstream(512, 2560, 4096, weight_k=14336, max_reuse=r)
@@ -109,11 +245,22 @@ class UpstreamScheduleTests(unittest.TestCase):
         fallback = plan_upstream(128, 256, 512, max_reuse=4)
         self.assertEqual(fallback.base.m_reuse, 2)
         validate_upstream_buffering(fallback, 2)
-        with self.assertRaises(ValueError):
-            plan_upstream(512, 4096, 2560, mode='swiglu', max_reuse=4)
+        swiglu_r4 = plan_upstream(512, 4096, 2560, mode='swiglu', max_reuse=4)
+        validate_upstream_buffering(swiglu_r4, 1, 1)
+        validate_upstream_buffering(swiglu_r4, 1, 2, bfp16_native_layout=True)
+        for a_depth, y_depth in ((1, 2), (2, 1), (2, 2)):
+            with self.subTest(a_depth=a_depth, y_depth=y_depth), self.assertRaises(ValueError):
+                validate_upstream_buffering(swiglu_r4, a_depth, y_depth)
+        swiglu_fallback = plan_upstream(128, 256, 512, mode='swiglu', max_reuse=4)
+        self.assertEqual(swiglu_fallback.base.m_reuse, 2)
+        validate_upstream_buffering(swiglu_fallback, 2, 2)
+        for depth in (1, 2):
+            self.assertEqual(validate_output_fifo_depth(depth), depth)
         for value in (0, 3, -1, True, False, 1.0, '2', None):
             with self.subTest(depth=value), self.assertRaises(ValueError):
                 validate_activation_fifo_depth(value)
+            with self.subTest(output_depth=value), self.assertRaises(ValueError):
+                validate_output_fifo_depth(value)
         for vector in (False, True):
             for reuse in (1, 2):
                 validate_kernel_tuning(vector, reuse)
@@ -123,6 +270,17 @@ class UpstreamScheduleTests(unittest.TestCase):
         for reuse in (0, 3, True, 1.0, None, '2'):
             with self.subTest(mmul_reuse=reuse), self.assertRaises(ValueError):
                 validate_kernel_tuning(False, reuse)
+
+    def test_native8_requires_explicit_bfp_arithmetic_and_boolean(self):
+        validate_kernel_tuning(True, 1, 'bfp16', True)
+        with self.assertRaisesRegex(ValueError, 'requires arithmetic=bfp16'):
+            validate_kernel_tuning(True, 1, 'bf16', True)
+        direct = plan_upstream(512, 4096, 2560, mode='swiglu', max_reuse=4)
+        for bad in (1, 0, 'true', None):
+            with self.subTest(value=bad), self.assertRaisesRegex(ValueError, 'must be a bool'):
+                validate_kernel_tuning(True, 1, 'bfp16', bad)
+            with self.subTest(value=bad), self.assertRaisesRegex(ValueError, 'must be a bool'):
+                validate_upstream_buffering(direct, 1, 1, bad)
 
     def test_segment_pipeline_preserves_fifo_order_and_bounds_live_transfers(self):
         cases = list(_cases()) + [
@@ -257,6 +415,45 @@ class UpstreamScheduleTests(unittest.TestCase):
                         weights = [e[3] for e in entries if e[2] and e[2].startswith('W')]
                         self.assertEqual(weights, ['gate', 'up'] * 4 if mode == 'swiglu'
                                          else ['W'] * 8)
+
+    def test_real_worker_endpoints_change_only_core_output_depth(self):
+        source = Path(__file__).with_name('w4a16_upstream.py').read_text()
+        design = next(n for n in ast.parse(source).body
+                      if isinstance(n, ast.FunctionDef) and n.name == '_design')
+        start = next(i for i, node in enumerate(design.body)
+                     if isinstance(node, ast.Assign)
+                     and any(isinstance(t, ast.Name) and t.id == 'workers' for t in node.targets))
+        code = compile(ast.Module(body=design.body[start:start + 2], type_ignores=[]),
+                       '<graph worker endpoints>', 'exec')
+        for mode in ('projection', 'swiglu'):
+            for depth in (1, 2):
+                with self.subTest(mode=mode, output_depth=depth):
+                    endpoints = []
+                    class Fifo:
+                        def __init__(self, kind):
+                            self.kind = kind
+                        def prod(self, **kwargs):
+                            endpoints.append((self.kind, 'prod', kwargs))
+                        def cons(self, **kwargs):
+                            endpoints.append((self.kind, 'cons', kwargs))
+                    direct = plan_upstream(512, 4096, 2560, mode=mode, max_reuse=4)
+                    environment = dict(direct=direct, plan=direct.base, mode=mode,
+                        split_m32_a=False,
+                        activation_fifo_depth=1, output_fifo_depth=depth,
+                        a_broadcasts=[Fifo('A') for _ in range(4)],
+                        w_broadcasts=[Fifo('W') for _ in range(8)],
+                        gates={(c, r): Fifo('gate') for c in (0, 2, 4, 6) for r in range(4)},
+                        y_workers={c: [Fifo('Y') for _ in range(4)] for c in range(8)},
+                        c_tile=None, b_tile=None, y_tile=None, init=None, low=None,
+                        high=None, finish=None, pointwise=None, worker_stack_size=4096,
+                        Buffer=lambda *a, **kw: None, Worker=lambda *a, **kw: None,
+                        Tile=lambda *a: a, producer_fn=lambda *a: None, consumer_fn=lambda *a: None)
+                    exec(code, environment)
+                    expected_outputs = 32 if mode == 'projection' else 16
+                    self.assertEqual(endpoints.count(('Y', 'prod', {'depth': depth})), expected_outputs)
+                    self.assertEqual(endpoints.count(('A', 'cons', {'depth': 1})), 32)
+                    self.assertTrue(all(not kwargs for kind, action, kwargs in endpoints
+                                        if kind in ('W', 'gate')))
 
     def test_n64_segments_cover_worker_ownership_without_duplicate_acquisitions(self):
         for kwargs in _cases():

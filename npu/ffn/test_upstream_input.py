@@ -13,20 +13,22 @@ def _stream_permutation(dims):
                      for indices in itertools.product(*(range(size) for size, _ in dims))])
 
 
-def _compact_host(x):
+def _compact_host(x, native8=False):
     m, k = x.shape
-    return x.reshape(m // 16, 4, 4, k // 128, 16, 8).transpose(0, 3, 1, 4, 2, 5).reshape(-1)
+    mr = 8 if native8 else 4
+    return x.reshape(m // 16, 16 // mr, mr, k // 128, 16, 8).transpose(0, 3, 1, 4, 2, 5).reshape(-1)
 
 
 class UpstreamInputTests(unittest.TestCase):
-    def _check_streams(self, direct, x):
+    def _check_streams(self, direct, x, native8=False):
         plan = direct.base
+        mr = 8 if native8 else 4
         expected_indices, observed_indices = [], []
-        perms = {layout: _stream_permutation(direct.activation_dims_to_stream(layout))
+        perms = {layout: _stream_permutation(direct.activation_dims_to_stream(layout, native8))
                  for layout in ('compact', 'row_major')}
         for permutation in perms.values():
             np.testing.assert_array_equal(np.sort(permutation), np.arange(plan.m_reuse * 2048))
-        compact = _compact_host(x)
+        compact = _compact_host(x, native8)
         addresses = np.arange(x.size).reshape(x.shape)
         for lane in range(plan.m_column_groups * 4):
             worker = plan.worker((lane // 4) * plan.n_columns, lane % 4)
@@ -36,7 +38,7 @@ class UpstreamInputTests(unittest.TestCase):
                 rows = [row for mt in m_tiles for row in range(mt * 16, (mt + 1) * 16)]
                 expected = np.concatenate([
                     x[rows, kg * 128:(kg + 1) * 128]
-                    .reshape(plan.m_reuse, 4, 4, 16, 8).transpose(0, 1, 3, 2, 4).reshape(-1)
+                    .reshape(plan.m_reuse, 16 // mr, mr, 16, 8).transpose(0, 1, 3, 2, 4).reshape(-1)
                     for kg in range(plan.kb)])
                 for layout, host in (('compact', compact), ('row_major', x.reshape(-1))):
                     tap = direct.activation_tap(lane, group, layout)
@@ -53,6 +55,7 @@ class UpstreamInputTests(unittest.TestCase):
     def test_row_major_shim_and_memtile_match_native_a_for_all_worker_groups(self):
         cases = [
             ('swiglu', 512, 4096, 2560, 2),
+            ('swiglu', 512, 4096, 2560, 4),
             ('swiglu', 128, 256, 1152, 1),
             ('swiglu', 512, 128, 128, 2),
             ('projection', 512, 2560, 4096, 4),
@@ -67,11 +70,15 @@ class UpstreamInputTests(unittest.TestCase):
                 direct = plan_upstream(m, k, n, mode=mode, max_reuse=reuse,
                                        weight_k=k + 256, weight_n=n + 128,
                                        k_start=128, n_start=32)
-                self._check_streams(direct, np.arange(m * k, dtype=np.uint32).reshape(m, k))
+                for native8 in (False, True):
+                    with self.subTest(native8=native8):
+                        self._check_streams(direct, np.arange(m * k, dtype=np.uint32).reshape(m, k), native8)
 
     def test_permutation_preserves_all_65536_bf16_bit_patterns(self):
         direct = plan_upstream(512, 128, 128, max_reuse=4)
-        self._check_streams(direct, np.arange(65536, dtype=np.uint16).reshape(512, 128))
+        for native8 in (False, True):
+            with self.subTest(native8=native8):
+                self._check_streams(direct, np.arange(65536, dtype=np.uint16).reshape(512, 128), native8)
 
     def test_compact_default_and_invalid_layouts(self):
         direct = plan_upstream(512, 4096, 2560, mode='swiglu')

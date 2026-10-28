@@ -1,5 +1,44 @@
 # HeteroMega agent continuation guide
 
+## Latest measurement — 2026-10-28: DMA-BUF output P4352 beats native FFN
+
+The user asked to continue the optimization and beat original HeteroMosaic. The
+selected candidate now does so on the isolated synthetic FFN: **measured** on
+HX370/default at M512/H4096/I14336, two reversed blocks with 100 samples/mode
+give HeteroMega **15.887/15.780 ms** versus faithful native HeteroMosaic
+**16.031/15.947 ms**, a **0.90%/1.05%** candidate advantage. Matched GPU-only
+controls are 22.310/22.365 versus 22.248/22.258 ms, so the candidate control is
+0.28–0.48% slower; the complete-FFN advantage is real in both blocks but small,
+and the distributions overlap.
+
+Selected configuration: P4352, eight columns/32 workers, BFP16 native layout,
+split-M32 A prefetch, preconverted B, shared SwiGLU/down intermediate, row-major
+output, imported HIP-owned output BO, teammate three-kernel GPU suffix. Ordinary
+timing includes input staging, both NPU launches, BO synchronization, GPU suffix
+and final reduction. The NPU branch median is about 14.39 ms; separate GPU-event
+diagnostics measured about 15.03 ms for the GPU suffix, so the GPU suffix is the
+critical path. Input staging is only 0.27 ms and is not the bottleneck.
+
+The explicit `report` numerical policy is retained. Native and candidate both
+fail original tolerances (native 132 outside-tolerance checks per 100 samples in
+block 0; candidate 216 per job). Structural/completion/buffer-integrity checks
+pass. This is an isolated synthetic FFN comparison, not whole-model prefill/TTFT,
+attention interference or pretrained accuracy. Candidate jobs complete 436 NPU
+dispatches; native completes 218 per job.
+
+Rejected/negative results retained: original GPU suffix 16.026 ms at P4352 (20
+samples), preconvert-A 19.988 ms (10 samples), GPU-owned DMA-BUF input slower
+(6.530 vs 5.431 ms in H512/P512 smoke), and the 10-sample partition sweep
+15.879/15.432/16.080 ms at P4096/P4352/P4608. The earlier 50-sample paired run
+was mixed; the 100-sample confirmation resolves it in both blocks.
+
+Read `docs/runs/2026-10-27-dmabuf-output/README.md`, `audit.json` and
+`source_manifest.json`. Cloud root `/notebooks/HeteroMega-direct-output-20261027`;
+branch `codex/shared-buffer-ffn-optimization`; committed only, no push/PR.
+**Next:** integrate the FFN into the causal model schedule and measure attention
+interference before whole-model/prefill/TTFT claims; further gains require
+shortening the GPU suffix or improving NPU efficiency enough to shift balance.
+
 ## Latest measurement — 2026-10-27: faithful native HeteroMosaic baseline
 
 The user requested reproduction and explicitly permits native numerical

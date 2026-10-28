@@ -2,11 +2,13 @@
 
 ## Start here
 
-- Read the **2026-10-22 optimization/PR update at the top of `agent.md` first**
-  and `npu/ffn/BFP16_ADAPTATION.md` for the latest upstream adaptation,
-  arithmetic policy, hardware evidence and remaining comparison work.
-  The original user-provided
-  FFN-prefill plan and separately labeled review recommendations follow it.
+- Read the **2026-10-28 DMA-BUF output measurement at the top of `agent.md`
+  first**, plus `docs/runs/2026-10-27-dmabuf-output/README.md` and its audit.
+  The selected P4352 configuration now beats the faithful native FFN by
+  0.90%/1.05% in two reversed 100-sample blocks, with report-policy numerical
+  deviations retained. Then read the older 2026-10-22 optimization/PR update,
+  `npu/ffn/BFP16_ADAPTATION.md`, the original user-provided FFN-prefill plan
+  and separately labeled review recommendations.
 - Read `docs/project-plan.md` for the baseline architecture and build/run notes;
   its earlier broad research scope and milestones are historical.
 - Read `docs/progress.md` for the latest verified state and open questions.

@@ -207,8 +207,23 @@ class UpstreamNpuTests(unittest.TestCase):
         # device compiler. This catches mismatches hidden by mock manifests.
         with tempfile.TemporaryDirectory() as root:
             specs = backend._ffn_specs(128, 256, 128, *_weights(), root, 128)
+            specs.update({"native8_" + key: value for key, value in backend._ffn_specs(
+                128, 256, 128, *_weights(), root, 128, arithmetic="bfp16",
+                bfp16_native_layout=True, swiglu_input_layout="row_major",
+                output_layout="down_a", down_output_layout="row_major").items()})
+            for split, preconvert, preconvert_a in ((False, True, False), (True, False, False),
+                                                    (True, True, False), (True, True, True)):
+                variants = backend._ffn_specs(512, 512, 512, *_weights(512, 1024), root,
+                    arithmetic="bfp16", bfp16_native_layout=True, swiglu_input_layout="row_major",
+                    output_layout="down_a", down_output_layout="row_major",
+                    swiglu_reuse=4, down_reuse=4, swiglu_output_fifo_depth=1,
+                    swiglu_activation_fifo_depth=2 if split else 1,
+                    down_activation_fifo_depth=2 if split else 1,
+                    split_m32_a=split, preconvert_b=preconvert, preconvert_a=preconvert_a)
+                specs.update({f"split{split}_preconvert{preconvert}_a{preconvert_a}_{key}": value
+                              for key, value in variants.items()})
             for spec in specs.values():
-                with self.subTest(mode=spec["expected"]["mode"]):
+                with self.subTest(mode=spec["expected"]["mode"], native8=spec["expected"]["bfp16_native_layout"]):
                     directory = spec["directory"]
                     directory.mkdir(parents=True)
                     binary, instructions = directory / "final.xclbin", directory / "insts.bin"
@@ -229,6 +244,10 @@ class UpstreamNpuTests(unittest.TestCase):
                         add_compile_args=compile_args, device_from_args=lambda *a, **k: None,
                         run_design_cli=lambda *a, **k: None, plan_upstream=backend.plan_upstream,
                         upstream_worker_stack_size=backend.upstream_worker_stack_size,
+                        validate_upstream_buffering=backend.validate_upstream_buffering,
+                        validate_split_m32_a=backend.validate_split_m32_a,
+                        validate_preconvert_a=backend.validate_preconvert_a,
+                        validate_kernel_tuning=backend.validate_kernel_tuning,
                         upstream_swiglu=object(), upstream_projection=object(),
                         FINGERPRINT=sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest(),
                         HASHES=hashes, UPSTREAM_LAYOUT_VERSION=backend.UPSTREAM_LAYOUT_VERSION,

@@ -1,0 +1,894 @@
+{
+  "audit_script_sha256": "627210de57e3588c3c3b08f37fafbce91a0d1dad505c291528afb28977c63e45",
+  "limitations": [
+    "Physical MLIR confirms buffer addresses and reserved stack, not actual maximum stack use.",
+    "The 4096-byte LUT is source-confirmed and its source hash matches the linked object name; its final linked address and other linker data are unavailable.",
+    "61952-byte known data plus stack leaves 3584 nominal bytes, not a proof of final linker headroom.",
+    "kernel.o is ET_REL. Its text total excludes generated main, pointwise code, linked runtime, alignment and dead-section removal; final program SRAM occupancy is unknown.",
+    "Buffer/DMA structure enables two A slots; it does not measure actual DMA/compute overlap or stalls.",
+    "v10 preconverted A uses existing scratch tail by source contract, but these v9 outputs do not prove v10 allocation identity."
+  ],
+  "passed": true,
+  "schema_version": 1,
+  "scope": "v9 combined split-M32 A + preconverted B, P4096",
+  "shape": {
+    "H": 4096,
+    "I": 14336,
+    "M": 512,
+    "P": 4096
+  },
+  "silu_source_sha256": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+  "stages": {
+    "down": {
+      "activation_dma": {
+        "core_buffer_bytes": 8192,
+        "core_buffer_count": 64,
+        "core_dma_elements": 4096,
+        "host_memory_tile_buffer_bytes": 16384,
+        "host_memory_tile_buffer_count": 8,
+        "memory_tile_dma_elements": 8192,
+        "outgoing_permutation_example": "aie.dma_bd(%direct_a_host_0_cons_buff_0 : memref<8192xbf16> offset = 0 len = 8192 sizes = [4, 4, 512] strides = [512, 2048, 1]) {bd_id = 0 : i32, next_bd_id = 1 : i32} loc(#loc64)"
+      },
+      "core_roles": {
+        "down": {
+          "count": 32,
+          "representative": {
+            "allocations": [
+              {
+                "address": 4096,
+                "bytes": 16384,
+                "category": "dequant_scratch",
+                "dtype": "bf16",
+                "line": 916,
+                "name": "direct_dequant_0_0"
+              },
+              {
+                "address": 20480,
+                "bytes": 8192,
+                "category": "activation",
+                "dtype": "bf16",
+                "line": 762,
+                "name": "direct_a_broadcast_0_0_cons_buff_0"
+              },
+              {
+                "address": 28672,
+                "bytes": 8192,
+                "category": "activation",
+                "dtype": "bf16",
+                "line": 763,
+                "name": "direct_a_broadcast_0_0_cons_buff_1"
+              },
+              {
+                "address": 36864,
+                "bytes": 4352,
+                "category": "weight",
+                "dtype": "ui8",
+                "line": 580,
+                "name": "direct_w_broadcast_0_0_cons_buff_0"
+              },
+              {
+                "address": 41216,
+                "bytes": 4352,
+                "category": "weight",
+                "dtype": "ui8",
+                "line": 581,
+                "name": "direct_w_broadcast_0_0_cons_buff_1"
+              },
+              {
+                "address": 45568,
+                "bytes": 4096,
+                "category": "output",
+                "dtype": "bf16",
+                "line": 400,
+                "name": "direct_y_worker_0_0_buff_0"
+              },
+              {
+                "address": 49664,
+                "bytes": 4096,
+                "category": "output",
+                "dtype": "bf16",
+                "line": 401,
+                "name": "direct_y_worker_0_0_buff_1"
+              },
+              {
+                "address": 53760,
+                "bytes": 4096,
+                "category": "accumulator",
+                "dtype": "bf16",
+                "line": 914,
+                "name": "direct_acc0_0_0"
+              },
+              {
+                "address": 57856,
+                "bytes": 4096,
+                "category": "accumulator",
+                "dtype": "bf16",
+                "line": 915,
+                "name": "direct_acc1_0_0"
+              }
+            ],
+            "assigned_buffer_bytes": 57856,
+            "assigned_map_end_bytes": 61952,
+            "known_data_plus_stack_bytes": 61952,
+            "known_lut_source_bytes": 0,
+            "nominal_remaining_bytes": 3584,
+            "stack_reserved_bytes": 4096,
+            "tile": [
+              0,
+              2
+            ]
+          },
+          "tiles": [
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              5
+            ],
+            [
+              6,
+              2
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              5
+            ],
+            [
+              7,
+              2
+            ],
+            [
+              7,
+              3
+            ],
+            [
+              7,
+              4
+            ],
+            [
+              7,
+              5
+            ]
+          ]
+        }
+      },
+      "device": "npu2",
+      "inputs": {
+        "aie.mlir": "b31a847ec696681062418886879063be43a56748a0e1c984e1c7df78ca2e7dcd",
+        "input_with_addresses.mlir": "398a2578acd0ce4c563dde192e50d12cca67f7b137c2ffea2ec78993d6f4d2e4",
+        "kernel.dis": "8bc658ac8d4d083a91bb9f8b9c8e86e9740f19a49f9df958f9538cdab2020cca",
+        "kernel.o": "0439fa66588508c3b4e2cd11d42f24e2749f52cc07aad2f041d4365bdbe86872"
+      },
+      "memory_tile_max_assigned_bytes": 74240,
+      "memory_tiles": [
+        {
+          "assigned_bytes": 74240,
+          "by_category": {
+            "activation_host": 32768,
+            "output_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            0,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 74240,
+          "by_category": {
+            "activation_host": 32768,
+            "output_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            1,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 74240,
+          "by_category": {
+            "activation_host": 32768,
+            "output_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            2,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 74240,
+          "by_category": {
+            "activation_host": 32768,
+            "output_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            3,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 41472,
+          "by_category": {
+            "output_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            4,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 41472,
+          "by_category": {
+            "output_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            5,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 41472,
+          "by_category": {
+            "output_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            6,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 41472,
+          "by_category": {
+            "output_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            7,
+            1
+          ]
+        }
+      ],
+      "odd_up_scratch_absent": true,
+      "projection_object": {
+        "all_executable_sections_bytes": 6096,
+        "allocated_sections": [
+          {
+            "bytes": 0,
+            "executable": true,
+            "name": ".text"
+          },
+          {
+            "bytes": 928,
+            "executable": true,
+            "name": ".text.w4a16_prefill_dequantize_pair"
+          },
+          {
+            "bytes": 1104,
+            "executable": true,
+            "name": ".text.w4a16_prefill_accumulate_pair_m0"
+          },
+          {
+            "bytes": 1120,
+            "executable": true,
+            "name": ".text.w4a16_prefill_accumulate_pair_m1"
+          },
+          {
+            "bytes": 160,
+            "executable": true,
+            "name": ".text.w4a16_prefill_init"
+          },
+          {
+            "bytes": 192,
+            "executable": true,
+            "name": ".text.w4a16_prefill_finish"
+          },
+          {
+            "bytes": 160,
+            "executable": true,
+            "name": ".text.w4a16_prefill_reuse_init"
+          },
+          {
+            "bytes": 1120,
+            "executable": true,
+            "name": ".text.w4a16_prefill_reuse_accumulate_low"
+          },
+          {
+            "bytes": 1120,
+            "executable": true,
+            "name": ".text.w4a16_prefill_reuse_accumulate_high"
+          },
+          {
+            "bytes": 192,
+            "executable": true,
+            "name": ".text.w4a16_prefill_reuse_finish"
+          }
+        ],
+        "elf_type": "ET_REL",
+        "final_linked_core_program_bytes": null,
+        "machine": 264,
+        "nonexecutable_allocated_bytes": 0
+      },
+      "split_order_all_cores_verified": true,
+      "status": "compiler_output_confirmed"
+    },
+    "swiglu": {
+      "activation_dma": {
+        "core_buffer_bytes": 8192,
+        "core_buffer_count": 64,
+        "core_dma_elements": 4096,
+        "host_memory_tile_buffer_bytes": 16384,
+        "host_memory_tile_buffer_count": 8,
+        "memory_tile_dma_elements": 8192,
+        "outgoing_permutation_example": "aie.dma_bd(%direct_a_host_0_cons_buff_0 : memref<8192xbf16> offset = 0 len = 8192 sizes = [8, 16, 8, 8] strides = [1024, 8, 128, 1]) {bd_id = 0 : i32, next_bd_id = 1 : i32} loc(#loc60)"
+      },
+      "core_roles": {
+        "gate": {
+          "count": 16,
+          "representative": {
+            "allocations": [
+              {
+                "address": 4096,
+                "bytes": 16384,
+                "category": "dequant_scratch",
+                "dtype": "bf16",
+                "line": 833,
+                "name": "direct_dequant_0_0"
+              },
+              {
+                "address": 20480,
+                "bytes": 8192,
+                "category": "activation",
+                "dtype": "bf16",
+                "line": 699,
+                "name": "direct_a_broadcast_0_0_cons_buff_0"
+              },
+              {
+                "address": 28672,
+                "bytes": 8192,
+                "category": "activation",
+                "dtype": "bf16",
+                "line": 700,
+                "name": "direct_a_broadcast_0_0_cons_buff_1"
+              },
+              {
+                "address": 36864,
+                "bytes": 4352,
+                "category": "weight",
+                "dtype": "ui8",
+                "line": 463,
+                "name": "direct_w_broadcast_0_0_cons_buff_0"
+              },
+              {
+                "address": 41216,
+                "bytes": 4352,
+                "category": "weight",
+                "dtype": "ui8",
+                "line": 464,
+                "name": "direct_w_broadcast_0_0_cons_buff_1"
+              },
+              {
+                "address": 45568,
+                "bytes": 4096,
+                "category": "gate_handoff",
+                "dtype": "bf16",
+                "line": 539,
+                "name": "direct_gate_0_0_buff_0"
+              },
+              {
+                "address": 49664,
+                "bytes": 4096,
+                "category": "gate_handoff",
+                "dtype": "bf16",
+                "line": 540,
+                "name": "direct_gate_0_0_buff_1"
+              },
+              {
+                "address": 53760,
+                "bytes": 4096,
+                "category": "accumulator",
+                "dtype": "bf16",
+                "line": 831,
+                "name": "direct_acc0_0_0"
+              },
+              {
+                "address": 57856,
+                "bytes": 4096,
+                "category": "accumulator",
+                "dtype": "bf16",
+                "line": 832,
+                "name": "direct_acc1_0_0"
+              }
+            ],
+            "assigned_buffer_bytes": 57856,
+            "assigned_map_end_bytes": 61952,
+            "known_data_plus_stack_bytes": 61952,
+            "known_lut_source_bytes": 0,
+            "nominal_remaining_bytes": 3584,
+            "stack_reserved_bytes": 4096,
+            "tile": [
+              0,
+              2
+            ]
+          },
+          "tiles": [
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              6,
+              2
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              5
+            ]
+          ]
+        },
+        "up": {
+          "count": 16,
+          "representative": {
+            "allocations": [
+              {
+                "address": 4096,
+                "bytes": 16384,
+                "category": "dequant_scratch",
+                "dtype": "bf16",
+                "line": 850,
+                "name": "direct_dequant_1_0"
+              },
+              {
+                "address": 20480,
+                "bytes": 8192,
+                "category": "activation",
+                "dtype": "bf16",
+                "line": 703,
+                "name": "direct_a_broadcast_0_1_cons_buff_0"
+              },
+              {
+                "address": 28672,
+                "bytes": 8192,
+                "category": "activation",
+                "dtype": "bf16",
+                "line": 704,
+                "name": "direct_a_broadcast_0_1_cons_buff_1"
+              },
+              {
+                "address": 36864,
+                "bytes": 4352,
+                "category": "weight",
+                "dtype": "ui8",
+                "line": 445,
+                "name": "direct_w_broadcast_1_0_cons_buff_0"
+              },
+              {
+                "address": 41216,
+                "bytes": 4352,
+                "category": "weight",
+                "dtype": "ui8",
+                "line": 446,
+                "name": "direct_w_broadcast_1_0_cons_buff_1"
+              },
+              {
+                "address": 45568,
+                "bytes": 4096,
+                "category": "output",
+                "dtype": "bf16",
+                "line": 306,
+                "name": "direct_y_worker_1_0_buff_0"
+              },
+              {
+                "address": 49664,
+                "bytes": 4096,
+                "category": "accumulator",
+                "dtype": "bf16",
+                "line": 848,
+                "name": "direct_acc0_1_0"
+              },
+              {
+                "address": 53760,
+                "bytes": 4096,
+                "category": "accumulator",
+                "dtype": "bf16",
+                "line": 849,
+                "name": "direct_acc1_1_0"
+              }
+            ],
+            "assigned_buffer_bytes": 53760,
+            "assigned_map_end_bytes": 57856,
+            "known_data_plus_stack_bytes": 61952,
+            "known_lut_source_bytes": 4096,
+            "nominal_remaining_bytes": 3584,
+            "stack_reserved_bytes": 4096,
+            "tile": [
+              1,
+              2
+            ]
+          },
+          "tiles": [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              5
+            ],
+            [
+              7,
+              2
+            ],
+            [
+              7,
+              3
+            ],
+            [
+              7,
+              4
+            ],
+            [
+              7,
+              5
+            ]
+          ]
+        }
+      },
+      "device": "npu2",
+      "inputs": {
+        "aie.mlir": "0976ffb9ce2c5da4607e002b05662065963de3626e78760d6e169599c141a65c",
+        "input_with_addresses.mlir": "b35369572a6bec5ef5035b4dff483ed9d6b6bf8ebbbee36377fb50078e748b9d",
+        "kernel.dis": "cd0cd2783097d9b2bf2fb743c25960971d8463bea690f1ad218f105657bd1c17",
+        "kernel.o": "0439fa66588508c3b4e2cd11d42f24e2749f52cc07aad2f041d4365bdbe86872"
+      },
+      "memory_tile_max_assigned_bytes": 74240,
+      "memory_tiles": [
+        {
+          "assigned_bytes": 41472,
+          "by_category": {
+            "activation_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            0,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 74240,
+          "by_category": {
+            "activation_host": 32768,
+            "output_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            1,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 41472,
+          "by_category": {
+            "activation_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            2,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 74240,
+          "by_category": {
+            "activation_host": 32768,
+            "output_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            3,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 8704,
+          "by_category": {
+            "weight_host": 8704
+          },
+          "tile": [
+            4,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 41472,
+          "by_category": {
+            "output_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            5,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 8704,
+          "by_category": {
+            "weight_host": 8704
+          },
+          "tile": [
+            6,
+            1
+          ]
+        },
+        {
+          "assigned_bytes": 41472,
+          "by_category": {
+            "output_host": 32768,
+            "weight_host": 8704
+          },
+          "tile": [
+            7,
+            1
+          ]
+        }
+      ],
+      "odd_up_scratch_absent": true,
+      "projection_object": {
+        "all_executable_sections_bytes": 6096,
+        "allocated_sections": [
+          {
+            "bytes": 0,
+            "executable": true,
+            "name": ".text"
+          },
+          {
+            "bytes": 928,
+            "executable": true,
+            "name": ".text.w4a16_prefill_dequantize_pair"
+          },
+          {
+            "bytes": 1104,
+            "executable": true,
+            "name": ".text.w4a16_prefill_accumulate_pair_m0"
+          },
+          {
+            "bytes": 1120,
+            "executable": true,
+            "name": ".text.w4a16_prefill_accumulate_pair_m1"
+          },
+          {
+            "bytes": 160,
+            "executable": true,
+            "name": ".text.w4a16_prefill_init"
+          },
+          {
+            "bytes": 192,
+            "executable": true,
+            "name": ".text.w4a16_prefill_finish"
+          },
+          {
+            "bytes": 160,
+            "executable": true,
+            "name": ".text.w4a16_prefill_reuse_init"
+          },
+          {
+            "bytes": 1120,
+            "executable": true,
+            "name": ".text.w4a16_prefill_reuse_accumulate_low"
+          },
+          {
+            "bytes": 1120,
+            "executable": true,
+            "name": ".text.w4a16_prefill_reuse_accumulate_high"
+          },
+          {
+            "bytes": 192,
+            "executable": true,
+            "name": ".text.w4a16_prefill_reuse_finish"
+          }
+        ],
+        "elf_type": "ET_REL",
+        "final_linked_core_program_bytes": null,
+        "machine": 264,
+        "nonexecutable_allocated_bytes": 0
+      },
+      "split_order_all_cores_verified": true,
+      "status": "compiler_output_confirmed"
+    }
+  }
+}

@@ -1,0 +1,242 @@
+{
+  "passed": true,
+  "errors": [],
+  "scope": "Recorded full-FFN output hashes and error metrics only; no timing comparison.",
+  "limitations": [
+    "Partial GPU/NPU arrays are not archived; identical error metrics do not independently prove partial bitwise identity.",
+    "GPU binary hashes can differ across rebuilds; matching source closure, build fingerprint, fixture hashes and outputs are required here.",
+    "Diagnostic records are included only for output parity and cannot establish ordinary latency."
+  ],
+  "fixture": {
+    "config": {
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "seed": 12832,
+      "gpu_variant": "teammate"
+    },
+    "inputs": [
+      "94d5703a73197e7d647bba72c95ce8cf63c5f148aa31184daf13bbcf9665f2c7",
+      "95df2593b42a09c89e320344159b74d7381ead52e0ffd7e0c74f27132be06134",
+      "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+    ],
+    "weights": {
+      "gate": {
+        "k": 4096,
+        "n": 14336,
+        "bytes": 31195136,
+        "sha256": "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+        "readonly": true
+      },
+      "up": {
+        "k": 4096,
+        "n": 14336,
+        "bytes": 31195136,
+        "sha256": "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+        "readonly": true
+      },
+      "down": {
+        "k": 14336,
+        "n": 4096,
+        "bytes": 31195136,
+        "sha256": "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db",
+        "readonly": true
+      }
+    },
+    "baseline_weights": {
+      "gate": "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+      "up": "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+      "down": "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+    },
+    "channels": 3584,
+    "channel_start": 0
+  },
+  "gpu_contract": {
+    "backend": "teammate_three_kernel_gpu_ffn",
+    "source_sha256": {
+      "experiments/ffn_partition/teammate_gpu_bindings.cpp": "630ee7571fba7f557738268b07f66be51b26b4685e8f5a086cd2b0bf0d280e08",
+      "kernels/gpu/src/gpu_ffn.cpp": "69354e44d859160d8c8691e9901633a2b4c8b0a08a36bc84834f7d6844c5b21b",
+      "kernels/gpu/src/pack_w4a16.cpp": "c9e1c80ec76ce03ac0762e2b4fb4038c49d8f7a6d7bc20703fb1af58b2f08acb",
+      "kernels/gpu/src/silu_mul.cu": "7783a4c24d9a1d29829313304a1a05011713166518108c338df540cfd331624f",
+      "kernels/gpu/src/gemv_w4a16.cu": "9c8d624da810a69d86061b8ab40ade33b8d22555ea027ac5ff86dcb202a058b3",
+      "src/hipkernels/w4a16_gemm_packed.cu": "c506049e90326636e00bf151532f2e06809e3a6cdce5f203a3345149e4c930f1",
+      "src/hipkernels/w4a16_gemv_packed.cu": "fde6baa3df304a1a1d6445dc10991b38e42c338fcf57c8bf2e91c102f9b97a58",
+      "kernels/gpu/include/heteromega/gpu_ffn.hpp": "b61dc4f3243c8c0e57e498ab966013c8391fbfe6c24721c20a81f8e1f6db9f56",
+      "kernels/gpu/src/bf16_device.hpp": "b5e27cfac8260a24b3b48de6ac7aec3550187bf14a335d255ccd91e1cc99dd89",
+      "include/hipkernels/w4a16_gemm_packed.hpp": "303816dff302f91facfa5dbda283bd76c0dc1c6dc084aa3e0fced47c2bca5d2b",
+      "experiments/ffn_partition/teammate_gpu.py": "5442db8c46df35005a84284581516ad3566d9f651eceb25b7e4a2868e5ceb04f",
+      "experiments/ffn_partition/gpu_backend.py": "ca5b9ac3a18a5edcf2cc4e5aae75c9417e9dd5c83cdfd9f746b5d8e2c773abc7"
+    },
+    "build_fingerprint": "f8a01ca1c6c841ecbd9ef21c5a3dab8ae7f93401b5b3cf47e4e4c881724b72aa",
+    "activation": "teammate_fp32_silu_times_up_single_bf16_rounding",
+    "source_packed_sha256": {
+      "gate": "d003b3cdf272803d404ea731eec54f04d6fb70d17c75256a73ce17c948d4eefe",
+      "up": "f63bb0baf5a8b5cc350a461a3aa424c13a7ae6df1f0810ea0e29ba214f51f709",
+      "down": "bc028fd83ccaf7365ebb80a358c6932a0ef5388a2e0ac27ab2e0c9f7b64906db"
+    },
+    "prepared_packed_sha256": {
+      "gate_up": "893ab4192db9b0c7ed58ce012ecea3d4245ef1688a1e49ca9b9d03ad13285aa8",
+      "down": "d1fb7c85ce16957a91259fcf6c438af7a87701763fee278a3cf34b8e6835c6f8"
+    },
+    "channels": 10752,
+    "source_channel_begin": 3584,
+    "source_channel_end": 14336,
+    "gemm_autotune": 0
+  },
+  "records_checked": 390,
+  "metrics_checked": 1218,
+  "numerical_failed_metrics_retained": 264,
+  "output_hashes": {
+    "candidate_input0": "2f8892d448c4adca093eb4fd1cdd4f607d4c4d6981a28c41cec24ce48b97c017",
+    "candidate_input1": "4151151fe7ab92979ed68de75361046edb432647a28a0cdd83dfa56c71068acb",
+    "candidate_input2": "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74",
+    "baseline_input0": "882b3eb7c5dd9bad158b8431692514dcc41d9907d663bb9937cd0dd3973a1578",
+    "baseline_input1": "15b42c1f52925945b337e78e379df647cbcd83bd2947ca70c15b44834a2c687c"
+  },
+  "reports": [
+    {
+      "path": "/tmp/optimization-results-snapshot/native8/results/teammate_native8_diagnostic.json",
+      "sha256": "55ddf090460fd29de748df414468e63737589f1386ee8b6890ac7cbe59d15bdd",
+      "measurement_mode": "gpu_device_diagnostic",
+      "ordinary_headline_eligible": false,
+      "gpu_binary_sha256": "a81e87bd9c2f1c0d9a87f9c0f97185405459881ffeb5e1e3342adb230c19e8bb",
+      "status": "completed_with_accuracy_deviations",
+      "kernel_flags": {
+        "bfp16_native_layout": true,
+        "split_m32_a": false,
+        "preconvert_b": false,
+        "preconvert_a": false
+      },
+      "completed_npu_dispatches_by_stage": {
+        "swiglu": 32,
+        "down": 32
+      },
+      "collections": {
+        "validation_runs": 8,
+        "warmup_samples": 6,
+        "samples": 30
+      },
+      "numerical_failed_metrics": 30
+    },
+    {
+      "path": "/tmp/optimization-results-snapshot/native8/results/native8_comparison_fixed/jobs/b0_upstream_p3584_ordinary.json",
+      "sha256": "86e991acca45a5fb814c031473f251841d4aa9562cbdf2196a69bad6c61e69d7",
+      "measurement_mode": "ordinary",
+      "ordinary_headline_eligible": true,
+      "gpu_binary_sha256": "d48a020389f06705f7d8f36da68c7c052f594ab923f8cdd85605656930cf791b",
+      "status": "completed_with_accuracy_deviations",
+      "kernel_flags": {
+        "bfp16_native_layout": true,
+        "split_m32_a": false,
+        "preconvert_b": false,
+        "preconvert_a": false
+      },
+      "completed_npu_dispatches_by_stage": {
+        "swiglu": 74,
+        "down": 74
+      },
+      "collections": {
+        "validation_runs": 8,
+        "warmup_samples": 9,
+        "samples": 90
+      },
+      "numerical_failed_metrics": 72
+    },
+    {
+      "path": "/tmp/optimization-results-snapshot/native8/results/native8_comparison_fixed/jobs/b1_upstream_p3584_ordinary.json",
+      "sha256": "0658cff7f12156c461e63f687bc09069c238bd97625b59ec0ae01310d122645d",
+      "measurement_mode": "ordinary",
+      "ordinary_headline_eligible": true,
+      "gpu_binary_sha256": "fcdaaa14b24c11e70cd19fb2659da42869592120f7f35ea03762509d65db2fa7",
+      "status": "completed_with_accuracy_deviations",
+      "kernel_flags": {
+        "bfp16_native_layout": true,
+        "split_m32_a": false,
+        "preconvert_b": false,
+        "preconvert_a": false
+      },
+      "completed_npu_dispatches_by_stage": {
+        "swiglu": 74,
+        "down": 74
+      },
+      "collections": {
+        "validation_runs": 8,
+        "warmup_samples": 9,
+        "samples": 90
+      },
+      "numerical_failed_metrics": 72
+    },
+    {
+      "path": "/tmp/optimization-results-snapshot/prefetch/results/split_full_sweep.json",
+      "sha256": "dae90e4291fec727b361fa4f5a4c3437d204146dfebda693b13101688acbcf34",
+      "measurement_mode": "ordinary",
+      "ordinary_headline_eligible": true,
+      "gpu_binary_sha256": "68b0770c0177a5021739f6c31ecb4cdfca0e634021a4e36d167b2511ec47f7a5",
+      "status": "completed_with_accuracy_deviations",
+      "kernel_flags": {
+        "bfp16_native_layout": true,
+        "split_m32_a": true,
+        "preconvert_b": false,
+        "preconvert_a": false
+      },
+      "completed_npu_dispatches_by_stage": {
+        "swiglu": 32,
+        "down": 32
+      },
+      "collections": {
+        "validation_runs": 8,
+        "warmup_samples": 6,
+        "samples": 30
+      },
+      "numerical_failed_metrics": 30
+    },
+    {
+      "path": "/tmp/optimization-results-snapshot/prefetch/results/preconvert_full_sweep.json",
+      "sha256": "ef21a56f890af9bd8f5ed6a991f08ee5f2cdbeb7ffb54162f5d16c4abda7d92d",
+      "measurement_mode": "ordinary",
+      "ordinary_headline_eligible": true,
+      "gpu_binary_sha256": "43e4061a7d9912761ac4ef51d8438d5be22508e27a0077de616edf6cb3bc19e2",
+      "status": "completed_with_accuracy_deviations",
+      "kernel_flags": {
+        "bfp16_native_layout": true,
+        "split_m32_a": false,
+        "preconvert_b": true,
+        "preconvert_a": false
+      },
+      "completed_npu_dispatches_by_stage": {
+        "swiglu": 32,
+        "down": 32
+      },
+      "collections": {
+        "validation_runs": 8,
+        "warmup_samples": 6,
+        "samples": 30
+      },
+      "numerical_failed_metrics": 30
+    },
+    {
+      "path": "/tmp/optimization-results-snapshot/prefetch/results/combined_full_sweep.json",
+      "sha256": "262e5016f4c3bc253f1dc68c0ab53f4b0c2f1e5aa5214041f3eb67c54ca156d9",
+      "measurement_mode": "ordinary",
+      "ordinary_headline_eligible": true,
+      "gpu_binary_sha256": "b46dfbbf5af9483778be5f3cf62a56958bf2d090d16f57a6e44cafe28ab41ae7",
+      "status": "completed_with_accuracy_deviations",
+      "kernel_flags": {
+        "bfp16_native_layout": true,
+        "split_m32_a": true,
+        "preconvert_b": true,
+        "preconvert_a": false
+      },
+      "completed_npu_dispatches_by_stage": {
+        "swiglu": 32,
+        "down": 32
+      },
+      "collections": {
+        "validation_runs": 8,
+        "warmup_samples": 6,
+        "samples": 30
+      },
+      "numerical_failed_metrics": 30
+    }
+  ]
+}

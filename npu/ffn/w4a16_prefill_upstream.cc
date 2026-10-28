@@ -9,13 +9,15 @@
 // The graph holds one upstream payload and A[reuse,2048], then calls low
 // and high with separate C[reuse,512] buffers and the same 4096-BF16 scratch.
 // Thus both N32 halves reuse the original DMA object without host repacking
-// or duplicate weight DMA. C remains FP32 across K groups; Y is BF16.
+// or duplicate weight DMA. By default C remains FP32 across K groups; Y is
+// BF16. The opt-in native8 experiment stores BF16 C at each K128 boundary.
 // Native 4x8x8 four-accumulator MMUL follows AMD MLIR-AIE aie2p/mm.cc,
 // Copyright 2025 AMD, Apache-2.0 WITH LLVM-exception, revision
 // 7e00b57955e108fe9d8e9419f5828a0c7e650858.
 // Optional BFP16-backed 8x8x8 four-accumulator MMUL follows TileFuse at
 // 121dd54abc68f84d89a7074372ebf82be2db62d5 (aie2p/mix_int4_ATB.cc).
-// Internal gathers/scatters preserve the external 4x8-blocked A/C ABI.
+// By default internal gathers/scatters preserve the external 4x8-blocked
+// A/C ABI. The opt-in native8 layout uses direct 8x8 A/C/Y blocks instead.
 
 // Select arithmetic before AIE headers. Standalone builds default to native
 // BF16; explicit 1 enables the AIE API's BFP16-backed BF16-input MMUL.
@@ -44,6 +46,47 @@
 #error "BFP16 MMUL requires HETEROMEGA_MMUL_M_REUSE=1"
 #endif
 
+// Opt-in paired ABI/arithmetic experiment. A/C/Y use native 8x8 blocks,
+// and C is rounded to BF16 after every K128 group. The default retains
+// the existing 4x8 A/Y ABI and FP32 partials exactly.
+#ifndef HETEROMEGA_BFP16_NATIVE_LAYOUT
+#define HETEROMEGA_BFP16_NATIVE_LAYOUT 0
+#endif
+#if HETEROMEGA_BFP16_NATIVE_LAYOUT != 0 && HETEROMEGA_BFP16_NATIVE_LAYOUT != 1
+#error "HETEROMEGA_BFP16_NATIVE_LAYOUT must be 0 or 1"
+#endif
+#if HETEROMEGA_BFP16_NATIVE_LAYOUT && !AIE_API_EMULATE_BFLOAT16_MMUL_WITH_BFP16
+#error "Native 8x8 layout and BF16 partials require BFP16 arithmetic"
+#endif
+#ifndef HETEROMEGA_PRECONVERT_B
+#define HETEROMEGA_PRECONVERT_B 0
+#endif
+#if HETEROMEGA_PRECONVERT_B != 0 && HETEROMEGA_PRECONVERT_B != 1
+#error "HETEROMEGA_PRECONVERT_B must be 0 or 1"
+#endif
+#if HETEROMEGA_PRECONVERT_B && !HETEROMEGA_BFP16_NATIVE_LAYOUT
+#error "Preconverted B requires native8 BFP16 arithmetic"
+#endif
+#ifndef HETEROMEGA_SPLIT_M32_A
+#define HETEROMEGA_SPLIT_M32_A 0
+#endif
+#if HETEROMEGA_SPLIT_M32_A != 0 && HETEROMEGA_SPLIT_M32_A != 1
+#error "HETEROMEGA_SPLIT_M32_A must be 0 or 1"
+#endif
+#if HETEROMEGA_SPLIT_M32_A && !HETEROMEGA_BFP16_NATIVE_LAYOUT
+#error "Split M32 activation streaming requires native8 BFP16 arithmetic"
+#endif
+#ifndef HETEROMEGA_PRECONVERT_A
+#define HETEROMEGA_PRECONVERT_A 0
+#endif
+#if HETEROMEGA_PRECONVERT_A != 0 && HETEROMEGA_PRECONVERT_A != 1
+#error "HETEROMEGA_PRECONVERT_A must be 0 or 1"
+#endif
+#if HETEROMEGA_PRECONVERT_A && \
+    !(HETEROMEGA_SPLIT_M32_A && HETEROMEGA_PRECONVERT_B)
+#error "Preconverted A requires split M32 activation streaming and preconverted B"
+#endif
+
 #include <aie_api/aie.hpp>
 #include <stdint.h>
 #include "aie_kernel_utils.h"
@@ -54,6 +97,9 @@
 static_assert(HETEROMEGA_M_REUSE == 1 || HETEROMEGA_M_REUSE == 2 ||
                   HETEROMEGA_M_REUSE == 4,
               "M reuse must be 1, 2 or 4 native M16 tiles");
+#if HETEROMEGA_SPLIT_M32_A
+static_assert(HETEROMEGA_M_REUSE == 4, "Split M32 activation streaming requires M reuse4");
+#endif
 
 namespace {
 constexpr int REUSE = HETEROMEGA_M_REUSE;
@@ -75,8 +121,34 @@ constexpr int NB = N / NR;
 constexpr int PACKED_N = 64;
 constexpr int PACKED_NB = PACKED_N / NR;
 constexpr int Q_BYTES = K * PACKED_N / 2;
+#if HETEROMEGA_BFP16_NATIVE_LAYOUT
+using Partial = bfloat16;
+#else
+using Partial = float;
+#endif
 
 using MMUL = aie::mmul<MR, KR, NR, bfloat16, bfloat16, accfloat>;
+#if HETEROMEGA_PRECONVERT_B
+using NativeMMUL = aie::mmul<8, 8, 8, bfloat16, bfp16ebs8, accfloat>;
+constexpr int BFP_TILE_BYTES = aie::block_vector<bfp16ebs8, 64>::memory_bytes();
+static_assert(BFP_TILE_BYTES == 72, "BFP16 EBS8 tile must occupy 72 bytes");
+constexpr int HALF_SCRATCH_ELEMENTS = KB * NB * BFP_TILE_BYTES / sizeof(bfloat16);
+#else
+using NativeMMUL = MMUL;
+constexpr int HALF_SCRATCH_ELEMENTS = K * N;
+#endif
+#if HETEROMEGA_PRECONVERT_A
+using PreconvertedMMUL = aie::mmul<8, 8, 8, bfp16ebs8, bfp16ebs8, accfloat>;
+// Packed B halves occupy bytes [0,9216) of the split path's unchanged
+// 16KiB scratch. Reuse the aligned tail for one M16 A object, [9216,11520).
+// The next M16 overwrites only this tail after both N32 halves consume it.
+constexpr int PACKED_A_OFFSET_BYTES = 2 * HALF_SCRATCH_ELEMENTS * sizeof(bfloat16);
+constexpr int PACKED_A_BYTES = MB * KB * BFP_TILE_BYTES;
+static_assert(PACKED_A_OFFSET_BYTES % 64 == 0 && KB * BFP_TILE_BYTES % 64 == 0,
+              "Each packed A stream must begin at a 64-byte boundary");
+static_assert(PACKED_A_OFFSET_BYTES + PACKED_A_BYTES <= 2 * K * N * sizeof(bfloat16),
+              "Packed A must fit after packed B inside the full N64 scratch");
+#endif
 #if AIE_API_EMULATE_BFLOAT16_MMUL_WITH_BFP16
 static_assert(MMUL::size_A == 64 && MMUL::size_B == 64 &&
                   MMUL::size_C == 64,
@@ -101,7 +173,7 @@ add_128_as_bf16(aie::vector<uint8, Lanes> q) {
   return aie::bit_or(uint16(0x4300), wide).template cast_to<bfloat16>();
 }
 
-// A uses native [MB=4, KB=16, MR=4, KR=8] blocks. The ORIGINAL W tile:
+// The ORIGINAL W tile is independent of the selected activation layout:
 //   bytes [0,4096): q[KB=16,NB=8,KR=8,NR/2=4], low-even/high-odd;
 //   bytes [4096,4224): BF16 scales[64];
 //   bytes [4224,4352): zeros[NB=8,repeat=2,NR=8].
@@ -129,6 +201,14 @@ static inline void dequantize(const uint8_t *__restrict payload,
 #endif
 
   for (int nb = 0; nb < NB; ++nb) {
+#if HETEROMEGA_PRECONVERT_B
+    // Each N8 stream starts at a 64-byte boundary (16*72=1152 bytes),
+    // then reads/writes all K8 blocks sequentially. This avoids unaligned
+    // block-stream seeks and fits inside the unchanged 8KiB scratch BO.
+    auto *stream_base = reinterpret_cast<bfp16ebs8 *>(
+        reinterpret_cast<uint8_t *>(scratch) + nb * KB * BFP_TILE_BYTES);
+    aie::block_vector_output_buffer_stream<bfp16ebs8, 64> converted(stream_base);
+#endif
     const auto scale = aie::load_v<NR>(scales + nb * NR)
                            .template grow_replicate<KR * NR>();
 #if HETEROMEGA_VECTOR_ZERO
@@ -153,7 +233,18 @@ static inline void dequantize(const uint8_t *__restrict payload,
       const auto quant_plus_128 = add_128_as_bf16(q8);
       const auto centered = aie::sub(quant_plus_128, bias);
       const auto weight = aie::mul(centered, scale).to_vector<bfloat16>();
+#if HETEROMEGA_PRECONVERT_B
+      // Match the BF16-input MMUL's B operand conversion exactly: preserve
+      // the BF16 dequant rounding, transpose K/N, widen by multiplying by
+      // BF16 one, then convert with the caller's conv_even rounding mode.
+      const auto transposed = aie::transpose(weight, 8, 8);
+      const aie::accum<accfloat, 64> widened = ::mul_elem_64(
+          transposed, ::concat(::broadcast_one_to_v32bfloat16(),
+                               ::broadcast_one_to_v32bfloat16()));
+      converted << widened;
+#else
       aie::store_v(scratch + (kb * NB + nb) * (KR * NR), weight);
+#endif
     }
   }
 }
@@ -345,22 +436,217 @@ static inline void accumulate_half(const bfloat16 *__restrict a,
   aie::set_rounding(saved_rounding);
 }
 
+#if HETEROMEGA_BFP16_NATIVE_LAYOUT
+// Native block order A[MB=2,KB=16,8,8], C/Y[MB=2,NB=4,8,8]. This
+// requires matching graph DMA transforms; it must never consume the old
+// 4x8 activation layout. W and dequantized scratch retain their exact ABI.
+// Four accumulators remain live, matching the selected upstream strategy;
+// only K128 boundary storage changes from FP32 to nearest-even BF16.
+static inline void accumulate_dequantized_native(
+    const bfloat16 *__restrict a, const bfloat16 *__restrict b_scratch,
+    bfloat16 *__restrict c) {
+  for (int mb = 0; mb < MB; mb += 2) {
+    for (int nb = 0; nb < NB; nb += 2) {
+      bfloat16 *c00 = c + (mb * NB + nb) * MMUL::size_C;
+      bfloat16 *c01 = c00 + MMUL::size_C;
+      bfloat16 *c10 = c00 + NB * MMUL::size_C;
+      bfloat16 *c11 = c10 + MMUL::size_C;
+      NativeMMUL acc00(aie::load_v<MMUL::size_C>(c00));
+      NativeMMUL acc01(aie::load_v<MMUL::size_C>(c01));
+      NativeMMUL acc10(aie::load_v<MMUL::size_C>(c10));
+      NativeMMUL acc11(aie::load_v<MMUL::size_C>(c11));
+#if HETEROMEGA_PRECONVERT_B
+      const auto *packed = reinterpret_cast<const uint8_t *>(b_scratch);
+      aie::block_vector_input_buffer_stream<bfp16ebs8, 64> b0_stream(
+          reinterpret_cast<const bfp16ebs8 *>(packed + nb * KB * BFP_TILE_BYTES));
+      aie::block_vector_input_buffer_stream<bfp16ebs8, 64> b1_stream(
+          reinterpret_cast<const bfp16ebs8 *>(packed + (nb + 1) * KB * BFP_TILE_BYTES));
+#endif
+      AIE_PREPARE_FOR_PIPELINING
+      for (int kb = 0; kb < KB; ++kb) {
+        const auto a0 = aie::load_v<MMUL::size_A>(
+            a + (mb * KB + kb) * MMUL::size_A);
+        const auto a1 = aie::load_v<MMUL::size_A>(
+            a + ((mb + 1) * KB + kb) * MMUL::size_A);
+#if HETEROMEGA_PRECONVERT_B
+        // Public mixed MMUL requires the transpose operation modifier.
+        // B is already stored as N8/K8; this selects A*B^T and passes the
+        // packed parent unchanged to the hardware's 8x8T instruction.
+        const auto b0 = aie::op_transpose(b0_stream.pop());
+        const auto b1 = aie::op_transpose(b1_stream.pop());
+#else
+        const auto b0 = aie::load_v<MMUL::size_B>(
+            b_scratch + (kb * NB + nb) * MMUL::size_B);
+        const auto b1 = aie::load_v<MMUL::size_B>(
+            b_scratch + (kb * NB + nb + 1) * MMUL::size_B);
+#endif
+        acc00.mac(a0, b0);
+        acc01.mac(a0, b1);
+        acc10.mac(a1, b0);
+        acc11.mac(a1, b1);
+      }
+      aie::store_v(c00, acc00.to_vector<bfloat16>());
+      aie::store_v(c01, acc01.to_vector<bfloat16>());
+      aie::store_v(c10, acc10.to_vector<bfloat16>());
+      aie::store_v(c11, acc11.to_vector<bfloat16>());
+    }
+  }
+}
+
+template <unsigned Half>
+static inline void accumulate_half_native(const bfloat16 *__restrict a,
+                                         const uint8_t *__restrict payload,
+                                         bfloat16 *__restrict c,
+                                         bfloat16 *__restrict b_scratch) {
+  const auto saved_rounding = aie::swap_rounding(aie::rounding_mode::conv_even);
+  event0();
+  dequantize<Half>(payload, b_scratch);
+  for (int r = 0; r < REUSE; ++r)
+    accumulate_dequantized_native(a + r * M * K, b_scratch, c + r * M * N);
+  event1();
+  aie::set_rounding(saved_rounding);
+}
+
+#if HETEROMEGA_SPLIT_M32_A
+#if HETEROMEGA_PRECONVERT_A
+static inline void preconvert_a_native(const bfloat16 *__restrict a,
+                                      bfp16ebs8 *__restrict packed_a) {
+  for (int mb = 0; mb < MB; ++mb) {
+    auto *stream_base = reinterpret_cast<bfp16ebs8 *>(
+        reinterpret_cast<uint8_t *>(packed_a) + mb * KB * BFP_TILE_BYTES);
+    aie::block_vector_output_buffer_stream<bfp16ebs8, 64> converted(stream_base);
+    AIE_PREPARE_FOR_PIPELINING
+    for (int kb = 0; kb < KB; ++kb) {
+      // Exactly the mixed BF16/BFP MMUL's A conversion, with no transpose.
+      const aie::accum<accfloat, 64> widened(
+          aie::load_v<MMUL::size_A>(a + (mb * KB + kb) * MMUL::size_A));
+      converted << widened;
+    }
+  }
+}
+
+static inline void accumulate_preconverted_native(
+    const bfp16ebs8 *__restrict packed_a,
+    const bfloat16 *__restrict b_scratch, bfloat16 *__restrict c) {
+  const auto *a_bytes = reinterpret_cast<const uint8_t *>(packed_a);
+  const auto *b_bytes = reinterpret_cast<const uint8_t *>(b_scratch);
+  for (int nb = 0; nb < NB; nb += 2) {
+    bfloat16 *c00 = c + nb * MMUL::size_C;
+    bfloat16 *c01 = c00 + MMUL::size_C;
+    bfloat16 *c10 = c00 + NB * MMUL::size_C;
+    bfloat16 *c11 = c10 + MMUL::size_C;
+    PreconvertedMMUL acc00(aie::load_v<MMUL::size_C>(c00));
+    PreconvertedMMUL acc01(aie::load_v<MMUL::size_C>(c01));
+    PreconvertedMMUL acc10(aie::load_v<MMUL::size_C>(c10));
+    PreconvertedMMUL acc11(aie::load_v<MMUL::size_C>(c11));
+    aie::block_vector_input_buffer_stream<bfp16ebs8, 64> a0_stream(packed_a);
+    aie::block_vector_input_buffer_stream<bfp16ebs8, 64> a1_stream(
+        reinterpret_cast<const bfp16ebs8 *>(a_bytes + KB * BFP_TILE_BYTES));
+    aie::block_vector_input_buffer_stream<bfp16ebs8, 64> b0_stream(
+        reinterpret_cast<const bfp16ebs8 *>(b_bytes + nb * KB * BFP_TILE_BYTES));
+    aie::block_vector_input_buffer_stream<bfp16ebs8, 64> b1_stream(
+        reinterpret_cast<const bfp16ebs8 *>(b_bytes + (nb + 1) * KB * BFP_TILE_BYTES));
+    AIE_PREPARE_FOR_PIPELINING
+    for (int kb = 0; kb < KB; ++kb) {
+      const auto a0 = a0_stream.pop();
+      const auto a1 = a1_stream.pop();
+      const auto b0 = aie::op_transpose(b0_stream.pop());
+      const auto b1 = aie::op_transpose(b1_stream.pop());
+      acc00.mac(a0, b0);
+      acc01.mac(a0, b1);
+      acc10.mac(a1, b0);
+      acc11.mac(a1, b1);
+    }
+    aie::store_v(c00, acc00.to_vector<bfloat16>());
+    aie::store_v(c01, acc01.to_vector<bfloat16>());
+    aie::store_v(c10, acc10.to_vector<bfloat16>());
+    aie::store_v(c11, acc11.to_vector<bfloat16>());
+  }
+}
+#endif
+
+// One M32 activation FIFO object updates either rows0..31 or32..63 of
+// both N32 partials. Four accumulators remain live at a time. The graph
+// holds W and the full-N64 scratch until both M32 objects have completed.
+template <unsigned MOffset>
+static inline void accumulate_pair_m32(const bfloat16 *__restrict a,
+                                      bfloat16 *__restrict c0,
+                                      bfloat16 *__restrict c1,
+                                      bfloat16 *__restrict b_scratch) {
+  static_assert(MOffset == 0 || MOffset == 2, "M32 offset is measured in M16 lanes");
+  const auto saved_rounding = aie::swap_rounding(aie::rounding_mode::conv_even);
+  event0();
+  for (int r = 0; r < 2; ++r) {
+#if HETEROMEGA_PRECONVERT_A
+    auto *packed_a = reinterpret_cast<bfp16ebs8 *>(
+        reinterpret_cast<uint8_t *>(b_scratch) + PACKED_A_OFFSET_BYTES);
+    preconvert_a_native(a + r * M * K, packed_a);
+    accumulate_preconverted_native(packed_a, b_scratch,
+                                   c0 + (MOffset + r) * M * N);
+    accumulate_preconverted_native(packed_a, b_scratch + HALF_SCRATCH_ELEMENTS,
+                                   c1 + (MOffset + r) * M * N);
+#else
+    accumulate_dequantized_native(a + r * M * K, b_scratch,
+                                 c0 + (MOffset + r) * M * N);
+    accumulate_dequantized_native(a + r * M * K,
+                                 b_scratch + HALF_SCRATCH_ELEMENTS,
+                                 c1 + (MOffset + r) * M * N);
+#endif
+  }
+  event1();
+  aie::set_rounding(saved_rounding);
+}
+#endif
+#endif
+
 } // namespace
 
 extern "C" {
 
-// C and Y use [MB=4, NB=4, MR=4, NR=8] block-major layout.
+#if HETEROMEGA_SPLIT_M32_A
+void w4a16_prefill_dequantize_pair(const uint8_t *__restrict payload,
+                                  bfloat16 *__restrict b_scratch) {
+  const auto saved_rounding = aie::swap_rounding(aie::rounding_mode::conv_even);
+  event0();
+  dequantize<0>(payload, b_scratch);
+  dequantize<1>(payload, b_scratch + HALF_SCRATCH_ELEMENTS);
+  event1();
+  aie::set_rounding(saved_rounding);
+}
+
+void w4a16_prefill_accumulate_pair_m0(const bfloat16 *__restrict a,
+                                    bfloat16 *__restrict c0,
+                                    bfloat16 *__restrict c1,
+                                    bfloat16 *__restrict b_scratch) {
+  accumulate_pair_m32<0>(a, c0, c1, b_scratch);
+}
+
+void w4a16_prefill_accumulate_pair_m1(const bfloat16 *__restrict a,
+                                    bfloat16 *__restrict c0,
+                                    bfloat16 *__restrict c1,
+                                    bfloat16 *__restrict b_scratch) {
+  accumulate_pair_m32<2>(a, c0, c1, b_scratch);
+}
+#endif
+
+// Default C/Y use [MB=4,NB=4,MR=4,NR=8] blocks; native8 uses
+// [MB=2,NB=4,MR=8,NR=8].
 // The graph calls init once per output tile, accumulate once per K group,
-// then finish once. C remains local FP32 across all K groups.
-void w4a16_prefill_init(float *__restrict c) {
-  const auto zeros = aie::zeros<float, 16>();
+// then finish once. C stays local: FP32 by default, BF16 in native8 mode.
+void w4a16_prefill_init(Partial *__restrict c) {
+  const auto zeros = aie::zeros<Partial, 16>();
   AIE_PREPARE_FOR_PIPELINING
   for (int i = 0; i < M * N; i += 16)
     aie::store_v(c + i, zeros);
 }
 
-void w4a16_prefill_finish(const float *__restrict c,
+void w4a16_prefill_finish(const Partial *__restrict c,
                          bfloat16 *__restrict output) {
+#if HETEROMEGA_BFP16_NATIVE_LAYOUT
+  AIE_PREPARE_FOR_PIPELINING
+  for (int i = 0; i < M * N; i += 32)
+    aie::store_v(output + i, aie::load_v<32>(c + i));
+#else
   const auto saved_rounding = aie::swap_rounding(aie::rounding_mode::conv_even);
   AIE_PREPARE_FOR_PIPELINING
   for (int i = 0; i < M * N; i += 16) {
@@ -368,14 +654,15 @@ void w4a16_prefill_finish(const float *__restrict c,
     aie::store_v(output + i, value.to_vector<bfloat16>());
   }
   aie::set_rounding(saved_rounding);
+#endif
 }
 
 
-// Grouped ABI: A[r] is the baseline M16/K128 tile, C[r] and Y[r] are the
-// baseline M16/N32 tile. Low/high select halves of the SAME original N64
+// Grouped ABI: A[r] is an M16/K128 tile, C[r] and Y[r] are M16/N32 tiles
+// in the selected layout. Low/high select halves of the SAME original N64
 // payload. K groups must still arrive in the original increasing order.
-void w4a16_prefill_reuse_init(float *__restrict c) {
-  const auto zeros = aie::zeros<float, 16>();
+void w4a16_prefill_reuse_init(Partial *__restrict c) {
+  const auto zeros = aie::zeros<Partial, 16>();
   AIE_PREPARE_FOR_PIPELINING
   for (int i = 0; i < REUSE * M * N; i += 16)
     aie::store_v(c + i, zeros);
@@ -383,20 +670,33 @@ void w4a16_prefill_reuse_init(float *__restrict c) {
 
 void w4a16_prefill_reuse_accumulate_low(const bfloat16 *__restrict a,
                                        const uint8_t *__restrict payload,
-                                       float *__restrict c,
+                                       Partial *__restrict c,
                                        bfloat16 *__restrict b_scratch) {
+#if HETEROMEGA_BFP16_NATIVE_LAYOUT
+  accumulate_half_native<0>(a, payload, c, b_scratch);
+#else
   accumulate_half<0>(a, payload, c, b_scratch);
+#endif
 }
 
 void w4a16_prefill_reuse_accumulate_high(const bfloat16 *__restrict a,
                                         const uint8_t *__restrict payload,
-                                        float *__restrict c,
+                                        Partial *__restrict c,
                                         bfloat16 *__restrict b_scratch) {
+#if HETEROMEGA_BFP16_NATIVE_LAYOUT
+  accumulate_half_native<1>(a, payload, c, b_scratch);
+#else
   accumulate_half<1>(a, payload, c, b_scratch);
+#endif
 }
 
-void w4a16_prefill_reuse_finish(const float *__restrict c,
+void w4a16_prefill_reuse_finish(const Partial *__restrict c,
                               bfloat16 *__restrict output) {
+#if HETEROMEGA_BFP16_NATIVE_LAYOUT
+  AIE_PREPARE_FOR_PIPELINING
+  for (int i = 0; i < REUSE * M * N; i += 32)
+    aie::store_v(output + i, aie::load_v<32>(c + i));
+#else
   const auto saved_rounding = aie::swap_rounding(aie::rounding_mode::conv_even);
   AIE_PREPARE_FOR_PIPELINING
   for (int i = 0; i < REUSE * M * N; i += 16) {
@@ -404,6 +704,7 @@ void w4a16_prefill_reuse_finish(const float *__restrict c,
     aie::store_v(output + i, value.to_vector<bfloat16>());
   }
   aie::set_rounding(saved_rounding);
+#endif
 }
 
 } // extern "C"

@@ -17,7 +17,8 @@ import subprocess
 import sys
 
 from .contract import accuracy_summary, benchmark_stats
-from .run_upstream_partition import selected_options
+from .run_upstream_partition import selected_options, kernel_options
+from types import SimpleNamespace
 from .sweep_partition import (COMPLETED_STATUSES, ROOT, comma_ints, completed_status,
                               query_power, save_json, source_hashes, utc_now)
 
@@ -40,6 +41,217 @@ def valid_hash(value):
 @lru_cache(maxsize=8)
 def zero_hash(rows=512, columns=4096):
     return sha256(bytes(rows * columns * 4)).hexdigest()
+
+
+def candidate_options(args):
+    return kernel_options(SimpleNamespace(npu_arithmetic="bfp16",
+        down_output_layout=getattr(args, "down_output_layout", "compact"),
+        swiglu_reuse=getattr(args, "swiglu_reuse", 2),
+        bfp16_native_layout=getattr(args, "bfp16_native_layout", False),
+        split_m32_a=getattr(args, "split_m32_a", False),
+        preconvert_b=getattr(args, "preconvert_b", False),
+        preconvert_a=getattr(args, "preconvert_a", False)))
+
+
+def validate_optimized_artifacts(report, part, args, p):
+    """Cross-check requested options against the artifacts actually loaded.
+
+    Older archived default reports predate these fields. New opt-in runs must
+    retain complete manifest/build-contract evidence for both NPU launches.
+    """
+    options = candidate_options(args)
+    native8 = getattr(args, "bfp16_native_layout", False)
+    split_a = getattr(args, "split_m32_a", False)
+    preconvert_b = getattr(args, "preconvert_b", False)
+    preconvert_a = getattr(args, "preconvert_a", False)
+    npu = part["npu"]
+    accumulator = "bf16" if native8 else "float32"
+    require(npu.get("bfp16_native_layout", False) is native8 and
+            npu.get("accumulator_format", "float32") == accumulator and
+            npu.get("split_m32_a", False) is split_a and
+            npu.get("preconvert_b", False) is preconvert_b and
+            npu.get("preconvert_a", False) is preconvert_a,
+            "candidate execution arithmetic/layout differs from requested options")
+    optimized = (native8 or getattr(args, "shared_intermediate", False) or
+        getattr(args, "dmabuf_gpu_output", False) or
+        getattr(args, "dmabuf_gpu_input", False) or
+        getattr(args, "mapped_npu_output", False) or getattr(args, "swiglu_reuse", 2) != 2 or
+        getattr(args, "down_output_layout", "compact") != "compact" or
+        getattr(args, "gpu_variant", "original") != "original")
+    if not optimized:
+        return
+    require(npu.get("segment_pipeline_depth") == options["segment_pipeline_depth"],
+            "candidate execution pipeline differs")
+    kernel = npu.get("kernel_options", {})
+    expected_kernel = dict(options, bfp16_native_layout=native8,
+        down_output_layout=options.get("down_output_layout", "compact"),
+        swiglu_output_fifo_depth=options.get("swiglu_output_fifo_depth", 2),
+        down_output_fifo_depth=options.get("down_output_fifo_depth", 2))
+    expected_kernel.pop("segment_pipeline_depth")
+    # Archived ordinary/native8 runs predate the optional split-A field.
+    if split_a or "split_m32_a" in kernel:
+        expected_kernel["split_m32_a"] = split_a
+    if preconvert_b or "preconvert_b" in kernel:
+        expected_kernel["preconvert_b"] = preconvert_b
+    if preconvert_a or "preconvert_a" in kernel:
+        expected_kernel["preconvert_a"] = preconvert_a
+    require(all(kernel.get(key) == value for key, value in expected_kernel.items()),
+            "candidate execution kernel options differ")
+    artifacts = npu.get("artifacts", {})
+    require(set(artifacts) == {"swiglu", "down"} and
+            report.get("artifacts", {}).get(str(p)) == artifacts,
+            "candidate built/loaded artifact evidence differs")
+    common = dict(kind="w4a16_upstream_bfp16", arithmetic="bfp16", compute_format="bfp16",
+        m=512, cols=8, compute_rows=4, worker_count=32, worker_stack_size=4096,
+        weight_tile_bytes=4352, segment_pipeline_depth=2, vector_zero=True, mmul_m_reuse=1,
+        bfp16_native_layout=native8, accumulator_format=accumulator, k_start=0, n_start=0)
+    dependencies = None
+    for stage, geometry in (("swiglu", dict(mode="swiglu", k=4096, n=p,
+            weight_k=4096, weight_n=14336, input_layout="row_major", output_layout="down_a")),
+            ("down", dict(mode="projection", k=p, n=4096, weight_k=14336, weight_n=4096,
+             input_layout="compact", output_layout=options.get("down_output_layout", "compact")))):
+        expected = dict(common, **geometry, m_reuse=options[stage + "_reuse"],
+            activation_fifo_depth=options[stage + "_activation_fifo_depth"],
+            output_fifo_depth=options.get(stage + "_output_fifo_depth", 2))
+        artifact = artifacts[stage]
+        manifest, contract = artifact.get("manifest", {}), artifact.get("build_contract", {})
+        if split_a or "split_m32_a" in manifest or "activation_m_reuse" in manifest:
+            expected.update(split_m32_a=split_a,
+                            activation_m_reuse=2 if split_a else options[stage + "_reuse"])
+        if preconvert_b or "preconvert_b" in manifest:
+            expected["preconvert_b"] = preconvert_b
+        if preconvert_a or "preconvert_a" in manifest:
+            expected["preconvert_a"] = preconvert_a
+        require(all(manifest.get(key) == value for key, value in expected.items()),
+                f"candidate {stage} manifest options differ")
+        recorded = contract.get("expected_manifest", {})
+        require(all(recorded.get(key) == value for key, value in expected.items()) and
+                all(manifest.get(key) == value for key, value in recorded.items()),
+                f"candidate {stage} build contract differs from manifest")
+        closure = manifest.get("dependency_sha256", {})
+        require(isinstance(closure, dict) and {"w4a16_upstream.py", "w4a16_prefill_upstream.cc",
+            "upstream_schedule.py", "upstream_output.py", "upstream_weights.py"}.issubset(closure),
+            f"candidate {stage} source closure missing")
+        for digest in closure.values():
+            valid_hash(digest)
+        require(contract.get("source_sha256") == closure and
+                manifest.get("source_sha256") == closure["w4a16_prefill_upstream.cc"] and
+                manifest.get("graph_sha256") == closure["w4a16_upstream.py"],
+                f"candidate {stage} source identity differs")
+        require(dependencies is None or dependencies == closure,
+                "candidate stages were built from different source closures")
+        dependencies = closure
+        for name in ("xclbin_sha256", "insts_sha256"):
+            valid_hash(manifest.get(name))
+
+
+def validate_teammate_gpu(part, report, p):
+    gpu = part.get("gpu", {})
+    require(all(gpu.get(key) == value for key, value in dict(
+        backend="teammate_three_kernel_gpu_ffn", m=512, hidden=4096,
+        channels=14336-p, source_intermediate=14336, source_channel_begin=p,
+        source_channel_end=14336, kernels_per_prefill=3, gemm_autotune=0).items()),
+        "teammate GPU suffix metadata differs")
+    require(gpu.get("source_packed_sha256") == report.get("gpu_baseline_packed_weight_sha256"),
+            "teammate GPU suffix did not use the fixed full packed buffers")
+    closure = gpu.get("source_sha256", {})
+    required = {"experiments/ffn_partition/teammate_gpu_bindings.cpp",
+        "experiments/ffn_partition/teammate_gpu.py", "kernels/gpu/src/gpu_ffn.cpp",
+        "kernels/gpu/src/pack_w4a16.cpp", "kernels/gpu/src/silu_mul.cu",
+        "src/hipkernels/w4a16_gemm_packed.cu"}
+    require(isinstance(closure, dict) and required.issubset(closure), "teammate GPU source closure missing")
+    for digest in closure.values():
+        valid_hash(digest)
+    for key, digest in report["gpu_baseline"].get("source_sha256", {}).items():
+        if key in closure:
+            require(closure[key] == digest, "teammate/common GPU source differs from baseline")
+    prepared = gpu.get("prepared_packed_sha256", {})
+    require(set(prepared) == {"gate_up", "down"}, "teammate prepared buffer hashes missing")
+    for digest in (*prepared.values(), gpu.get("build_fingerprint"), gpu.get("binary_sha256")):
+        valid_hash(digest)
+
+
+def validate_dmabuf_output(report, part, args):
+    enabled = getattr(args, "dmabuf_gpu_output", False)
+    npu, runtime = part["npu"], part.get("runtime", {})
+    require(report.get("config", {}).get("dmabuf_gpu_output", False) is enabled and
+            npu.get("gpu_output_dmabuf", False) is enabled and
+            runtime.get("gpu_output_dmabuf", False) is enabled,
+            "DMA-BUF output selection/runtime differs")
+    if not enabled:
+        return
+    contract = npu.get("gpu_output_dmabuf_contract", {})
+    require(runtime.get("output") == contract and contract.get("shape") == [512, 4096] and
+            contract.get("dtype") == "BF16" and contract.get("python_buffer_type") == "pyxrt.bo" and
+            contract.get("output_argument") == 5 and contract.get("copy_fallback") is False and
+            contract.get("fd_closed_after_import") is True,
+            "DMA-BUF output binding/extent/ownership contract differs")
+    allocation, imported, registry = (contract.get(key, {}) for key in ("allocation", "imported_bo", "registry"))
+    offset = allocation.get("export_offset")
+    require(type(offset) is int and offset >= 0 and offset % 4096 == 0,
+            "DMA-BUF output export offset is not page aligned")
+    require(offset == 0 or contract.get("sub_buffer_used") is True,
+            "nonzero DMA-BUF output offset requires explicit sub-buffer evidence")
+    if ("backing_nbytes" in allocation or any(key in contract for key in
+            ("import_extent_policy", "imported_backing_bo", "sub_buffer_used", "sub_buffer_offset"))):
+        require(contract.get("import_extent_policy") in (
+                    "zero_offset_logical_subbuffer", "page_offset_logical_subbuffer", "whole_backing"),
+                "unknown DMA-BUF logical/backing allocation policy")
+        parent = contract.get("imported_backing_bo", {})
+        backing = allocation.get("backing_nbytes")
+        sub = contract.get("sub_buffer_used")
+        require(type(backing) is int and backing >= 512 * 4096 * 2 and backing % 4096 == 0 and
+                parent.get("nbytes") == backing and contract.get("sub_buffer_offset") == offset and
+                sub is (backing != 512 * 4096 * 2 or offset != 0) and
+                parent.get("group_id") == imported.get("group_id") and
+                parent.get("bank_id") == imported.get("bank_id") and
+                parent.get("flags") == imported.get("flags") and
+                (parent.get("address") + offset == imported.get("address") if sub else
+                 parent.get("address") == imported.get("address")),
+                "DMA-BUF logical output is not a bounded view of its backing allocation")
+    require(allocation.get("nbytes") == 512 * 4096 * 2 == imported.get("nbytes") and
+            isinstance(offset, int) and offset >= 0 and
+            allocation.get("export_fd_closed") is True and
+            allocation.get("allocation") == "hipMalloc standalone allocation" and
+            allocation.get("export") == "hsa_amd_portable_export_dmabuf" and
+            imported.get("bank_id") == contract.get("kernel_bank_id") == (contract.get("kernel_group_id", -1) & 0xffff) and
+            imported.get("flags_name") in ("normal", "host_only") and
+            isinstance(imported.get("flags"), int), "DMA-BUF allocation/import metadata differs")
+    for pointer in (allocation.get("gpu_pointer"), imported.get("address")):
+        require(isinstance(pointer, int) and pointer > 0 and pointer % 4096 == 0,
+                "DMA-BUF allocation/import address is not page aligned")
+    require(registry.get("registered_types_shared") is True and registry.get("glibcxx_cxx11_abi") == 1 and
+            registry.get("pybind_internals_id") ==
+            f"__pybind11_internals_v5_gcc_libstdcpp_cxxabi{registry.get('gxx_abi_version')}__",
+            "DMA-BUF bridge pyxrt registry/ABI differs")
+    build = contract.get("build", {})
+    require(set(build) == {"xrt_bridge", "hip_allocation"}, "DMA-BUF extension build evidence missing")
+    for label, source in (("xrt_bridge", "xrt_dmabuf_bindings.cpp"),
+                          ("hip_allocation", "hip_dmabuf_bindings.cpp")):
+        info = build[label]
+        closure = info.get("source_sha256", {})
+        require({"experiments/ffn_partition/dmabuf_output.py", "experiments/ffn_partition/" + source}.issubset(closure),
+                "DMA-BUF extension source closure missing")
+        for path, digest in closure.items():
+            valid_hash(digest)
+            if path in report.get("provenance", {}).get("source_sha256", {}):
+                require(report["provenance"]["source_sha256"][path] == digest,
+                        "DMA-BUF extension/runtime source identity differs")
+        valid_hash(info.get("build_fingerprint"))
+        valid_hash(info.get("binding_library_sha256"))
+    bridge = build["xrt_bridge"]
+    require(bridge.get("registry") == registry and bridge.get("expected_pybind_internals_id") == registry["pybind_internals_id"],
+            "DMA-BUF bridge build/loaded registry differs")
+    for field in ("pyxrt_sha256", "xrt_library_sha256"):
+        valid_hash(bridge.get(field))
+    for field in ("xrt_header_sha256", "pybind_header_sha256"):
+        require(bool(bridge.get(field)), "DMA-BUF dependency headers missing")
+        for digest in bridge[field].values():
+            valid_hash(digest)
+    require(len(build["hip_allocation"].get("runtime_dependency_sha256", {})) == 4,
+            "DMA-BUF HIP/HSA headers and runtime library identities missing")
+    for digest in build["hip_allocation"]["runtime_dependency_sha256"].values():
+        valid_hash(digest)
 
 
 def build_jobs(args):
@@ -71,6 +283,13 @@ def build_jobs(args):
                     command += ["--iron-python", args.iron_python]
                 if args.no_build_candidate:
                     command += ["--no-build"]
+                for flag in ("shared_intermediate", "mapped_npu_output", "bfp16_native_layout", "split_m32_a", "preconvert_b", "preconvert_a", "dmabuf_gpu_output", "dmabuf_gpu_input"):
+                    if getattr(args, flag, False):
+                        command += ["--" + flag.replace("_", "-")]
+                for name, default in (("down_output_layout", "compact"), ("swiglu_reuse", 2), ("gpu_variant", "original")):
+                    value = getattr(args, name, default)
+                    if value != default:
+                        command += ["--" + name.replace("_", "-"), str(value)]
             jobs.append(dict(id=tag, variant=variant, mode=mode, block=block, npu_channels=p,
                 iterations=iterations, npu_arithmetic="bfp16" if p else "native_unmodified",
                 accuracy_policy="report" if p else args.native_accuracy_policy, command=command, report_path=report_path,
@@ -196,12 +415,79 @@ def validate_native(report, job, args):
                 accuracy_status=accuracy["accuracy_status"], fixture=fixture_identity(report, "native"))
 
 
+
+def validate_dmabuf_input(report, part, args):
+    """Require explicit GPU-owned input evidence when DMA-BUF input is requested."""
+    enabled = getattr(args, "dmabuf_gpu_input", False)
+    if not enabled:
+        return
+    npu, runtime = part.get("npu", {}), part.get("runtime", {})
+    require(report.get("config", {}).get("dmabuf_gpu_input", False) is True and
+            npu.get("gpu_input_dmabuf", False) is True and
+            runtime.get("gpu_input_dmabuf", False) is True,
+            "DMA-BUF GPU input was not executed on every evidence layer")
+    require(report.get("config", {}).get("dmabuf_gpu_output", False) is True,
+            "DMA-BUF GPU input requires the DMA-BUF output path")
+    contract = npu.get("gpu_input_dmabuf_contract", {})
+    require(contract.get("direction") == "gpu_write_to_npu_read" and
+            contract.get("host_input_staging") == "none" and
+            contract.get("copy_fallback") is False and
+            contract.get("fd_closed_after_import") is True and
+            contract.get("input_argument") == 3,
+            "DMA-BUF GPU input contract differs")
+    allocation, imported = contract.get("allocation", {}), contract.get("imported_bo", {})
+    offset = allocation.get("export_offset")
+    require(type(offset) is int and offset >= 0 and offset % 4096 == 0 and
+            isinstance(allocation.get("nbytes"), int) and allocation["nbytes"] > 0 and
+            allocation["nbytes"] % 4096 == 0 and
+            allocation.get("export_fd_closed") is True,
+            "DMA-BUF GPU input allocation evidence differs")
+    require(offset == 0 or contract.get("sub_buffer_used") is True,
+            "nonzero DMA-BUF GPU input offset requires explicit sub-buffer evidence")
+    if contract.get("sub_buffer_used"):
+        parent = contract.get("imported_backing_bo", {})
+        require(parent.get("address", -1) + offset == imported.get("address") and
+                contract.get("sub_buffer_offset") == offset,
+                "DMA-BUF GPU input sub-buffer offset/address evidence differs")
+    require(imported.get("bank_id") == contract.get("kernel_bank_id") and
+            imported.get("nbytes") == allocation.get("nbytes"),
+            "DMA-BUF GPU input import evidence differs")
+    registry = contract.get("registry", {})
+    require(registry.get("registered_types_shared") is True and
+            registry.get("glibcxx_cxx11_abi") == 1,
+            "DMA-BUF GPU input pybind registry differs")
+    build = contract.get("build", {})
+    for label, source in (("xrt_bridge", "xrt_dmabuf_bindings.cpp"),
+                          ("hip_allocation", "hip_dmabuf_bindings.cpp")):
+        item = build.get(label, {})
+        require(isinstance(item.get("build_fingerprint"), str) and
+                len(item.get("build_fingerprint", "")) == 64 and
+                isinstance(item.get("binding_library_sha256"), str) and
+                len(item.get("binding_library_sha256", "")) == 64,
+                f"DMA-BUF GPU input {label} build evidence differs")
+        closure = item.get("source_sha256", {})
+        require({"experiments/ffn_partition/dmabuf_output.py",
+                 "experiments/ffn_partition/" + source}.issubset(closure),
+                f"DMA-BUF GPU input {label} source closure differs")
+    adapter_sources = contract.get("source_sha256", {})
+    require(isinstance(adapter_sources.get("experiments/ffn_partition/dmabuf_input.py"), str) and
+            isinstance(adapter_sources.get("experiments/ffn_partition/dmabuf_output.py"), str),
+            "DMA-BUF GPU input adapter source hashes missing")
+    require(part.get("gpu_input_sync_count") == part.get("completed_candidate_calls"),
+            "DMA-BUF GPU input total synchronization count differs")
+
+
+
 def validate_candidate(report, job, args):
     require(report.get("status") in COMPLETED_STATUSES, "candidate report did not complete")
+    require(report.get("config", {}).get("gpu_device_diagnostics", False) is False and
+            report.get("measurement_mode", "ordinary_latency") != "gpu_device_diagnostic" and
+            report.get("ordinary_headline_eligible", True) is True,
+            "GPU diagnostic timing cannot enter ordinary native comparison")
     expected = dict(m=512, hidden=4096, intermediate=14336, seed=12832, npu_channels=str(job["npu_channels"]),
                     warmup=args.warmup, iterations=job["iterations"], npu_arithmetic="bfp16", accuracy_policy="report")
     require(all(report.get("config", {}).get(k) == v for k, v in expected.items()), "candidate configuration differs")
-    require(report.get("npu_options") == selected_options("bfp16") and report.get("copy_output_bits") is False,
+    require(report.get("npu_options") == candidate_options(args) and report.get("copy_output_bits") is False,
             "candidate does not use the selected direct-buffer options")
     fixture = fixture_identity(report, "upstream")
     parts = report.get("partitions", [])
@@ -212,13 +498,27 @@ def validate_candidate(report, job, args):
     require(part.get("original_weight_buffers_unchanged") is True and
             part.get("weight_buffers_after") == report["original_weight_buffers"], "partition changed original weights")
     npu = part.get("npu", {})
+    dmabuf = getattr(args, "dmabuf_gpu_output", False)
     require(all(npu.get(k) == v for k, v in dict(arithmetic="bfp16", npu_arithmetic="bfp16", compute_format="bfp16",
             weight_repacking=False, full_weight_buffers=True, full_intermediate=14336, channel_start=0, channels=p,
-            columns_requested=8, worker_count=32, launches_per_run=2, host_output_readback="borrowed_until_consumed").items()),
+            columns_requested=8, worker_count=32, launches_per_run=2,
+            host_output_readback="gpu_owned_dmabuf" if dmabuf else "borrowed_until_consumed").items()),
             "candidate direct-buffer/eight-column arithmetic contract differs")
-    require(report.get("gpu_baseline", {}).get("backend") == "heteromosaic_original_gpu_packed" and
-            part.get("gpu", {}).get("backend") == "heteromosaic_original_gpu_packed" and
-            part["gpu"].get("source_sha256") == report["gpu_baseline"].get("source_sha256"), "GPU control changed")
+    require(report.get("gpu_baseline", {}).get("backend") == "heteromosaic_original_gpu_packed", "GPU control changed")
+    if getattr(args, "gpu_variant", "original") == "original":
+        require(part.get("gpu", {}).get("backend") == "heteromosaic_original_gpu_packed" and
+                part["gpu"].get("source_sha256") == report["gpu_baseline"].get("source_sha256"), "GPU suffix changed")
+    else:
+        validate_teammate_gpu(part, report, p)
+    shared = getattr(args, "shared_intermediate", False)
+    dmabuf = getattr(args, "dmabuf_gpu_output", False)
+    dmabuf_input = getattr(args, "dmabuf_gpu_input", False)
+    require(bool(npu.get("shared_intermediate", False)) == shared and
+            bool(npu.get("mapped_output", False)) == getattr(args, "mapped_npu_output", False),
+            "candidate runtime options differ")
+    validate_optimized_artifacts(report, part, args, p)
+    validate_dmabuf_output(report, part, args)
+    validate_dmabuf_input(report, part, args)
     initial = report.get("correctness", {})
     require(set(initial) == {f"baseline_run_{i}_input_{idx}" for i, idx in enumerate((0, 1, 2, 0))}, "initial GPU controls missing")
     for metric in initial.values():
@@ -255,6 +555,23 @@ def validate_candidate(report, job, args):
             diag = sample.get("diagnostics", {}).get("npu", {})
             require(diag.get("completed_dispatches_total") == 2 * calls and
                     diag.get("weight_upload_counts") == dict(gate=1, up=1, down=1), "candidate per-call completion/upload mismatch")
+            if shared:
+                require(diag.get("shared_input_completed_consumptions") == calls and
+                        diag.get("down_input_host_write_count") == 0, "shared intermediate consumption mismatch")
+            if dmabuf:
+                require(diag.get("gpu_output_dmabuf") is True and diag.get("gpu_output_sync_count") == calls and
+                        diag.get("final_output_bo_reads") == 0 and diag.get("final_output_h2d_copies") == 0 and
+                        sample.get("diagnostics", {}).get("gpu_output_dmabuf") is True and
+                        sample["diagnostics"].get("final_output_h2d_copies") == 0,
+                        "DMA-BUF per-call output synchronization/copy evidence differs")
+            if dmabuf_input:
+                require(diag.get("gpu_input_dmabuf") is True and
+                        diag.get("gpu_input_sync_count") == calls and
+                        diag.get("host_input_write_count") == 0 and
+                        sample.get("diagnostics", {}).get("gpu_input_dmabuf") is True and
+                        sample["diagnostics"].get("input_gpu_to_gpu_copies") == 1 and
+                        sample["diagnostics"].get("host_input_copies") == 0,
+                        "DMA-BUF per-call input synchronization/copy evidence differs")
     require(seen[("candidate", 0)] != seen[("candidate", 1)], "changed input produced stale candidate output")
     if ("baseline", 0) in seen and ("baseline", 1) in seen:
         require(seen[("baseline", 0)] != seen[("baseline", 1)], "changed input produced stale GPU output")
@@ -262,9 +579,14 @@ def validate_candidate(report, job, args):
     expected_calls = 8 + 2 * (args.warmup + job["iterations"])
     require(calls == expected_calls == part.get("completed_candidate_calls") == part.get("expected_npu_dispatches_per_stage") and
             part.get("completed_npu_dispatches_by_stage") == dict(swiglu=calls, down=calls) and
-            part.get("input_write_counts_by_stage") == dict(swiglu=[calls, 1, 1], down=[calls, 1]) and
+            part.get("input_write_counts_by_stage") == dict(
+                swiglu=[0 if dmabuf_input else calls, 1, 1], down=[0 if shared else calls, 1]) and
             part.get("fixed_weight_upload_counts") == dict(gate=1, up=1, down=1), "candidate total completion/upload mismatch")
     accuracy = accuracy_summary(list(named.values()))
+    if dmabuf:
+        require(part.get("gpu_output_sync_count") == calls, "DMA-BUF total output synchronization count differs")
+    if dmabuf_input:
+        require(part.get("gpu_input_sync_count") == calls, "DMA-BUF total input synchronization count differs")
     overall = accuracy_summary([*initial.values(), *named.values()])
     status = "passed" if overall["passed"] else "completed_with_accuracy_deviations"
     require(part.get("accuracy") == accuracy and report.get("accuracy") == overall and
@@ -334,6 +656,18 @@ def parse_args(argv=None):
     parser.add_argument("--iterations", type=int, default=50)
     parser.add_argument("--warmup", type=int, default=3)
     parser.add_argument("--native-diagnostic", action="store_true")
+    parser.add_argument("--shared-intermediate", action="store_true")
+    parser.add_argument("--mapped-npu-output", action="store_true")
+    parser.add_argument("--dmabuf-gpu-output", action="store_true")
+    parser.add_argument("--dmabuf-gpu-input", action="store_true",
+                        help="use a GPU-owned DMA-BUF SwiGLU input; requires --dmabuf-gpu-output")
+    parser.add_argument("--down-output-layout", choices=("compact", "row_major"), default="compact")
+    parser.add_argument("--swiglu-reuse", type=int, choices=(2, 4), default=2)
+    parser.add_argument("--bfp16-native-layout", action="store_true")
+    parser.add_argument("--split-m32-a", action="store_true")
+    parser.add_argument("--preconvert-b", action="store_true")
+    parser.add_argument("--preconvert-a", action="store_true")
+    parser.add_argument("--gpu-variant", choices=("original", "teammate"), default="original")
     parser.add_argument("--diagnostic-iterations", type=int, default=10)
     parser.add_argument("--artifact-root", type=Path, required=True)
     parser.add_argument("--iron-python", default=os.environ.get("IRON_PYTHON"))
@@ -347,11 +681,23 @@ def parse_args(argv=None):
     parser.add_argument("--keep-going", action="store_true", help="preserve failed evidence and continue; final exit remains nonzero")
     args = parser.parse_args(argv)
     args.seed = 12832
+    if args.split_m32_a and (not args.bfp16_native_layout or args.swiglu_reuse != 4):
+        parser.error("--split-m32-a requires --bfp16-native-layout and --swiglu-reuse 4")
+    if args.preconvert_b and not args.bfp16_native_layout:
+        parser.error("--preconvert-b requires --bfp16-native-layout")
+    if args.preconvert_a and (not args.split_m32_a or not args.preconvert_b):
+        parser.error("--preconvert-a requires --split-m32-a and --preconvert-b")
+    if args.dmabuf_gpu_output:
+        if args.mapped_npu_output:
+            parser.error("--dmabuf-gpu-output is incompatible with --mapped-npu-output")
+        args.down_output_layout = "row_major"
+    if args.dmabuf_gpu_input and not args.dmabuf_gpu_output:
+        parser.error("--dmabuf-gpu-input requires --dmabuf-gpu-output")
     if (not 1 <= args.iterations <= 1000 or not 0 <= args.warmup <= 100 or
             not 1 <= args.diagnostic_iterations <= 1000 or args.job_timeout <= 0):
         parser.error("invalid iteration/warmup/timeout bounds")
-    if not all(p in (2560, 2816) for p in args.npu_channels):
-        parser.error("bounded comparison supports P2560 and P2816")
+    if not all(256 <= p <= 8192 and p % 256 == 0 for p in args.npu_channels):
+        parser.error("comparison supports aligned P256..8192 in steps of 256")
     if not args.no_build_candidate and not args.iron_python:
         parser.error("provide --iron-python (or IRON_PYTHON) or --no-build-candidate")
     for name in ("native_root", "native_library", "driver_include", "artifact_root", "output_dir"):

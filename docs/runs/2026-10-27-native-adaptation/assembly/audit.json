@@ -1,0 +1,913 @@
+{
+  "scope": "Static kernel object audit, not linked-core program size or measured device cycles.",
+  "artifacts": {
+    "native8_r4": {
+      "object_sha256": "5e76b954d92e27a35841f29cf00f85702ea154bc10636836199f81ea90c9415b",
+      "disassembly_sha256": "d3f74c83ee7111fd3e7f9e2290710509332138b9b1229c7404e019beb144fd4b",
+      "executable_sections_bytes": {
+        ".text": 0,
+        ".text.w4a16_prefill_init": 160,
+        ".text.w4a16_prefill_finish": 192,
+        ".text.w4a16_prefill_reuse_init": 160,
+        ".text.w4a16_prefill_reuse_accumulate_low": 1104,
+        ".text.w4a16_prefill_reuse_accumulate_high": 1104,
+        ".text.w4a16_prefill_reuse_finish": 192
+      },
+      "all_executable_bytes_in_object": 2912,
+      "functions": {
+        "w4a16_prefill_init": {
+          "code_bytes": 160,
+          "storage_equivalent_32bit_words": 40,
+          "frame_bytes": 0,
+          "static_vector_stack_transfers": 0,
+          "stack_operations": [],
+          "calls": []
+        },
+        "w4a16_prefill_finish": {
+          "code_bytes": 192,
+          "storage_equivalent_32bit_words": 48,
+          "frame_bytes": 0,
+          "static_vector_stack_transfers": 0,
+          "stack_operations": [],
+          "calls": []
+        },
+        "w4a16_prefill_reuse_init": {
+          "code_bytes": 160,
+          "storage_equivalent_32bit_words": 40,
+          "frame_bytes": 0,
+          "static_vector_stack_transfers": 0,
+          "stack_operations": [],
+          "calls": []
+        },
+        "w4a16_prefill_reuse_accumulate_low": {
+          "code_bytes": 1104,
+          "storage_equivalent_32bit_words": 276,
+          "frame_bytes": 64,
+          "static_vector_stack_transfers": 0,
+          "stack_operations": [
+            {
+              "address": "0x7a",
+              "instruction": "st\t p6, [sp, #-64]"
+            },
+            {
+              "address": "0x436",
+              "instruction": "lda\t p6, [sp, #-64]"
+            }
+          ],
+          "calls": []
+        },
+        "w4a16_prefill_reuse_accumulate_high": {
+          "code_bytes": 1104,
+          "storage_equivalent_32bit_words": 276,
+          "frame_bytes": 64,
+          "static_vector_stack_transfers": 0,
+          "stack_operations": [
+            {
+              "address": "0x7a",
+              "instruction": "st\t p6, [sp, #-64]"
+            },
+            {
+              "address": "0x436",
+              "instruction": "lda\t p6, [sp, #-64]"
+            }
+          ],
+          "calls": []
+        },
+        "w4a16_prefill_reuse_finish": {
+          "code_bytes": 192,
+          "storage_equivalent_32bit_words": 48,
+          "frame_bytes": 0,
+          "static_vector_stack_transfers": 0,
+          "stack_operations": [],
+          "calls": []
+        }
+      },
+      "projection_export_subset": [
+        "w4a16_prefill_reuse_accumulate_low",
+        "w4a16_prefill_reuse_accumulate_high",
+        "w4a16_prefill_reuse_init",
+        "w4a16_prefill_reuse_finish"
+      ],
+      "projection_export_subset_bytes": 2560
+    },
+    "split_m32_preconvert_b": {
+      "object_sha256": "0439fa66588508c3b4e2cd11d42f24e2749f52cc07aad2f041d4365bdbe86872",
+      "disassembly_sha256": "cd0cd2783097d9b2bf2fb743c25960971d8463bea690f1ad218f105657bd1c17",
+      "executable_sections_bytes": {
+        ".text": 0,
+        ".text.w4a16_prefill_dequantize_pair": 928,
+        ".text.w4a16_prefill_accumulate_pair_m0": 1104,
+        ".text.w4a16_prefill_accumulate_pair_m1": 1120,
+        ".text.w4a16_prefill_init": 160,
+        ".text.w4a16_prefill_finish": 192,
+        ".text.w4a16_prefill_reuse_init": 160,
+        ".text.w4a16_prefill_reuse_accumulate_low": 1120,
+        ".text.w4a16_prefill_reuse_accumulate_high": 1120,
+        ".text.w4a16_prefill_reuse_finish": 192
+      },
+      "all_executable_bytes_in_object": 6096,
+      "functions": {
+        "w4a16_prefill_dequantize_pair": {
+          "code_bytes": 928,
+          "storage_equivalent_32bit_words": 232,
+          "frame_bytes": 0,
+          "static_vector_stack_transfers": 0,
+          "stack_operations": [],
+          "calls": []
+        },
+        "w4a16_prefill_accumulate_pair_m0": {
+          "code_bytes": 1104,
+          "storage_equivalent_32bit_words": 276,
+          "frame_bytes": 576,
+          "static_vector_stack_transfers": 32,
+          "stack_operations": [
+            {
+              "address": "0x48",
+              "instruction": "st\t p6, [sp, #-64]"
+            },
+            {
+              "address": "0x54",
+              "instruction": "st\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x110",
+              "instruction": "vst\t bmll4, [sp, #-0x140]"
+            },
+            {
+              "address": "0x116",
+              "instruction": "vlda\t bmll0, [sp, #-0x140]"
+            },
+            {
+              "address": "0x116",
+              "instruction": "vst\t bmlh4, [sp, #-0x100]"
+            },
+            {
+              "address": "0x11c",
+              "instruction": "vlda\t bmlh0, [sp, #-0x100]"
+            },
+            {
+              "address": "0x11c",
+              "instruction": "vst\t bmhl4, [sp, #-0xc0]"
+            },
+            {
+              "address": "0x122",
+              "instruction": "vlda\t bmhl0, [sp, #-0xc0]"
+            },
+            {
+              "address": "0x122",
+              "instruction": "vst\t bmhh4, [sp, #-0x80]"
+            },
+            {
+              "address": "0x12c",
+              "instruction": "vlda\t bmhh0, [sp, #-0x80]"
+            },
+            {
+              "address": "0x13e",
+              "instruction": "vst\t bmll0, [sp, #-0x240]"
+            },
+            {
+              "address": "0x148",
+              "instruction": "vlda\t bmll0, [sp, #-0x240]"
+            },
+            {
+              "address": "0x148",
+              "instruction": "vst\t bmlh0, [sp, #-0x200]"
+            },
+            {
+              "address": "0x154",
+              "instruction": "vlda\t bmlh0, [sp, #-0x200]"
+            },
+            {
+              "address": "0x154",
+              "instruction": "vst\t bmhl0, [sp, #-0x1c0]"
+            },
+            {
+              "address": "0x162",
+              "instruction": "vlda\t bmhl0, [sp, #-0x1c0]"
+            },
+            {
+              "address": "0x162",
+              "instruction": "vst\t bmhh0, [sp, #-0x180]"
+            },
+            {
+              "address": "0x170",
+              "instruction": "vlda\t bmhh0, [sp, #-0x180]"
+            },
+            {
+              "address": "0x2e0",
+              "instruction": "vst\t bmll4, [sp, #-0x140]"
+            },
+            {
+              "address": "0x2e6",
+              "instruction": "vlda\t bmll0, [sp, #-0x140]"
+            },
+            {
+              "address": "0x2e6",
+              "instruction": "vst\t bmlh4, [sp, #-0x100]"
+            },
+            {
+              "address": "0x2ec",
+              "instruction": "vlda\t bmlh0, [sp, #-0x100]"
+            },
+            {
+              "address": "0x2ec",
+              "instruction": "vst\t bmhl4, [sp, #-0xc0]"
+            },
+            {
+              "address": "0x2f2",
+              "instruction": "vlda\t bmhl0, [sp, #-0xc0]"
+            },
+            {
+              "address": "0x2f2",
+              "instruction": "vst\t bmhh4, [sp, #-0x80]"
+            },
+            {
+              "address": "0x2fc",
+              "instruction": "vlda\t bmhh0, [sp, #-0x80]"
+            },
+            {
+              "address": "0x30e",
+              "instruction": "vst\t bmll0, [sp, #-0x240]"
+            },
+            {
+              "address": "0x318",
+              "instruction": "vlda\t bmll0, [sp, #-0x240]"
+            },
+            {
+              "address": "0x318",
+              "instruction": "vst\t bmlh0, [sp, #-0x200]"
+            },
+            {
+              "address": "0x324",
+              "instruction": "vlda\t bmlh0, [sp, #-0x200]"
+            },
+            {
+              "address": "0x324",
+              "instruction": "vst\t bmhl0, [sp, #-0x1c0]"
+            },
+            {
+              "address": "0x332",
+              "instruction": "vlda\t bmhl0, [sp, #-0x1c0]"
+            },
+            {
+              "address": "0x332",
+              "instruction": "vst\t bmhh0, [sp, #-0x180]"
+            },
+            {
+              "address": "0x340",
+              "instruction": "vlda\t bmhh0, [sp, #-0x180]"
+            },
+            {
+              "address": "0x432",
+              "instruction": "lda\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x438",
+              "instruction": "lda\t p6, [sp, #-64]"
+            }
+          ],
+          "calls": []
+        },
+        "w4a16_prefill_accumulate_pair_m1": {
+          "code_bytes": 1120,
+          "storage_equivalent_32bit_words": 280,
+          "frame_bytes": 576,
+          "static_vector_stack_transfers": 32,
+          "stack_operations": [
+            {
+              "address": "0x58",
+              "instruction": "st\t p6, [sp, #-64]"
+            },
+            {
+              "address": "0x64",
+              "instruction": "st\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x120",
+              "instruction": "vst\t bmll4, [sp, #-0x140]"
+            },
+            {
+              "address": "0x126",
+              "instruction": "vlda\t bmll0, [sp, #-0x140]"
+            },
+            {
+              "address": "0x126",
+              "instruction": "vst\t bmlh4, [sp, #-0x100]"
+            },
+            {
+              "address": "0x12c",
+              "instruction": "vlda\t bmlh0, [sp, #-0x100]"
+            },
+            {
+              "address": "0x12c",
+              "instruction": "vst\t bmhl4, [sp, #-0xc0]"
+            },
+            {
+              "address": "0x132",
+              "instruction": "vlda\t bmhl0, [sp, #-0xc0]"
+            },
+            {
+              "address": "0x132",
+              "instruction": "vst\t bmhh4, [sp, #-0x80]"
+            },
+            {
+              "address": "0x13c",
+              "instruction": "vlda\t bmhh0, [sp, #-0x80]"
+            },
+            {
+              "address": "0x14e",
+              "instruction": "vst\t bmll0, [sp, #-0x240]"
+            },
+            {
+              "address": "0x158",
+              "instruction": "vlda\t bmll0, [sp, #-0x240]"
+            },
+            {
+              "address": "0x158",
+              "instruction": "vst\t bmlh0, [sp, #-0x200]"
+            },
+            {
+              "address": "0x164",
+              "instruction": "vlda\t bmlh0, [sp, #-0x200]"
+            },
+            {
+              "address": "0x164",
+              "instruction": "vst\t bmhl0, [sp, #-0x1c0]"
+            },
+            {
+              "address": "0x172",
+              "instruction": "vlda\t bmhl0, [sp, #-0x1c0]"
+            },
+            {
+              "address": "0x172",
+              "instruction": "vst\t bmhh0, [sp, #-0x180]"
+            },
+            {
+              "address": "0x180",
+              "instruction": "vlda\t bmhh0, [sp, #-0x180]"
+            },
+            {
+              "address": "0x2e8",
+              "instruction": "vst\t bmll4, [sp, #-0x140]"
+            },
+            {
+              "address": "0x2ee",
+              "instruction": "vlda\t bmll0, [sp, #-0x140]"
+            },
+            {
+              "address": "0x2ee",
+              "instruction": "vst\t bmlh4, [sp, #-0x100]"
+            },
+            {
+              "address": "0x2f4",
+              "instruction": "vlda\t bmlh0, [sp, #-0x100]"
+            },
+            {
+              "address": "0x2f4",
+              "instruction": "vst\t bmhl4, [sp, #-0xc0]"
+            },
+            {
+              "address": "0x2fa",
+              "instruction": "vlda\t bmhl0, [sp, #-0xc0]"
+            },
+            {
+              "address": "0x2fa",
+              "instruction": "vst\t bmhh4, [sp, #-0x80]"
+            },
+            {
+              "address": "0x304",
+              "instruction": "vlda\t bmhh0, [sp, #-0x80]"
+            },
+            {
+              "address": "0x312",
+              "instruction": "vst\t bmll0, [sp, #-0x240]"
+            },
+            {
+              "address": "0x31c",
+              "instruction": "vst\t bmlh0, [sp, #-0x200]"
+            },
+            {
+              "address": "0x328",
+              "instruction": "vlda\t bmll0, [sp, #-0x240]"
+            },
+            {
+              "address": "0x334",
+              "instruction": "vlda\t bmlh0, [sp, #-0x200]"
+            },
+            {
+              "address": "0x334",
+              "instruction": "vst\t bmhl0, [sp, #-0x1c0]"
+            },
+            {
+              "address": "0x342",
+              "instruction": "vlda\t bmhl0, [sp, #-0x1c0]"
+            },
+            {
+              "address": "0x342",
+              "instruction": "vst\t bmhh0, [sp, #-0x180]"
+            },
+            {
+              "address": "0x350",
+              "instruction": "vlda\t bmhh0, [sp, #-0x180]"
+            },
+            {
+              "address": "0x442",
+              "instruction": "lda\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x448",
+              "instruction": "lda\t p6, [sp, #-64]"
+            }
+          ],
+          "calls": []
+        },
+        "w4a16_prefill_init": {
+          "code_bytes": 160,
+          "storage_equivalent_32bit_words": 40,
+          "frame_bytes": 0,
+          "static_vector_stack_transfers": 0,
+          "stack_operations": [],
+          "calls": []
+        },
+        "w4a16_prefill_finish": {
+          "code_bytes": 192,
+          "storage_equivalent_32bit_words": 48,
+          "frame_bytes": 0,
+          "static_vector_stack_transfers": 0,
+          "stack_operations": [],
+          "calls": []
+        },
+        "w4a16_prefill_reuse_init": {
+          "code_bytes": 160,
+          "storage_equivalent_32bit_words": 40,
+          "frame_bytes": 0,
+          "static_vector_stack_transfers": 0,
+          "stack_operations": [],
+          "calls": []
+        },
+        "w4a16_prefill_reuse_accumulate_low": {
+          "code_bytes": 1120,
+          "storage_equivalent_32bit_words": 280,
+          "frame_bytes": 576,
+          "static_vector_stack_transfers": 16,
+          "stack_operations": [
+            {
+              "address": "0x56",
+              "instruction": "st\t r8, [sp, #-64]"
+            },
+            {
+              "address": "0x62",
+              "instruction": "st\t p6, [sp, #-60]"
+            },
+            {
+              "address": "0x6e",
+              "instruction": "st\t p7, [sp, #-56]"
+            },
+            {
+              "address": "0x2ea",
+              "instruction": "vst\t bmll4, [sp, #-0x140]"
+            },
+            {
+              "address": "0x2f0",
+              "instruction": "vlda\t bmll0, [sp, #-0x140]"
+            },
+            {
+              "address": "0x2f0",
+              "instruction": "vst\t bmlh4, [sp, #-0x100]"
+            },
+            {
+              "address": "0x2f6",
+              "instruction": "vlda\t bmlh0, [sp, #-0x100]"
+            },
+            {
+              "address": "0x2f6",
+              "instruction": "vst\t bmhl4, [sp, #-0xc0]"
+            },
+            {
+              "address": "0x2fc",
+              "instruction": "vlda\t bmhl0, [sp, #-0xc0]"
+            },
+            {
+              "address": "0x2fc",
+              "instruction": "vst\t bmhh4, [sp, #-0x80]"
+            },
+            {
+              "address": "0x306",
+              "instruction": "vlda\t bmhh0, [sp, #-0x80]"
+            },
+            {
+              "address": "0x31a",
+              "instruction": "vst\t bmll0, [sp, #-0x240]"
+            },
+            {
+              "address": "0x326",
+              "instruction": "vlda\t bmll0, [sp, #-0x240]"
+            },
+            {
+              "address": "0x326",
+              "instruction": "vst\t bmlh0, [sp, #-0x200]"
+            },
+            {
+              "address": "0x334",
+              "instruction": "vlda\t bmlh0, [sp, #-0x200]"
+            },
+            {
+              "address": "0x334",
+              "instruction": "vst\t bmhl0, [sp, #-0x1c0]"
+            },
+            {
+              "address": "0x342",
+              "instruction": "vlda\t bmhl0, [sp, #-0x1c0]"
+            },
+            {
+              "address": "0x342",
+              "instruction": "vst\t bmhh0, [sp, #-0x180]"
+            },
+            {
+              "address": "0x350",
+              "instruction": "vlda\t bmhh0, [sp, #-0x180]"
+            },
+            {
+              "address": "0x43e",
+              "instruction": "lda\t p7, [sp, #-56]"
+            },
+            {
+              "address": "0x444",
+              "instruction": "lda\t p6, [sp, #-60]"
+            },
+            {
+              "address": "0x448",
+              "instruction": "lda\t r8, [sp, #-64]"
+            }
+          ],
+          "calls": []
+        },
+        "w4a16_prefill_reuse_accumulate_high": {
+          "code_bytes": 1120,
+          "storage_equivalent_32bit_words": 280,
+          "frame_bytes": 576,
+          "static_vector_stack_transfers": 16,
+          "stack_operations": [
+            {
+              "address": "0x6c",
+              "instruction": "st\t p6, [sp, #-64]"
+            },
+            {
+              "address": "0x78",
+              "instruction": "st\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x2ea",
+              "instruction": "vst\t bmll4, [sp, #-0x140]"
+            },
+            {
+              "address": "0x2f0",
+              "instruction": "vlda\t bmll0, [sp, #-0x140]"
+            },
+            {
+              "address": "0x2f0",
+              "instruction": "vst\t bmlh4, [sp, #-0x100]"
+            },
+            {
+              "address": "0x2f6",
+              "instruction": "vlda\t bmlh0, [sp, #-0x100]"
+            },
+            {
+              "address": "0x2f6",
+              "instruction": "vst\t bmhl4, [sp, #-0xc0]"
+            },
+            {
+              "address": "0x2fc",
+              "instruction": "vlda\t bmhl0, [sp, #-0xc0]"
+            },
+            {
+              "address": "0x2fc",
+              "instruction": "vst\t bmhh4, [sp, #-0x80]"
+            },
+            {
+              "address": "0x306",
+              "instruction": "vlda\t bmhh0, [sp, #-0x80]"
+            },
+            {
+              "address": "0x31a",
+              "instruction": "vst\t bmll0, [sp, #-0x240]"
+            },
+            {
+              "address": "0x326",
+              "instruction": "vlda\t bmll0, [sp, #-0x240]"
+            },
+            {
+              "address": "0x326",
+              "instruction": "vst\t bmlh0, [sp, #-0x200]"
+            },
+            {
+              "address": "0x334",
+              "instruction": "vlda\t bmlh0, [sp, #-0x200]"
+            },
+            {
+              "address": "0x334",
+              "instruction": "vst\t bmhl0, [sp, #-0x1c0]"
+            },
+            {
+              "address": "0x342",
+              "instruction": "vlda\t bmhl0, [sp, #-0x1c0]"
+            },
+            {
+              "address": "0x342",
+              "instruction": "vst\t bmhh0, [sp, #-0x180]"
+            },
+            {
+              "address": "0x350",
+              "instruction": "vlda\t bmhh0, [sp, #-0x180]"
+            },
+            {
+              "address": "0x442",
+              "instruction": "lda\t p7, [sp, #-60]"
+            },
+            {
+              "address": "0x448",
+              "instruction": "lda\t p6, [sp, #-64]"
+            }
+          ],
+          "calls": []
+        },
+        "w4a16_prefill_reuse_finish": {
+          "code_bytes": 192,
+          "storage_equivalent_32bit_words": 48,
+          "frame_bytes": 0,
+          "static_vector_stack_transfers": 0,
+          "stack_operations": [],
+          "calls": []
+        }
+      },
+      "projection_export_subset": [
+        "w4a16_prefill_dequantize_pair",
+        "w4a16_prefill_accumulate_pair_m0",
+        "w4a16_prefill_accumulate_pair_m1",
+        "w4a16_prefill_reuse_init",
+        "w4a16_prefill_reuse_finish"
+      ],
+      "projection_export_subset_bytes": 3504
+    }
+  },
+  "loops": {
+    "native8_low_k8": {
+      "start_inclusive": "0x320",
+      "end_exclusive": "0x3c0",
+      "encoded_bytes": 160,
+      "encoded_bundles": 23,
+      "opcode_counts": {
+        "add": 4,
+        "lshl": 2,
+        "mov": 4,
+        "movs": 4,
+        "nop": 4,
+        "nopa": 2,
+        "nopb": 1,
+        "nops": 1,
+        "nopv": 1,
+        "nopxm": 1,
+        "padda": 2,
+        "paddb": 2,
+        "vconv.bfp16ebs8.fp32": 4,
+        "vlda.conv.fp32.bf16": 4,
+        "vldb": 4,
+        "vmac.f": 4,
+        "vmul.f": 2,
+        "vshuffle": 4
+      },
+      "stack_accesses": []
+    },
+    "native8_high_k8": {
+      "start_inclusive": "0x320",
+      "end_exclusive": "0x3c0",
+      "encoded_bytes": 160,
+      "encoded_bundles": 23,
+      "opcode_counts": {
+        "add": 4,
+        "lshl": 2,
+        "mov": 4,
+        "movs": 4,
+        "nop": 4,
+        "nopa": 2,
+        "nopb": 1,
+        "nops": 1,
+        "nopv": 1,
+        "nopxm": 1,
+        "padda": 2,
+        "paddb": 2,
+        "vconv.bfp16ebs8.fp32": 4,
+        "vlda.conv.fp32.bf16": 4,
+        "vldb": 4,
+        "vmac.f": 4,
+        "vmul.f": 2,
+        "vshuffle": 4
+      },
+      "stack_accesses": []
+    },
+    "candidate_dequant_low_k8": {
+      "start_inclusive": "0x130",
+      "end_exclusive": "0x1b0",
+      "encoded_bytes": 128,
+      "encoded_bundles": 25,
+      "opcode_counts": {
+        "add": 2,
+        "mov": 2,
+        "movs": 1,
+        "nop": 7,
+        "nopa": 3,
+        "nopb": 2,
+        "nops": 2,
+        "nopv": 2,
+        "nopxm": 1,
+        "vbor": 2,
+        "vconv.bf16.fp32": 4,
+        "vconv.fp32.bf16": 2,
+        "vldb.unpack": 1,
+        "vmul.f": 2,
+        "vshuffle": 2,
+        "vst.flush.512.conv": 1,
+        "vst.push.576.conv.bfp16ebs8.fp32": 1,
+        "vsub.f": 1,
+        "vunpack": 2
+      },
+      "stack_accesses": []
+    },
+    "candidate_dequant_high_k8": {
+      "start_inclusive": "0x2c0",
+      "end_exclusive": "0x340",
+      "encoded_bytes": 128,
+      "encoded_bundles": 25,
+      "opcode_counts": {
+        "add": 2,
+        "mov": 2,
+        "movs": 1,
+        "nop": 7,
+        "nopa": 3,
+        "nopb": 2,
+        "nops": 2,
+        "nopv": 2,
+        "nopxm": 1,
+        "vbor": 2,
+        "vconv.bf16.fp32": 4,
+        "vconv.fp32.bf16": 2,
+        "vldb.unpack": 1,
+        "vmul.f": 2,
+        "vshuffle": 2,
+        "vst.flush.512.conv": 1,
+        "vst.push.576.conv.bfp16ebs8.fp32": 1,
+        "vsub.f": 1,
+        "vunpack": 2
+      },
+      "stack_accesses": []
+    },
+    "candidate_m0_low_k8": {
+      "start_inclusive": "0x180",
+      "end_exclusive": "0x1f0",
+      "encoded_bytes": 112,
+      "encoded_bundles": 12,
+      "opcode_counts": {
+        "add": 2,
+        "lshl": 1,
+        "mov": 2,
+        "movs": 2,
+        "nop": 1,
+        "nopa": 2,
+        "nopb": 2,
+        "nopm": 2,
+        "nops": 1,
+        "nopv": 2,
+        "nopx": 1,
+        "nopxm": 1,
+        "padda": 2,
+        "vconv.bfp16ebs8.fp32": 2,
+        "vlda.conv.fp32.bf16": 4,
+        "vldb.fill.512": 2,
+        "vldb.pop.576": 2,
+        "vmac.f": 4,
+        "vmov": 2
+      },
+      "stack_accesses": []
+    },
+    "candidate_m0_high_k8": {
+      "start_inclusive": "0x350",
+      "end_exclusive": "0x3c0",
+      "encoded_bytes": 112,
+      "encoded_bundles": 12,
+      "opcode_counts": {
+        "add": 2,
+        "lshl": 1,
+        "mov": 2,
+        "movs": 2,
+        "nop": 1,
+        "nopa": 2,
+        "nopb": 2,
+        "nopm": 2,
+        "nops": 1,
+        "nopv": 2,
+        "nopx": 1,
+        "nopxm": 1,
+        "padda": 2,
+        "vconv.bfp16ebs8.fp32": 2,
+        "vlda.conv.fp32.bf16": 4,
+        "vldb.fill.512": 2,
+        "vldb.pop.576": 2,
+        "vmac.f": 4,
+        "vmov": 2
+      },
+      "stack_accesses": []
+    },
+    "candidate_m1_low_k8": {
+      "start_inclusive": "0x190",
+      "end_exclusive": "0x200",
+      "encoded_bytes": 112,
+      "encoded_bundles": 12,
+      "opcode_counts": {
+        "add": 2,
+        "lshl": 1,
+        "mov": 2,
+        "movs": 2,
+        "nop": 1,
+        "nopa": 2,
+        "nopb": 2,
+        "nopm": 2,
+        "nops": 1,
+        "nopv": 2,
+        "nopx": 1,
+        "nopxm": 1,
+        "padda": 2,
+        "vconv.bfp16ebs8.fp32": 2,
+        "vlda.conv.fp32.bf16": 4,
+        "vldb.fill.512": 2,
+        "vldb.pop.576": 2,
+        "vmac.f": 4,
+        "vmov": 2
+      },
+      "stack_accesses": []
+    },
+    "candidate_m1_high_k8": {
+      "start_inclusive": "0x360",
+      "end_exclusive": "0x3d0",
+      "encoded_bytes": 112,
+      "encoded_bundles": 12,
+      "opcode_counts": {
+        "add": 2,
+        "lshl": 1,
+        "mov": 2,
+        "movs": 2,
+        "nop": 1,
+        "nopa": 2,
+        "nopb": 2,
+        "nopm": 2,
+        "nops": 1,
+        "nopv": 2,
+        "nopx": 1,
+        "nopxm": 1,
+        "padda": 2,
+        "vconv.bfp16ebs8.fp32": 2,
+        "vlda.conv.fp32.bf16": 4,
+        "vldb.fill.512": 2,
+        "vldb.pop.576": 2,
+        "vmac.f": 4,
+        "vmov": 2
+      },
+      "stack_accesses": []
+    }
+  },
+  "derived_per_m64_k128_n64": {
+    "matrix_register_blocks": 16,
+    "explanation": "4 M16 lanes * 2 N32 halves * 2 N16 register groups. Each K loop executes15 steady iterations plus peeled work for the16th K8.",
+    "matrix_mac_instructions_both": 1024,
+    "baseline_bfp_conversions": {
+      "a": 512,
+      "b": 512,
+      "total": 1024
+    },
+    "candidate_bfp_conversions": {
+      "a": 512,
+      "b_in_dequant": 128,
+      "total": 640
+    },
+    "conversion_count_reduction_fraction": 0.375,
+    "baseline_steady_mmul_bundles": 5520,
+    "candidate_steady_mmul_bundles": 2880,
+    "candidate_extra_vector_stack_bytes": 16384,
+    "candidate_stack_traffic_explanation": "8 stores +8 loads of64-byte vector quarters before each register-group K loop; no steady-loop spills. This is local stack traffic, not measured DRAM traffic.",
+    "baseline_b_scratch_payload_bytes": {
+      "writes": 16384,
+      "reads": 65536
+    },
+    "candidate_b_scratch_payload_bytes": {
+      "writes": 9216,
+      "reads": 36864
+    },
+    "payload_note": "Logical data payload. FIFO refill/flush transactions and padding may differ."
+  },
+  "limits": [
+    "Encoded bundle counts are not cycles; compressed instruction size, issue constraints, stalls and overlap prevent conversion to latency.",
+    "Steady-loop totals exclude preparation, prologue/epilogue, C loads/stores, graph FIFO waits and host/device transfers.",
+    "Both candidate stages have identical object SHA256; the audit applies to SwiGLU and down R4 projection bodies.",
+    "Candidate leaf frame576B is below the graph4096B allocation; complete stack safety also requires linked main/call-chain evidence, which this object-only audit does not establish.",
+    "Whole object includes unused legacy exports; projection subset is not the full linked-core text. No program-memory capacity claim is made."
+  ]
+}

@@ -314,8 +314,10 @@ class PersistentXrtRunner(XrtRunner):
         self.input_write_counts[index] += 1
 
     def dispatch_wait(self):
-        if any(count == 0 for count in self.input_write_counts):
-            raise RuntimeError("every input BO must be initialized before dispatch")
+        device_owned = getattr(self, "device_owned_inputs", set())
+        if any(count == 0 and index not in device_owned
+               for index, count in enumerate(self.input_write_counts)):
+            raise RuntimeError("every host-written input BO must be initialized before dispatch")
         start = time.perf_counter_ns()
         handle = self.kernel(3, self.instruction_bo, self.instruction_bytes, *self.buffers)
         state = handle.wait(10000)

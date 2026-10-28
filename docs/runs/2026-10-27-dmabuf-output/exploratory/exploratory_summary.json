@@ -1,0 +1,225 @@
+{
+  "full_sweep_10_samples": {
+    "4096": {
+      "status": "completed_with_accuracy_deviations",
+      "wall": {
+        "count": 10,
+        "median_us": 15878.921,
+        "p10_us": 15453.939,
+        "p90_us": 16447.751
+      },
+      "gpu": {
+        "count": 10,
+        "median_us": 22168.912,
+        "p10_us": 21740.8,
+        "p90_us": 23033.826
+      },
+      "npu_branch_median_us": 14135.2435
+    },
+    "4352": {
+      "status": "completed_with_accuracy_deviations",
+      "wall": {
+        "count": 10,
+        "median_us": 15432.229,
+        "p10_us": 14832.97,
+        "p90_us": 15855.591
+      },
+      "gpu": {
+        "count": 10,
+        "median_us": 22247.7605,
+        "p10_us": 21907.127,
+        "p90_us": 22511.896
+      },
+      "npu_branch_median_us": 13864.6285
+    },
+    "4608": {
+      "status": "completed_with_accuracy_deviations",
+      "wall": {
+        "count": 10,
+        "median_us": 16079.9465,
+        "p10_us": 15557.656,
+        "p90_us": 16889.652
+      },
+      "gpu": {
+        "count": 10,
+        "median_us": 22191.506999999998,
+        "p10_us": 21872.188,
+        "p90_us": 23243.532
+      },
+      "npu_branch_median_us": 14650.9985
+    }
+  },
+  "p4352_original_gpu_20": {
+    "status": "completed_with_accuracy_deviations",
+    "wall": {
+      "count": 20,
+      "median_us": 16025.920999999998,
+      "p10_us": 15696.909,
+      "p90_us": 16570.201
+    },
+    "gpu": {
+      "count": 20,
+      "median_us": 22088.14,
+      "p10_us": 21759.251,
+      "p90_us": 22401.179
+    },
+    "npu_branch_median_us": 14683.587,
+    "options": {
+      "arithmetic": "bfp16",
+      "segment_pipeline_depth": 2,
+      "swiglu_reuse": 4,
+      "down_reuse": 4,
+      "swiglu_activation_fifo_depth": 2,
+      "down_activation_fifo_depth": 2,
+      "vector_zero": true,
+      "mmul_m_reuse": 1,
+      "output_layout": "down_a",
+      "swiglu_input_layout": "row_major",
+      "down_output_layout": "row_major",
+      "swiglu_output_fifo_depth": 1,
+      "bfp16_native_layout": true,
+      "split_m32_a": true,
+      "preconvert_b": true
+    }
+  },
+  "p4352_teammate_gpu_20": {
+    "status": "completed_with_accuracy_deviations",
+    "wall": {
+      "count": 20,
+      "median_us": 15692.713,
+      "p10_us": 15164.658,
+      "p90_us": 16809.897
+    },
+    "gpu": {
+      "count": 20,
+      "median_us": 22295.425499999998,
+      "p10_us": 21864.149,
+      "p90_us": 22722.382
+    },
+    "npu_branch_median_us": 14383.717499999999,
+    "options": {
+      "arithmetic": "bfp16",
+      "segment_pipeline_depth": 2,
+      "swiglu_reuse": 4,
+      "down_reuse": 4,
+      "swiglu_activation_fifo_depth": 2,
+      "down_activation_fifo_depth": 2,
+      "vector_zero": true,
+      "mmul_m_reuse": 1,
+      "output_layout": "down_a",
+      "swiglu_input_layout": "row_major",
+      "down_output_layout": "row_major",
+      "swiglu_output_fifo_depth": 1,
+      "bfp16_native_layout": true,
+      "split_m32_a": true,
+      "preconvert_b": true
+    }
+  },
+  "p4352_preconvert_a_10": {
+    "status": "completed_with_accuracy_deviations",
+    "wall": {
+      "count": 10,
+      "median_us": 19987.661,
+      "p10_us": 19302.059,
+      "p90_us": 21110.534
+    },
+    "gpu": {
+      "count": 10,
+      "median_us": 22066.09,
+      "p10_us": 21781.861,
+      "p90_us": 22830.0
+    },
+    "npu_branch_median_us": 18692.4205,
+    "options": {
+      "arithmetic": "bfp16",
+      "segment_pipeline_depth": 2,
+      "swiglu_reuse": 4,
+      "down_reuse": 4,
+      "swiglu_activation_fifo_depth": 2,
+      "down_activation_fifo_depth": 2,
+      "vector_zero": true,
+      "mmul_m_reuse": 1,
+      "output_layout": "down_a",
+      "swiglu_input_layout": "row_major",
+      "down_output_layout": "row_major",
+      "swiglu_output_fifo_depth": 1,
+      "bfp16_native_layout": true,
+      "split_m32_a": true,
+      "preconvert_b": true,
+      "preconvert_a": true
+    }
+  },
+  "dmabuf_input_smoke_h512_p512_3": {
+    "status": "passed",
+    "wall": {
+      "count": 3,
+      "median_us": 6529.855,
+      "p10_us": 6489.415,
+      "p90_us": 7154.142
+    },
+    "gpu": {
+      "count": 3,
+      "median_us": 530.0,
+      "p10_us": 525.67,
+      "p90_us": 532.009
+    },
+    "npu_waits": {
+      "swiglu": 2797.866,
+      "down": 3025.182
+    },
+    "input_stage_median_us": 68.178
+  },
+  "dmabuf_output_smoke_h512_p512_3": {
+    "status": "passed",
+    "wall": {
+      "count": 3,
+      "median_us": 5431.428,
+      "p10_us": 5246.891,
+      "p90_us": 5436.628
+    },
+    "gpu": {
+      "count": 3,
+      "median_us": 516.64,
+      "p10_us": 502.39,
+      "p90_us": 547.74
+    },
+    "npu_waits": {
+      "swiglu": 2366.736,
+      "down": 2525.763
+    },
+    "input_stage_median_us": 47.669
+  },
+  "fifty_sample_paired_comparison": {
+    "status": "completed_with_accuracy_deviations",
+    "comparisons": [
+      {
+        "block": 0,
+        "npu_channels": 4352,
+        "native_job": "b0_native_ordinary",
+        "candidate_job": "b0_upstream_p4352_ordinary",
+        "native_accuracy_passed": false,
+        "candidate_accuracy_passed": false,
+        "native_accuracy_policy": "report",
+        "candidate_accuracy_policy": "report",
+        "comparison_kind": "experimental_latency_with_numerical_deviations",
+        "native_over_candidate_latency_ratio": 1.0260631637076998,
+        "speedup_vs_native": null,
+        "gpu_control_native_over_candidate": 1.0025800967242355
+      },
+      {
+        "block": 1,
+        "npu_channels": 4352,
+        "native_job": "b1_native_ordinary",
+        "candidate_job": "b1_upstream_p4352_ordinary",
+        "native_accuracy_passed": false,
+        "candidate_accuracy_passed": false,
+        "native_accuracy_policy": "report",
+        "candidate_accuracy_policy": "report",
+        "comparison_kind": "experimental_latency_with_numerical_deviations",
+        "native_over_candidate_latency_ratio": 0.9895189397174621,
+        "speedup_vs_native": null,
+        "gpu_control_native_over_candidate": 0.9974871523553794
+      }
+    ]
+  }
+}
