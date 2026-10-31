@@ -1,0 +1,13 @@
+{
+  "source_archive": "C:\\Users\\pangq\\Desktop\\HeteroMega\\HeteroMega-ffn-deploy\\build\\heteromega-ffn-deploy-source.tar.gz",
+  "source_files": 1069,
+  "bytes": 17689421,
+  "sha256": "b9d92fca5f8db340af701776bff3bd1eab92f94a7628a343b2f0318c52e8fc33",
+  "base_commit": "e6ca183c0a78a74496f797b37905f7830e422caa",
+  "implementation": "uncommitted; cloud deployment checks complete under report policy",
+  "uploaded_archive_sha256": "b41747d9d310400aeeb2fd9a8fb946fb5073f8e90e353f17f282bfda7175032c",
+  "validation_evidence_archive_sha256": "72600d36a3d4fab9f1e0f9486d59eea85ac9f8d7b43ff9aae7f3ec42893edf1d",
+  "notes": "Refreshed local source bundle includes tested CMake/model-smoke fixes and current docs. Cloud used the original uploaded archive plus those recorded fixes. Refreshed bundle was not uploaded again.",
+  "credentials_included": false,
+  "model_weights_included": false
+}

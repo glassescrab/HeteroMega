@@ -1,5 +1,13 @@
 # Prefill evaluation
 
+> **2026-10-31 update:** Main C now has a cloud-validated C++ model endpoint;
+> follow [GPU + NPU FFN testing](ffn-teammate-testing.md). The batch runner below
+> still has only its original three methods. It has not been extended to select
+> the merged endpoint or record merged completion counts. Clear
+> `HETEROMEGA_FFN_CONFIG` before all original-method jobs so inherited state
+> cannot activate the candidate in a control. Model smoke timing is diagnostic
+> and differs from this runner's synchronized generate(1) measurement boundary.
+
 Reuse `kernels/gpu/tools/run_model_ffn.py` from GPU PR #1: one excluded warmup,
 then five measured pairs of synchronized `generate(1)` / `generate(64)` calls.
 The primary time includes first-token selection and Python call overhead; it is
@@ -12,7 +20,7 @@ The full experiment plan includes pending implementations, not just CLI choices:
 | --- | --- | --- |
 | Main A | Original GPU-only (`gpu_original`) | Wired; no new hardware measurements |
 | Main B | Original HeteroMosaic GPU+NPU (`heteromosaic`) | Wired; working NPU runtime required |
-| Main C | Our persistent FFN GPU+NPU | Pending complete NPU branch, boundary sum and runtime entry |
+| Main C | Our persistent FFN GPU+NPU | C++ endpoint and cloud deployment checks complete; batch-runner method/counter wiring pending |
 | GPU sanity | Original GPU FFN vs our all-GPU FFN (`gpu_original` vs `gpu_ffn_all`) | Model runner wired; reuse PR #1 FFN tests/benchmarks |
 | NPU sanity | Original NPU FFN vs our all-NPU FFN | Pending both equivalent full-FFN endpoints |
 

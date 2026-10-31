@@ -1,0 +1,10 @@
+test_build_keeps_the_supplied_virtualenv_python_symlink (experiments.ffn_deploy.test_prepare.PackageTests.test_build_keeps_the_supplied_virtualenv_python_symlink) ... ok
+test_package_checks_hashes_and_does_not_modify_binaries (experiments.ffn_deploy.test_prepare.PackageTests.test_package_checks_hashes_and_does_not_modify_binaries) ... ok
+test_tampered_artifact_is_rejected_before_config_write (experiments.ffn_deploy.test_prepare.PackageTests.test_tampered_artifact_is_rejected_before_config_write) ... ok
+test_unaligned_instructions_rejected_even_with_matching_hash (experiments.ffn_deploy.test_prepare.PackageTests.test_unaligned_instructions_rejected_even_with_matching_hash) ... ok
+test_wrong_graph_is_rejected (experiments.ffn_deploy.test_prepare.PackageTests.test_wrong_graph_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.006s
+
+OK

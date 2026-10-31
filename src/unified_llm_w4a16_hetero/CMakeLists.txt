@@ -53,7 +53,8 @@ endif()
 # heteromega::GpuFfnModel when the environment variable HETEROMEGA_GPU_FFN=1 is set. A separate library, so that
 # this library's -march=native does not reach the HIP device compiler.
 option(HETEROMEGA_GPU_FFN "Build the HeteroMega GPU FFN path into the model library" OFF)
-if(HETEROMEGA_GPU_FFN)
+option(HETEROMEGA_MERGED_FFN "Build opt-in complete GPU-NPU FFN deployment through C++ XRT" OFF)
+if(HETEROMEGA_GPU_FFN OR HETEROMEGA_MERGED_FFN)
     set(HM_GPU_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../kernels/gpu)
     set(HM_GPU_HIP_SOURCES ${HM_GPU_DIR}/src/silu_mul.cu ${HM_GPU_DIR}/src/residual_add.cu ${HM_GPU_DIR}/src/gemv_w4a16.cu)
     set_source_files_properties(${HM_GPU_HIP_SOURCES} PROPERTIES LANGUAGE HIP)
@@ -69,8 +70,26 @@ if(HETEROMEGA_GPU_FFN)
     target_compile_definitions(heteromega_gpu_ffn PUBLIC __HIP_PLATFORM_AMD__=1)
     target_link_libraries(heteromega_gpu_ffn PUBLIC hipkernels "${TORCH_LIBRARIES}" hip::host OpenMP::OpenMP_CXX)
     target_link_libraries(unified_llm_w4a16_hetero_lib PUBLIC heteromega_gpu_ffn)
-    target_compile_definitions(unified_llm_w4a16_hetero_lib PRIVATE HETEROMEGA_GPU_FFN=1)
-    message(STATUS "HeteroMega GPU FFN: ON (runtime switch HETEROMEGA_GPU_FFN=1)")
+    if(HETEROMEGA_GPU_FFN)
+        target_compile_definitions(unified_llm_w4a16_hetero_lib PRIVATE HETEROMEGA_GPU_FFN=1)
+        message(STATUS "HeteroMega GPU FFN: ON (runtime switch HETEROMEGA_GPU_FFN=1)")
+    endif()
+endif()
+
+if(HETEROMEGA_MERGED_FFN)
+    set(HETEROMEGA_XRT_ROOT "/opt/xilinx/xrt" CACHE PATH "XRT installation")
+    find_path(HETEROMEGA_XRT_INCLUDE xrt/xrt_kernel.h HINTS ${HETEROMEGA_XRT_ROOT}/include REQUIRED)
+    find_library(HETEROMEGA_XRT_LIBRARY xrt_coreutil HINTS ${HETEROMEGA_XRT_ROOT}/lib REQUIRED)
+    find_package(OpenSSL REQUIRED COMPONENTS Crypto)
+    add_library(heteromega_merged_ffn STATIC merged_ffn.cpp)
+    set_target_properties(heteromega_merged_ffn PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON POSITION_INDEPENDENT_CODE ON)
+    target_include_directories(heteromega_merged_ffn PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+                               PRIVATE ${HETEROMEGA_XRT_INCLUDE})
+    target_link_libraries(heteromega_merged_ffn PUBLIC heteromega_gpu_ffn npu_matmul_func
+                          PRIVATE ${HETEROMEGA_XRT_LIBRARY} OpenSSL::Crypto)
+    target_link_libraries(unified_llm_w4a16_hetero_lib PUBLIC heteromega_merged_ffn)
+    target_compile_definitions(unified_llm_w4a16_hetero_lib PRIVATE HETEROMEGA_MERGED_FFN=1)
+    message(STATUS "HeteroMega merged FFN: ON (runtime opt-in HETEROMEGA_FFN_CONFIG=<JSON>)")
 endif()
 
 set_target_properties(unified_llm_w4a16_hetero_lib PROPERTIES
@@ -187,3 +206,18 @@ set_target_properties(unified_llm_w4a16_hetero_libtorch PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/py/unified_llm_w4a16"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/py/unified_llm_w4a16"
 )
+
+if(HETEROMEGA_MERGED_FFN)
+    # Exercise exactly the executor used by the model, without allocating a full LLM.
+    # The ROCm HIP linker cannot consume GCC's slim LTO objects. Disable
+    # pybind11's automatic LTO so the module exports its Python initializer.
+    pybind11_add_module(heteromega_ffn_deploy NO_EXTRAS ../../experiments/ffn_deploy/bindings.cpp)
+    target_link_libraries(heteromega_ffn_deploy PRIVATE heteromega_merged_ffn)
+    target_include_directories(heteromega_ffn_deploy PRIVATE ${TORCH_INCLUDE_DIRS})
+    if(TORCH_PYTHON_LIBRARY)
+        target_link_libraries(heteromega_ffn_deploy PRIVATE ${TORCH_PYTHON_LIBRARY})
+    endif()
+    set_target_properties(heteromega_ffn_deploy PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON
+                          LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/py"
+                          RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/py")
+endif()

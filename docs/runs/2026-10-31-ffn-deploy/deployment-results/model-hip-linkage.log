@@ -1,0 +1,2 @@
+	libamdhip64.so.7 => /opt/rocm-7.2.0/lib/libamdhip64.so.7 (0x00007d2d83043000)
+	libamdhip64.so => /notebooks/heteromosaic-venv/lib/python3.12/site-packages/torch/lib/libamdhip64.so (0x00007d2d0a200000)

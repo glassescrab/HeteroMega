@@ -388,6 +388,7 @@ torch::Tensor unpack_gptq_qzeros(torch::Tensor qzeros, int64_t out_features, boo
 // Load quantized weights from safetensors file with mmap
 // GPTQ format: layer.weight.qweight (uint8 packed), layer.weight.scales (bf16), layer.weight.qzeros (uint8 packed)
 void UnifiedLLMW4A16Impl::load_quantized_weights_from_safetensors(const std::string &filename) {
+    reset_heteromega_ffn();
     // Safetensors path currently loads separate q/k/v projections.
     gemma_use_qkv_fused_ = false;
     qwen_use_qkv_fused_ = false;
@@ -1045,6 +1046,7 @@ static torch::Tensor read_bin_tensor(const std::string &path, torch::ScalarType 
 }
 
 void UnifiedLLMW4A16Impl::load_quantized_weights_from_bins(const std::string &weights_dir) {
+    reset_heteromega_ffn();
     if (debug_verbosity >= 1) {
         std::cout << "Loading quantized weights from bins: " << weights_dir << std::endl;
     }
@@ -1231,6 +1233,7 @@ GemmaScratchSpace UnifiedLLMW4A16Impl::get_scratch_space() {
 }
 
 void UnifiedLLMW4A16Impl::initialize_dummy_weights(int seed) {
+    reset_heteromega_ffn();
     torch::NoGradGuard no_grad;
     torch::manual_seed(seed);
     if (debug_verbosity >= 1) {

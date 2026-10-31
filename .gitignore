@@ -1,6 +1,12 @@
 # build directory 
 /build
 
+# Local FFN deployment configuration, generated artifacts and test output.
+/deployment.json
+/deployment-results/
+/deployment-results.tar.gz
+/artifacts/
+
 # model_weights directories (general pattern)
 **/model_weights/
 */model_weights/

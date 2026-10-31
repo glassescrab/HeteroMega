@@ -1,0 +1,9 @@
+{
+  "status": "blocked_before_deployment",
+  "in_app_browser": "The browser access host is unavailable",
+  "chrome_attempt": "Computer Use stopped because it could not confidently determine current browser URL",
+  "direct_http": "HTTP403 Cloudflare1010",
+  "hardware_build": false,
+  "hardware_execution": false,
+  "credentials_saved": false
+}

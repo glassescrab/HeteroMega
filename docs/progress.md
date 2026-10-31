@@ -1,5 +1,33 @@
 # HeteroMega progress
 
+## 2026-10-31: publish validated FFN integration for teammate evaluation
+
+- User requested publishing the GPU/NPU model integration to origin/main and
+  a teammate runbook. Prepared from current main e91c4cb9 in a separate clean
+  worktree, preserving the baseline/docs and pinned review/deployment worktrees.
+- Imported required NPU sources, partition-test support and GPU source updates
+  from tested e6ca183c, plus the cloud-validated C++ bridge and model hook.
+  No compute/host implementation edits relative to the validated worktree.
+  Earlier bulk experiment results remain on the source branch. Publication
+  includes October31 raw deployment evidence and its matching compiled artifact.
+- New entry point: [ffn-teammate-testing.md](ffn-teammate-testing.md); complete
+  environment/build commands: [ffn-deployment.md](ffn-deployment.md). README,
+  session instructions and evaluation notes link the integrated endpoint.
+- Retained cloud evidence: full builds; isolated30 dispatches; GPU-attention
+  M512/1024 model64/128; native-attention128 merged +640 native calls per
+  inflight1/2 job, with zero submission/timeline failures. GPU/structural checks
+  pass; numerical tolerances still fail under report policy. No accuracy or
+  whole-model speedup claim. Optional Python-host parity remains unrun.
+- Publication checks: all imported implementation files and nine retained source
+  hashes match the validated worktree; artifact hashes match; 15 documented Bash
+  blocks parse; local C++ contract/metadata checks pass. Four Windows packaging
+  tests pass, one real-symlink case skips (all five passed on the retained Linux
+  run). Raw evidence logs retain their original whitespace. Selected historical
+  JSON fixtures accompany the imported CPU tests; bulk history stays separate.
+- Next: teammate reproduces dispatch counts, adds this endpoint/counter to the
+  batch evaluator and performs paired timing with fixed inputs and schedules.
+  Clear the candidate environment switch in every original control job.
+
 ## 2026-10-18: local evaluation runner on GPU PR #1
 
 - Based on GPU PR #1 at `1b0023b`; preserves the earlier evaluation checkout.

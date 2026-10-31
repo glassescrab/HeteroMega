@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.18)
+project(heteromega_ffn_contract LANGUAGES CXX)
+enable_testing()
+add_executable(ffn_deploy_contract contract_test.cpp)
+target_include_directories(ffn_deploy_contract PRIVATE ../../include)
+target_compile_features(ffn_deploy_contract PRIVATE cxx_std_17)
+add_test(NAME ffn_deploy_contract COMMAND ffn_deploy_contract)

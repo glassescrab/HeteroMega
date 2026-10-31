@@ -1,0 +1,6 @@
+{
+  "artifact_dir": "/notebooks/heteromega-deploy.eT0uOJ/HeteroMega-ffn-deploy/artifacts/deploy-m512-h4096-p6400",
+  "accuracy_policy": "report",
+  "timeout_ms": 10000,
+  "device_index": 0
+}

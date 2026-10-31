@@ -1,0 +1,55 @@
+{
+  "CMakeLists.txt": {
+    "sha256": "856dd217d3b43c45e54530a25c1899a15c36910a1399071a1e3d28cf8c595d85",
+    "lf_sha256": "9d9e0904a983c0069f2755073160fe8f8f71ed7e72abb93d5d20ade4932514a6",
+    "bytes": 3596
+  },
+  "src/unified_llm_w4a16_hetero/CMakeLists.txt": {
+    "sha256": "90c3b66935fe16c7fb352f52eddf55f43bbfffc1462af19711af47643e123deb",
+    "lf_sha256": "90c3b66935fe16c7fb352f52eddf55f43bbfffc1462af19711af47643e123deb",
+    "bytes": 9315
+  },
+  "src/unified_llm_w4a16_hetero/merged_ffn.cpp": {
+    "sha256": "21252e388f4faf747072c41b850244dcdf5655051109fd0e152e4c0f9e2a539e",
+    "lf_sha256": "21252e388f4faf747072c41b850244dcdf5655051109fd0e152e4c0f9e2a539e",
+    "bytes": 14470
+  },
+  "experiments/ffn_deploy/model_smoke.py": {
+    "sha256": "48845f6434624be64489e0e5bb145445105fb2e1e31479f71c3834d366f39139",
+    "lf_sha256": "48845f6434624be64489e0e5bb145445105fb2e1e31479f71c3834d366f39139",
+    "bytes": 7044
+  },
+  "experiments/ffn_deploy/smoke.py": {
+    "sha256": "99382a83e4a5807b1725411311dac20ab2f3e159ffd358ec0a88dc3a26eaf2be",
+    "lf_sha256": "99382a83e4a5807b1725411311dac20ab2f3e159ffd358ec0a88dc3a26eaf2be",
+    "bytes": 9163
+  },
+  "experiments/ffn_deploy/bindings.cpp": {
+    "sha256": "b26327d86d2072e4d40233898b72660a0e529113b60bfd12f3843232e1c2aafb",
+    "lf_sha256": "b26327d86d2072e4d40233898b72660a0e529113b60bfd12f3843232e1c2aafb",
+    "bytes": 1829
+  },
+  "experiments/ffn_deploy/prepare.py": {
+    "sha256": "49af01172492d03460efa0e83d92251ce7550e2dea1193338ed6a3f80736651e",
+    "lf_sha256": "49af01172492d03460efa0e83d92251ce7550e2dea1193338ed6a3f80736651e",
+    "bytes": 3975
+  },
+  "include/heteromega/merged_ffn.hpp": {
+    "sha256": "f65821b6e54d5400214abebc90414548089fd7a95f2c9484db928e2aa0060234",
+    "lf_sha256": "f65821b6e54d5400214abebc90414548089fd7a95f2c9484db928e2aa0060234",
+    "bytes": 1245
+  },
+  "include/heteromega/merged_ffn_contract.hpp": {
+    "sha256": "de7966e571c055f6fe7b0e7c49cec076ad9d1f3444b00d162a7a9a56859fd147",
+    "lf_sha256": "de7966e571c055f6fe7b0e7c49cec076ad9d1f3444b00d162a7a9a56859fd147",
+    "bytes": 6248
+  },
+  "build/py/heteromega_ffn_deploy.cpython-312-x86_64-linux-gnu.so": {
+    "sha256": "b4ba6c426354340783ca1c930604a6c5a4b059bd2da9ea71318db250247c8ab5",
+    "bytes": 3869800
+  },
+  "build/py/unified_llm_w4a16/unified_llm_w4a16_hetero_libtorch.so": {
+    "sha256": "ac9680bb1cab617651c2177f7e239141732f5395a29c1ca5a99bb07816a06bbd",
+    "bytes": 6626816
+  }
+}

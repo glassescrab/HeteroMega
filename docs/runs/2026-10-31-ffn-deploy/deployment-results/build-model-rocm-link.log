@@ -1,0 +1,7 @@
+[  8%] Built target npu_matmul_func
+[ 47%] Built target hipkernels
+[ 67%] Built target heteromega_gpu_ffn
+[ 73%] Built target heteromega_merged_ffn
+[ 94%] Built target unified_llm_w4a16_hetero_lib
+[ 97%] Linking HIP shared module ../../py/unified_llm_w4a16/unified_llm_w4a16_hetero_libtorch.so
+[100%] Built target unified_llm_w4a16_hetero_libtorch

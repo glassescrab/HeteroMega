@@ -15,6 +15,12 @@
 #ifndef AUTOTUNE
 #define AUTOTUNE 0     // 0 = disable kernel autotuning, 1 = benchmark/select per shape
 #endif
+#ifndef HETEROMEGA_GPU_MREUSE
+#define HETEROMEGA_GPU_MREUSE 1
+#endif
+#if HETEROMEGA_GPU_MREUSE != 1 && HETEROMEGA_GPU_MREUSE != 2
+#error "HETEROMEGA_GPU_MREUSE must be 1 or 2"
+#endif
 
 #if BF16_COMPUTE
 #include <rocwmma/rocwmma.hpp>
@@ -371,7 +377,7 @@ using FragA = fragment<matrix_a, 16, 16, 16, bfloat16_t, row_major>;
 using FragB_Row = fragment<matrix_b, 16, 16, 16, bfloat16_t, row_major>;
 using FragC = fragment<accumulator, 16, 16, 16, float>;
 
-template <bool AlignedMN>
+template <bool AlignedMN, bool FUSE_ACT = false>
 __global__ void __launch_bounds__(256) w4a16_gemm_rocwmma_packed(
     bfloat16_t *__restrict__ output, const bfloat16_t *__restrict__ input,
     const uint8_t *__restrict__ packed_params, const int M, const int K,
@@ -527,6 +533,246 @@ __global__ void __launch_bounds__(256) w4a16_gemm_rocwmma_packed(
     float *smem_F32 = (float *)&smem_B[0][0];
     // Batch 4 wave tiles per phase to reduce synchronization overhead.
     for (int base_w = 0; base_w < 8; base_w += 4) {
+        if (wave_id >= base_w && wave_id < base_w + 4) {
+            const int slot = wave_id - base_w;
+            float *tile_ptr = &smem_F32[slot * 2048];
+            for (int i = 0; i < 2; ++i) {
+                for (int j = 0; j < 4; ++j) {
+                    store_matrix_sync(&tile_ptr[(i * 16) * 64 + j * 16], acc[i][j], 64, mem_row_major);
+                }
+            }
+        }
+        __syncthreads();
+
+        int offset = tid * 8;
+        if (offset < 2048) {
+            if constexpr (FUSE_ACT) {
+                // gate/up are interleaved in 64-column groups: slots 2r and
+                // 2r+1 hold the gate/up halves of the same 32 rows. Round the
+                // accumulators to BF16 before SiLU to match silu_mul exactly.
+                const int act_N = N / 2;
+                for (int pair = 0; pair < 2; ++pair) {
+                    const int gate_slot = pair * 2;
+                    const int up_slot = gate_slot + 1;
+                    const int row_group = base_w / 2 + pair;
+                    const int r_base = global_m_start + row_group * 32;
+                    const float *gate_ptr = &smem_F32[gate_slot * 2048];
+                    const float *up_ptr = &smem_F32[up_slot * 2048];
+                    for (int k = 0; k < 8; k += 2) {
+                        int lr = (offset + k) / 64;
+                        int lc = (offset + k) % 64;
+                        int gr = r_base + lr;
+                        int gc = bx * 64 + lc;
+                        float g0 = bf16_to_float(float_to_bf16(gate_ptr[lr * 64 + lc]));
+                        float u0 = bf16_to_float(float_to_bf16(up_ptr[lr * 64 + lc]));
+                        float g1 = bf16_to_float(float_to_bf16(gate_ptr[lr * 64 + lc + 1]));
+                        float u1 = bf16_to_float(float_to_bf16(up_ptr[lr * 64 + lc + 1]));
+                        float o0 = g0 / (1.0f + __expf(-g0)) * u0;
+                        float o1 = g1 / (1.0f + __expf(-g1)) * u1;
+                        float2 of2;
+                        of2.x = o0;
+                        of2.y = o1;
+                        __bf16_2 obf = __float22bfloat162_rn(of2);
+                        *reinterpret_cast<__bf16_2 *>(&output[gr * act_N + gc]) = obf;
+                    }
+                }
+            } else {
+                for (int slot = 0; slot < 4; ++slot) {
+                    int w = base_w + slot;
+                    int r_base = global_m_start + (w / 2) * 32;
+                    int c_base = global_n_start + (w % 2) * 64;
+                    const float *tile_ptr = &smem_F32[slot * 2048];
+                    if constexpr (AlignedMN) {
+                        for (int k = 0; k < 8; k += 2) {
+                            int lr = (offset + k) / 64;
+                            int lc = (offset + k) % 64;
+                            int gr = r_base + lr;
+                            int gc = c_base + lc;
+                            float2 f2;
+                            f2.x = tile_ptr[lr * 64 + lc];
+                            f2.y = tile_ptr[lr * 64 + lc + 1];
+                            __bf16_2 bf2 = __float22bfloat162_rn(f2);
+                            *reinterpret_cast<__bf16_2 *>(&output[gr * N + gc]) = bf2;
+                        }
+                    } else {
+                        for (int k = 0; k < 8; ++k) {
+                            int lr = (offset + k) / 64;
+                            int lc = (offset + k) % 64;
+                            int gr = r_base + lr;
+                            int gc = c_base + lc;
+                            if (gr < M && gc < N) {
+                                output[gr * N + gc] = float_to_bf16(tile_ptr[lr * 64 + lc]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        __syncthreads();
+    }
+}
+
+template <bool AlignedMN, int MTILES>
+__global__ void __launch_bounds__(256 * MTILES) w4a16_gemm_rocwmma_packed_mt(
+    bfloat16_t *__restrict__ output, const bfloat16_t *__restrict__ input,
+    const uint8_t *__restrict__ packed_params, const int M, const int K,
+    const int N, const int num_tiles_k, const int num_tiles_n)
+{
+    // Process K in 128 chunks to reduce loop + sync overhead vs 64-chunk loop.
+    __shared__ __align__(16) bfloat16_t smem_B[128][128 + PAD];
+    __shared__ __align__(16) uint8_t smem_W_packed[8192];
+    __shared__ float smem_scales[2][128];
+    __shared__ uint8_t smem_zeros[2][128];
+
+    const int tid = threadIdx.x;
+    const int bx = blockIdx.x;
+    const int by = blockIdx.y;
+    const int wave_id = tid / 32;
+    const int wave_y = wave_id / 2;
+    const int wave_x = wave_id % 2;
+
+    const int n_tile_idx = tid / 128;
+    const int local_tid = tid & 127;
+    const int tile_n_idx_global = (bx * 2) + n_tile_idx;
+    const int col_group = tile_n_idx_global % 8;
+    const int col_offset = tile_n_idx_global / 8;
+    int tbg = 0;
+#pragma unroll
+    for (int g = 0; g < 8; ++g) {
+        if (g < col_group) {
+            tbg += ((num_tiles_n + 7 - g) / 8) * num_tiles_k;
+        }
+    }
+    const int base_z = tbg + col_offset * num_tiles_k;
+    const int dst_base = n_tile_idx * 4096;
+
+    const int global_m_start = by * (128 * MTILES);
+    const int global_n_start = bx * 128;
+
+    FragC acc[2][4];
+    for (int i = 0; i < 2; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            fill_fragment(acc[i][j], 0.0f);
+        }
+    }
+
+    for (int k_outer = 0; k_outer < K; k_outer += 128) {
+        const int k_tile_idx = k_outer / 128;
+        const size_t tile_offset = (size_t)(base_z + k_tile_idx) * PACKED_TILE_SIZE;
+        const uint8_t *w_base = packed_params + tile_offset;
+
+        // Load packed weights for K=128 (4x 32-row blocks) into shared.
+        // Only the first 256 threads own the two N64 packed tiles; extra
+        // MTILES warps only participate in dequant/MMA/output.
+        if (tid < 256) {
+#pragma unroll
+        for (int kt = 0; kt < 4; ++kt) {
+            const uint2 *src_ptr = (const uint2 *)(w_base + kt * 1024);
+            uint2 *dst_ptr = (uint2 *)(smem_W_packed);
+            const int dst_off = dst_base + kt * 1024;
+            dst_ptr[dst_off / 8 + local_tid] = src_ptr[local_tid];
+
+            // Load scales/zeros once per tile
+            if (kt == 0 && local_tid < 64) {
+                const bfloat16_t *ts = (const bfloat16_t *)(w_base + WEIGHT_BYTES);
+                const uint8_t *tz = w_base + WEIGHT_BYTES + SCALE_BYTES;
+                smem_scales[n_tile_idx][local_tid] = bf16_to_float(ts[local_tid]);
+                smem_zeros[n_tile_idx][local_tid] = tz[(local_tid / 8) * 16 + (local_tid % 8)];
+            }
+        }
+        }
+        __syncthreads();
+
+        const int dq_iters = 2048 / (256 * MTILES);
+#pragma unroll
+        for (int iter = 0; iter < dq_iters; ++iter) {
+            int grp_idx = tid * dq_iters + iter;
+            int idx_base = grp_idx << 3;               // * 8
+            int k_in = idx_base >> 7;                  // / 128
+            int n_in = idx_base & 127;                 // % 128
+            int t = n_in >> 6;                         // / 64
+            int n_local = n_in & 63;                   // % 64
+            int k_sub = k_in & 31;                     // % 32
+            int k_block = k_in >> 5;                   // / 32
+            int SR = k_sub >> 3;
+            int IR = k_sub & 7;
+            int SC = n_local >> 3;
+            int block_idx = (SR << 3) | SC;
+            int byte_off = (block_idx << 5) | (IR << 2);
+            int smem_base = (t << 12) + (k_block << 10); // t*4096 + k_block*1024
+
+            const uint32_t packed = *reinterpret_cast<const uint32_t *>(
+                &smem_W_packed[smem_base + byte_off]);
+            const uint2 z_packed = *reinterpret_cast<const uint2 *>(&smem_zeros[t][n_local]);
+            const float4 s0 = *reinterpret_cast<const float4 *>(&smem_scales[t][n_local]);
+            const float4 s1 = *reinterpret_cast<const float4 *>(&smem_scales[t][n_local + 4]);
+
+            float s_arr[8];
+            *(float4 *)&s_arr[0] = s0;
+            *(float4 *)&s_arr[4] = s1;
+
+            uint8_t z_arr[8];
+            *(uint2 *)z_arr = z_packed;
+
+            union {
+                bfloat16_t res[8];
+                float packed_res[4];
+            } u;
+
+#pragma unroll
+            for (int x = 0; x < 4; ++x) {
+                uint8_t p_byte = (packed >> (x * 8)) & 0xFF;
+                int q0 = p_byte & 0x0F;
+                int q1 = (p_byte >> 4) & 0x0F;
+
+                int z0 = z_arr[x * 2];
+                int z1 = z_arr[x * 2 + 1];
+
+                float val0 = (float)(q0 - z0) * s_arr[x * 2];
+                float val1 = (float)(q1 - z1) * s_arr[x * 2 + 1];
+
+                float2 f2;
+                f2.x = val0;
+                f2.y = val1;
+                __bf16_2 bf2 = __float22bfloat162_rn(f2);
+
+                union {
+                    __bf16_2 bf;
+                    float f;
+                } converter;
+                converter.bf = bf2;
+                u.packed_res[x] = converter.f;
+            }
+
+            *reinterpret_cast<uint4 *>(&smem_B[k_in][n_in]) = *reinterpret_cast<uint4 *>(u.res);
+        }
+        __syncthreads();
+
+        FragA fA;
+        FragB_Row fB[4];
+#pragma unroll
+        for (int ki = 0; ki < 128; ki += 16) {
+            // Load B fragments once (shared for both i=0/1)
+#pragma unroll
+            for (int j = 0; j < 4; ++j) {
+                load_matrix_sync(fB[j], &smem_B[ki][wave_x * 64 + j * 16], 128 + PAD);
+            }
+#pragma unroll
+            for (int i = 0; i < 2; ++i) {
+                int r_offset = global_m_start + wave_y * 32 + i * 16;
+                load_matrix_sync(fA, input + r_offset * K + (k_outer + ki), K);
+#pragma unroll
+                for (int j = 0; j < 4; ++j) {
+                    mma_sync(acc[i][j], fA, fB[j], acc[i][j]);
+                }
+            }
+        }
+        __syncthreads();
+    }
+
+    float *smem_F32 = (float *)&smem_B[0][0];
+    // Batch 4 wave tiles per phase to reduce synchronization overhead.
+    for (int base_w = 0; base_w < 8 * MTILES; base_w += 4) {
         if (wave_id >= base_w && wave_id < base_w + 4) {
             const int slot = wave_id - base_w;
             float *tile_ptr = &smem_F32[slot * 2048];
@@ -959,7 +1205,7 @@ void w4a16_gemm_fused_packed(torch::Tensor &output, const torch::Tensor &input,
 void w4a16_gemm_fused_packed_tiles(torch::Tensor &output, const torch::Tensor &input,
                                    const torch::Tensor &packed_params, int64_t in_features,
                                    int64_t out_features, int64_t packed_tiles_k, int64_t packed_tiles_n,
-                                   hipStream_t stream) {
+                                   hipStream_t stream, bool fuse_activation) {
     const int M = input.numel() / in_features;
     const int K = in_features;
     const int N = out_features;
@@ -977,6 +1223,7 @@ void w4a16_gemm_fused_packed_tiles(torch::Tensor &output, const torch::Tensor &i
     if (!cache_config_set) {
         (void)hipFuncSetCacheConfig((const void *)w4a16_gemm_rocwmma_packed<true>, hipFuncCachePreferShared);
         (void)hipFuncSetCacheConfig((const void *)w4a16_gemm_rocwmma_packed<false>, hipFuncCachePreferShared);
+        (void)hipFuncSetCacheConfig((const void *)w4a16_gemm_rocwmma_packed<true, true>, hipFuncCachePreferShared);
         (void)hipFuncSetCacheConfig((const void *)w4a16_gemm_rocwmma_packed_k2048<true>, hipFuncCachePreferL1);
         (void)hipFuncSetCacheConfig((const void *)w4a16_gemm_rocwmma_packed_k2048<false>, hipFuncCachePreferL1);
         (void)hipFuncSetCacheConfig((const void *)w4a16_gemm_rocwmma_packed_n64<true>, hipFuncCachePreferShared);
@@ -985,6 +1232,19 @@ void w4a16_gemm_fused_packed_tiles(torch::Tensor &output, const torch::Tensor &i
     }
 
     const bool aligned_mn = ((M & 127) == 0) && ((N & 127) == 0);
+    if (fuse_activation) {
+        if (!aligned_mn || (N & 127) || (M & 127))
+            throw std::runtime_error("w4a16_gemm_fused_packed_tiles: fused activation requires aligned M/N");
+        dim3 block(256);
+        dim3 grid(N / 128, M / 128);
+        hipLaunchKernelGGL((w4a16_gemm_rocwmma_packed<true, true>), grid, block, 0, stream,
+                           (bfloat16_t *)output.data_ptr(), (const bfloat16_t *)input.data_ptr(),
+                           packed_params.data_ptr<uint8_t>(), M, K, N, num_tiles_k, num_tiles_n);
+        const hipError_t err = hipGetLastError();
+        if (err != hipSuccess)
+            throw std::runtime_error(std::string("HIP error: ") + hipGetErrorString(err));
+        return;
+    }
     auto launch_generic128 = [&]() {
         dim3 block(256);
         if (aligned_mn) {
@@ -1034,6 +1294,19 @@ void w4a16_gemm_fused_packed_tiles(torch::Tensor &output, const torch::Tensor &i
     if ((K <= 1024) && ((N & 63) == 0)) {
         launch_n64_general();
     } else if ((K >= 2048) && ((K & 127) == 0)) {
+#if HETEROMEGA_GPU_MREUSE == 2
+        if (aligned_mn && ((M & 255) == 0)) {
+            dim3 block(512);
+            dim3 grid(N / 128, M / 256);
+            hipLaunchKernelGGL((w4a16_gemm_rocwmma_packed_mt<true, 2>), grid, block, 0, stream,
+                               (bfloat16_t *)output.data_ptr(), (const bfloat16_t *)input.data_ptr(),
+                               packed_params.data_ptr<uint8_t>(), M, K, N, num_tiles_k, num_tiles_n);
+            const hipError_t err = hipGetLastError();
+            if (err != hipSuccess)
+                throw std::runtime_error(std::string("HIP error: ") + hipGetErrorString(err));
+            return;
+        }
+#endif
 #if AUTOTUNE
         const PackedShapeKey shape_key{M, K, N, aligned_mn};
         PackedKernelVariant selected = PackedKernelVariant::Generic128;

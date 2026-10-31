@@ -39,6 +39,9 @@
 #ifdef HETEROMEGA_GPU_FFN
 #include "heteromega/gpu_ffn.hpp"
 #endif
+#ifdef HETEROMEGA_MERGED_FFN
+#include "heteromega/merged_ffn.hpp"
+#endif
 
 // #define FA2_HIP_KERNEL 1 // Removed as per refactor instructions
 
@@ -1585,6 +1588,13 @@ UnifiedLLMW4A16Impl::UnifiedLLMW4A16Impl(ArchitectureType arch_type, int64_t voc
       phi_model_max_position_embeddings_(model_max_position_embeddings), phi_rope_short_factors_(std::move(rope_short_factors)),
       phi_rope_long_factors_(std::move(rope_long_factors)) {
 
+    const char *ffn_config = std::getenv("HETEROMEGA_FFN_CONFIG");
+    if (ffn_config && *ffn_config) {
+#ifndef HETEROMEGA_MERGED_FFN
+        TORCH_CHECK(false, "Rebuild with -DHETEROMEGA_MERGED_FFN=ON to use HETEROMEGA_FFN_CONFIG");
+#endif
+        TORCH_CHECK(arch_type_ == ArchitectureType::LLAMA3, "Merged FFN deployment currently supports Llama3 only");
+    }
     std::cout << "Initializing UnifiedLLMW4A16Impl_hetero" << std::endl;
 
     // Read NPU config early to set debug verbosity
@@ -1870,6 +1880,7 @@ void UnifiedLLMW4A16Impl::init_llama_chunk_async_runtime(bool force_rebuild) {
 }
 
 UnifiedLLMW4A16Impl &UnifiedLLMW4A16Impl::to(torch::Device device) {
+    reset_heteromega_ffn();
     torch::nn::Module::to(device);
 
     for (auto &cache : caches_k) {
@@ -2299,11 +2310,49 @@ torch::Tensor UnifiedLLMW4A16Impl::forward_llama3(torch::Tensor x, int64_t start
                                        nullptr, nullptr, effective_chunk_id, -1);
 }
 
-// HeteroMega GPU FFN (kernels/gpu) for forward_llama3_with_scratch. Off unless the library is built with
-// -DHETEROMEGA_GPU_FFN=ON and the environment variable HETEROMEGA_GPU_FFN=1 is set. Built at the first forward pass,
-// from the loaded packed gate/up/down weights.
-// HETEROMEGA_GPU_FFN_SPLIT=<s_prefill>,<s_decode> keeps only the first channels of each phase on the GPU. The other
-// channels are the NPU's share, which this path does not compute yet, so use it to time the GPU share only.
+void UnifiedLLMW4A16Impl::reset_heteromega_ffn() {
+    heteromega_merged_ffn_.reset();
+    heteromega_ffn_.reset();
+    heteromega_ffn_checked_ = false;
+}
+
+uint64_t UnifiedLLMW4A16Impl::merged_ffn_completed_dispatches() const {
+#ifdef HETEROMEGA_MERGED_FFN
+    return heteromega_merged_ffn_ ? heteromega_merged_ffn_->completed_dispatches() : 0;
+#else
+    return 0;
+#endif
+}
+
+heteromega::MergedFfn *UnifiedLLMW4A16Impl::heteromega_merged_ffn(int64_t rows) {
+    const char *path = std::getenv("HETEROMEGA_FFN_CONFIG");
+    if (!path || !*path) return nullptr;
+#ifdef HETEROMEGA_MERGED_FFN
+    static std::mutex setup_mutex;
+    std::lock_guard<std::mutex> lock(setup_mutex);
+    const char *gpu = std::getenv("HETEROMEGA_GPU_FFN");
+    TORCH_CHECK(!gpu || std::string(gpu) != "1", "Use HETEROMEGA_FFN_CONFIG or HETEROMEGA_GPU_FFN, not both");
+    TORCH_CHECK(arch_type_ == ArchitectureType::LLAMA3 && groupsize_ == 128 && use_packed_weights && pad_packed_weights == 0,
+                "Merged FFN deployment requires Llama3, packed group128 weights and padPackedWeights=0");
+    if (rows == 1) return nullptr; // Preserve the original decode path.
+    if (!heteromega_merged_ffn_) {
+        auto executor = std::make_shared<heteromega::MergedFfn>(path);
+        TORCH_CHECK(executor->config().hidden == hidden_size_ && executor->config().intermediate == intermediate_size_,
+                    "Merged FFN artifact does not match model dimensions");
+        for (int64_t i = 0; i < num_hidden_layers_; ++i)
+            executor->add_layer(gate_layers[i]->get_packed_params(), up_layers[i]->get_packed_params(),
+                                down_layers[i]->get_packed_params());
+        heteromega_merged_ffn_ = std::move(executor);
+    }
+    return heteromega_merged_ffn_->supports(rows, hidden_size_, intermediate_size_) ? heteromega_merged_ffn_.get() : nullptr;
+#else
+    TORCH_CHECK(false, "HETEROMEGA_FFN_CONFIG is set but this binary was built without -DHETEROMEGA_MERGED_FFN=ON");
+    return nullptr;
+#endif
+}
+
+// Historical GPU-only model shortcut. Partial splits omit NPU work (timing only).
+// Built with HETEROMEGA_GPU_FFN; activated by HETEROMEGA_GPU_FFN=1.
 heteromega::GpuFfnModel *UnifiedLLMW4A16Impl::heteromega_gpu_ffn() {
 #ifdef HETEROMEGA_GPU_FFN
     static std::mutex mutex;
@@ -2376,6 +2425,7 @@ torch::Tensor UnifiedLLMW4A16Impl::forward_llama3_with_scratch(
     auto up_buf = up_buffer_base.narrow(0, 0, bsz).narrow(1, 0, seq_len);
     auto out_buf = output_buffer_base.narrow(0, 0, bsz).narrow(1, 0, seq_len);
     auto normed = norm_buffer_base.narrow(0, 0, bsz).narrow(1, 0, seq_len);
+    auto *merged_ffn = heteromega_merged_ffn(bsz * seq_len);
 #ifdef HETEROMEGA_GPU_FFN
     heteromega::GpuFfnModel *gpu_ffn = heteromega_gpu_ffn();
 #endif
@@ -2591,6 +2641,20 @@ torch::Tensor UnifiedLLMW4A16Impl::forward_llama3_with_scratch(
         // RMSNorm (write to norm_buffer)
         // Slice x and normed to logical size to ensure correct Mean calculation
         post_attn_norms[i]->forward_out(normed.slice(-1, 0, hidden_size_), x.slice(-1, 0, hidden_size_));
+
+#ifdef HETEROMEGA_MERGED_FFN
+        if (merged_ffn != nullptr) {
+            const int64_t rows = bsz * seq_len;
+            const auto xn_2d = normed.slice(-1, 0, hidden_size_).contiguous().view({rows, hidden_size_});
+            auto y_2d = out_buf.slice(-1, 0, hidden_size_);
+            y_2d = y_2d.is_contiguous() ? y_2d.view({rows, hidden_size_})
+                                      : torch::empty({rows, hidden_size_}, y_2d.options());
+            merged_ffn->forward(i, xn_2d, y_2d, c10::hip::getCurrentHIPStream().stream());
+            x.add_(y_2d.view({bsz, seq_len, hidden_size_}));
+            end_stage_trace(std::move(g2_trace));
+            continue;
+        }
+#endif
 
 #ifdef HETEROMEGA_GPU_FFN
         if (gpu_ffn != nullptr) {

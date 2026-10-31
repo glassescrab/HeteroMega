@@ -1,0 +1,100 @@
+{
+  "correctness": "passed",
+  "mode": "prefill",
+  "M": 4096,
+  "K": 4096,
+  "N": 2048,
+  "artifact": {
+    "xclbin": "/notebooks/HeteroMega/npu/ffn/build_prefill_m4096/final.xclbin",
+    "insts": "/notebooks/HeteroMega/npu/ffn/build_prefill_m4096/insts.bin",
+    "kind": "w4a16_prefill_bf16",
+    "m": 4096,
+    "k": 4096,
+    "n": 2048,
+    "cols": 4,
+    "tile_m": 16,
+    "tile_k": 128,
+    "tile_n": 32,
+    "group_size": 128,
+    "weight_tile_bytes": 2144,
+    "source_sha256": "090e87845395f730b580be537c7da5f11c0f53eaee110b28786e362cdfd32ba2",
+    "target_mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+    "xclbin_sha256": "61c95c5ea49de87a46ce4d870662d4a7cc37b52da15afabe3f220b655901b41f",
+    "insts_sha256": "d90814d738266ae9f558f2926aaaf74d56fd799cc259d600aecba4f17db6dd96"
+  },
+  "layout": "prefill_m16_k128_n32_mmul4x8x8_v1",
+  "group_size": 128,
+  "compact_host_bytes": {
+    "activations": 33554432,
+    "weights": 4390912,
+    "output": 16777216
+  },
+  "host_weight_replication_across_m": false,
+  "host_activation_replication_across_n": false,
+  "tolerances": {
+    "max_error_atol": 0.05,
+    "max_error_rtol": 0.03,
+    "relative_l2_limit": 0.02
+  },
+  "cases": [
+    {
+      "name": "random_nonzero_output_slice",
+      "comparison": "tolerance",
+      "output_slice": [
+        32,
+        2080
+      ],
+      "correctness": "passed",
+      "finite": true,
+      "max_abs_error": 0.0625,
+      "relative_l2_error": 5.1515830060888104e-05,
+      "rms_error": 0.000129026628684255,
+      "reference_max_abs": 16.25,
+      "max_error_limit": 0.5375,
+      "elementwise_close_fraction": 1.0,
+      "launch_us": 372427.248
+    },
+    {
+      "name": "changed_activations",
+      "comparison": "tolerance",
+      "correctness": "passed",
+      "finite": true,
+      "max_abs_error": 0.0625,
+      "relative_l2_error": 5.380632422377454e-05,
+      "rms_error": 0.00013504867584422856,
+      "reference_max_abs": 14.25,
+      "max_error_limit": 0.4775,
+      "elementwise_close_fraction": 1.0,
+      "launch_us": 372058.953
+    },
+    {
+      "name": "zero_activations",
+      "comparison": "tolerance",
+      "correctness": "passed",
+      "finite": true,
+      "max_abs_error": 0.0,
+      "relative_l2_error": 0.0,
+      "rms_error": 0.0,
+      "reference_max_abs": 0.0,
+      "max_error_limit": 0.05,
+      "elementwise_close_fraction": 1.0,
+      "launch_us": 372029.965
+    }
+  ],
+  "timing_case": "random_nonzero_output_slice",
+  "timing_outputs_verified": true,
+  "timing_max_abs_error": 0.0625,
+  "launch_us": [
+    371522.165,
+    371206.273,
+    371709.254
+  ],
+  "median_launch_us": 371522.165,
+  "iterations": 3,
+  "warmup": 1,
+  "effective_gops": 184.96736725250295,
+  "timing_scope": "XRT launch to completion; excludes host input/output copies and CPU reference",
+  "numerical_reference": "BF16 activation/dequantized weight, FP32 full-K accumulation, BF16 output; not AIE2P BFP16 emulation",
+  "down_partial_rounding": "Kernel output rounds each device partial to BF16; reduced FFN correctness requires a separate test.",
+  "implementation": "tiled prefill W4A16 projection; standalone NPU microbenchmark, no FFN or model latency claim"
+}
