@@ -1,5 +1,22 @@
 # HeteroMega progress
 
+## 2026-11-05: PR #3 kernel package reconciled with the integrated model
+
+**Code-confirmed:** PR #3's two-launch P2560 BFP16 package is preserved under
+`npu/ffn/packages/bfp16_p2560/`, with all 22 files byte-identical to
+`fd67fbf40e9e2e1d06b58d365e4657e61aed050f`. Resolving its five add/add conflicts
+keeps the newer live kernels and model integration from `main` at `4b7216a2`.
+The snapshot retains its matching sources, MLIR, binaries, manifests, licenses
+and original checksums; the package guide distinguishes it from deployment.
+
+**Verified locally:** 192 tests and 1,321 subtests pass. All 21 package checksums,
+20 manifest dependency hashes and four XCLBIN/instruction hashes pass. All 62
+existing live `npu/ffn` files other than the documentation-only README update
+match `main` exactly. Independent static review found no merge-blocking issue.
+No new hardware run or performance/accuracy claim is made. Next: use
+`docs/ffn-teammate-testing.md` for the integrated path, or rebuild the historical
+package from its own directory with its pinned toolchain.
+
 ## 2026-11-05: what this repository keeps of the merged-ffn-fix runs
 
 `docs/runs/2026-11-02-*` and `docs/runs/2026-11-03-*` keep READMEs, summary tables, comparison JSON and the files that `tools/split_model` reads. Raw logs, other per-run JSON and the job scripts under `tools/aup-kit/` are on tag [`prefill-evidence-2026-11-05`](https://github.com/kalebguo/HeteroMega-fork/tree/prefill-evidence-2026-11-05) of the fork. The commit hashes in these entries refer to that tag's history.

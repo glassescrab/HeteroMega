@@ -7,6 +7,12 @@ For the selected single-dispatch graph **inside the model**, start with
 separate experiments; do not substitute them into the deployment manifest.
 Historical bulk evidence remains on the pinned source branch e6ca183c.
 
+The standalone two-launch BFP16 P2560 package from PR #3 is preserved under
+[packages/bfp16_p2560](packages/bfp16_p2560/README.md). Its original sources,
+generated MLIR, binaries, manifests and checksums are kept together; see the
+[package guide](packages/README.md) before using it. It is a historical
+reproduction target and does not replace the current merged model path.
+
 This directory adds editable MLIR-AIE/IRON sources to the HeteroMosaic
 baseline. A complete host-staged GPU–NPU FFN microbenchmark is available in
 [experiments/ffn_partition](../../experiments/ffn_partition/README.md). Whole-model
