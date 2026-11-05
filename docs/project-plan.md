@@ -1,5 +1,14 @@
 # HeteroMega project plan
 
+> **2026-10-31 deployment publication:** persistent GPU/NPU FFN integration is
+> ready for teammate use via [the testing guide](ffn-teammate-testing.md).
+> Full builds, isolated/model hooks and native-attention coexistence were
+> measured on AUP under report policy; error metrics remain visible in the
+> [evidence](runs/2026-10-31-ffn-deploy/README.md). Build/run instructions are in
+> [ffn-deployment.md](ffn-deployment.md). Optional Python-host parity, repeated
+> paired model timing and integration into the older batch evaluator remain.
+> The user now authorizes committing/pushing this integration to origin/main.
+
 > **2026-10-14 profiling update:** [profiling-2026-10-14.md](profiling-2026-10-14.md)
 > records repeated baselines, FFN stages and NPU wait phases. The FFN accounts
 > for about 68% of diagnostic prefill, and GPU-only down projection is a major

@@ -13,6 +13,7 @@
 
 namespace heteromega {
 class GpuFfnModel; // kernels/gpu/include/heteromega/gpu_ffn.hpp
+class MergedFfn;
 }
 
 // Attention mechanism selection:
@@ -152,6 +153,10 @@ class RMSNormImpl : public torch::nn::Module {
     // Setter for weight loading
     void set_weight(torch::Tensor weight);
 
+    const torch::Tensor &weight() const { return weight_; }
+    float eps() const { return eps_; }
+    bool gemma_style() const { return gemma_style_; }
+
   private:
     float eps_;
     bool gemma_style_;
@@ -207,6 +212,10 @@ class UnifiedLLMW4A16Impl : public torch::nn::Module {
 
     // Import weights to NPU (must be called after loading weights)
     void import_weights();
+
+    // Deployment diagnostics and cache invalidation (weight/device changes require no concurrent inference).
+    uint64_t merged_ffn_completed_dispatches() const;
+    void reset_heteromega_ffn();
 
     // Initialize all weights with dummy values (random) for testing without loading files
     void initialize_dummy_weights(int seed = 42);
@@ -274,6 +283,8 @@ class UnifiedLLMW4A16Impl : public torch::nn::Module {
     std::shared_ptr<heteromega::GpuFfnModel> heteromega_ffn_;
     bool heteromega_ffn_checked_ = false;
     heteromega::GpuFfnModel *heteromega_gpu_ffn();
+    std::shared_ptr<heteromega::MergedFfn> heteromega_merged_ffn_;
+    heteromega::MergedFfn *heteromega_merged_ffn(int64_t rows);
 
     // Normalization layers
     std::vector<RMSNorm> input_norms;

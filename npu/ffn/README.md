@@ -1,149 +1,149 @@
-# Final NPU FFN prefill kernels
+# NPU FFN kernel bring-up
 
-Eight NPU2 columns × four compute rows. The selected binaries use
-**BFP16-backed 8×8×8 MMUL** from glassescrab TileFuse, with BF16 I/O,
-unsigned W4 weights, K128 quantization groups and FP32 partial sums.
-`--arithmetic bf16` retains the native 4×8×8 control; `--arithmetic bfp16`
-selects the packaged variant.
+For the selected single-dispatch graph **inside the model**, start with
+[GPU + NPU FFN testing](../../docs/ffn-teammate-testing.md). Its selected
+`w4a16_merged_upstream.py` and `w4a16_prefill_upstream.cc` path consumes original
+4352-byte packed tiles. Older compact formats and two-launch paths below are
+separate experiments; do not substitute them into the deployment manifest.
+Historical bulk evidence remains on the pinned source branch e6ca183c.
 
-These kernels accept the **original glassescrab TileFuse packed weight
-buffers directly**. There is no weight repacking or gate/up concatenation.
-Selected partition: M512, H4096, P2560 out of full I14336. This partition is
-retained for compatibility testing; it has not been retuned for this design.
+The standalone two-launch BFP16 P2560 package from PR #3 is preserved under
+[packages/bfp16_p2560](packages/bfp16_p2560/README.md). Its original sources,
+generated MLIR, binaries, manifests and checksums are kept together; see the
+[package guide](packages/README.md) before using it. It is a historical
+reproduction target and does not replace the current merged model path.
 
-The selected graph accepts row-major SwiGLU input and scatters its output
-straight into the down projection's activation layout. Down reuses each weight
-tile across four M16 lanes with a single core activation FIFO buffer; SwiGLU
-retains reuse two. Vector zero-point metadata construction preserves exact
-BF16 bits. Both stages retain the bounded two-segment DMA pipeline and the
-four-accumulator MMUL path. These choices are explicit build options; baseline
-controls remain available.
+This directory adds editable MLIR-AIE/IRON sources to the HeteroMosaic
+baseline. A complete host-staged GPU–NPU FFN microbenchmark is available in
+[experiments/ffn_partition](../../experiments/ffn_partition/README.md). Whole-model
+Llama prefill acceleration remains unvalidated.
 
-| Stage | Generated MLIR | XCLBIN | Instructions |
-|---|---|---|---|
-| Gate + up + SiLU × up | [aie.mlir](prebuilt/swiglu_m512_k4096_p2560/aie.mlir) | [final.xclbin](prebuilt/swiglu_m512_k4096_p2560/final.xclbin) | [insts.bin](prebuilt/swiglu_m512_k4096_p2560/insts.bin) |
-| Down projection | [aie.mlir](prebuilt/down_m512_k2560_n4096/aie.mlir) | [final.xclbin](prebuilt/down_m512_k2560_n4096/final.xclbin) | [insts.bin](prebuilt/down_m512_k2560_n4096/insts.bin) |
+Current development targets **multi-token prefill projections**. The default
+FFN experiment now uses [eight columns and four compute rows](ARRAY8.md),
+with multicast and weight reuse. See
+[PREFILL.md](PREFILL.md) for the tiled W4A16 matrix-multiply design, compact
+buffer ABI, build commands, and correctness checks. The scalar single-token
+and activation examples below preserve the earlier bring-up work.
+Hardware results for 128/512/2048/4096-token projections are recorded in
+[PREFILL_VALIDATION.md](PREFILL_VALIDATION.md).
 
-The packaged model-shape binaries pass signed/changed-input, zero and
-repeatability checks on HX370/default power under the original numerical
-bounds. BFP16 correctness checks cover five small cases, M512/H4096/P2560
-and a P1152 partition at offset128: 40 completed NPU launches. A rebuilt
-native model-shape control adds eight successful launches. Worst BFP16
-relative L2 versus the BF16 CPU oracle is **0.0167717**, below the unchanged
-0.02 limit. Report mode retains numerical verdicts; these runs all passed.
+The optional `--npu-arithmetic bfp16` experiment adapts the corrected TileFuse
+W4A16 GEMM from the latest relevant `glassescrab/mlir-aie` branch. It retains
+the existing compact ABI, eight-column graphs and on-chip SwiGLU fusion.
+See [the branch audit, arithmetic contract and measurements](BFP16_ADAPTATION.md).
+Native BF16 remains the default; BFP16 reports numerical deviations explicitly.
 
-With the same original weight bytes, layout/reuse options and synthetic
-inputs, isolated NPU-branch median latency is **22.322→14.470 ms (35.18%)**
-in ABBA order and **22.405→14.650 ms (34.61%)** in BAAB order. Each arithmetic
-has 100 timed samples per order. Native/BFP16 have separate deterministic
-references; all warmup/timed outputs match their own arithmetic exactly.
-The two timing experiments completed 976 NPU launches including references,
-structural checks and warmup. BFP16 versus native maximum relative L2 is
-0.0166252; maximum absolute error is 0.00305176. Native output is unchanged.
+## Environment
 
-The timer includes host validation, activation handling, BO I/O, both
-launch/waits and final output unpacking. Construction, fixed-weight upload,
-output snapshots and checks are excluded. SwiGLU host launch-plus-wait
-falls from 11.729 to 6.512 ms in ABBA; this is not device-only compute time.
-The caller borrows intermediate readback views; BO reads/synchronization remain.
+Validated environment and measurements are recorded in [VALIDATION.md](VALIDATION.md).
+The AUP notebook supplied for development is **Ryzen AI 9 HX 370 / Strix**, with
+an AIE2P NPU (`npu2`), not the planned Ryzen AI Max+ 395 evaluation machine.
+Keep their performance results separate.
 
-These are isolated NPU-branch results. Combined GPU+NPU prefill acceleration
-and pretrained-model accuracy remain unvalidated. Synthetic checks do not
-establish model accuracy. Partition P2560 has not been retuned.
+The code targets MLIR-AIE revision
+`7e00b57955e108fe9d8e9419f5828a0c7e650858`, supplied by the notebook's
+`ironenv`. It requires NumPy and `ml_dtypes`, and device runs require `pyxrt`.
+Use the preconfigured Jupyter terminal. Do not apply the inherited root
+README's kernel/GRUB/driver installation steps to the managed notebook.
 
-## Original weight format
+The checkout is `/notebooks/HeteroMega`; `/notebooks` persists across sessions
+while the AUP token remains valid. Credentials are not stored in this repo.
 
-Pinned producer: glassescrab/mlir-aie
-`121dd54abc68f84d89a7074372ebf82be2db62d5`,
-`programming_examples/tilefuse/gemm_w4a16/test.cpp`.
+## Build and run
 
-- Full source logical weight shape: K×N; K is divisible by 128, N by 64.
-- Each K128/N64 tile is **4,352 bytes**: 4,096 unsigned INT4 bytes,
-  128 BF16-scale bytes, then 128 zero bytes. Every N8 zero vector is duplicated
-  in place. Zero values are 0–15.
-- Q order: `[k_micro=16,n_micro=8,k_inner=8,n_pair=4]`; the low nibble is
-  the even N lane. Scale order is logical N. Zero order is `[8,2,8]`.
-- Whole-buffer tile order: N64 column modulo eight, column within that stripe,
-  then K128 group. This ordering is retained across partition selection.
-- Full buffer bytes: `(K/128)*(N/64)*4352`. Full geometry is recorded in each
-  manifest; never substitute the partition dimensions for it.
-
-Workers process adjacent N32 halves of an original tile using one A/W
-acquisition, one shared 8 KiB dequantization scratch and two FP32 partial
-buffers. Column boundaries can cause a shared N64 tile to be read by two
-columns. No second packed host representation is created.
-
-## Rebuild
-
-Use MLIR-AIE/IRON at `7e00b57955e108fe9d8e9419f5828a0c7e650858`.
-From this directory:
+From this directory, in the supplied MLIR-AIE environment:
 
 ```bash
-mkdir -p build/swiglu build/down
-python w4a16_upstream.py --arithmetic bfp16 --mode swiglu -M 512 -K 4096 -N 2560 \
-  --weight-k 4096 --weight-n 14336 --max-reuse 2 --segment-pipeline-depth 2 \
-  --vector-zero --mmul-m-reuse 1 --activation-fifo-depth 2 \
-  --input-layout row_major --output-layout down_a \
-  --xclbin-path build/swiglu/final.xclbin \
-  --insts-path build/swiglu/insts.bin --pdi-path build/swiglu/final.pdi
-python w4a16_upstream.py --arithmetic bfp16 --mode projection -M 512 -K 2560 -N 4096 \
-  --weight-k 14336 --weight-n 4096 --max-reuse 4 --segment-pipeline-depth 2 \
-  --vector-zero --mmul-m-reuse 1 --activation-fifo-depth 1 \
-  --input-layout compact --output-layout compact \
-  --xclbin-path build/down/final.xclbin \
-  --insts-path build/down/insts.bin --pdi-path build/down/final.pdi
+# One full Llama-3.1-8B intermediate vector; also supports smaller local shards.
+make length=14336 tile_size=1024 cols=1
+python run_silu_mul.py --json results/silu_mul_14336_hx370.json
+
+# A small, single-token W4A16 projection tile, built from source.
+make -f Makefile.w4a16 K=128 N=64
+make -f Makefile.w4a16 run K=128 N=64
 ```
 
-`--weight-k/--weight-n` describe the full original buffer. `-K/-N` and
-`--k-start/--n-start` describe the selected region; K starts align to 128,
-N starts to 32. `-N` means P for SwiGLU. The packaged binaries select start 0.
-BFP16 is explicit in these commands; use `--arithmetic bf16` for the native
-control. Arithmetic is recorded in each object/cache/manifest identity.
-Pipeline depth is recorded in the manifest. Depth one and two use distinct
-compiled artifact identities; the packaged binaries use depth two.
+`build/final.xclbin.json` and the W4 equivalent contain compiled shapes and
+artifact hashes. Runners validate them before allocating device buffers;
+rebuild when changing dimensions. Each build emits an XCLBIN, instruction
+binary, and PDI. Generated hardware binaries stay out of Git.
+Both IRON graphs include the C++ source hash in their compile-time arguments:
+the pinned JIT otherwise can reuse a whole-design cache entry after an
+external C++ kernel changes. Manifests identify the intended toolchain
+revision, not an automatically detected installed revision.
+External object filenames also include the source hash and tile dimensions;
+the pinned explicit-output compiler otherwise reuses an existing `.o`
+in `final.prj` without checking whether its source or `-D` dimensions changed.
 
-## Runtime contract
+The XRT harness reuses allocations, but explicitly synchronizes input and
+output BOs. Its reported dispatch/wait time includes NPU DMA and compute and
+excludes BO input/output synchronization, allocation, and compilation. It is
+not isolated core latency, FFN latency, TTFT, or end-to-end inference latency.
 
-XRT kernel name: `MLIR_AIE`. Instruction length is **bytes**, not words.
+CPU-only checks, from the repository root:
 
-- SwiGLU: `(3, instruction_bo, instruction_bytes, A_bo, gate_W_bo, up_W_bo, Z_bo)`.
-- Down: `(3, instruction_bo, instruction_bytes, A_bo, W_bo, Y_bo)`.
-- Instruction BO uses group 1. Tensor BO groups start at 3 in the listed order.
-- Upload each original weight buffer once. Sync inputs, launch, check completed
-  execution, then sync output. An unchanged BO upload is still a memory copy;
-  direct format compatibility does not establish imported-buffer zero-copy.
+```bash
+python -m unittest discover -s npu/ffn -v
+python npu/ffn/run_w4a16_linear.py --self-test
+```
 
-| Buffer | SwiGLU bytes | Down bytes |
-|---|---:|---:|
-| A | 4,194,304 | 2,621,440 |
-| Each original W | 31,195,136 (gate and up separately) | 31,195,136 |
-| Output | 2,621,440 | 4,194,304 |
+## Numerical and partition contracts
 
-Activations use little-endian BF16 bits:
+- Activations and weight scales are **BF16**, consistent with the inherited
+  BF16/int4 kernels. W4A16 here does not mean IEEE FP16 activations.
+- `silu_mul.cc` consumes already-projected gate and up arrays. It computes
+  `BF16(BF16(SiLU(gate)) * up)`, retaining the baseline's intermediate BF16
+  rounding. A 128-segment direct sigmoid LUT replaces the coarse native
+  tanh approximation; narrowing uses round-to-nearest-even. Inputs below
+  -16 use sigmoid zero and inputs at/above 16 use one. The finite input
+  smoke tests include gates from -64 to 64. The approximation is checked against that staged
+  reference, with single-round error also reported.
+- `w4a16_linear.cc` is a scalar, single-core correctness implementation of
+  `M=1`, group size 128. It dequantizes each weight to BF16, accumulates in
+  FP32, and returns BF16. K is a multiple of 128 and N a multiple of 64;
+  compile-time FIFO limits reject larger shapes. It is not optimized and
+  cannot directly run a full 4096×14336 Llama projection.
+- The portable weight layout is output-major `[N, K/2]` uint8: even K in the
+  low nibble, odd K in the high nibble; scales and zeros are `[N, K/128]`.
+  Dequantization is `(q - zero) * scale`. The W4 runner packs three regions:
+  quant bytes, little-endian BF16 scales, and one uint8 zero per group.
+- `reference.py` keeps matching gate/up output-channel slices local through
+  activation/multiply and consumes matching down-projection K slices.
+  Its CPU oracle reduces FP32 down partials before final BF16 rounding;
+  the device linear prototype returns BF16 partials. Real cross-device
+  reduction needs separate error validation. Host algebra tests do not
+  establish bitwise model equivalence.
 
-- SwiGLU A: row-major `[M,H]`.
-- SwiGLU Z and down A: `[M/16,P/128,4,16,4,8]`.
-- Down Y: compact `[M/16,H/32,4,4,4,8]`.
+## Integration work remaining
 
-The SwiGLU DMA writes the down-A layout directly; pass Z unchanged to down.
-No CPU Z permutation is required. Z still traverses shared DRAM and the
-current caller still reads and writes BOs between launches. This is not an
-on-chip fused FFN or a shared-BO claim. Final Y must be unpacked into row-major
-order before reducing it with the complementary GPU result. A borrowed
-readback view is valid only until the same non-reentrant runner is reused;
-materialize independent final Y before returning or overlapping calls.
+1. Profile the validated [tiled prefill projection](PREFILL.md) to separate
+   dequantization, matrix arithmetic, and DMA costs. Add on-chip weight reuse
+   and connect checkpoint loading to its packed layout.
+2. Connect gate/up, local activation, and sliced down projection within the
+   NPU graph. The current standalone activation crosses host/device BO
+   boundaries; it does not yet prove persistent intermediate locality.
+3. Adapt to HeteroMosaic's packed layout and runtime. Its 128×64 tiles occupy
+   4352 bytes (4096 quantized weight bytes, 128 BF16 scale bytes, and 128
+   duplicated-zero bytes) and have an eight-way column interleave. These
+   are not interchangeable with the portable layout above.
+4. Integrate shared buffers and cross-device synchronization. Shared physical
+   DRAM does not itself guarantee identical weight layouts, no temporary
+   copies, or coherent GPU/NPU access. The inherited runtime uses DMA-BUF
+   import, GPU events, and an NPU mutex; this isolated harness uses XRT.
+5. Select one aligned asymmetric FFN ratio offline, compare CPU/GPU reduction,
+   then run the fixed Llama-3.1-8B-Instruct evaluation on Max+ 395. Check
+   numerical error and greedy-token agreement before reporting speedups.
 
-To rebuild the prior two-segment control, omit `--vector-zero`, use reuse two
-and activation FIFO depth two for both stages, and choose compact input/output.
-`--segment-pipeline-depth 1` retains the older serial schedule. Each option is
-recorded in the manifest/cache identity. Native-only experimental
-`--mmul-m-reuse 2` reserves a 4 KiB stack: the original 2 KiB overflowed on full shapes. Even after
-the fix it is about 2.2× slower because of heavy register spilling, so these
-BFP16 binaries use `--mmul-m-reuse 1` and 4 KiB stacks. Native MMUL1 uses
-2 KiB. BFP16 rejects MMUL2. SwiGLU reuse four is unsupported.
+The inherited FFN launch sites are in
+`src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp`; buffer import and NPU
+submission are in `npuSetup.cpp`; per-operator splits and temporary assembly
+are in `hetero_compute.cpp`. Existing NPU PDIs remain untouched.
 
-Verify integrity from this directory: `sha256sum -c SHA256SUMS`.
-Each manifest identifies selected BFP16 arithmetic, upstream weight layout, full source
-geometry, selected slice and source/binary hashes. Earlier compact-weight
-artifacts are incompatible; native and BFP16 artifacts cannot be substituted. Attribution: [NOTICE](NOTICE) and
-[MLIR-AIE license](licenses/MLIR-AIE-LICENSE.txt).
+## Source references
+
+- [Pinned MLIR-AIE SwiGLU example](https://github.com/Xilinx/mlir-aie/tree/7e00b57955e108fe9d8e9419f5828a0c7e650858/programming_examples/ml/swiglu)
+- [Pinned AIE2P kernels](https://github.com/Xilinx/mlir-aie/tree/7e00b57955e108fe9d8e9419f5828a0c7e650858/aie_kernels/aie2p)
+- [HeteroMosaic baseline](https://github.com/glassescrab/HeteroMega/tree/61714a3147f34857aa5dfef21a28e762777a2df0)
+
+Adapted MLIR-AIE portions retain their Apache-2.0 WITH LLVM-exception
+attribution. The inherited project's licenses and notices remain applicable.

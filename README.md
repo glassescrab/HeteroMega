@@ -6,6 +6,10 @@ starting from HeteroMosaic. The current experimental cloud port runs both
 devices, but random packed-W4A16 numerical checks still fail. Kernel development
 and performance conclusions must account for that unresolved correctness issue.
 
+- [GPU + NPU FFN testing](docs/ffn-teammate-testing.md): build the C++ model
+  integration, use/rebuild the NPU artifact, verify both devices and evaluate
+  with preserved controls. [Deployment runbook](docs/ffn-deployment.md) and
+  [cloud validation evidence](docs/runs/2026-10-31-ffn-deploy/README.md).
 - [Kernel teammate handoff](docs/kernel-handoff.md): where to start, measured
   bottlenecks, kernel interfaces, and the next milestone.
 - [Profiling report](docs/profiling-2026-10-14.md): repeated baseline latency,

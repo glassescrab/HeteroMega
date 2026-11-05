@@ -4,7 +4,7 @@ include_directories(${ROCM_PATH}/include /usr/include/libdrm ${DRIVER_PATH}/src/
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # Create a library from npu_matmul_func.cpp
-add_library(npu_matmul_func STATIC npu_matmul_func.cpp)
+add_library(npu_matmul_func STATIC npu_matmul_func.cpp npu_execution.cpp)
 target_compile_options(npu_matmul_func PRIVATE -O0 -g -fPIC) # Must compile with -O0 or -O1, -fPIC for shared library linking
 target_include_directories(npu_matmul_func PUBLIC
     ${CMAKE_SOURCE_DIR}/include

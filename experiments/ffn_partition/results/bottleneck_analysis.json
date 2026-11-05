@@ -1,0 +1,497 @@
+{
+  "kind": "derived_analysis_no_new_hardware_measurements",
+  "notes": [
+    "Host dispatch/wait includes device DMA and runtime costs; it is not pure compute time.",
+    "Stage sums are computed per sample before taking medians; separate medians need not add.",
+    "Graph payloads exclude SiLU, instruction traffic, caches and scratch; they are not DRAM counters.",
+    "Proportional work model assumes linear GPU scaling, instantaneous NPU and zero overhead; it is not a measured speedup or universal bound.",
+    "Effective GFLOPS counts three projection FLOPs over the entire host NPU branch."
+  ],
+  "source_reports_sha256": {
+    "ffn_m128_h4096_i14336_hx370.json": "749c830ab28a9f03ad40d81ea2290786ca308c8f38d499499893c07502330648",
+    "ffn_m512_h4096_i14336_hx370.json": "07103bcfcd965daef3a9f8cd25eb74785c23cc2d9487e06f7e450016e084bbef",
+    "ffn_m512_h4096_i14336_c8_hx370.json": "a7a8416164881bcf4c600b7aada725c830d7a86cad55830eadaa66f374cf9465"
+  },
+  "rows": [
+    {
+      "report": "ffn_m128_h4096_i14336_hx370.json",
+      "m": 128,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 128,
+      "columns_max": 4,
+      "projection_workers": {
+        "gate_up": 4,
+        "down": 4
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 6.552485000000001,
+        "serial": 13.9289755,
+        "concurrent": 7.3929145,
+        "npu_branch": 6.661349,
+        "projection_dispatch_wait_sum": 4.8742385,
+        "silu_dispatch_wait": 0.8654735,
+        "host_bo_io_outside_dispatch": 0.3020834999999999,
+        "layouts": 0.4606965,
+        "input_gpu_to_host": 0.060214,
+        "output_stage_and_boundary_wait": 0.28052
+      },
+      "median_projection_wait_share_of_npu_percent": 73.59864273275689,
+      "speedup_vs_gpu": 0.8863195969600353,
+      "npu_branch_over_full_gpu_ratio": 1.0166141547824985,
+      "npu_branch_effective_projection_gflops": 60.446192505451975,
+      "proportional_work_model": {
+        "npu_fraction": 0.008928571428571428,
+        "gpu_time_released_ms": 0.058504330357142864,
+        "zero_overhead_instant_npu_speedup": 1.009009009009009
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 823296,
+        "projection_graph_a_payload": 12582912,
+        "projection_graph_weight_payload": 6586368,
+        "projection_graph_output_payload": 1114112,
+        "projection_graph_total_payload": 20283392,
+        "host_bo_read_write_payload": 3342336,
+        "gpu_host_input_output_payload": 2097152
+      },
+      "weight_dma_and_dequant_replays": 8
+    },
+    {
+      "report": "ffn_m128_h4096_i14336_hx370.json",
+      "m": 128,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 512,
+      "columns_max": 4,
+      "projection_workers": {
+        "gate_up": 4,
+        "down": 4
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 6.7365425,
+        "serial": 20.510286,
+        "concurrent": 14.21823,
+        "npu_branch": 13.4799795,
+        "projection_dispatch_wait_sum": 11.3616895,
+        "silu_dispatch_wait": 1.3730740000000001,
+        "host_bo_io_outside_dispatch": 0.35075000000000034,
+        "layouts": 0.4282825,
+        "input_gpu_to_host": 0.065624,
+        "output_stage_and_boundary_wait": 0.288554
+      },
+      "median_projection_wait_share_of_npu_percent": 84.117668940631,
+      "speedup_vs_gpu": 0.4737961405885261,
+      "npu_branch_over_full_gpu_ratio": 2.001023447859195,
+      "npu_branch_effective_projection_gflops": 119.4818386778704,
+      "proportional_work_model": {
+        "npu_fraction": 0.03571428571428571,
+        "gpu_time_released_ms": 0.24059080357142856,
+        "zero_overhead_instant_npu_speedup": 1.037037037037037
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 3293184,
+        "projection_graph_a_payload": 50331648,
+        "projection_graph_weight_payload": 26345472,
+        "projection_graph_output_payload": 1310720,
+        "projection_graph_total_payload": 77987840,
+        "host_bo_read_write_payload": 3932160,
+        "gpu_host_input_output_payload": 2097152
+      },
+      "weight_dma_and_dequant_replays": 8
+    },
+    {
+      "report": "ffn_m128_h4096_i14336_hx370.json",
+      "m": 128,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 2048,
+      "columns_max": 4,
+      "projection_workers": {
+        "gate_up": 4,
+        "down": 4
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 6.8325205,
+        "serial": 46.970693499999996,
+        "concurrent": 40.584454,
+        "npu_branch": 39.903713,
+        "projection_dispatch_wait_sum": 37.2074195,
+        "silu_dispatch_wait": 0.9862360000000001,
+        "host_bo_io_outside_dispatch": 0.732846999999999,
+        "layouts": 0.8384795,
+        "input_gpu_to_host": 0.06379850000000001,
+        "output_stage_and_boundary_wait": 0.342983
+      },
+      "median_projection_wait_share_of_npu_percent": 93.58805375130383,
+      "speedup_vs_gpu": 0.16835314576364635,
+      "npu_branch_over_full_gpu_ratio": 5.84026246243974,
+      "npu_branch_effective_projection_gflops": 161.4499117914165,
+      "proportional_work_model": {
+        "npu_fraction": 0.14285714285714285,
+        "gpu_time_released_ms": 0.9760743571428572,
+        "zero_overhead_instant_npu_speedup": 1.1666666666666665
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 13172736,
+        "projection_graph_a_payload": 201326592,
+        "projection_graph_weight_payload": 105381888,
+        "projection_graph_output_payload": 2097152,
+        "projection_graph_total_payload": 308805632,
+        "host_bo_read_write_payload": 6291456,
+        "gpu_host_input_output_payload": 2097152
+      },
+      "weight_dma_and_dequant_replays": 8
+    },
+    {
+      "report": "ffn_m512_h4096_i14336_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 128,
+      "columns_max": 4,
+      "projection_workers": {
+        "gate_up": 4,
+        "down": 4
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 27.1777345,
+        "serial": 44.591339,
+        "concurrent": 27.192144,
+        "npu_branch": 16.34019,
+        "projection_dispatch_wait_sum": 11.818355500000001,
+        "silu_dispatch_wait": 0.6543779999999999,
+        "host_bo_io_outside_dispatch": 1.3003759999999998,
+        "layouts": 2.477773,
+        "input_gpu_to_host": 0.2551855,
+        "output_stage_and_boundary_wait": 10.058194499999999
+      },
+      "median_projection_wait_share_of_npu_percent": 72.6585307018278,
+      "speedup_vs_gpu": 0.999470085918933,
+      "npu_branch_over_full_gpu_ratio": 0.6012344406411064,
+      "npu_branch_effective_projection_gflops": 98.56756475903892,
+      "proportional_work_model": {
+        "npu_fraction": 0.008928571428571428,
+        "gpu_time_released_ms": 0.24265834375,
+        "zero_overhead_instant_npu_speedup": 1.009009009009009
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 823296,
+        "projection_graph_a_payload": 50331648,
+        "projection_graph_weight_payload": 26345472,
+        "projection_graph_output_payload": 4456448,
+        "projection_graph_total_payload": 81133568,
+        "host_bo_read_write_payload": 13369344,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "weight_dma_and_dequant_replays": 32
+    },
+    {
+      "report": "ffn_m512_h4096_i14336_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 512,
+      "columns_max": 4,
+      "projection_workers": {
+        "gate_up": 4,
+        "down": 4
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 27.440523999999996,
+        "serial": 71.773508,
+        "concurrent": 44.423892,
+        "npu_branch": 42.346426,
+        "projection_dispatch_wait_sum": 38.0472375,
+        "silu_dispatch_wait": 0.747466,
+        "host_bo_io_outside_dispatch": 1.2628110000000006,
+        "layouts": 2.3766145,
+        "input_gpu_to_host": 0.25809,
+        "output_stage_and_boundary_wait": 0.7165965000000001
+      },
+      "median_projection_wait_share_of_npu_percent": 89.55500294842741,
+      "speedup_vs_gpu": 0.617697431823398,
+      "npu_branch_over_full_gpu_ratio": 1.543207629708529,
+      "npu_branch_effective_projection_gflops": 152.13682835949368,
+      "proportional_work_model": {
+        "npu_fraction": 0.03571428571428571,
+        "gpu_time_released_ms": 0.9800187142857142,
+        "zero_overhead_instant_npu_speedup": 1.037037037037037
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 3293184,
+        "projection_graph_a_payload": 201326592,
+        "projection_graph_weight_payload": 105381888,
+        "projection_graph_output_payload": 5242880,
+        "projection_graph_total_payload": 311951360,
+        "host_bo_read_write_payload": 15728640,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "weight_dma_and_dequant_replays": 32
+    },
+    {
+      "report": "ffn_m512_h4096_i14336_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 2048,
+      "columns_max": 4,
+      "projection_workers": {
+        "gate_up": 4,
+        "down": 4
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 27.153975,
+        "serial": 174.43478,
+        "concurrent": 151.398608,
+        "npu_branch": 148.437535,
+        "projection_dispatch_wait_sum": 142.32045399999998,
+        "silu_dispatch_wait": 1.5577055,
+        "host_bo_io_outside_dispatch": 2.145303999999998,
+        "layouts": 2.404929,
+        "input_gpu_to_host": 0.2615,
+        "output_stage_and_boundary_wait": 2.1650885
+      },
+      "median_projection_wait_share_of_npu_percent": 95.92050885046203,
+      "speedup_vs_gpu": 0.1793541919487133,
+      "npu_branch_over_full_gpu_ratio": 5.46651217731474,
+      "npu_branch_effective_projection_gflops": 173.60705818780943,
+      "proportional_work_model": {
+        "npu_fraction": 0.14285714285714285,
+        "gpu_time_released_ms": 3.8791392857142855,
+        "zero_overhead_instant_npu_speedup": 1.1666666666666665
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 13172736,
+        "projection_graph_a_payload": 805306368,
+        "projection_graph_weight_payload": 421527552,
+        "projection_graph_output_payload": 8388608,
+        "projection_graph_total_payload": 1235222528,
+        "host_bo_read_write_payload": 25165824,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "weight_dma_and_dequant_replays": 32
+    },
+    {
+      "report": "ffn_m512_h4096_i14336_c8_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 128,
+      "columns_max": 8,
+      "projection_workers": {
+        "gate_up": 4,
+        "down": 8
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 27.095586000000004,
+        "serial": 42.789004,
+        "concurrent": 27.357611499999997,
+        "npu_branch": 14.627347499999999,
+        "projection_dispatch_wait_sum": 10.227305499999998,
+        "silu_dispatch_wait": 0.9577625000000001,
+        "host_bo_io_outside_dispatch": 1.1367385000000003,
+        "layouts": 1.8537455,
+        "input_gpu_to_host": 0.2547855,
+        "output_stage_and_boundary_wait": 12.029621500000001
+      },
+      "median_projection_wait_share_of_npu_percent": 71.35961257202293,
+      "speedup_vs_gpu": 0.9904222084592439,
+      "npu_branch_over_full_gpu_ratio": 0.5398424488770974,
+      "npu_branch_effective_projection_gflops": 110.10969254678609,
+      "proportional_work_model": {
+        "npu_fraction": 0.008928571428571428,
+        "gpu_time_released_ms": 0.24192487500000004,
+        "zero_overhead_instant_npu_speedup": 1.009009009009009
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 823296,
+        "projection_graph_a_payload": 50331648,
+        "projection_graph_weight_payload": 26345472,
+        "projection_graph_output_payload": 4456448,
+        "projection_graph_total_payload": 81133568,
+        "host_bo_read_write_payload": 13369344,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "weight_dma_and_dequant_replays": 32
+    },
+    {
+      "report": "ffn_m512_h4096_i14336_c8_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 256,
+      "columns_max": 8,
+      "projection_workers": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 27.308867,
+        "serial": 45.904205000000005,
+        "concurrent": 27.619086499999998,
+        "npu_branch": 16.767512500000002,
+        "projection_dispatch_wait_sum": 12.6671195,
+        "silu_dispatch_wait": 1.1260940000000002,
+        "host_bo_io_outside_dispatch": 1.2412665000000003,
+        "layouts": 1.863615,
+        "input_gpu_to_host": 0.256255,
+        "output_stage_and_boundary_wait": 9.8395535
+      },
+      "median_projection_wait_share_of_npu_percent": 74.78136859415193,
+      "speedup_vs_gpu": 0.9887679304672151,
+      "npu_branch_over_full_gpu_ratio": 0.6139951723372487,
+      "npu_branch_effective_projection_gflops": 192.11111200901146,
+      "proportional_work_model": {
+        "npu_fraction": 0.017857142857142856,
+        "gpu_time_released_ms": 0.4876583392857143,
+        "zero_overhead_instant_npu_speedup": 1.0181818181818183
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 1646592,
+        "projection_graph_a_payload": 100663296,
+        "projection_graph_weight_payload": 52690944,
+        "projection_graph_output_payload": 4718592,
+        "projection_graph_total_payload": 158072832,
+        "host_bo_read_write_payload": 14155776,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "weight_dma_and_dequant_replays": 32
+    },
+    {
+      "report": "ffn_m512_h4096_i14336_c8_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 512,
+      "columns_max": 8,
+      "projection_workers": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 27.358957,
+        "serial": 54.279095999999996,
+        "concurrent": 28.048008000000003,
+        "npu_branch": 26.0392215,
+        "projection_dispatch_wait_sum": 21.34763,
+        "silu_dispatch_wait": 1.0121455000000001,
+        "host_bo_io_outside_dispatch": 1.3503554999999996,
+        "layouts": 2.3708199999999997,
+        "input_gpu_to_host": 0.25704,
+        "output_stage_and_boundary_wait": 0.6319325
+      },
+      "median_projection_wait_share_of_npu_percent": 82.31748937957965,
+      "speedup_vs_gpu": 0.9754331573208336,
+      "npu_branch_over_full_gpu_ratio": 0.9517622144733076,
+      "npu_branch_effective_projection_gflops": 247.41334697736644,
+      "proportional_work_model": {
+        "npu_fraction": 0.03571428571428571,
+        "gpu_time_released_ms": 0.9771056071428571,
+        "zero_overhead_instant_npu_speedup": 1.037037037037037
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 3293184,
+        "projection_graph_a_payload": 201326592,
+        "projection_graph_weight_payload": 105381888,
+        "projection_graph_output_payload": 5242880,
+        "projection_graph_total_payload": 311951360,
+        "host_bo_read_write_payload": 15728640,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "weight_dma_and_dequant_replays": 32
+    },
+    {
+      "report": "ffn_m512_h4096_i14336_c8_hx370.json",
+      "m": 512,
+      "hidden": 4096,
+      "intermediate": 14336,
+      "npu_channels": 1024,
+      "columns_max": 8,
+      "projection_workers": {
+        "gate_up": 8,
+        "down": 8
+      },
+      "samples_per_mode": {
+        "baseline": 20,
+        "serial": 20,
+        "concurrent": 20
+      },
+      "median_ms": {
+        "baseline": 27.4549845,
+        "serial": 73.6423995,
+        "concurrent": 45.687243499999994,
+        "npu_branch": 43.685807000000004,
+        "projection_dispatch_wait_sum": 38.8773435,
+        "silu_dispatch_wait": 1.1219735,
+        "host_bo_io_outside_dispatch": 1.3930250000000002,
+        "layouts": 2.366495,
+        "input_gpu_to_host": 0.259515,
+        "output_stage_and_boundary_wait": 0.740876
+      },
+      "median_projection_wait_share_of_npu_percent": 88.8353271538505,
+      "speedup_vs_gpu": 0.6009332670726787,
+      "npu_branch_over_full_gpu_ratio": 1.591179445029372,
+      "npu_branch_effective_projection_gflops": 294.94480639902105,
+      "proportional_work_model": {
+        "npu_fraction": 0.07142857142857142,
+        "gpu_time_released_ms": 1.9610703214285714,
+        "zero_overhead_instant_npu_speedup": 1.0769230769230769
+      },
+      "calculated_bytes": {
+        "unique_packed_projection_weights": 6586368,
+        "projection_graph_a_payload": 402653184,
+        "projection_graph_weight_payload": 210763776,
+        "projection_graph_output_payload": 6291456,
+        "projection_graph_total_payload": 619708416,
+        "host_bo_read_write_payload": 18874368,
+        "gpu_host_input_output_payload": 8388608
+      },
+      "weight_dma_and_dequant_replays": 32
+    }
+  ]
+}

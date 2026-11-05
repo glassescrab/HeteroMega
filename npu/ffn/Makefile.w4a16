@@ -1,0 +1,25 @@
+# Source the pinned MLIR-AIE ironenv before invoking this makefile.
+SHELL := /bin/bash
+PYTHON ?= python3
+K ?= 128
+N ?= 64
+build_dir ?= build_w4a16
+
+.PHONY: all compile mlir self-test run
+all: compile
+
+compile:
+	mkdir -p $(build_dir)
+	$(PYTHON) w4a16_linear.py -d npu2 -K $(K) -N $(N) \
+		--xclbin-path $(build_dir)/final.xclbin --insts-path $(build_dir)/insts.bin \
+		--pdi-path $(build_dir)/final.pdi
+
+mlir:
+	$(PYTHON) w4a16_linear.py -d npu2 -K $(K) -N $(N) --emit-mlir
+
+self-test:
+	$(PYTHON) run_w4a16_linear.py --self-test
+
+run: compile
+	$(PYTHON) run_w4a16_linear.py -K $(K) -N $(N) \
+		--xclbin $(build_dir)/final.xclbin --insts $(build_dir)/insts.bin

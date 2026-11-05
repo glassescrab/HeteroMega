@@ -1,0 +1,37 @@
+{
+  "publication_base": "e91c4cb989a3d034c1be36090710371a11d8229c",
+  "tested_kernel_base": "e6ca183c0a78a74496f797b37905f7830e422caa",
+  "retained_source_files_verified": [
+    "CMakeLists.txt",
+    "src/unified_llm_w4a16_hetero/CMakeLists.txt",
+    "src/unified_llm_w4a16_hetero/merged_ffn.cpp",
+    "experiments/ffn_deploy/model_smoke.py",
+    "experiments/ffn_deploy/smoke.py",
+    "experiments/ffn_deploy/bindings.cpp",
+    "experiments/ffn_deploy/prepare.py",
+    "include/heteromega/merged_ffn.hpp",
+    "include/heteromega/merged_ffn_contract.hpp"
+  ],
+  "implementation_matches_tested_worktree": true,
+  "artifact_hashes_verified": true,
+  "credential_pattern_scan": "no matches; no screenshots published",
+  "hardware_results": "retained October31 cloud run; no new hardware run in publication session",
+  "documentation_bash_blocks_syntax_checked": 15,
+  "packaging_tests_windows": {
+    "passed": 4,
+    "skipped": 1,
+    "skip_reason": "real symlink privilege unavailable; all five passed in retained Linux cloud run"
+  },
+  "source_document_whitespace_check": "passed; retained raw logs excluded to preserve evidence",
+  "portable_cpp_contract": "passed: valid sizing/fallback, 40 rejected contracts and overflow guard; retained real artifact manifest accepted",
+  "historical_cpu_test_fixtures": [
+    "array8_default_m512_p512_hx370.json",
+    "array8_m512_h4096_i14336_hx370.json",
+    "bottleneck_analysis.json",
+    "ffn_m128_h4096_i14336_hx370.json",
+    "ffn_m512_h4096_i14336_c8_hx370.json",
+    "ffn_m512_h4096_i14336_hx370.json",
+    "power/default_before.json",
+    "timeline_m512_p512_array8.json"
+  ]
+}

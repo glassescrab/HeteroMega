@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/notebooks/heteromega-deploy.eT0uOJ/HeteroMega-ffn-deploy/experiments/ffn_deploy/smoke.py", line 161, in <module>
+    main()
+  File "/notebooks/heteromega-deploy.eT0uOJ/HeteroMega-ffn-deploy/experiments/ffn_deploy/smoke.py", line 34, in main
+    import heteromega_ffn_deploy as deployment
+ImportError: dynamic module does not define module export function (PyInit_heteromega_ffn_deploy)
+{
+  "status": "failed",
+  "error": "ImportError: dynamic module does not define module export function (PyInit_heteromega_ffn_deploy)"
+}

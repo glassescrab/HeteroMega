@@ -1,5 +1,31 @@
 # HeteroMega session guide
 
+## 2026-10-31 integrated GPU + NPU FFN
+
+- Read `docs/ffn-teammate-testing.md`, `docs/ffn-deployment.md` and the latest
+  `docs/progress.md` entry. The user authorizes committing/pushing the validated
+  integration and teammate guide to origin/main. Preserve existing worktrees
+  and teammate changes; no shared driver/kernel changes or credentials/weights.
+- Build-time `HETEROMEGA_MERGED_FFN=ON`, runtime `HETEROMEGA_FFN_CONFIG=<JSON>`.
+  Llama3 packed group128, M512/H4096/I14336/P6400 is the tested configuration.
+  NPU owns a prefix and GPU a suffix through gate/up/SiLU/down; C++ sums the
+  two outputs and the model adds one residual. Host staging, not zero-copy.
+- Cloud builds and deployment checks complete: isolated30, GPU-attention
+  model64/128 merged completions, native-attention128 merged +640 native calls
+  for one/two inflight slots. Inspect retained evidence and native ioctl counts.
+  The initial missing-root native run silently used GPU fallback and is invalid.
+- NPU/combined numerical deviations are accepted under explicit report policy;
+  preserve their error metrics and failed strict verdicts. GPU controls, finite/
+  stale-output checks, launch/completion and guards remain strict. These jobs
+  do not establish accuracy or a model speedup. Portable tests are not hardware
+  proof. Existing evaluation batch methods do not yet include this new method.
+- Unset HETEROMEGA_FFN_CONFIG in original baseline jobs; do not combine with
+  HETEROMEGA_GPU_FFN=1. Decode/unsupported rows use the original FFN.
+- Kernel/source history before this publication is retained on
+  codex/npu-merged-kernel-parallel at e6ca183c; the required source dependencies
+  and October31 deployment evidence are included here without the full earlier
+  experiment-result archive. Pinned review/deployment worktrees remain intact.
+
 ## Start here
 
 - Read `agent.md` for the current user-provided FFN-prefill plan and separately

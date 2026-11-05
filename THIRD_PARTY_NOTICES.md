@@ -43,3 +43,19 @@ As documented by upstream, the single-header library also contains:
 
 The corresponding license texts are retained in
 `include/third_party/nlohmann/LICENSES/`.
+
+## MLIR-AIE / TileFuse W4A16 projection strategy
+
+- Upstream: https://github.com/glassescrab/mlir-aie
+- Revision: `121dd54abc68f84d89a7074372ebf82be2db62d5`
+- Source: `aie_kernels/aie2p/mix_int4_ATB.cc` and
+  `programming_examples/tilefuse/gemm_w4a16/makefile-common`
+- Adapted file: `npu/ffn/w4a16_prefill_bfp16.cc`
+- License: Apache-2.0 WITH LLVM-exception
+- Copyright: Copyright (C) 2025, Advanced Micro Devices, Inc.;
+  Copyright (C) 2025, University of Illinois Urbana-Champaign.
+- License text: `npu/ffn/licenses/MLIR-AIE-LICENSE.txt`
+- Local adaptation: BFP16-backed 8×8×8 matrix multiplication and four-accumulator
+  reuse, retaining HeteroMega's compact tensor layout, explicit invocation
+  state, per-column dequantization, and FP32 partial sums between K groups.
+  This does not copy the upstream full-array schedule or weight payload ABI.

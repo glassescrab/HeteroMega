@@ -7,7 +7,8 @@ column ownership boundary can cause two columns to read the same N64 tile.
 from dataclasses import dataclass, replace
 
 from prefill_schedule import TapSpec, plan_prefill
-from prefill_swiglu_schedule import (plan_swiglu, swiglu_logical_column,
+from prefill_gate_up_schedule import plan_gate_up
+from prefill_swiglu_schedule import (swiglu_logical_column,
                                      swiglu_output_tap)
 from upstream_weights import upstream_weight_bytes, weight_tile_offset
 
@@ -17,6 +18,34 @@ class WeightSegment:
     first_local_tile: int
     n64_tile: int
     halves: tuple
+
+
+@dataclass(frozen=True)
+class CoreSegmentRun:
+    halves: tuple
+    count: int
+
+
+def core_segment_runs(segments):
+    """Compress identical core operations without changing DMA ownership.
+
+    Core workers consume FIFOs in order; only the selected low/high halves
+    distinguish their segment bodies. Original weight addresses stay in
+    the host-side segment taps. A native column has at most a high-only
+    first segment, a run of paired segments and a low-only final segment.
+    Using runtime loops for these runs avoids cloning the K-loop body for
+    every N64 segment, which can exceed the core's program-memory capacity.
+    """
+    runs = []
+    for segment in segments:
+        halves = segment.halves
+        if halves not in ((0,), (1,), (0, 1)):
+            raise ValueError('core segment must contain low, high or paired halves')
+        if runs and runs[-1].halves == halves:
+            runs[-1] = replace(runs[-1], count=runs[-1].count + 1)
+        else:
+            runs.append(CoreSegmentRun(halves, 1))
+    return tuple(runs)
 
 
 @dataclass(frozen=True)
@@ -38,13 +67,33 @@ def validate_activation_fifo_depth(depth):
     return depth
 
 
+def validate_output_fifo_depth(depth):
+    if isinstance(depth, bool) or not isinstance(depth, int) or depth not in (1, 2):
+        raise ValueError('output_fifo_depth must be 1 or 2')
+    return depth
+
+
 def validate_input_layout(input_layout):
     if input_layout not in ('compact', 'row_major'):
         raise ValueError('input_layout must be compact or row_major')
     return input_layout
 
 
-def validate_kernel_tuning(vector_zero, mmul_m_reuse, arithmetic='bf16'):
+def validate_bfp16_native_layout(enabled):
+    if not isinstance(enabled, bool):
+        raise ValueError('bfp16_native_layout must be a bool')
+    return enabled
+
+
+def validate_preconvert_a(enabled, split_m32_a, preconvert_b):
+    if not isinstance(enabled, bool):
+        raise ValueError('preconvert_a must be a bool')
+    if enabled and (split_m32_a is not True or preconvert_b is not True):
+        raise ValueError('preconvert_a requires split_m32_a=True and preconvert_b=True')
+
+
+def validate_kernel_tuning(vector_zero, mmul_m_reuse, arithmetic='bf16',
+                           bfp16_native_layout=False, preconvert_b=False):
     if arithmetic not in ('bf16', 'bfp16'):
         raise ValueError('arithmetic must be bf16 or bfp16')
     if not isinstance(vector_zero, bool):
@@ -54,6 +103,12 @@ def validate_kernel_tuning(vector_zero, mmul_m_reuse, arithmetic='bf16'):
         raise ValueError('mmul_m_reuse must be 1 or 2')
     if arithmetic == 'bfp16' and mmul_m_reuse != 1:
         raise ValueError('bfp16 requires mmul_m_reuse=1')
+    if validate_bfp16_native_layout(bfp16_native_layout) and arithmetic != 'bfp16':
+        raise ValueError('bfp16_native_layout requires arithmetic=bfp16')
+    if not isinstance(preconvert_b, bool):
+        raise ValueError('preconvert_b must be a bool')
+    if preconvert_b and not bfp16_native_layout:
+        raise ValueError('preconvert_b requires bfp16_native_layout=True')
 
 
 def upstream_worker_stack_size(mmul_m_reuse, arithmetic='bf16'):
@@ -68,18 +123,60 @@ def upstream_worker_stack_size(mmul_m_reuse, arithmetic='bf16'):
     return 4096 if arithmetic == 'bfp16' or mmul_m_reuse == 2 else 2048
 
 
-def validate_upstream_buffering(schedule, activation_fifo_depth):
+def validate_upstream_buffering(schedule, activation_fifo_depth, output_fifo_depth=2,
+                               bfp16_native_layout=False):
     """Reject the known oversized reuse-four core-buffer configuration.
 
     Projection reuse four needs 76,288 raw bytes with depth-two A buffers,
     or 59,904 with depth-one consumers, including the baseline 2 KiB stack.
     A paired-M or BFP16 4 KiB stack raises the latter to 61,952 bytes.
+    SwiGLU reuse four additionally needs depth-one core Z producers: its up
+    scratch adds 4,096 bytes, offset by removing one 4,096-byte Z object.
+    The shared gate pool stays depth two, resident on the even gate tile
+    in the observed compiler allocation; it is not duplicated on up.
+    The opt-in native8/BF16-partial mode saves 8 KiB at reuse four, allowing
+    depth-two Z again (57,856 raw up bytes including the 4 KiB stack).
     Actual compiler placement/spills still need build and hardware checks.
-    Host and memory-tile A buffers remain double-buffered in either case.
+    In particular, full M512 native4 SwiGLU reuse four exceeded the linker
+    data region despite its raw count; the native8 variant is a separate
+    candidate, not a claim that FIFO depths alone resolve that failure.
+    Host/memory-tile A and Y buffers remain double-buffered in either case.
     """
     depth = validate_activation_fifo_depth(activation_fifo_depth)
+    output_depth = validate_output_fifo_depth(output_fifo_depth)
+    native8 = validate_bfp16_native_layout(bfp16_native_layout)
     if schedule.base.m_reuse == 4 and depth != 1:
         raise ValueError('effective M reuse 4 requires activation_fifo_depth=1')
+    if (schedule.mode == 'swiglu' and schedule.base.m_reuse == 4
+            and output_depth != 1 and not native8):
+        raise ValueError('effective SwiGLU M reuse 4 requires output_fifo_depth=1')
+
+
+def validate_split_m32_a(schedule, enabled, bfp16_native_layout,
+                         activation_fifo_depth, output_fifo_depth):
+    """Validate the bounded M64-weight/M32-activation streaming experiment.
+
+    Two depth-two M32 A objects occupy the same 16 KiB as one M64 object.
+    Full N64 BF16 scratch occupies 16 KiB; each K128 weight is dequantized
+    once before both A chunks. SwiGLU consumes its native8 BF16 C directly
+    in pointwise and needs a depth-one Z producer to fit the raw budget.
+    Initial wrappers update both N32 halves, so partial segments are rejected.
+    """
+    if not isinstance(enabled, bool):
+        raise ValueError('split_m32_a must be a bool')
+    if not enabled:
+        return
+    if not validate_bfp16_native_layout(bfp16_native_layout):
+        raise ValueError('split_m32_a requires bfp16_native_layout=True')
+    if schedule.base.m_reuse != 4:
+        raise ValueError('split_m32_a requires effective M reuse 4')
+    if validate_activation_fifo_depth(activation_fifo_depth) != 2:
+        raise ValueError('split_m32_a requires activation_fifo_depth=2')
+    depth = validate_output_fifo_depth(output_fifo_depth)
+    if schedule.mode == 'swiglu' and depth != 1:
+        raise ValueError('split_m32_a SwiGLU requires output_fifo_depth=1')
+    if any(segment.halves != (0, 1) for column in schedule.segments for segment in column):
+        raise ValueError('split_m32_a requires paired N64 segments without single-half tails')
 
 
 def segment_pipeline_actions(schedule, segment_pipeline_depth=2):
@@ -151,10 +248,14 @@ class UpstreamSchedule:
                            strides=(0, 128, self.base.k, 1))
         return replace(tap, sizes=(1, *tap.sizes[1:]))
 
-    def activation_dims_to_stream(self, input_layout='compact'):
+    def activation_dims_to_stream(self, input_layout='compact', bfp16_native_layout=False):
         validate_input_layout(input_layout)
+        validate_bfp16_native_layout(bfp16_native_layout)
         if input_layout == 'compact':
             return self.base.activation_dims_to_stream
+        if bfp16_native_layout:
+            # Row-major [R*16,128] -> native8 [R*2,16,8,8].
+            return ((self.base.m_reuse * 2, 1024), (16, 8), (8, 128), (8, 1))
         # Row-major [R*16,128] -> native [R*4,16,4,8]. Strides refer to
         # BF16 elements within one unchanged R*2048-element FIFO object.
         # Four dimensions fit the AIE2 memory-tile DMA addressing limit.
@@ -175,9 +276,10 @@ def plan_upstream(m, k, n, *, mode='projection', weight_k=None, weight_n=None,
     if (isinstance(max_reuse, bool) or not isinstance(max_reuse, int)
             or max_reuse not in (1, 2, 4)):
         raise ValueError('direct upstream weights support max_reuse 1, 2 or 4')
-    if mode == 'swiglu' and max_reuse == 4:
-        raise ValueError('SwiGLU reuse 4 exceeds the current core-buffer budget')
-    base = (plan_swiglu(m, k, n, columns=columns, max_reuse=max_reuse)
+    # Direct buffers have separately configurable A/Z endpoints. Keep the
+    # older compact SwiGLU planner's reuse-two limit unchanged; the direct
+    # graph validates its explicit reuse-four memory controls separately.
+    base = (plan_gate_up(m, k, n, columns=columns, max_reuse=max_reuse)
             if mode == 'swiglu' else
             plan_prefill(m, k, n, columns=columns, max_reuse=max_reuse))
     weight_k = k if weight_k is None else weight_k

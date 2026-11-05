@@ -1,0 +1,21 @@
+Initializing UnifiedLLMW4A16Impl_hetero
+Using NPU config: /notebooks/heteromega-deploy.eT0uOJ/HeteroMega-ffn-deploy/deployment-results/model-512.model-config.json
+Debug verbosity level: 1
+Use Packed Weights: true
+Pad Packed Weights: false
+CPU Decode: false
+Warmup enabled: false
+Minimal PDI enabled: true
+Split M only: false
+Prompt length filter enabled: 512
+Chunking enabled: true
+Chunking scheduled: false
+Prefill chunk size: 512
+Chunking inflight workers: 1
+Async chunking: false
+GEMV Driven Split K: true
+GEMV NPU Col Prefix: 8c
+Heterogeneity mode: gpu
+Initializing NPU...
+GPU-only mode: skipping XDNA/NPU init
+double free or corruption (out)

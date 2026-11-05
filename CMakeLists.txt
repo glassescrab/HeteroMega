@@ -32,7 +32,7 @@ endif()
 set(DRIVER_PATH "${HOME_LIBS}/xdna-driver-05-19-25")
 
 # Pin the toolchain to the ROCm 7.1.1 installation.
-set(ROCM_PATH "/opt/rocm-7.1.1")
+set(ROCM_PATH "/opt/rocm-7.1.1" CACHE PATH "ROCm installation (AUP uses /opt/rocm-7.2.0)")
 set(ENV{ROCM_PATH} "${ROCM_PATH}")
 message(STATUS "Using ROCM_PATH: ${ROCM_PATH}")
 link_directories(${ROCM_PATH}/lib)
@@ -78,3 +78,16 @@ add_subdirectory(src/microbenchmarks)
 add_executable(test_sdpa_perf src/microbenchmarks/test_sdpa_perf.cpp)
 target_link_libraries(test_sdpa_perf PRIVATE torch ${TORCH_LIBRARIES})
 set_property(TARGET test_sdpa_perf PROPERTY CXX_STANDARD 17)
+
+# Optional cloud compatibility header; no effect on the inherited default build.
+set(HETEROMEGA_TORCH_COMPAT_HEADER "" CACHE FILEPATH "Header for the documented Torch 2.11 HIP type aliases")
+if(HETEROMEGA_TORCH_COMPAT_HEADER)
+    foreach(target unified_llm_w4a16_hetero_lib unified_llm_w4a16_hetero_libtorch
+                   heteromega_gpu_ffn heteromega_merged_ffn heteromega_ffn_deploy)
+        if(TARGET ${target})
+            target_compile_options(${target} PRIVATE
+                $<$<COMPILE_LANGUAGE:CXX>:-include>
+                $<$<COMPILE_LANGUAGE:CXX>:${HETEROMEGA_TORCH_COMPAT_HEADER}>)
+        endif()
+    endforeach()
+endif()

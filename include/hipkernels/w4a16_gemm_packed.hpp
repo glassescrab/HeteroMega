@@ -46,7 +46,7 @@ void w4a16_gemm_fused_packed(torch::Tensor &output, const torch::Tensor &input, 
  */
 void w4a16_gemm_fused_packed_tiles(torch::Tensor &output, const torch::Tensor &input, const torch::Tensor &packed_params,
                                    int64_t in_features, int64_t out_features, int64_t packed_tiles_k, int64_t packed_tiles_n,
-                                   hipStream_t stream = 0);
+                                   hipStream_t stream = 0, bool fuse_activation = false);
 
 void w4a16_gemv_fused_packed(torch::Tensor &output, const torch::Tensor &input, const torch::Tensor &packed_params, int64_t in_features,
                              int64_t out_features, int64_t total_out_features = -1, int64_t start_col = 0, hipStream_t stream = 0);

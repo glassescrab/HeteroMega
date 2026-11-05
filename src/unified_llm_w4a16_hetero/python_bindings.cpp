@@ -69,6 +69,8 @@ PYBIND11_MODULE(unified_llm_w4a16_hetero_libtorch, m) {
         .def("load_quantized_weights_from_bins", &UnifiedLLMW4A16Impl::load_quantized_weights_from_bins, py::arg("weights_dir"))
         .def("initialize_npu", &UnifiedLLMW4A16Impl::initialize_npu, "Initialize NPU driver and resources")
         .def("import_weights", &UnifiedLLMW4A16Impl::import_weights, "Import weights to NPU")
+        .def("merged_ffn_completed_dispatches", &UnifiedLLMW4A16Impl::merged_ffn_completed_dispatches,
+             "Successful opt-in merged FFN XRT completions; zero is not evidence of NPU execution")
         .def("initialize_dummy_weights", &UnifiedLLMW4A16Impl::initialize_dummy_weights, py::arg("seed") = 42,
              "Initialize dummy weights for testing");
 }

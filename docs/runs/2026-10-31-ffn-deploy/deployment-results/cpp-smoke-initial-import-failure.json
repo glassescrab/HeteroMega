@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "scope": "Hardware validation of the C++ executor used by the model.\n\nChecks alternating/zero inputs, two layers, two HIP streams, serial/concurrent\nbranches, completion counts and numerical metrics. Does not download weights.\nThis is a deployment check, not a whole-model benchmark or an accuracy claim.\n",
+  "config": "/notebooks/heteromega-deploy.eT0uOJ/HeteroMega-ffn-deploy/deployment.json",
+  "checks": [],
+  "samples": [],
+  "python_parity": [],
+  "error": "ImportError: dynamic module does not define module export function (PyInit_heteromega_ffn_deploy)"
+}

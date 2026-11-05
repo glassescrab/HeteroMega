@@ -1,0 +1,39 @@
+{
+  "base_commit": "e6ca183c0a78a74496f797b37905f7830e422caa",
+  "branch": "codex/ffn-cpp-deploy-20261031",
+  "implementation": "uncommitted draft",
+  "tests": {
+    "native_cpp_contract": "passed; 40 invalid contracts rejected plus valid sizing/fallback/overflow checks",
+    "retained_artifact_metadata": "passed; metadata only",
+    "python_packaging": "4 passed; virtualenv symlink regression skipped (Windows privilege required)",
+    "python_compileall": "passed",
+    "whitespace": "passed",
+    "manual_bash_blocks": "7 syntax checks passed; not executed on cloud"
+  },
+  "gpu_npu_library_build": "not run",
+  "hardware_execution": "not run",
+  "source_sha256": {
+    "CMakeLists.txt": "856dd217d3b43c45e54530a25c1899a15c36910a1399071a1e3d28cf8c595d85",
+    "experiments/ffn_deploy/__init__.py": "68b2a54b8614507498fb703b47aa4a3dfd4e43fca2411885c4694756a89cae4e",
+    "experiments/ffn_deploy/bindings.cpp": "b26327d86d2072e4d40233898b72660a0e529113b60bfd12f3843232e1c2aafb",
+    "experiments/ffn_deploy/model_smoke.py": "d7c5d15b0345f18dc30855b4f7c3e9bf6197de46613dccf0e3a89be65a7d3535",
+    "experiments/ffn_deploy/prepare.py": "49af01172492d03460efa0e83d92251ce7550e2dea1193338ed6a3f80736651e",
+    "experiments/ffn_deploy/smoke.py": "99382a83e4a5807b1725411311dac20ab2f3e159ffd358ec0a88dc3a26eaf2be",
+    "experiments/ffn_deploy/test_prepare.py": "65924367e0b0d06210e40dd223aa20199508d39ba8b51d7b82d7243d9aee8899",
+    "include/heteromega/merged_ffn.hpp": "f65821b6e54d5400214abebc90414548089fd7a95f2c9484db928e2aa0060234",
+    "include/heteromega/merged_ffn_contract.hpp": "de7966e571c055f6fe7b0e7c49cec076ad9d1f3444b00d162a7a9a56859fd147",
+    "include/npu_matmul_func/npu_execution.hpp": "885065673f697e207f7ebc298305afeae4f7ca8ea02834fad9bd231f18cd3306",
+    "include/unified_llm_w4a16_hetero/unified_llm_w4a16.hpp": "6744cfcc7a34c326df8b400db82e085ec4be27a6b5b9ce407e3460421a934115",
+    "src/npu_matmul_func/CMakeLists.txt": "25c4bec2dfe3215bff77baa24294d4e48601d0a25eef0971d4f1cc3aedde85c7",
+    "src/npu_matmul_func/npu_execution.cpp": "8cb96eb883b767094a25128d9c64fd7433fd20827d9f808c162344605caa1502",
+    "src/unified_llm_w4a16_hetero/CMakeLists.txt": "5797515e4d0fc9ea304858e299927a725dae8356f0798f15124f6e66224e040e",
+    "src/unified_llm_w4a16_hetero/helper.cpp": "96510933f9265cdfeb10bab16a9d9728903c1a4165cb12b26ff025f021e1a9f5",
+    "src/unified_llm_w4a16_hetero/merged_ffn.cpp": "21252e388f4faf747072c41b850244dcdf5655051109fd0e152e4c0f9e2a539e",
+    "src/unified_llm_w4a16_hetero/npuSetup.cpp": "c7f69f3243d38183e1957a5277fd5a47893f55cc65efdc158bdbb5313832e416",
+    "src/unified_llm_w4a16_hetero/python_bindings.cpp": "ab1b55ee05cc18b39d812a1cd646dc8c63cad34acd4a19f1f3f2b3bac6b309be",
+    "src/unified_llm_w4a16_hetero/unified_llm_w4a16.cpp": "af1052acfd741a5fa7219fc73c275425a8061ad102c270cb849bc854f70680b2",
+    "tests/ffn_deploy/CMakeLists.txt": "98429a6c853f25667f179bee825380d2eb4194e1aebe8e1a5dff955ae572d808",
+    "tests/ffn_deploy/contract_test.cpp": "f8a220494d2baf24a85fba469adacefbc7a4180312cc93a58a3db1a6ec02758a"
+  },
+  "compute_kernel_sources": "unchanged from e6ca183c"
+}

@@ -1,0 +1,193 @@
+"""One eight-column W4A16 gate/up projection with two compact output BOs.
+
+Compute [gate|up] = A @ [Wgate;Wup].T as a wider N=2P array8 GEMM. Four
+columns produce each projection, using all32 workers. Native BF16/FP32 is
+the default; --arithmetic bfp16 selects block-float matrix computation.
+Separate output DMA taps retain each projection's
+compact layout without a CPU split/compaction. SiLU/multiply remains a
+separate dispatch; this is horizontal projection fusion, not a fused SwiGLU.
+
+The FIFO topology follows AMD's pinned MLIR-AIE whole_array matmul example
+(7e00b57955e108fe9d8e9419f5828a0c7e650858, Apache-2.0 WITH LLVM-exception).
+"""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+
+import aie.iron as iron
+import numpy as np
+from aie.helpers.taplib import TensorAccessPattern
+from aie.iron import Buffer, CompileTime, ExternalFunction, In, Kernel, ObjectFifo, Out, Program, Runtime, TaskGroup, Worker
+from aie.iron.controlflow import range_
+from aie.iron.device import Tile
+from aie.utils import config
+from aie.utils.hostruntime.argparse import add_compile_args, device_from_args
+from aie.utils.hostruntime.cli import run_design_cli
+from ml_dtypes import bfloat16
+
+from projection_arithmetic import (ARITHMETIC_CHOICES, ARITHMETIC_SOURCE_SHA,
+                                   projection_arithmetic, validate_projection_identity)
+
+from prefill_gate_up_schedule import (gate_up_output_tap, gate_up_output_target,
+                                     plan_gate_up)
+
+
+KERNEL_PATH = Path(__file__).with_name('w4a16_prefill_reuse.cc')
+SOURCE = KERNEL_PATH.read_text()
+SOURCE_SHA = hashlib.sha256(SOURCE.encode()).hexdigest()
+SCHEDULE_SHA = hashlib.sha256(Path(__file__).with_name('prefill_schedule.py').read_bytes()).hexdigest()
+GATE_UP_SCHEDULE_SHA = hashlib.sha256(Path(__file__).with_name('prefill_gate_up_schedule.py').read_bytes()).hexdigest()
+TARGET_COMMIT = '7e00b57955e108fe9d8e9419f5828a0c7e650858'
+
+
+def _tap(spec):
+    return TensorAccessPattern((spec.buffer_elements,), offset=spec.offset,
+                               sizes=list(spec.sizes), strides=list(spec.strides))
+
+
+@iron.jit(aiecc_flags=['--alloc-scheme=basic-sequential'])
+def w4a16_gate_up(
+    activations: In, weights: In, gate_output: Out, up_output: Out, *,
+    m: CompileTime[int] = 512, k: CompileTime[int] = 4096,
+    channels: CompileTime[int] = 512, cols: CompileTime[int] = 8,
+    max_reuse: CompileTime[int] = 2,
+    arithmetic: CompileTime[str] = 'bf16',
+    arithmetic_source_sha256: CompileTime[str] = ARITHMETIC_SOURCE_SHA,
+    source_sha256: CompileTime[str] = SOURCE_SHA,
+    schedule_sha256: CompileTime[str] = SCHEDULE_SHA,
+    gate_up_schedule_sha256: CompileTime[str] = GATE_UP_SCHEDULE_SHA,
+):
+    projection = projection_arithmetic(arithmetic)
+    validate_projection_identity(projection, source_sha256, arithmetic_source_sha256)
+    plan = plan_gate_up(m, k, channels, columns=cols, rows=4, max_reuse=max_reuse)
+    if (source_sha256 != projection.source_sha256 or schedule_sha256 != SCHEDULE_SHA
+            or gate_up_schedule_sha256 != GATE_UP_SCHEDULE_SHA):
+        raise ValueError('kernel or schedule source hash changed; rebuild the graph')
+    device = iron.get_current_device()
+    if device is None or device.cols != 8:
+        raise ValueError('combined gate/up requires the full eight-column NPU2 device')
+    reuse = plan.m_reuse
+    a_tile = np.ndarray[(reuse * 2048,), np.dtype[bfloat16]]
+    w_tile = np.ndarray[(2144,), np.dtype[np.uint8]]
+    y_tile = np.ndarray[(reuse * 512,), np.dtype[bfloat16]]
+    c_tile = np.ndarray[(reuse * 512,), np.dtype[np.float32]]
+    b_tile = np.ndarray[(4096,), np.dtype[bfloat16]]
+    y_join = np.ndarray[(4 * reuse * 512,), np.dtype[bfloat16]]
+    a_host = np.ndarray[(m * k,), np.dtype[bfloat16]]
+    w_host = np.ndarray[(plan.nb * plan.kb * 2144,), np.dtype[np.uint8]]
+    y_host = np.ndarray[(m * channels,), np.dtype[bfloat16]]
+
+    obj = projection.object_name(reuse)
+    accumulate = ExternalFunction('w4a16_prefill_reuse_accumulate',
+        object_file_name=obj, source_string=projection.source,
+        arg_types=[a_tile, w_tile, c_tile, b_tile],
+        compile_flags=projection.compile_flags(reuse),
+        include_dirs=[config.cxx_header_path(), str(Path(config.cxx_header_path()) / 'aie_kernels')])
+    init = Kernel('w4a16_prefill_reuse_init', obj, [c_tile])
+    finish = Kernel('w4a16_prefill_reuse_finish', obj, [c_tile, y_tile])
+
+    a_prods, a_broadcasts = [], []
+    for row in range(4):
+        source = ObjectFifo(a_tile, depth=2, name=f'gate_up_a_host_{row}')
+        a_prods.append(source.prod(tile=Tile(row, 0), channel=0))
+        # Same quarter-stream permutation as the validated array8 graph;
+        # dimensions remain within the pinned dialect's512-element limit.
+        a_broadcasts.append(source.cons().forward(tile=Tile(row, 1),
+            name=f'gate_up_a_broadcast_{row}',
+            dims_to_stream=list(plan.activation_dims_to_stream)))
+    w_prods, w_broadcasts, y_conses, y_workers = [], [], [], []
+    for col in range(8):
+        source = ObjectFifo(w_tile, depth=2, name=f'gate_up_w_host_{col}')
+        w_prods.append(source.prod(tile=Tile(col, 0), channel=1))
+        w_broadcasts.append(source.cons().forward(tile=Tile(col, 1),
+                                                name=f'gate_up_w_broadcast_{col}'))
+        joined = ObjectFifo(y_join, depth=2, name=f'gate_up_y_host_{col}')
+        y_workers.append(joined.prod().join([r * reuse * 512 for r in range(4)],
+            tile=Tile(col, 1), obj_types=[y_tile] * 4, depths=[2] * 4,
+            names=[f'gate_up_y_worker_{col}_{r}' for r in range(4)]))
+        y_conses.append(joined.cons(tile=Tile(col, 0), channel=0))
+
+    def core_fn(a_in, w_in, y_out, c, b, zero, mac, store):
+        count = plan.groups_per_column * plan.local_nb
+        loop = range(1) if count == 1 else range_(count)
+        for _ in loop:
+            zero(c)
+            for _ in range_(plan.kb):
+                a = a_in.acquire(1)
+                w = w_in.acquire(1)
+                mac(a, w, c, b)
+                a_in.release(1)
+                w_in.release(1)
+            y = y_out.acquire(1)
+            store(c, y)
+            y_out.release(1)
+
+    workers = []
+    for col in range(8):
+        for row in range(4):
+            c = Buffer(c_tile, name=f'gate_up_acc_{col}_{row}')
+            b = Buffer(b_tile, name=f'gate_up_dequant_{col}_{row}')
+            workers.append(Worker(core_fn,
+                [a_broadcasts[row].cons(), w_broadcasts[col].cons(),
+                 y_workers[col][row].prod(), c, b, init, accumulate, finish],
+                tile=Tile(col, row + 2), stack_size=projection.stack_size, dynamic_objfifo_lowering=True))
+
+    def sequence(a, w, gate, up, a_hs, w_hs, y_hs):
+        for group_index in range(plan.groups_per_column):
+            task_group = TaskGroup()
+            for col in range(8):
+                output = gate if gate_up_output_target(plan, col) == 'gate' else up
+                y_hs[col].drain(output, _tap(gate_up_output_tap(plan, col, group_index)),
+                               wait=True, group=task_group)
+            for row in range(4):
+                a_hs[row].fill(a, _tap(plan.activation_tap(0, row, group_index)),
+                               group=task_group)
+            for col in range(8):
+                w_hs[col].fill(w, _tap(plan.weight_tap(col)), group=task_group)
+            task_group.finish()
+
+    runtime = Runtime(sequence, [a_host, w_host, y_host, y_host, a_prods, w_prods, y_conses])
+    return Program(device, runtime, workers=workers).resolve_program()
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    add_compile_args(parser, dev_choices=('npu2',), default_dev='npu2', with_pdi=True, with_emit_mlir=True)
+    parser.add_argument('-M', type=int, default=512)
+    parser.add_argument('-K', type=int, default=4096)
+    parser.add_argument('-P', '--channels', type=int, default=512)
+    parser.add_argument('-co', '--columns', type=int, default=8)
+    parser.add_argument('--max-reuse', type=int, choices=(1, 2, 4), default=2)
+    parser.add_argument('--arithmetic', choices=ARITHMETIC_CHOICES, default='bf16')
+    opts = parser.parse_args()
+    projection = projection_arithmetic(opts.arithmetic)
+    plan = plan_gate_up(opts.M, opts.K, opts.channels, columns=opts.columns,
+                        rows=4, max_reuse=opts.max_reuse)
+    run_design_cli(w4a16_gate_up, opts,
+        compile_kwargs=dict(m=opts.M, k=opts.K, channels=opts.channels, cols=opts.columns,
+                            max_reuse=opts.max_reuse, arithmetic=opts.arithmetic,
+                            arithmetic_source_sha256=ARITHMETIC_SOURCE_SHA,
+                            source_sha256=projection.source_sha256,
+                            schedule_sha256=SCHEDULE_SHA,
+                            gate_up_schedule_sha256=GATE_UP_SCHEDULE_SHA),
+        device=lambda o: device_from_args(o, n_cols=None))
+    if opts.xclbin_path and not opts.emit_mlir:
+        manifest = dict(kind='w4a16_gate_up_bf16', design='array8_gate_up',
+            m=opts.M, k=opts.K, n=2 * opts.channels, channels=opts.channels,
+            output_count=2, output_order=['gate', 'up'], cols=8, compute_rows=4,
+            m_reuse=plan.m_reuse, worker_count=32,
+            m_column_groups=plan.m_column_groups, n_columns=plan.n_columns,
+            tile_m=16, tile_k=128, tile_n=32, group_size=128, weight_tile_bytes=2144,
+            source_sha256=projection.source_sha256, schedule_sha256=SCHEDULE_SHA,
+            gate_up_schedule_sha256=GATE_UP_SCHEDULE_SHA,
+            target_mlir_aie_commit=TARGET_COMMIT,
+            xclbin_sha256=hashlib.sha256(Path(opts.xclbin_path).read_bytes()).hexdigest(),
+            insts_sha256=hashlib.sha256(Path(opts.insts_path).read_bytes()).hexdigest())
+        manifest.update(projection.manifest_fields())
+        Path(str(opts.xclbin_path) + '.json').write_text(json.dumps(manifest, indent=2) + '\n')
+
+
+if __name__ == '__main__':
+    main()

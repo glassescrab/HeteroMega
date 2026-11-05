@@ -1,0 +1,10 @@
+{
+  "kernel": "6.17.0-42-generic",
+  "torch": "2.11.0+rocm7.2",
+  "hip": "7.2.26015",
+  "numpy": "2.5.4",
+  "gpu": "AMD Radeon 890M",
+  "gpu_arch": "gfx1150",
+  "iron_python": "/home/mliraie/mlir-aie/ironenv/bin/python",
+  "native_artifacts": "/notebooks/HeteroMosaic-baseline/hw_bins"
+}

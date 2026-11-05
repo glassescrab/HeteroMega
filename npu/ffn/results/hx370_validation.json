@@ -1,0 +1,54 @@
+{
+  "validated_at_utc": "2026-10-14T03:31:44.115377+00:00",
+  "cpu": "AMD Ryzen AI 9 HX 370 w/ Radeon 890M",
+  "kernel": "6.17.0-42-generic",
+  "xrt": "2.26.0",
+  "mlir_aie_commit": "7e00b57955e108fe9d8e9419f5828a0c7e650858",
+  "runs": {
+    "silu_mul_14336_4col_hx370.json": {
+      "passed": true,
+      "max_abs_error": 0.125,
+      "cases": 4,
+      "median_launch_us": 92.43350000000001,
+      "source_sha256": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+      "rtol": 0.04,
+      "atol": 0.02
+    },
+    "silu_mul_14336_hx370.json": {
+      "passed": true,
+      "max_abs_error": 0.125,
+      "cases": 4,
+      "median_launch_us": 160.12150000000003,
+      "source_sha256": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+      "rtol": 0.04,
+      "atol": 0.02
+    },
+    "silu_mul_2048_hx370.json": {
+      "passed": true,
+      "max_abs_error": 0.125,
+      "cases": 4,
+      "median_launch_us": 98.378,
+      "source_sha256": "1863c3ab0cb4be00c0ced57223d172da2706969d1329d7785e9a78c4dea167fc",
+      "rtol": 0.04,
+      "atol": 0.02
+    },
+    "w4a16_k128_n64_hx370.json": {
+      "passed": true,
+      "max_abs_error": 0.0,
+      "cases": 4,
+      "median_launch_us": 917.787,
+      "source_sha256": "2f8242f4dab67c09a2424cce7e55a8258ec9c387b9c66ee82038d3f0f47f6358",
+      "rtol": 0.01,
+      "atol": 0.001
+    },
+    "w4a16_k256_n64_hx370.json": {
+      "passed": true,
+      "max_abs_error": 0.0,
+      "cases": 4,
+      "median_launch_us": 1723.981,
+      "source_sha256": "2f8242f4dab67c09a2424cce7e55a8258ec9c387b9c66ee82038d3f0f47f6358",
+      "rtol": 0.01,
+      "atol": 0.001
+    }
+  }
+}

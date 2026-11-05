@@ -1825,7 +1825,7 @@ int initialize_xdna_driver(const char *drv_path) {
 }
 
 #include <mutex>
-std::mutex npu_mutex;
+#include "npu_matmul_func/npu_execution.hpp"
 std::mutex create_cmd_packet_mutex;
 
 int npuMatmul_zero(int hwctx_numb, int instctx_numb, void *output_pointer, void *input_pointer, void *weight_pointer,
@@ -1874,10 +1874,10 @@ int npuMatmul_zero(int hwctx_numb, int instctx_numb, void *output_pointer, void 
     }
 
     // Lock the NPU for execution
-    // EXPLANATION: std::lock_guard acquires 'npu_mutex'.
+    // The deployment XRT FFN uses this same execution mutex.
     // If another thread holds it, this thread will BLOCK (sleep/wait) until it is released.
     // It does NOT strictly spin-wait (burn CPU) unless the mutex implementation decides to spin briefly.
-    std::lock_guard<std::mutex> lock(npu_mutex);
+    std::lock_guard<std::mutex> lock(heteromega::npu_execution_mutex());
 
     if (debug_verbosity >= 2)
         std::cout << "Executing NPU command" << std::endl;

@@ -1,0 +1,4 @@
+# Runtime manifests validate these payloads by byte-exact SHA256.
+*.xclbin -text
+*.pdi -text
+*.bin -text

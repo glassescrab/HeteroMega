@@ -1,0 +1,207 @@
+{
+  "status": "completed_with_report_policy",
+  "scope": "deployment validation; no accuracy or speedup claim",
+  "cloud_root": "/notebooks/heteromega-deploy.eT0uOJ/HeteroMega-ffn-deploy",
+  "runs": {
+    "cpp-smoke": {
+      "status": "completed_with_accuracy_deviations",
+      "completed_dispatches": 30,
+      "accuracy": {
+        "passed": false,
+        "accepted": true,
+        "check_count": 90,
+        "outside_tolerance_count": 24,
+        "accuracy_status": "reported_deviations"
+      },
+      "worst_errors": {
+        "output": {
+          "max_abs_error": 0.078125,
+          "relative_l2_error": 0.014858955383174024,
+          "normalized_max_error": 0.018518518518518517
+        },
+        "gpu": {
+          "max_abs_error": 0.015625,
+          "relative_l2_error": 0.0036517689000493472,
+          "normalized_max_error": 0.0051813471502590676
+        },
+        "npu": {
+          "max_abs_error": 0.0703125,
+          "relative_l2_error": 0.02150459423485892,
+          "normalized_max_error": 0.022727272727272728
+        }
+      }
+    },
+    "model-512": {
+      "status": "completed_with_report_policy",
+      "completed_dispatches": 64,
+      "last_logits_error": {
+        "passed": false,
+        "correctness": "failed",
+        "finite": true,
+        "max_abs_error": 0.46875,
+        "relative_l2_error": 0.04544356219535038,
+        "normalized_max_error": 0.01953125,
+        "rms_error": 0.12339031119791471,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 24.0,
+        "max_error_limit": 0.77,
+        "elementwise_close_fraction": 0.6006502619760479
+      },
+      "candidate_repeat_error": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0,
+        "relative_l2_error": 0.0,
+        "normalized_max_error": 0.0,
+        "rms_error": 0.0,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 23.875,
+        "max_error_limit": 0.76625,
+        "elementwise_close_fraction": 1.0
+      },
+      "candidate_repeat_bit_exact": true,
+      "decode_fallback": true,
+      "unsupported_shape_fallback": true
+    },
+    "model-1024-inflight2": {
+      "status": "completed_with_report_policy",
+      "completed_dispatches": 128,
+      "last_logits_error": {
+        "passed": false,
+        "correctness": "failed",
+        "finite": true,
+        "max_abs_error": 0.46875,
+        "relative_l2_error": 0.03757337571740305,
+        "normalized_max_error": 0.020161290322580645,
+        "rms_error": 0.0919861234061425,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 23.25,
+        "max_error_limit": 0.7475,
+        "elementwise_close_fraction": 0.7276228792415169
+      },
+      "candidate_repeat_error": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0,
+        "relative_l2_error": 0.0,
+        "normalized_max_error": 0.0,
+        "rms_error": 0.0,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 23.5,
+        "max_error_limit": 0.755,
+        "elementwise_close_fraction": 1.0
+      },
+      "candidate_repeat_bit_exact": true,
+      "decode_fallback": true,
+      "unsupported_shape_fallback": true
+    },
+    "model-hetero-1024-inflight1": {
+      "status": "completed_with_report_policy",
+      "completed_dispatches": 128,
+      "last_logits_error": {
+        "passed": false,
+        "correctness": "failed",
+        "finite": true,
+        "max_abs_error": 1.28125,
+        "relative_l2_error": 0.08611311786574,
+        "normalized_max_error": 0.05481283422459893,
+        "rms_error": 0.20767361948598645,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 23.375,
+        "max_error_limit": 0.75125,
+        "elementwise_close_fraction": 0.3885120384231537
+      },
+      "candidate_repeat_error": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0,
+        "relative_l2_error": 0.0,
+        "normalized_max_error": 0.0,
+        "rms_error": 0.0,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 23.25,
+        "max_error_limit": 0.7475,
+        "elementwise_close_fraction": 1.0
+      },
+      "candidate_repeat_bit_exact": true,
+      "decode_fallback": true,
+      "unsupported_shape_fallback": true,
+      "ioctl_counts": {
+        "ctx_ok": 3,
+        "exec_ok": 768,
+        "exec_fail": 0,
+        "legacy_ok": 0,
+        "legacy_fail": 640,
+        "timeline_ok": 768,
+        "timeline_fail": 0
+      },
+      "native_dispatches": 640
+    },
+    "model-hetero-1024-inflight2": {
+      "status": "completed_with_report_policy",
+      "completed_dispatches": 128,
+      "last_logits_error": {
+        "passed": false,
+        "correctness": "failed",
+        "finite": true,
+        "max_abs_error": 1.28125,
+        "relative_l2_error": 0.08611311786574,
+        "normalized_max_error": 0.05481283422459893,
+        "rms_error": 0.20767361948598645,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 23.375,
+        "max_error_limit": 0.75125,
+        "elementwise_close_fraction": 0.3885120384231537
+      },
+      "candidate_repeat_error": {
+        "passed": true,
+        "correctness": "passed",
+        "finite": true,
+        "max_abs_error": 0.0,
+        "relative_l2_error": 0.0,
+        "normalized_max_error": 0.0,
+        "rms_error": 0.0,
+        "rtol": 0.03,
+        "atol": 0.05,
+        "l2_limit": 0.02,
+        "reference_max_abs": 23.25,
+        "max_error_limit": 0.7475,
+        "elementwise_close_fraction": 1.0
+      },
+      "candidate_repeat_bit_exact": true,
+      "decode_fallback": true,
+      "unsupported_shape_fallback": true,
+      "ioctl_counts": {
+        "ctx_ok": 3,
+        "exec_ok": 768,
+        "exec_fail": 0,
+        "legacy_ok": 0,
+        "legacy_fail": 640,
+        "timeline_ok": 768,
+        "timeline_fail": 0
+      },
+      "native_dispatches": 640
+    }
+  },
+  "optional_python_parity": {
+    "run": false,
+    "reason": "runtime NumPy 2.5.4; pyxrt unavailable on current import path"
+  }
+}

@@ -1,0 +1,23 @@
+python.exe : test_build_keeps_the_supplied_virtualenv_python_symlink 
+(experiments.ffn_deploy.test_prepare.PackageTests.test_build_keeps_the_supplied_virtualenv_python_symlink) ... skipped 
+"symlinks unavailable: [WinError 1314] A required privilege is not held by the client: 
+'C:\\\\Users\\\\pangq\\\\AppData\\\\Local\\\\Temp\\\\tmph3jor2cz\\\\system-python' -> 
+'C:\\\\Users\\\\pangq\\\\AppData\\\\Local\\\\Temp\\\\tmph3jor2cz\\\\venv-python'"
+At line:2 char:1
++ & 'C:/Users/pangq/.cache/codex-runtimes/codex-primary-runtime/depende ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_build_keep...\\venv-python'":String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+test_package_checks_hashes_and_does_not_modify_binaries 
+(experiments.ffn_deploy.test_prepare.PackageTests.test_package_checks_hashes_and_does_not_modify_binaries) ... ok
+test_tampered_artifact_is_rejected_before_config_write 
+(experiments.ffn_deploy.test_prepare.PackageTests.test_tampered_artifact_is_rejected_before_config_write) ... ok
+test_unaligned_instructions_rejected_even_with_matching_hash 
+(experiments.ffn_deploy.test_prepare.PackageTests.test_unaligned_instructions_rejected_even_with_matching_hash) ... ok
+test_wrong_graph_is_rejected (experiments.ffn_deploy.test_prepare.PackageTests.test_wrong_graph_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.022s
+
+OK (skipped=1)
