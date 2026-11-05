@@ -1,5 +1,245 @@
 # HeteroMega progress
 
+## 2026-11-05: what this repository keeps of the merged-ffn-fix runs
+
+`docs/runs/2026-11-02-*` and `docs/runs/2026-11-03-*` keep READMEs, summary tables, comparison JSON and the files that `tools/split_model` reads. Raw logs, other per-run JSON and the job scripts under `tools/aup-kit/` are on tag [`prefill-evidence-2026-11-05`](https://github.com/kalebguo/HeteroMega-fork/tree/prefill-evidence-2026-11-05) of the fork. The commit hashes in these entries refer to that tag's history.
+
+## 2026-11-03 (merged-ffn-fix): prefill at 2048 and 4096 tokens
+
+Evidence and tables: `docs/runs/2026-11-03-long-prompt/`.
+
+- **Measured:** `merged_ffn` P8192 is 2053.9 ms at 2048 tokens and 4452.3 ms at 4096 tokens (9 samples, 3 processes each), against `gpu_original` 3790.9 and 8184.7 ms: 1.85x and 1.84x. At 1024 tokens on this prompt it is 1010.4 ms.
+- **Measured:** all switches do not fit in GTT at 4096 tokens. Without `HETEROMEGA_GEMM_UNCACHED` it fits, peak 11753-11813 of 11818 MB. All switches at 2048 tokens: peak 10981-11067 MB.
+- **Measured:** `heteromosaic` with its shipped groups is 2318.0 / 4863.9 ms, so P8192 is 1.13x / 1.09x faster, in the same job. Its output deviates strongly at these lengths: step 1 relative L2 0.024-0.293, greedy 0-18 of 64, against 0.004-0.006 and 30-64 for `merged_ffn` and 0.003 and 64 for `gpu_original` with larger chunks. Cause not determined. These ratios do not compare equal outputs.
+- **Limits:** one sampled prompt for timing, two for numerics at 2048 tokens, one at 4096. `heteromosaic` has no paired run at 1024 tokens on this prompt.
+- **Next:** a paired `heteromosaic` run at 1024 tokens, if the user wants it. Then the memory held by the merged path, so that `HETEROMEGA_GEMM_UNCACHED` fits at 4096 tokens, and the cause of the `heteromosaic` deviation.
+
+## 2026-11-03 (merged-ffn-fix): GPU branch, attention, NPU queue and copies at two inflight chunks
+
+Evidence and tables: `docs/runs/2026-11-03-gemm/`. New kernels `gemm_w4a16`, `sdpa_bf16`, `residual_norm_bf16`; every switch is off by default.
+
+- **Measured:** with all kept switches at two inflight chunks and 1024 tokens, `merged_ffn` P8192 is 1005.5 ms, P6400 1032.3 ms, P7168 1046.7 ms (9 samples, 3 processes each, `exec_ok=448`, 0 fallbacks,
+  reference tokens). Against the archived `heteromosaic` records, 1309.6-1355.5 ms, P8192 is 1.30-1.35x. Not paired, at the user's request. At the start of this work P8192 was 1274.8 ms.
+- **Measured, step gains within one job:** uncached weights 2-5%, `sdpa_bf16` 4-7%, fused FFN + shared NPU buffers about 4%, attention writing the `o` input 0-0.7%, layer boundary kernel 0-1.2%.
+- **Measured, rejected:** GPU kernels using the NPU buffers directly, which removes both HIP copies: 1.0-1.9% slower. The other negative results are listed in the run's README. My estimate of 3-5% for the
+  layer boundary kernel was too high.
+- **Measured:** numerics on the two sampled prompts stay close to GPU-only with the new kernels. Step 1 relative L2 at P8192 is 0.0080 / 0.0081, `gpu_fast` 0.0043 / 0.0110, `heteromosaic` 0.0204 / 0.0619. Argmax
+  agreement over 512 positions is 96.3-99.2%, `gpu_fast` 96.9-98.8%. Two prompts do not establish accuracy.
+- **Measured:** the GPU is busy 96.6-100% of the prefill and the NPU 66.3-87.1%. P8192 is close to balance. The non-GEMM stages of attention are about 6% of the cycle, the two HIP copies 0.3-0.4 ms, and the mutex wait is
+  not the bound. **Estimated:** the GEMMs take about 13.7 of the GPU's 15.7 ms per chunk-layer. I stopped here because the last two kept steps gave at most 1.2% and the zero copy step lost.
+- **Not measured:** energy, other prompt lengths, one inflight chunk with these switches. No final report or report-page update, at the user's request.
+- Peak GTT is 10951 of 11818 MB: the attention weights are held twice for uncached reads (about 0.7 GB).
+- Next, if more speed is wanted: only a new idea for the GEMMs under NPU memory load can give more than about 3%. No such idea is proposed now.
+
+## 2026-11-02 (merged-ffn-fix): two inflight chunks with a larger NPU share
+
+Evidence: `docs/runs/2026-11-02-inflight2-{prep,timing,diag,numerics,repeat,energy}/`. C++ build `9dac460`, 1024 tokens unless noted.
+
+- **Measured:** at two inflight chunks `merged_ffn_p8192` beats `heteromosaic`: 1274.8 ms against 1331.0 ms, 1.044x, 30 samples each, 6 processes
+  per method in alternating order. All 6 P8192 process medians (1273.0-1276.1) are below all 6 `heteromosaic` medians (1300.0-1336.4).
+- **Measured,** paired in one job, 10 samples per cell, inflight 2 / inflight 1: `heteromosaic` 1309.6 / 1355.5, config 3 (all gate/up rows on the NPU)
+  1342.5 / 1748.8, `merged_ffn` P6400 1355.5 / 1340.9, P8192 1269.2 / 1534.6 ms. 512 tokens at inflight 1: `gpu_original` 895.0, P6400 649.3, P8192 747.5 ms.
+  NPU calls per prefill as expected: 288 on both native methods, 64 on both merged methods.
+- **Estimated before the runs, against measured:** P8192 at inflight 2, 1140-1180 against 1269.2; P8192 at inflight 1, about 1540 against 1534.6; config 3
+  at inflight 2, 1010-1050 against 1342.5. The inflight 1 estimate held. The inflight 2 estimates were too low.
+- **Measured:** neither device saturates at inflight 2. Config 3's gate/up waits are 6.4 ms as expected, and the NPU is busy for 74.8% of the prefill. P8192's
+  cycle is 19.85 ms against a GPU load of about 17.6 ms (estimated). **Hypothesis:** the overhead grows near balance, or the GPU slows under the NPU's load.
+- **Measured:** the task's named artifact for config 3, `16384x4096x14336/.../final_512x4096x14336_*`, gives wrong tokens with no error (step-1 relative L2
+  0.83 / 0.93). The logs show its instructions running on the 8192 family's PDI, because `minimal_pdi` reuses the PDI. **Hypothesis:** that mismatch is the cause.
+  The 8192 family's file of the same shape gives correct tokens, so config 3 above uses it.
+- **Measured,** step-1 relative L2 on the step 5b prompts, seed 1 / seed 2: `merged_ffn` 0.0050 / 0.0173, P8192 0.0073 / 0.0105, `heteromosaic` 0.0204 / 0.0619,
+  config 3 0.0190 / 0.0620. So more native rows do not raise the error at step 1, and P8192 shows no consistent direction on two prompts.
+- **Not measured:** energy per prefill. The user paused that job. Only the coverage test ran: the `PPT` reading moves with CPU, NPU and GPU load (idle 3.41 W, NPU
+  loop 18.06 W, GPU loop 47.16 W), and it does not cover DRAM.
+- **Suspect label (requested by the starting session):** `heteromosaic_mdown`'s numerical failure rests on one artifact in the `16384x14336x4096/_M` family. The
+  run's PDI and instructions come from that one directory, so it is not the mismatch above; whether the artifact or native down causes it is not established.
+- Held at the user's request, no report for now: `tools/split_model/REPORT.md` keeps its inflight 1 decision with a pointer to these runs, and the report page is
+  not updated, including the suspect label. `tools/split_model/heteromosaic_records.py` compares new runs with the archived `heteromosaic` records.
+- Next, for the user to decide: a new W4A16 GEMM kernel, the design in `kernels/gpu/README.md` (not implemented).
+
+## 2026-11-02 (merged-ffn-fix): outcome across steps 1-5
+
+Branch `merged-ffn-fix` on the fork. **Measured:** `merged_ffn` is 1.36x `gpu_original` at 1024 tokens (1340.8 vs 1827.8 ms) and
+ties `heteromosaic` (1336.2 vs 1317.6 ms, 0.986x), with 64 instead of 288 NPU calls per prefill, one NPU context instead of two, and
+the smallest logit deviation of any NPU method. It is not faster than `heteromosaic`. Combining it with native NPU attention
+loses (0.820x) because of NPU context changes. Other split ratios are not worth building (estimated, `tools/split_model/REPORT.md`).
+
+## 2026-11-02 (merged-ffn-fix step 5): numerics, and what the token checks missed
+
+- **Measured** (`docs/runs/2026-11-02-fix-step5-numerics/`): the first hardware run of the native GEMM probes. Native relative L2
+  grows with K, from 0.053 at K=1536 to 0.285 at K=14336, with the GPU control at 0.0017. The fixed decision rule supports
+  accumulation rounding, sign handling and scale metadata together. The 1.5 anchor repeats: maximum 1.375 at K=2048.
+  **Hypothesis:** asymmetric partial-sum rounding; the K16 emulation matches the maximum but not r or the sign effect.
+- **Measured:** the fixed reference prompt has 12 distinct tokens and a period of 10, and every path predicts it with a perplexity
+  near 1. So every earlier "tokens match" is weak evidence of accuracy. Step-1 logit relative L2 on it: `merged_ffn` 0.038,
+  `merged_ffn_hetero` 0.123, `heteromosaic` 0.155.
+- **Measured** (`docs/runs/2026-11-02-fix-step5b-sampled/`, two model-sampled prompts, seed 1 / seed 2), against `gpu_original`:
+
+  | Method | Step-1 relative L2 | Step-1 KL, nats | Argmax agreement, 512 positions |
+  | --- | ---: | ---: | ---: |
+  | `merged_ffn` | 0.0050 / 0.0173 | 0.00016 / 0.00069 | 99.2% / 97.9% |
+  | `heteromosaic` | 0.0204 / 0.0619 | 0.00441 / 0.01352 | 93.6% / 75.2% |
+  | `merged_ffn_hetero` | 0.0187 / 0.0508 | 0.00539 / 0.01256 | 94.7% / 76.8% |
+  | `heteromosaic_mdown` | 0.3281 / 0.5661 | 0.63951 / 1.19736 | 81.6% / 37.1% |
+
+- **Measured:** `heteromosaic_mdown`'s first predicted token is wrong on both seeds, with no shared top-5 token. Native M-split down
+  with the existing artifact is therefore not a usable competitor, on either latency or numerics.
+  **Suspect (label added 2026-11-02):** that verdict rests on one artifact, `hw_bins/npu2/16384x14336x4096/bf16_int4AWQ_bf16_M/final_256x14336x4096_*`,
+  which no shipped entry uses. Whether the failure comes from this artifact or from native down is not established.
+- **Estimated:** `merged_ffn_hetero` is about equal to `heteromosaic`, so native attention dominates the native path's deviation.
+  Most of `merged_ffn`'s lead comes from GPU attention. Per FFN, Oct 28 measured 0.0148 (merged) against 0.1167 (native).
+- Limits: these prompts run away to near-random tokens (mean NLL about 10 nats against a uniform 11.76), so this is a stress test.
+  Two seeds. No real-text perplexity or task accuracy. The box has no tokenizer.
+- Next, for the user to decide: (1) real-text perplexity from token IDs tokenized elsewhere; (2) whether a PDI can hold attention
+  and the merged graph, with the merged kernel's arithmetic; (3) a vectorized full scan as the default; (4) merging this branch.
+
+## 2026-11-02 (merged-ffn-fix step 4): native M-split down and cost-model refit
+
+- **Measured** (`docs/runs/2026-11-02-fix-step4-mdown/`): `heteromosaic` 1333.8 ms, `heteromosaic_mdown` 1518.3 ms at
+  1024 tokens (0.878x). Submissions 13472 → 14176, which confirms +64 NPU calls per prefill. The earlier estimate of a
+  12.3 ms FFN and "up to 200 ms saved" did not hold with the existing artifact.
+- **Measured** (`docs/runs/2026-11-02-fix-step3c/`): each NPU context change costs 2.0-3.0 ms. Native down needs a third
+  context, and each layer-chunk changes context twice: 5.78 ms per layer-chunk, 370 ms per prefill.
+- **Estimated:** without those two changes, M-split down reaches 1148 ms in latency. **Hypothesis:** whether one PDI can serve
+  K=4096 and K=14336; no artifact exists. Step 5 shows that M-split down with this artifact also fails numerically; that verdict is
+  suspect (see the step 5 entry). All numbers here are for the `16384x14336x4096/bf16_int4AWQ_bf16_M` artifact.
+- `tools/split_model/REPORT.md` is refit and its old claims are corrected: the merged graph is about 7.2 TFLOPS (estimated
+  from the Oct 28 sweep slope), not 2.8-3.4; native gate/up is 9.3. **Decision: do not build other split ratios for prefill
+  latency.** P6400 is within 28 ms of the best valid split in every scenario (estimated), and the measured sweep shows no
+  winner.
+- Next: step 5 numerics.
+
+## 2026-11-02 (merged-ffn-fix step 3): H2 and head-to-head
+
+- **Measured** (`docs/runs/2026-11-02-fix-step3-h2/`): `heteromosaic` 1322.3 ms, `merged_ffn_hetero` 1612.3 ms at 1024
+  tokens (0.820x). Native calls confirmed by the ioctl counter: 13472 and 12768 submissions, 0 failures. Tokens match.
+- **Measured** (`docs/runs/2026-11-02-fix-step3c/`): `heteromosaic` 1317.6 ms, `merged_ffn` 1336.2 ms (0.986x, paired). This
+  is a tie within the 36 ms between-process spread. NPU calls per prefill: 288 vs 64. Hardware contexts: 2 vs 1.
+- **Measured** (`docs/runs/2026-11-02-fix-step3b/`, `fix-step3c/`): in `merged_ffn_hetero` the merged kernel waits 13.15 ms
+  instead of 11.10 ms, and the first native call after it waits 4.86 ms instead of 1.91 ms. Context changes account for
+  318 ms of the 385 ms gap to the 1227 ms floor (estimated); 67 ms stay unexplained.
+- **Hypothesis:** the driver reloads PDI instructions and tile state on a context change. Not separated here.
+
+## 2026-11-02 (merged-ffn-fix step 2): phase timers locate the cost
+
+- **Measured** (`docs/runs/2026-11-02-fix-step2/`): one merged FFN takes 12.60 ms in the model, beyond waiting for attention,
+  which is faster than the Oct 28 harness (14.27-14.59 ms). 64 x (0.519 + 20.422) = 1340 ms against 1339.6 ms measured.
+- **Measured:** the NPU wait is 11.01-11.36 ms across all 32 layers, so per-layer weight BO switching costs nothing visible.
+  Copies, BO work and the sum total 1.18 ms. GPU branch alone 12.37 ms (smoke); it finished before the NPU path in the model.
+- **Measured** (`docs/runs/2026-11-02-fix-step2c/`): the "remaining 5 ms" is the scans. Without `-O` each original scan takes
+  9.8-10.2 ms in the model, against 7.16 ms in the earlier CPU-only test. The scan rows explain 19.87 of the 19.99 ms gap per
+  call. **Hypothesis:** the CPU scan is slower in situ because of shared package power and DRAM.
+- **Measured** (`docs/runs/2026-11-02-fix-step2b/`): the layer 1 / stream 1 effect came from not waiting for input readiness
+  before the D2H copy: 25.53 → 13.50 ms after commit `9dac460`. It never affected the single-chunk model path. Two inflight
+  chunks still gain nothing: `merged_ffn` 1352.5 ms. **Hypothesis:** cause is a shared HIP queue or delayed flush.
+
+## 2026-11-02 (merged-ffn-fix step 1): first trustworthy merged FFN number
+
+- **Code-confirmed:** `heteromega_merged_ffn` had no optimization flag. Commit `2ea8e6c` adds `-O3`, the opt-in
+  `HETEROMEGA_FFN_FINITE_CHECK=sampled` (every row at 1 in 64 columns) and `HETEROMEGA_FFN_TIMERS`. `full` stays the default.
+- **Measured** (`docs/runs/2026-11-02-fix-step1/`, `fix-step2b/`), prefill median at 512 / 1024 tokens, `merged_ffn` vs
+  `gpu_original`; 32 / 64 completions per pass, 0 wrong, 64 tokens identical:
+
+  | Build and check | 512 ms | 1024 ms | Speedup |
+  | --- | ---: | ---: | ---: |
+  | No `-O`, full (first evaluation) | 1257.1 | 2558.7 | 0.707 / 0.715 |
+  | `-O3`, full | 709.2 | 1473.8 | 1.257 / 1.241 |
+  | `-O3`, sampled | 649.4 | 1351.2 | 1.377 / 1.354 |
+  | `-O3`, sampled, input wait (`9dac460`) | 644.7 | 1340.8 | 1.383 / 1.363 |
+
+- **Estimated before the run:** 856 / 1757 and 799 / 1643 ms from the earlier scan cost; the Oct 28 rate gave 657 / 1359, which
+  the measurement matches. The earlier estimate overstated the `-O3` scan cost.
+- Why `sampled` and not a GPU-side check: a GPU `isfinite` needs a blocking readback or more kernels, and blocks the next
+  layer. **Code-confirmed by reading, not injected:** an isolated nonfinite at an unsampled column reaches the whole row of the
+  next layer's input. The last layer relies on token checks. A vectorizable full scan measures 0.105 ms in the CPU bench and
+  could become the default later (not in the executor).
+
+## 2026-11-02 (H1): first paired prefill evaluation, gpu_original vs merged_ffn (measured)
+
+- **Measured** on AUP by the local session (`tools/aup-kit` job `eval-main`, 17:43-17:52 UTC),
+  archived in `docs/runs/2026-11-02-eval-merged-gpu/` (merged from fork branch `aup-results`
+  `29ac080`). Build `main` `8e5c804` with `-DHETEROMEGA_MERGED_FFN=ON`; runner `0190cd8`;
+  retained P6400 artifact; GPU attention, M512 serial chunks, 10 samples per cell
+  (synchronized `generate(1)`, process order original/new/new/original).
+
+  | tokens | gpu_original median (min-max) | merged_ffn median (min-max) | speedup |
+  | --- | --- | --- | --- |
+  | 512 | 889.3 ms (880.0-967.8) | 1257.1 ms (1248.1-1621.9) | 0.707 |
+  | 1024 | 1829.0 ms (1825.6-1875.4) | 2558.7 ms (2543.4-2621.3) | 0.715 |
+
+- Merged FFN active: 32 / 64 completions per prefill pass, 22 passes per cell, 0 wrong. Controls
+  clean (0 completions). The 64 greedy tokens are identical in every repetition, and the 8
+  reference tokens match at 1024. Decode about 17 tok/s for both; peak 7.20 vs 7.85 GiB. The
+  first repetition of a process is often slower (e.g. 1621.9 ms); medians are not affected.
+- Cross-check (this cloud session): recomputing all cells from the eight result JSONs with
+  `evaluate_prefill.summarize` reproduces `summary.csv` exactly. The C++ smoke on the same build
+  (`docs/runs/2026-11-02-smoke-main/`, measured) repeats the 10-31 result: 33.02 ms concurrent,
+  43.95 ms serial per call, identical NPU error metrics; layer 1 / stream 1 again shows no
+  GPU/NPU overlap (44.53 ms).
+- Interpretation: the measured extra cost is 11.5 / 11.4 ms per merged FFN call (512 / 1024
+  tokens). The cost model predicted 12.2 ms from the smoke's 32.5 ms per call minus the
+  20.2 ms original GPU FFN (estimated, 7% high): P6400 is NPU-bound, as `tools/split_model/REPORT.md`
+  predicts. That report puts the best split at p≈2560-2816 and still predicts it slower than
+  Main B's FFN (≥16.2 vs 14.2 ms per layer-chunk; estimated). This run does not test the
+  native-rate comparison (3.24 ms per native gate/up call).
+- Not executed: `model_smoke` (the box venv has no `transformers`, the model directory has no
+  tokenizer; nothing installed, per the rules). `tools/npu_error_probe/token_agreement.py` avoids
+  both and covers its token/logit role.
+- Next: H2, `heteromosaic` vs `merged_ffn_hetero` at 1024 tokens with the ioctl counter, once
+  this session can reach the hub (it could not at the time of writing).
+
+## 2026-11-02: CPU-side preparation for AUP measurements (cloud session, not executed on hardware)
+
+Branch `claude/exciting-faraday-95a0c1` of kalebguo/HeteroMega-fork, based on main
+`8e5c804`. This sandbox has no GPU/NPU and **cannot reach the AUP hub** (its egress
+proxy refuses `dub.aupcloud.io`, HTTP 403 at CONNECT, also with the aup-kit User-Agent),
+so no hardware step of the hand-off plan (H1-H5) ran here. Nothing below is a new
+hardware measurement unless it cites an existing evidence file.
+
+- **Evaluation runner (code-confirmed, CPU-tested):** `evaluate_prefill.py` methods
+  `merged_ffn` / `merged_ffn_hetero`, `--merged-ffn-config`, per-pass merged completion
+  counts (expected `32 * (prompt_tokens // 512)`), verdict columns and speedup suppression;
+  controls clear `HETEROMEGA_FFN_CONFIG`. 10 unit tests and both dry runs pass. Per the
+  local session, the box has since run it (`eval-main`); those results are not in this
+  repository yet and are not cited here.
+- **NPU error probes (`tools/npu_error_probe/`, not executed):** native single-GEMM probes
+  (K, sign, metadata series), report with a fixed decision rule, real-weight token
+  agreement/logits/perplexity wrapper, detached AUP job. Blocked requests are listed
+  (K=64 below the quantization group; K=256/1024/2048 at N=4096 and K=16384 at N=2048
+  have no native M-split artifact). 17 CPU tests pass.
+- **Emulation (estimated):** the CPU model of `w4a16_prefill_upstream.cc` reproduces the
+  measured Oct-31 smoke NPU error (relative L2 0.02143 vs 0.02144 measured). BF16 partial
+  storage per K128, BFP16 activations and BFP16 weights contribute comparably. The same
+  arithmetic predicts only 0.375 of the native sweep's 1.5; a BF16 store about every K16
+  would fit all three native measurements. Hypothesis until the K-sweep probe runs.
+- **Host serialization review** (`docs/host-serialization-review.md`, report only):
+  original heterogeneous prefill is GPU-bound (estimated from the Oct-14 measured stage
+  table: each stage ≈ its GPU share; 1327 ms ≈ 1780 ms GPU-only minus the moved work),
+  which is why two inflight chunks gain only 0.8% on prefill and 0.3% on generation;
+  the polling/completion sums overlap. The merged FFN at P6400 is NPU-bound
+  (smoke: 32.5 ms concurrent vs about 12.3 ms GPU branch). The review lists 14 serialization
+  points (code-confirmed, `file:line`) and 7 ranked proposals with AUP measurements; the top
+  two are placement changes: a smaller merged NPU share, and native M-split down with the
+  existing `final_256x14336x4096` artifact. Fusion section: launch counts per path,
+  the unmeasured SiLU×up epilogue (`HETEROMEGA_GPU_FUSE_ACT`), boundary-sum/residual
+  folding; a FlashAttention-style fused FFN is estimated at no more than about 5% on GPU
+  and is unfavourable on the NPU.
+- **Split-ratio cost model** (`tools/split_model/`, estimated; inputs read from the measured
+  files listed in `REPORT.md`): t_gpu from the GPU ablation (about 9.3 TFLOPS); t_npu from the
+  P6400 smoke (32.5 ms per call, NPU-bound; about 2.8-3.4 TFLOPS after the staging
+  scenarios). Code-ordered optimum p ≈ 2560-2816 (17.0 ms central, 7.7-18.4% below the
+  19.8 ms GPU-only FFN). P4096 is already predicted slower than GPU-only and P6400 is
+  64% slower. Main B's measured in-model FFN is 14.2 ms per layer-chunk, so **no split of
+  the current merged graph is predicted to beat Main B**. Its NPU work is about 3x slower per
+  FLOP than the native GEMM (3.24 ms per 256x4096x14336 call ≈ 9.3 TFLOPS). Only with
+  native-rate NPU work would the best split (p≈5888, 12.9 ms) win. Gaps and the AUP
+  experiment (three p values via `prepare --build` + smoke + evaluator) are in the report.
+- Next (hardware, once reachable): `eval-main` results into `docs/runs/`, then
+  `heteromosaic` vs `merged_ffn_hetero`, then `tools/npu_error_probe/aup_job.sh`, then
+  P2560/P2816 artifacts instead of P4096/P8192. In parallel, profile why the merged NPU graph
+  is about 3x below the native GEMM's rate; per the model this, not the split, decides
+  Main C vs Main B.
+
 ## 2026-10-31: publish validated FFN integration for teammate evaluation
 
 - User requested publishing the GPU/NPU model integration to origin/main and
