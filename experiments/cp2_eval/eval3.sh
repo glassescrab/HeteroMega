@@ -7,6 +7,9 @@
 #   regime 2 (>= 2 in flight):           hbcheck-L main2-L main2i4-2048 ref2-L repl2-1024 ev2-1024         (quality: quality.sh v4 ...)
 #   v5 (eval_plan_v5): v5smoke m4-2048 m2b-2048 m2b-4096; ablation split unit x in flight: abl1s-1024 (smoke) abl1-1024
 #   per-micro-batch placement search (2 in flight): pmb1-L (middle, L=2048/4096) pmb2-L (first x last) pmbc-L (6x5 confirmation)
+#   11-16 config-ranking check: rk1-1024 rk2-2048 rk3-2048 rk4-4096 (settings S1-S4, make_rk_configs.py; rk<S>s-L = 1x1 smoke), our search in the
+#   AFTER environment apmb1-L apmb2-L apmbc-L (L=2048/4096; apmbs-L = 1x1 smoke). Their processes carry src= (tree hm-<src>) and pass rk_check.py.
+#   bash eval3.sh STAGE --dry prints the effective config of every cell without running anything.
 # A process whose log shows another in-flight count than its case.txt gets BAD_INFLIGHT (aggregate.py drops it).
 # One process per case (evaluate_prefill.py --rounds 1). The stage's process list is shuffled once with a logged seed into
 # $RES/STAGE/schedule.txt and reused on resume; a process whose dir has DONE is skipped, so re-running the same command continues.
@@ -99,6 +102,34 @@ emit() { # the stage's processes, one line each: CELL L K REPS [tag= nt= infl= E
         r1u-*) L=${STAGE#r1u-}; q=$(printf "Q%.0s" $(seq $((L / 512))))   # 11-15 user: HeteroMosaic config chosen by in-flight count: 1 in flight = 256/256/0
             procs_i 1 HKUnU "$L" 6 5 tag=$q cfg=pm_${q}_$L.json; for c in G1 O1p5120; do procs_i 1 $c "$L" 6 5; done ;;   # on every micro-batch (no UNCACHED, as HKUnU in main1a); same-stage ours and GPU-only
         ev2-1024) for c in H1 HT1; do procs_i 2 $c 1024 1 2 tag=ev2 E=HETEROMEGA_STAGE_EVENTS=@D/ev; done ;;
+        # ---- 11-16 user: config-ranking check, S<n> = the reported row's setting (make_rk_configs.py); only gate/up/down change in a setting.
+        # tag B_<cand> = BEFORE (hm-cp2b, no switches, original binaries, the author's attention on the NPU), A_<cand> = AFTER (hm-npualign, the
+        # reported switches, our binaries), M_auth = MIDDLE (the reported cell), K_auth = KEYONLY (MIDDLE on hm-npualign: new PDI key, original binaries)
+        rk[1-4]-*|rk[1-4]s-*) local S=${STAGE:2:1} n=6 m=3 r=5 hb ha fl cands ours rep k
+            [[ $STAGE == rk?s-* ]] && { n=1; m=1; r=1; }
+            case $S in 1) hb=HK0 ha=HKU fl=1 rep=hm_1024.shipped.json ours="" cands="auth g512u0d0 g256u0d0 g0u0d256" ;;   # kab1-1024 HKU
+                       2) hb=HT0 ha=HT1 fl=4 rep=hm_2048.shipped.json ours=g512u512d0 cands="auth g512u512d0 AAAB g256u256d256" ;;   # m4-2048
+                       3) hb=HS0 ha=HS1 fl="" rep=hs.json ours=g1024u1024d0 cands="auth g1024u1024d0 g1024u512d0 g1024u1024d256" ;;   # m2b-2048
+                       4) hb=HS0 ha=HS1 fl="" rep=hs.json ours=g2048u2048d0 cands="auth g2048u2048d0 g1536u1536d0_g1792u1280d0 g2048u2048d512" ;; esac
+            L=${STAGE##*-}
+            for c in $cands; do
+                k=$m; { [ $c = auth ] || [ $c = "$ours" ]; } && k=$n
+                procs_i "$fl" $hb "$L" $m $r tag=B_$c cfg=rk${S}_${c}_b.json want=rk${S}_${c}_b.want.json src=cp2b
+                procs_i "$fl" $ha "$L" $k $r tag=A_$c cfg=rk${S}_${c}_a.json want=rk${S}_${c}_a.want.json src=npualign
+            done
+            procs_i "$fl" $ha "$L" $n $r tag=M_auth cfg=$rep want=rk${S}_auth_m.want.json src=cp2b
+            [ $S = 1 ] || procs_i "$fl" $ha "$L" $m $r tag=K_auth cfg=$rep want=rk${S}_auth_m.want.json src=npualign
+            procs_i 1 G1 "$L" $n $r src=cp2b
+            if [ $S = 1 ]; then procs_i 1 O1p5120 1024 $n $r src=cp2b; fi ;;   # ours as in kab1-1024
+        apmb1-*|apmb2-*) L=${STAGE#apmb?-}; f=$CFGDIR/pmb_mid_$L.txt; [[ $STAGE == apmb2-* ]] && f=$CFGDIR/pmb_ends_$L.txt   # pmb1/pmb2, AFTER environment
+            for t in $(cat "$f" 2>/dev/null); do procs_i 2 H1 "$L" 1 3 tag=$t cfg=pm_${t}_$L.ours.json src=npualign; done ;;
+        apmbc-*|apmbs-*) L=${STAGE#apmb?-}; local n=6 r=5 top a S=3   # confirmation: top 2 of the screens, uniform 512/512/0 and 0/0/512, the AFTER author
+            [[ $STAGE == apmbs-* ]] && { n=1; r=1; }                       # entry of the 2-in-flight setting (S3/S4) and G1, 6x5; smoke: the middle patterns, 1x1
+            top=$(cat "$CFGDIR/pmb_top_$L.txt" 2>/dev/null); [[ $STAGE == apmbs-* ]] && top=$(cat "$CFGDIR/pmb_mid_$L.txt")
+            a=$(printf "A%.0s" $(seq $((L / 512)))); [ "$L" = 4096 ] && S=4
+            for t in $(printf "%s\n" $top $a ${a//A/B} | awk '!s[$0]++'); do procs_i 2 H1 "$L" $n $r tag=$t cfg=pm_${t}_$L.ours.json src=npualign; done
+            procs HS1 "$L" $n $r tag=A_auth cfg=rk${S}_auth_a.json want=rk${S}_auth_a.want.json src=npualign
+            procs_i 1 G1 "$L" $n $r src=cp2b ;;
         # ---- v3 stages ----------------------------------------------------------------------------------------------------------------
         gates)  # 1 process x 5 reps at 1024 (repro of the 11-14 numbers, memory-optimization check); 1 rep at 4096 = memory probes
             procs O1p8192 1024 1 5; procs HR 1024 1 5; procs H0 1024 1 5; procs H1 1024 1 5; procs G0 1024 1 5
@@ -156,8 +187,11 @@ plabel() { local c=$1 L=$2 k=$3 reps=$4 o tag=""; shift 4; for o in "$@"; do cas
 
 attempt() { # CELL L K REPS opts: one process; 0 done, 1 recorded OOM, 2 other failure
     local cell=$1 L=$2 k=$3 reps=$4; shift 4
-    local c=$cell p="" tag="" nt=64 infl="" cfgo="" envs=() o D METHOD BUILD CHUNK INFL CFG="" SW GRP=PK
-    for o in "$@"; do case $o in tag=*) tag=${o#tag=} ;; nt=*) nt=${o#nt=} ;; infl=*) infl=${o#infl=} ;; E=*) envs+=("${o#E=}") ;; cfg=*) cfgo=${o#cfg=} ;; esac; done
+    local c=$cell p="" tag="" nt=64 infl="" cfgo="" envs=() o D METHOD BUILD CHUNK INFL CFG="" SW GRP=PK src="" want="" T=$SRC
+    for o in "$@"; do case $o in tag=*) tag=${o#tag=} ;; nt=*) nt=${o#nt=} ;; infl=*) infl=${o#infl=} ;; E=*) envs+=("${o#E=}") ;; cfg=*) cfgo=${o#cfg=} ;;
+                                 src=*) src=${o#src=} ;; want=*) want=${o#want=} ;; esac; done
+    [ -n "$src" ] && T=/notebooks/hm-$src   # the cell's tree: cd, PYTHONPATH, HETEROMOSAIC_ROOT, build dir, ioctl counter, merged-FFN artifact
+    [ -d "$T" ] || { echo "no tree $T"; return 2; }
     if [[ $c =~ ^(O[A-Za-z0-9]*)p([0-9]+)$ ]]; then c=${BASH_REMATCH[1]}; p=${BASH_REMATCH[2]}; fi
     cell_switches "$c" || return 2
     BUILD=build; CHUNK=512; INFL=1
@@ -180,21 +214,22 @@ attempt() { # CELL L K REPS opts: one process; 0 done, 1 recorded OOM, 2 other f
     rm -rf "$D"; mkdir -p "$D"
     { echo "stage=$STAGE"; echo "cell=$cell"; echo "base=$c"; echo "tag=$tag"; echo "L=$L"; echo "k=$k"; echo "reps=$reps"; echo "new_tokens=$nt"
       echo "p=$p"; echo "group=$GRP"; echo "method=$METHOD"; echo "build=$BUILD"; echo "chunk=$CHUNK"; echo "inflight=$INFL"
-      echo "config=${CFG##*/}"; echo "switches=$SW ${envs[*]:-}"; } > "$D/case.txt"
+      echo "config=${CFG##*/}"; echo "switches=$SW ${envs[*]:-}"; echo "src=$T"; echo "want=$want"; echo "cfgdir=$CFGDIR"; } > "$D/case.txt"
     local args=(--model "$MODEL" --build "$BUILD" --out "$D" --ref "$REF" --gpu-chunk-size "$CHUNK" --prompt-tokens "$L" --rounds 1
                 --reps "$reps" --new-tokens "$nt" --methods "$METHOD")
     [ -n "$INFL" ] && args+=(--inflight "$INFL")
     [ -n "$CFG" ] && args+=(--config "$CFG")
-    [ "$METHOD" = merged_ffn ] && args+=(--merged-ffn-config "$SRC/deployment-results/deployment-p$p.json")
+    [ "$METHOD" = merged_ffn ] && args+=(--merged-ffn-config "$T/deployment-results/deployment-p$p.json")
     (   exec 9> "$LOCK"; flock 9
+        cd "$T" || exit 2; export HETEROMOSAIC_ROOT="$T"
         clear_switches
         local pair; for pair in $SW "${envs[@]:-}"; do [ -n "$pair" ] && export "${pair//@D/$D}"; done
         env | grep '^HETEROMEGA_' | sort > "$D/env.txt"
-        export PYTHONPATH="$SRC/$BUILD/py:$SRC/$BUILD/py/unified_llm_w4a16:$SRC"
+        export PYTHONPATH="$T/$BUILD/py:$T/$BUILD/py/unified_llm_w4a16:$T"
         snap > "$D/temp_before.txt"
         gtt=$(ls /sys/class/drm/card*/device/mem_info_gtt_used | head -1)
         ( while :; do echo "$(($(cat "$gtt") / 1048576))"; sleep 0.5; done ) > "$D/gtt.txt" & sampler=$!
-        LD_PRELOAD=$COUNT timeout -k 30 1800 python3 kernels/gpu/tools/evaluate_prefill.py "${args[@]}"
+        LD_PRELOAD=$T/deployment-results/count_ioctls.so timeout -k 30 1800 python3 kernels/gpu/tools/evaluate_prefill.py "${args[@]}"
         rc=$?; kill $sampler 2>/dev/null; snap > "$D/temp_after.txt"; exit $rc
     ) > "$D/run.log" 2>&1 < /dev/null
     local rc=$? peak ioctl fb sel verdict seen
@@ -204,7 +239,7 @@ attempt() { # CELL L K REPS opts: one process; 0 done, 1 recorded OOM, 2 other f
     sel=$(grep -h 'Using grouped kernels_gemm_chunked' "$D"/*.result.log 2>/dev/null | head -1)
     seen=$(inflight_seen "$D")
     verdict=$(awk -F, 'NR==2{print $18}' "$D/summary.csv" 2>/dev/null)
-    { echo "commit=$(git -C "$SRC" rev-parse HEAD)"; echo "build_dir=$SRC/$BUILD"; echo "peak_gtt_mib=$peak"
+    { echo "commit=$(git -C "$T" rev-parse HEAD)"; echo "build_dir=$T/$BUILD"; echo "peak_gtt_mib=$peak"
       echo "temp_sclk_before=$(cat "$D/temp_before.txt")"; echo "temp_sclk_after=$(cat "$D/temp_after.txt" 2>/dev/null)"
       echo "ioctl=$ioctl"; echo "uncached_fallback=$fb"; echo "hetero_gpu_gemm=$(grep -h HETERO_GPU_GEMM "$D"/*.log | tail -2 | tr '\n' '|')"
       echo "merged_ffn_verdict=$verdict"; echo "selection=$sel"; echo "inflight_seen=$seen"
@@ -224,6 +259,9 @@ attempt() { # CELL L K REPS opts: one process; 0 done, 1 recorded OOM, 2 other f
         fi
         [ $ok = 1 ] || { echo "BAD_SELECTION: $sel" | tee "$D/BAD_SELECTION"; } ;;
     esac
+    if [ -n "$src" ] && ! python3 "$JOBS/rk_check.py" "$D" > "$D/check.txt" 2>&1; then   # cell gate: not DONE, the stage goes on
+        echo "$(date -u +%H:%M:%S) $STAGE/$cell $L s$k BAD_CONFIG: $(head -c 600 "$D/check.txt" | tr '\n' ';')" | tee "$D/BAD_CONFIG"; return 2
+    fi
     echo "$(date -u +%H:%M:%S) $STAGE/$cell $L s$k median,min,max $(tail -1 "$D/summary.csv" | cut -d, -f5,6,7 | cut -c1-34) peakGTT=$peak fb=$fb"
     touch "$D/DONE"; return 0
 }
@@ -246,7 +284,7 @@ run_proc() { # CELL L K REPS opts: skip when DONE; on a recorded OOM run the lab
 
 stage_header() {
     mkdir -p "$SD"
-    { echo "commit $(git -C "$SRC" rev-parse HEAD) SRC=$SRC"; date -u; echo "NOU=${NOU:-}"; snap
+    { echo "commit $(git -C "$SRC" rev-parse HEAD) SRC=$SRC"; cat "$JOBS/trees.txt" 2>/dev/null; date -u; echo "NOU=${NOU:-}"; snap
       command -v xrt-smi > /dev/null && timeout 20 xrt-smi examine -r platform 2>&1 | head -20; } >> "$SD/stage.log" 2>&1
 }
 
@@ -295,6 +333,23 @@ case $STAGE in   # config files a stage needs, written before its schedule is ma
     pmb2-*) [ -s "$SD/schedule.txt" ] || python3 "$JOBS/hm_ratio.py" "$CFGDIR" pmb_ends "$LEN" $([ "$LEN" = 1024 ] || echo "$RES/pmb1-$LEN") | tee "$SD.ends.txt" ;;
     pmbc-*) [ -s "$SD/schedule.txt" ] || python3 "$JOBS/hm_ratio.py" "$CFGDIR" pmb_top "$LEN" "$RES/pmb1-$LEN" "$RES/pmb2-$LEN" | tee "$SD.top.txt" ;;
 esac
+ours_pm() { local f; for f in "$CFGDIR"/pm_*_"$1".json; do [[ $f == *.ours.json ]] || python3 "$HMB" config "$f" "${f%.json}.ours.json" > /dev/null || exit 2; done; }
+case $STAGE in rk[1-4]-*|rk[1-4]s-*|apmb*)   # 11-16 stages: rk configs (also the AFTER author entry of apmbc)
+    python3 "$JOBS/make_rk_configs.py" "$CFGDIR" "$HMB" > "$CFGDIR/rk_summary.txt" || { echo "make_rk_configs failed"; exit 2; } ;; esac
+case $STAGE in   # pm_*.ours.json = pm configs with our binaries (hm_bins.py config)
+    apmb1-*|apmbs-*) python3 "$JOBS/hm_ratio.py" "$CFGDIR" pmb_mid "$LEN" && python3 "$JOBS/hm_ratio.py" "$CFGDIR" pats "$LEN" "$(printf "B%.0s" $(seq $((LEN / 512))))" && ours_pm "$LEN" ;;
+    apmb2-*) [ -s "$SD/schedule.txt" ] || { python3 "$JOBS/hm_ratio.py" "$CFGDIR" pmb_ends "$LEN" "$RES/apmb1-$LEN" | tee "$SD.ends.txt"; ours_pm "$LEN"; } ;;
+    apmbc-*) [ -s "$SD/schedule.txt" ] || { python3 "$JOBS/hm_ratio.py" "$CFGDIR" pmb_top "$LEN" "$RES/apmb1-$LEN" "$RES/apmb2-$LEN" | tee "$SD.top.txt"; ours_pm "$LEN"; } ;;
+esac
+dry_line() { # CELL L K REPS opts: one line of the effective config (no run)
+    local c=$1 L=$2 reps=$4 o src="" cfg="" want="" infl="" tag="" b eff="-"; shift 4
+    for o in "$@"; do case $o in src=*) src=${o#src=} ;; cfg=*) cfg=${o#cfg=} ;; want=*) want=${o#want=} ;; infl=*) infl=${o#infl=} ;; tag=*) tag=${o#tag=} ;; esac; done
+    b=$c; [[ $b =~ ^(O[A-Za-z0-9]*)p[0-9]+$ ]] && b=${BASH_REMATCH[1]}
+    cell_switches "$b" > /dev/null
+    [ -n "$cfg" ] && eff=$(python3 "$JOBS/rk_check.py" dry "$CFGDIR/$cfg" "/notebooks/hm-$src" "$L" ${want:+"$CFGDIR/$want"} 2>&1)
+    echo "$c${tag:+.$tag} L=$L reps=$reps tree=hm-$src switches=[$(echo $SW | sed 's/HETEROMEGA_//g')] --inflight=${infl:-none} config=${cfg:--} :: $eff"
+}
+[ "$MODE" = --dry ] && { emit | while read -r line; do dry_line $line; done | sort | uniq -c; exit 0; }
 sched=$SD/schedule.txt
 if [ ! -s "$sched" ]; then   # generated once; a resume reuses it
     emit > "$SD.list" || exit 2

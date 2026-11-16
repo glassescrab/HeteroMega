@@ -6,7 +6,8 @@ LOCK=${LOCK:-/notebooks/hm-jobs/gpu.lock}
 MODEL=/notebooks/hm-model/Meta-Llama-3.1-8B-Instruct-AWQ-INT4
 PROMPTS=${PROMPTS:-/notebooks/hm-jobs/prompts}
 REF=$PROMPTS/sampled-4160.json
-CFGDIR=$RES/configs
+CFGDIR=${CFGDIR:-$RES/configs}
+HMB=/notebooks/hm-npualign/experiments/npu_align/hm_bins.py   # hm_bins.py config: gate/up/down fw_path -> hw_bins_ours
 COUNT=$SRC/deployment-results/count_ioctls.so
 STOP=${STOP_LONG_AFTER_UTC:-2026-11-15T19:30Z}   # no new process starts after this (resume later or read remaining.txt)
 GEN="HETEROMEGA_GEMM=fast HETEROMEGA_SDPA=fast"; SD="HETEROMEGA_SDPA=fast"; GM="HETEROMEGA_GEMM=fast"

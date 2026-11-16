@@ -12,6 +12,10 @@
 #   bash quality.sh pmbq | pmbq4096   the per-micro-batch search picks (pmb_top_<L>.txt, H1 switches, 2 in flight) added to quality-v4 / quality-v4-4096
 #   bash quality.sh v5q L     eval_plan_v5 rows C/D: G0 (+control), HS1 author entry, HS1.ours_gu (hso_<L>.json), no --inflight as in m2b-L; 2048 -> quality-v4-2048 (8), 4096 -> quality-v4-4096 (4)
 #   bash quality.sh ggq       diagnostic (11-15): HeteroMosaic runtime with 0/0/0 on both micro-batches (pm_GG_1024.json, H1 switches) at 2 and 1 in flight, quality-v4 prompts
+#   bash quality.sh rkq L     11-16 config-ranking check: the AFTER author and ours cells of S1-S4 at L and the apmbc-L winner (pmb_win_<L>.txt), each on
+#                           its own tree (7th path field); -> quality-rk-L (1024: 8 prompts, 2048: 8, 4096: 4); G0 copied from quality-v4[-L] when there.
+#                           QSEEDS / QOUT override the prompts / output dir (smoke). A .ours.json path whose log loads a PDI outside <tree>/hw_bins_ours
+#                           is marked <stem>.BAD_FW and its .npz moved aside.
 #   bash quality.sh q4096v4   4 prompts x 4096 tokens, the on paths (G0, G0 control, G1, O1 p*_on(4096), HP1, H1, HT1) -> quality-v4-4096/
 # Add --remaining to list the missing runs. Resumable: an existing .npz is kept. Results $RES/quality[-gate|-4096]/seed<N>/*.npz, comparison-<N>.json.
 # G0 is gpu_original-L-r0 and its control gpu_original-L-r1 (path_logits.py --compare looks for that stem); other stems are the cell names.
@@ -20,6 +24,7 @@ MODE=${1:?q1|gate|q4096|v4|v4off|v4p P|q4096v4|pmbq|pmbq4096}; REM=${2:-}; PP=""
 [ "$MODE" = v4p ] && { PP=${2:?v4p needs P}; REM=${3:-}; }
 [ "$MODE" = ggq ] && REM=${2:-}
 [ "$MODE" = v5q ] && { VL=${2:?v5q needs L (2048|4096)}; REM=${3:-}; }
+[ "$MODE" = rkq ] && { VL=${2:?rkq needs L}; REM=${3:-}; }
 case $MODE in v4|v4off|v4p|q4096v4|pmbq|pmbq4096) export BESTP_FILE=best_p1.txt ;; esac
 source "$(dirname "$0")/common.sh"
 env_setup
@@ -50,12 +55,14 @@ case $MODE in
     q4096v4|pmbq4096) L=4096; SEEDS="1 2 3 4"; OUT=$RES/quality-v4-4096 ;;
     pmbq|ggq) L=1024; SEEDS="1 2 3 4 5 6 7 8"; OUT=$RES/quality-v4 ;;
     v5q) L=$VL; case $L in 2048) SEEDS="1 2 3 4 5 6 7 8" ;; 4096) SEEDS="1 2 3 4" ;; *) echo "v5q: L must be 2048 or 4096"; exit 2 ;; esac; OUT=$RES/quality-v4-$L ;;
+    rkq) L=$VL; SEEDS="1 2 3 4 5 6 7 8"; QREF=quality-v4-$L; [ $L = 1024 ] && QREF=quality-v4; [ $L = 4096 ] && SEEDS="1 2 3 4"
+        SEEDS=${QSEEDS:-$SEEDS}; OUT=${QOUT:-$RES/quality-rk-$L} ;;
 esac
 case $MODE in
     v4|q4096v4) [ -n "$(bestp $L on)" ] || { echo "no best_p1 on-p for $L"; exit 2; } ;;
     v4off) [ -n "$(bestp $L off)" ] || { echo "no best_p1 off-p for $L"; exit 2; } ;;
 esac
-case $MODE in v4|v4off|v4p|q4096v4|pmbq|pmbq4096|v5q|ggq) ;; *) [ $MODE != gate ] && { [ -n "$(bestp $L on)" ] && [ -n "$(bestp $L off)" ] || { echo "no best p for $L (sweeps first, or P_ON_$L / P_OFF_$L)"; exit 2; }; } ;; esac
+case $MODE in v4|v4off|v4p|q4096v4|pmbq|pmbq4096|v5q|ggq|rkq) ;; *) [ $MODE != gate ] && { [ -n "$(bestp $L on)" ] && [ -n "$(bestp $L off)" ] || { echo "no best p for $L (sweeps first, or P_ON_$L / P_OFF_$L)"; exit 2; }; } ;; esac
 MAXSEQ=$((L + 160)); [ $L = 1024 ] && MAXSEQ=1600
 prompt() { # SEED -> prompt file; existing sampled-1/-2 have 1536 tokens, others are sampled here (gpu_original, temperature 1)
     if [ $L = 1024 ] && [ "$1" -le 2 ]; then echo "$PROMPTS/sampled-$1.json"; else echo "$PROMPTS/sampled${L}-$1.json"; fi
@@ -94,6 +101,14 @@ gpu_original-$L-r1|gpu_original|build|||1"
             echo "HS1.ours_gu-$L-r0|heteromosaic|build|$CFGDIR/hso_$L.json|$(swof HS1)|-" ;;
         ggq) echo "$g0"; for i in 2 1; do echo "PM.GG_i$i-1024-r0|heteromosaic|build|$CFGDIR/pm_GG_1024.json|$(swof H1)|$i"; done ;;
         pmbq|pmbq4096) local t; echo "$g0"; for t in $(cat "$CFGDIR/pmb_top_$L.txt"); do echo "PM.$t-$L-r0|heteromosaic|build|$CFGDIR/pm_${t}_$L.json|$(swof H1)|2"; done ;;
+        rkq) local na=/notebooks/hm-npualign w; echo "$g0"   # stems RK<S>.A_<cand>: the rk<S>-L cells (same base cell, config, in flight, tree)
+            case $L in
+                1024) echo "RK1.A_auth-$L-r0|heteromosaic|build|$CFGDIR/rk1_auth_a.json|$(swof HKU)|1|$na" ;;
+                2048) for c in auth g512u512d0; do echo "RK2.A_$c-$L-r0|heteromosaic|build|$CFGDIR/rk2_${c}_a.json|$(swof HT1)|4|$na"; done
+                      for c in auth g1024u1024d0; do echo "RK3.A_$c-$L-r0|heteromosaic|build|$CFGDIR/rk3_${c}_a.json|$(swof HS1)|-|$na"; done ;;
+                4096) for c in auth g2048u2048d0; do echo "RK4.A_$c-$L-r0|heteromosaic|build|$CFGDIR/rk4_${c}_a.json|$(swof HS1)|-|$na"; done ;;
+            esac
+            [ -s "$CFGDIR/pmb_win_$L.txt" ] && { w=$(cat "$CFGDIR/pmb_win_$L.txt"); echo "PM.$w-$L-r0|heteromosaic|build|$CFGDIR/pm_${w}_$L.ours.json|$(swof H1)|2|$na"; }; true ;;
     esac
 }
 reuse() { # OLDPATH-without-.npz DSTSTEM PLANNED-CONFIG-or-empty SWITCHES [LOG]: copy a seed-1 result of an earlier run when its env/config/log show the same path
@@ -122,7 +137,9 @@ seed1_reuse() { # v4/v4off at 1024, seed 1 only
 status=0
 for s in $SEEDS; do
     f=$(prompt "$s"); D=$OUT/seed$s; mkdir -p "$D"
-    PATHS=paths; case $MODE in v4|v4off|v4p|q4096v4|pmbq|pmbq4096|v5q|ggq) PATHS=paths4; [ "$s" = 1 ] && [ "$L" = 1024 ] && [ $MODE != v4p ] && [ $MODE != pmbq ] && [ $MODE != ggq ] && [ -z "$REM" ] && seed1_reuse ;; esac
+    [ $MODE = rkq ] && [ -z "$REM" ] && for r in 0 1; do   # G0 and its control of the same prompt from the earlier quality run
+        o=$RES/$QREF/seed$s/gpu_original-$L-r$r; [ -s "$o.npz" ] && [ ! -s "$D/gpu_original-$L-r$r.npz" ] && cp "$o.npz" "$D/" && echo "copied from $o" > "$D/gpu_original-$L-r$r.reused"; done
+    PATHS=paths; case $MODE in v4|v4off|v4p|q4096v4|pmbq|pmbq4096|v5q|ggq|rkq) PATHS=paths4; [ "$s" = 1 ] && [ "$L" = 1024 ] && [ $MODE != v4p ] && [ $MODE != pmbq ] && [ $MODE != ggq ] && [ -z "$REM" ] && seed1_reuse ;; esac
     if [ ! -s "$f" ]; then
         [ -n "$REM" ] && { echo "$MODE: prompt $f"; continue; }
         past_deadline && { echo "deadline $STOP"; exit 75; }
@@ -130,7 +147,8 @@ for s in $SEEDS; do
           python3 tools/npu_error_probe/path_logits.py --sample-prompt "$f" --seed "$s" --sample-tokens "$L" --max-seq-len "$MAXSEQ" \
               --model "$MODEL" --build build ) > "$D/sample.log" 2>&1 || { echo "sampling seed $s failed"; status=1; continue; }
     fi
-    while IFS='|' read -r stem method build cfg sw infl4; do
+    while IFS='|' read -r stem method build cfg sw infl4 srcp; do
+        T=${srcp:-$SRC}   # the path's tree (rkq); other modes: $SRC
         [ -s "$D/$stem.npz" ] && continue
         [ -n "$REM" ] && { echo "$MODE: seed$s/$stem"; continue; }
         past_deadline && { echo "deadline $STOP"; exit 75; }
@@ -138,13 +156,18 @@ for s in $SEEDS; do
         args=(--method "$method" --model "$MODEL" --build "$build" --ref "$f" --prompt-tokens "$L" --chunk 512
               --max-seq-len "$MAXSEQ" --no-score --out "$D/$stem.npz")
         [ "$infl" = - ] || args+=(--inflight "$infl")   # "-": no --inflight, the runtime selects the author's entry (v5q, as m2b-L)
-        case $cfg in p*) args+=(--merged-ffn-config "$SRC/deployment-results/deployment-$cfg.json") ;; ?*) args+=(--config "$cfg") ;; esac
-        ( exec 9> "$LOCK"; flock 9; clear_switches
+        case $cfg in p*) args+=(--merged-ffn-config "$T/deployment-results/deployment-$cfg.json") ;; ?*) args+=(--config "$cfg") ;; esac
+        ( exec 9> "$LOCK"; flock 9; cd "$T" || exit 2; export HETEROMOSAIC_ROOT="$T"; clear_switches
           for pair in $sw; do export "$pair"; done
           env | grep '^HETEROMEGA_' | sort > "$D/$stem.env"
-          export PYTHONPATH="$SRC/$build/py:$SRC/$build/py/unified_llm_w4a16:$SRC"
-          LD_PRELOAD=$COUNT timeout -k 30 1200 python3 tools/npu_error_probe/path_logits.py "${args[@]}"
+          export PYTHONPATH="$T/$build/py:$T/$build/py/unified_llm_w4a16:$T"
+          LD_PRELOAD=$T/deployment-results/count_ioctls.so timeout -k 30 1200 python3 tools/npu_error_probe/path_logits.py "${args[@]}"
         ) > "$D/$stem.log" 2>&1 < /dev/null && echo "$(date -u +%H:%M:%S) seed$s $stem ok" || { echo "seed$s $stem FAILED: $(grep -hiE 'error|Traceback' "$D/$stem.log" | tail -1 | cut -c1-200)"; status=1; }
+        if [[ $cfg == *.ours.json ]]; then   # our binaries must have loaded from this path's tree
+            n=$(grep -c 'Loading PDI: ' "$D/$stem.log"); k=$(grep -c "Loading PDI: $T/hw_bins_ours/" "$D/$stem.log")
+            if [ "$n" = 0 ] || [ "$k" != "$n" ] || grep -q 'Failed to create' "$D/$stem.log"; then
+                echo "seed$s $stem BAD_FW: $k of $n PDIs from $T/hw_bins_ours" | tee "$D/$stem.BAD_FW"; [ -e "$D/$stem.npz" ] && mv "$D/$stem.npz" "$D/$stem.npz.bad"; status=1; fi
+        fi
     done < <($PATHS)
     [ -z "$REM" ] && [ -s "$D/gpu_original-$L-r0.npz" ] && python3 tools/npu_error_probe/path_logits.py --compare "$D" --json "$OUT/comparison-$s.json" > "$OUT/comparison-$s.txt" 2>&1
 done

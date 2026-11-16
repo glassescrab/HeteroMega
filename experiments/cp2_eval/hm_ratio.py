@@ -17,6 +17,9 @@ Per-micro-batch placement search at 2 in flight (11-15 user; no operator split b
   hm_ratio.py CFGDIR pmb_mid L        middle patterns (all A, all B, A/B alternating, N/G alternating), first = last = A -> pmb_mid_<L>.txt
   hm_ratio.py CFGDIR pmb_ends L [DIR] best middle of DIR (pmb1-<L>; none at 1024), then first x last in {A,B,G,N} -> pmb_ends_<L>.txt
   hm_ratio.py CFGDIR pmb_top L DIR... the 2 best patterns of the screens, uniform A excluded (it runs as H1) -> pmb_top_<L>.txt; also writes uniform B (0/0/512)
+  hm_ratio.py CFGDIR pats L PAT...    write pm_<PAT>_<L>.json for the given patterns (-> pats_<L>.txt)
+  hm_ratio.py CFGDIR pmb_win L DIR    pattern with the lowest median of H1.<pattern> process medians in DIR (apmbc-<L>) -> pmb_win_<L>.txt
+Processes with a BAD_CONFIG file (rk_check.py gate) are left out of every ranking.
 Combo "g256u256d0" = gate npuM 256, up 256, down 0 (= shipped at 1024). Same prebuilt binaries (npuM is a runtime M)."""
 import glob, json, os, re, statistics, sys
 
@@ -54,6 +57,8 @@ def h1_means(L, dirs, role="H1"):
     res = {}
     for dr in dirs:
         for d in glob.glob(f"{dr}/{role}.*-{L}-s*"):
+            if os.path.exists(f"{d}/BAD_CONFIG"):
+                continue
             tag = re.search(rf"{role}\.(\w+)-{L}-s", d).group(1)
             try:
                 row = open(f"{d}/summary.csv").read().strip().splitlines()[-1].split(",")
@@ -121,6 +126,15 @@ def pmb_mid(n):
 def main_v4(cfgdir, mode, a):
     if mode == "r1u":   # 11-15 user: HeteroMosaic at 1 in flight = the author's 1-in-flight entry 256/256/0 on every micro-batch, at any length
         L = int(a[0]); write_pats(cfgdir, L, ["Q" * (L // 512)], "r1u"); return
+    if mode == "pats":
+        write_pats(cfgdir, int(a[0]), a[1:], "pats"); return
+    if mode == "pmb_win":
+        L = int(a[0]); res = {t: v for t, v in h1_means(L, a[1:]).items() if len(t) == L // 512 and set(t) <= set(PLACE)}
+        order = sorted(res, key=lambda t: statistics.median(res[t]))
+        for t in order:
+            print(f"{t}: process medians {', '.join(f'{x:.1f}' for x in res[t])} median {statistics.median(res[t]):.1f}")
+        open(f"{cfgdir}/pmb_win_{L}.txt", "w").write(order[0] + "\n")
+        print("pmb_win", L, order[0]); return
     if mode in ("pmb_mid", "pmb_ends", "pmb_top"):
         L = int(a[0]); n = L // 512
         if mode == "pmb_mid":
@@ -200,7 +214,7 @@ def main_v4(cfgdir, mode, a):
 
 def main():
     cfgdir, mode = sys.argv[1:3]
-    if mode in ("combos1", "top1", "probe1", "rank1", "pick1", "hbprobe", "hbpick", "same", "pmb_mid", "pmb_ends", "pmb_top", "r1u"):
+    if mode in ("combos1", "top1", "probe1", "rank1", "pick1", "hbprobe", "hbpick", "same", "pmb_mid", "pmb_ends", "pmb_top", "r1u", "pats", "pmb_win"):
         return main_v4(cfgdir, mode, sys.argv[3:])
     if mode == "combos":
         print(" ".join(COMBOS))

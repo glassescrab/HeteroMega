@@ -17,7 +17,15 @@ group, gate/up/down NPU tokens per micro-batch, micro-batches in flight seen in 
 | Row D, 4096 tokens, 2 x 2048, 2 in flight | `m2b-4096` | `hs.json` (author's entry), `hso_4096.json` (2048/2048/0) |
 | Ablation: split unit x micro-batches in flight | `abl1-1024` | `hm_1024.json` (512/512/0), `hp_g0u0d512.json` (0/0/512) |
 | Correctness (last-token KL, greedy tokens) | `quality.sh` | |
+| Config-ranking check (11-16): settings S1-S4 = rows A-D, FFN-split candidates before / after the NPU kernel change | `rk1-1024` `rk2-2048` `rk3-2048` `rk4-4096`; smoke `smoke_rk.sh`, run `chain_rk.sh` | `make_rk_configs.py` (from `hr.json` and the rows' configs) |
+| Per-micro-batch search with our NPU binaries (HeteroMosaic runtime) | `apmb1-L` `apmb2-L` `apmbc-L`, L = 2048, 4096 | `hm_ratio.py` pm patterns, `hm_bins.py config` |
 
 `chain_*.sh` are the detached job scripts that ran these stages in order with smoke gates; `phi.sh` builds and checks
 NPU channel counts above 8192 for the p sweep. Configs are generated from the author's `configs_strixP_llama3_8b.json5`
 by `make_hm_configs.py`, `hm_ratio.py` and `make_v5_configs.py`; attention runs on the GPU in all of them.
+
+The config-ranking stages run each cell on its own tree (`src=`: `/notebooks/hm-cp2b` = the reported code, original NPU binaries, old PDI cache
+key; `/notebooks/hm-npualign` = PDI cache key with npuM x npuN, our NPU binaries in `hw_bins_ours/`). `rk_check.py` gates every such process
+(selected group, schedule, in flight, GEMMs loaded per micro-batch, NPU files under the cell's tree, PDI contexts) and writes its config
+fingerprint; `rk_report.py RES STAGE` lists the fingerprints with the cell medians. `bash eval3.sh STAGE --dry` prints the effective config of
+every cell without running it.
