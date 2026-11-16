@@ -29,8 +29,8 @@ def plan_gate_up(m, k, channels, columns=8, rows=4, max_reuse=2):
     if (isinstance(channels, bool) or not isinstance(channels, Integral)
             or channels < 128 or channels % 128):
         raise ValueError("gate/up channels must be >=128 and divisible by128")
-    if channels > 8192:
-        raise ValueError("combined gate/up supports channels<=8192 (total N<=16384)")
+    if channels > 13312:  # was 8192; the merged graph unrolls N64 segments, so the old DMA-repeat bound does not bind (CP2 p sweep)
+        raise ValueError("combined gate/up supports channels<=13312 (total N<=26624)")
     plan = plan_prefill(m, k, 2 * int(channels), columns, rows, max_reuse)
     if plan.n_columns != 8 or plan.m_column_groups != 1:
         raise ValueError("combined gate/up must use one eight-column M group")

@@ -121,7 +121,7 @@ struct MergedFfnConfig {
         c.npu_channels = positive(j, "channels");
         c.intermediate = positive(j, "weight_n");
         if (c.m % 512 || c.hidden % 128 || c.intermediate % 128 || c.npu_channels % 256 ||
-            c.npu_channels >= c.intermediate || c.npu_channels > 8192 ||
+            c.npu_channels >= c.intermediate || c.npu_channels > 13312 ||
             positive(j, "weight_k") != c.hidden || positive(j, "weight_k_down") != c.intermediate ||
             positive(j, "weight_n_down") != c.hidden)
             throw std::invalid_argument("merged FFN: incompatible shape or channel partition");
