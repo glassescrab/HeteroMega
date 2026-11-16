@@ -11,6 +11,7 @@ for f in hr hs hso_2048 hso_4096 hm_1024 hm_2048 hm_4096 hm_1024.shipped hm_2048
 cd "$J" || exit 2
 stop() { [ -e "$R/STOP_RK" ] && echo "STOP_RK present: not starting $1"; }
 run() { echo "=== $(date -u +%H:%M:%S) $1"; bash eval3.sh "$1"; echo "stage $1 exit $?"
+        bash eval3.sh "$1"; echo "stage $1 second pass (processes without DONE) exit $?"
         python3 cellmed.py "$R/$1" > "$R/$1.cellmed.txt" 2>&1; python3 rk_report.py "$R" "$1" > "$R/$1.report.md" 2>&1; }
 for s in rk1-1024 rk2-2048 rk3-2048 rk4-4096; do stop $s && break; run $s; done
 for L in 2048 4096; do
