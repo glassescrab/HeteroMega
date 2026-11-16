@@ -41,7 +41,8 @@ BOS = 128000
 METHODS = {"gpu_original": ("gpu", False), "merged_ffn": ("gpu", True), "heteromosaic": ("hetero", False),
            "merged_ffn_hetero": ("hetero", True), "heteromosaic_mdown": ("hetero", False),  # mdown: pass its --config
            "heteromosaic_gateup": ("hetero", False), "heteromosaic_gateup16384": ("hetero", False),
-           "merged_ffn_p8192": ("gpu", True)}  # pass --config, --merged-ffn-config
+           "merged_ffn_p8192": ("gpu", True),  # pass --config, --merged-ffn-config
+           "gpu_ffn_all": ("gpu", False)}  # HETEROMEGA_GPU_FFN=1; use a build with HETEROMEGA_GPU_FFN=ON
 REFERENCE = "gpu_original"
 SWITCHES = ("HETEROMEGA_FFN_CONFIG", "HETEROMEGA_GPU_FFN", "HETEROMEGA_GPU_FFN_SPLIT")
 
@@ -99,6 +100,8 @@ def compare(directory):
 def load_model(args, heterogeneity, merged, prompt_tokens, out):
     for name in SWITCHES:
         os.environ.pop(name, None)
+    if getattr(args, "method", None) == "gpu_ffn_all":
+        os.environ["HETEROMEGA_GPU_FFN"] = "1"
     if merged:
         os.environ["HETEROMEGA_FFN_CONFIG"] = str(args.merged_ffn_config.resolve())
     if heterogeneity == "hetero":
@@ -187,7 +190,7 @@ def run_method(args):
             rows.append(last_row(model.model.forward(step, t)))
         return np.stack(rows)
 
-    if args.prompt_tokens + args.ppl_tokens <= len(ids_all):
+    if not args.no_score and args.prompt_tokens + args.ppl_tokens <= len(ids_all):
         arrays["scored_logits"] = checked(1, scored)
         arrays["nlls"] = np.asarray([nll(row, ids_all[args.prompt_tokens + i]) for i, row in enumerate(arrays["scored_logits"])])
     np.savez(args.out, meta=json.dumps(meta), **arrays)
@@ -208,6 +211,7 @@ def main():
     ap.add_argument("--inflight", type=int, help="inflight chunk slots, as run_model_ffn.py --inflight")
     ap.add_argument("--new-tokens", type=int, default=64)
     ap.add_argument("--ppl-tokens", type=int, default=512)
+    ap.add_argument("--no-score", action="store_true", help="skip the teacher-forced scoring of the tokens after the prompt")
     ap.add_argument("--out", type=Path)
     ap.add_argument("--compare", type=Path, help="directory of .npz runs; prints the comparison")
     ap.add_argument("--json", type=Path, help="with --compare: write the rows here")
