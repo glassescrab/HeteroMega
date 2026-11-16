@@ -3,6 +3,7 @@
 #include "npu_matmul_func/npu_execution.hpp"
 #include <c10/hip/HIPGuard.h>
 #include <c10/hip/HIPStream.h>
+#include <c10/hip/HIPCachingAllocator.h>
 #include <xrt/xrt_bo.h>
 #include <xrt/xrt_device.h>
 #include <xrt/xrt_kernel.h>
@@ -201,6 +202,9 @@ struct MergedFfn::Impl {
     std::ofstream timer_file;
     const bool serial_gpu = std::getenv("HETEROMEGA_FFN_SERIAL_GPU") != nullptr;
     const int slot_bo = std::getenv("HETEROMEGA_FFN_SLOT_BO") != nullptr ? std::atoi(std::getenv("HETEROMEGA_FFN_SLOT_BO")) : 0;
+    bool full_copy = false; // set by prepare_all
+    std::mutex all_mutex;
+    std::unordered_map<hipStream_t, GpuFfnBuffers> all_buffers; // forward_gpu_all scratch, one per stream
 
     explicit Impl(const std::string &path)
         : config(MergedFfnConfig::load(path)), finite_check(parse_finite_check(std::getenv("HETEROMEGA_FFN_FINITE_CHECK"))) {
@@ -222,6 +226,36 @@ struct MergedFfn::Impl {
         runtime.reset();
     }
 
+    // Call with setup_mutex held.
+    void prepare_layer(Layer &layer, const torch::Device &device, hipStream_t stream) {
+        for (const auto &w : layer.originals)
+            TORCH_CHECK(w.device() == device, "merged FFN: weight/input devices differ");
+        // full_copy: channels [P, P + I) wrap to [P, I) ++ [0, P), so the GPU's prefill share [P, I) is a prefix of the copy.
+        const int64_t end = full_copy ? config.npu_channels + config.intermediate : config.intermediate;
+        layer.gpu = slice_packed_ffn(layer.originals[0], layer.originals[1], layer.originals[2],
+            config.hidden, config.intermediate, config.npu_channels, end, GateUpLayout::kInterleaved);
+        // Setup only: make packing visible to every future chunk stream.
+        hip_check(hipStreamSynchronize(stream));
+        layer.gpu.gate_up = gemm_uncached_weights(layer.gpu.gate_up);
+        layer.gpu.down = gemm_uncached_weights(layer.gpu.down);
+        std::lock_guard<std::mutex> npu_lock(npu_execution_mutex());
+        if (!runtime) runtime = std::make_unique<Runtime>(config);
+        TORCH_CHECK(!runtime->poisoned, "merged FFN: executor is poisoned after a launch failure");
+        for (size_t i = 0; i < 3; ++i) {
+            auto host = layer.originals[i].to(torch::kCPU).contiguous();
+            layer.npu[i] = xrt::bo(runtime->device, config.weight_bytes(), xrt::bo::flags::host_only,
+                                   runtime->kernel.group_id(static_cast<int>(i) + 4));
+            layer.npu[i].write(host.data_ptr(), config.weight_bytes(), 0);
+            layer.npu[i].sync(XCL_BO_SYNC_BO_TO_DEVICE);
+        }
+        if (full_copy) {
+            // Nothing reads the originals any more. set_() empties the tensor for every holder, QuantizedLinear's parameter included.
+            for (auto &w : layer.originals) w.set_();
+            layer.originals = {};
+        }
+        layer.ready = true;
+    }
+
     std::pair<std::shared_ptr<Layer>, std::shared_ptr<Slot>> prepare(int64_t index, const torch::Tensor &x,
                                                                   hipStream_t stream) {
         std::lock_guard<std::mutex> lock(setup_mutex);
@@ -229,27 +263,7 @@ struct MergedFfn::Impl {
         TORCH_CHECK(gpu_device == -1 || gpu_device == x.get_device(), "merged FFN: device changed; rebuild executor");
         gpu_device = x.get_device();
         auto layer = layers[index];
-        if (!layer->ready) {
-            for (const auto &w : layer->originals)
-                TORCH_CHECK(w.device() == x.device(), "merged FFN: weight/input devices differ");
-            layer->gpu = slice_packed_ffn(layer->originals[0], layer->originals[1], layer->originals[2],
-                config.hidden, config.intermediate, config.npu_channels, config.intermediate, GateUpLayout::kInterleaved);
-            // Setup only: make packing visible to every future chunk stream.
-            hip_check(hipStreamSynchronize(stream));
-            layer->gpu.gate_up = gemm_uncached_weights(layer->gpu.gate_up);
-            layer->gpu.down = gemm_uncached_weights(layer->gpu.down);
-            std::lock_guard<std::mutex> npu_lock(npu_execution_mutex());
-            if (!runtime) runtime = std::make_unique<Runtime>(config);
-            TORCH_CHECK(!runtime->poisoned, "merged FFN: executor is poisoned after a launch failure");
-            for (size_t i = 0; i < 3; ++i) {
-                auto host = layer->originals[i].to(torch::kCPU).contiguous();
-                layer->npu[i] = xrt::bo(runtime->device, config.weight_bytes(), xrt::bo::flags::host_only,
-                                       runtime->kernel.group_id(static_cast<int>(i) + 4));
-                layer->npu[i].write(host.data_ptr(), config.weight_bytes(), 0);
-                layer->npu[i].sync(XCL_BO_SYNC_BO_TO_DEVICE);
-            }
-            layer->ready = true;
-        }
+        if (!layer->ready) prepare_layer(*layer, x.device(), stream);
         auto &slot = slots[stream];
         if (!slot) {
             slot = std::make_shared<Slot>(config, x.device(), static_cast<int>(slots.size()) - 1);
@@ -298,6 +312,34 @@ void MergedFfn::add_layer(const torch::Tensor &gate, const torch::Tensor &up, co
     impl_->layers.push_back(std::move(layer));
 }
 
+void MergedFfn::prepare_all(const torch::Device &device, hipStream_t stream) {
+    std::lock_guard<std::mutex> lock(impl_->setup_mutex);
+    impl_->full_copy = true;
+    impl_->gpu_device = device.index();
+    for (auto &layer : impl_->layers) {
+        if (layer->ready) continue;
+        impl_->prepare_layer(*layer, device, stream);
+        // Return this layer's freed originals now: held as reserved blocks, they would add up to the whole copy before the last layer.
+        c10::cuda::CUDACachingAllocator::emptyCache();
+    }
+}
+
+bool MergedFfn::has_full_gpu_copy() const { return impl_->full_copy; }
+
+void MergedFfn::forward_gpu_all(int64_t index, const torch::Tensor &x, torch::Tensor &y, hipStream_t current_stream) {
+    TORCH_CHECK(impl_->full_copy && index >= 0 && static_cast<size_t>(index) < impl_->layers.size(), "merged FFN: forward_gpu_all needs prepare_all");
+    const auto &w = impl_->layers[index]->gpu;
+    GpuFfnBuffers *buf = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(impl_->all_mutex);
+        auto &b = impl_->all_buffers[current_stream];
+        if (!b.x_pad.defined() || b.x_pad.size(0) < padded_rows(x.size(0)))
+            b = GpuFfnBuffers::allocate(x.size(0), w.stored_channels(), w.hidden, x.device());
+        buf = &b; // unordered_map keeps element addresses when it grows
+    }
+    gpu_ffn_slice_forward(w, x, *buf, y, current_stream);
+}
+
 MergedFfnResult MergedFfn::forward(int64_t index, const torch::Tensor &x, torch::Tensor output,
                                   hipStream_t current_stream, bool serial, bool sum) {
     const auto &c = config();
@@ -326,7 +368,7 @@ MergedFfnResult MergedFfn::forward(int64_t index, const torch::Tensor &x, torch:
         hip_check(hipEventRecord(branch_start, current_stream));
     }
     try {
-        gpu_ffn_slice_forward(layer.gpu, x, slot.gpu, slot.y_gpu, current_stream);
+        gpu_ffn_slice_forward(layer.gpu.prefix(c.intermediate - c.npu_channels), x, slot.gpu, slot.y_gpu, current_stream);
         hip_check(hipGetLastError());
     } catch (...) {
         // A later kernel's validation may fail after an earlier kernel was enqueued.

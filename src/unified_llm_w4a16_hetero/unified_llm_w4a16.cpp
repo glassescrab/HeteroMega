@@ -41,6 +41,7 @@
 #endif
 #ifdef HETEROMEGA_MERGED_FFN
 #include "heteromega/merged_ffn.hpp"
+#include <c10/hip/HIPCachingAllocator.h>
 #endif
 
 // #define FA2_HIP_KERNEL 1 // Removed as per refactor instructions
@@ -2341,7 +2342,6 @@ heteromega::MergedFfn *UnifiedLLMW4A16Impl::heteromega_merged_ffn(int64_t rows) 
     TORCH_CHECK(!gpu || std::string(gpu) != "1", "Use HETEROMEGA_FFN_CONFIG or HETEROMEGA_GPU_FFN, not both");
     TORCH_CHECK(arch_type_ == ArchitectureType::LLAMA3 && groupsize_ == 128 && use_packed_weights && pad_packed_weights == 0,
                 "Merged FFN deployment requires Llama3, packed group128 weights and padPackedWeights=0");
-    if (rows == 1) return nullptr; // Preserve the original decode path.
     if (!heteromega_merged_ffn_) {
         auto executor = std::make_shared<heteromega::MergedFfn>(path);
         TORCH_CHECK(executor->config().hidden == hidden_size_ && executor->config().intermediate == intermediate_size_,
@@ -2349,8 +2349,22 @@ heteromega::MergedFfn *UnifiedLLMW4A16Impl::heteromega_merged_ffn(int64_t rows) 
         for (int64_t i = 0; i < num_hidden_layers_; ++i)
             executor->add_layer(gate_layers[i]->get_packed_params(), up_layers[i]->get_packed_params(),
                                 down_layers[i]->get_packed_params());
+        if (hw_target == "gpu") {
+            // One GPU copy of the FFN weights serves prefill and decode; the originals are freed (hetero mode still reads them).
+            executor->prepare_all(gate_layers[0]->get_packed_params().device(), c10::hip::getCurrentHIPStream().stream());
+            // HETEROMEGA_GEMM_UNCACHED=1: attention weights become their uncached copy, so the process does not hold them twice.
+            for (int64_t i = 0; i < num_hidden_layers_; ++i) {
+                for (auto *layers : {&q_layers, &k_layers, &v_layers, &o_layers}) {
+                    auto packed = (*layers)[i]->get_packed_params();
+                    const auto copy = heteromega::gemm_uncached_weights(packed);
+                    if (copy.data_ptr() != packed.data_ptr()) packed.set_(copy.storage(), 0, packed.sizes(), packed.strides());
+                }
+                c10::cuda::CUDACachingAllocator::emptyCache(); // freed weights otherwise stay reserved
+            }
+        }
         heteromega_merged_ffn_ = std::move(executor);
     }
+    if (rows == 1) return nullptr; // Decode: the original path, or forward_gpu_all after prepare_all.
     return heteromega_merged_ffn_->supports(rows, hidden_size_, intermediate_size_) ? heteromega_merged_ffn_.get() : nullptr;
 #else
     TORCH_CHECK(false, "HETEROMEGA_FFN_CONFIG is set but this binary was built without -DHETEROMEGA_MERGED_FFN=ON");
@@ -2516,6 +2530,10 @@ torch::Tensor UnifiedLLMW4A16Impl::forward_llama3_with_scratch(
     auto out_buf = output_buffer_base.narrow(0, 0, bsz).narrow(1, 0, seq_len);
     auto normed = norm_buffer_base.narrow(0, 0, bsz).narrow(1, 0, seq_len);
     auto *merged_ffn = heteromega_merged_ffn(bsz * seq_len);
+#ifdef HETEROMEGA_MERGED_FFN
+    // The original FFN weights are gone after prepare_all: rows the artifact does not take use the full GPU copy.
+    auto *merged_ffn_all = merged_ffn == nullptr && heteromega_merged_ffn_ && heteromega_merged_ffn_->has_full_gpu_copy() ? heteromega_merged_ffn_.get() : nullptr;
+#endif
 #ifdef HETEROMEGA_GPU_FFN
     heteromega::GpuFfnModel *gpu_ffn = heteromega_gpu_ffn();
 #endif
@@ -2843,6 +2861,17 @@ torch::Tensor UnifiedLLMW4A16Impl::forward_llama3_with_scratch(
                 merged_ffn->forward(i, xn_2d, y_2d, c10::hip::getCurrentHIPStream().stream());
                 x.add_(y_2d.view({bsz, seq_len, hidden_size_}));
             }
+            stage_events.mark(i, "end");
+            end_stage_trace(std::move(g2_trace));
+            continue;
+        }
+        if (merged_ffn_all != nullptr) {
+            const int64_t rows = bsz * seq_len;
+            const auto xn_2d = normed.slice(-1, 0, hidden_size_).contiguous().view({rows, hidden_size_});
+            const auto y = out_buf.slice(-1, 0, hidden_size_);
+            auto y_2d = y.is_contiguous() ? y.view({rows, hidden_size_}) : torch::empty({rows, hidden_size_}, y.options());
+            merged_ffn_all->forward_gpu_all(i, xn_2d, y_2d, c10::hip::getCurrentHIPStream().stream());
+            x.add_(y_2d.view({bsz, seq_len, hidden_size_}));
             stage_events.mark(i, "end");
             end_stage_trace(std::move(g2_trace));
             continue;
