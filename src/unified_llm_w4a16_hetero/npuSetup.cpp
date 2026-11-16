@@ -1386,7 +1386,9 @@ void load_npu_kernels(int drv_fd, const std::string &config_path) {
 
                     // Check for PDI reuse
                     if (minimal_pdi) {
-                        cache_key = std::make_tuple(npuK, tile_size, col, dtype);
+                        // npuM and npuN are part of the key: a PDI built for one M (our MLIR-AIE projections bake M in)
+                        // must not be reused with another shape's instructions.
+                        cache_key = std::make_tuple(npuK, tile_size + "@" + std::to_string(npuM) + "x" + std::to_string(npuN), col, dtype);
                         can_cache = true;
                         if (pdi_cache.find(cache_key) != pdi_cache.end()) {
                             reuse_pdi = true;
