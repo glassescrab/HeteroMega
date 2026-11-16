@@ -139,7 +139,7 @@ for s in $SEEDS; do
     f=$(prompt "$s"); D=$OUT/seed$s; mkdir -p "$D"
     [ $MODE = rkq ] && [ -z "$REM" ] && for r in 0 1; do   # G0 and its control of the same prompt from the earlier quality run
         o=$RES/$QREF/seed$s/gpu_original-$L-r$r; [ -s "$o.npz" ] && [ ! -s "$D/gpu_original-$L-r$r.npz" ] && cp "$o.npz" "$D/" && echo "copied from $o" > "$D/gpu_original-$L-r$r.reused"; done
-    PATHS=paths; case $MODE in v4|v4off|v4p|q4096v4|pmbq|pmbq4096|v5q|ggq|rkq) PATHS=paths4; [ "$s" = 1 ] && [ "$L" = 1024 ] && [ $MODE != v4p ] && [ $MODE != pmbq ] && [ $MODE != ggq ] && [ -z "$REM" ] && seed1_reuse ;; esac
+    PATHS=paths; case $MODE in v4|v4off|v4p|q4096v4|pmbq|pmbq4096|v5q|ggq|rkq) PATHS=paths4; [ "$s" = 1 ] && [ "$L" = 1024 ] && [ $MODE != v4p ] && [ $MODE != pmbq ] && [ $MODE != ggq ] && [ $MODE != rkq ] && [ -z "$REM" ] && seed1_reuse ;; esac
     if [ ! -s "$f" ]; then
         [ -n "$REM" ] && { echo "$MODE: prompt $f"; continue; }
         past_deadline && { echo "deadline $STOP"; exit 75; }
