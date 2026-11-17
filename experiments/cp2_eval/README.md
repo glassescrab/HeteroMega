@@ -19,6 +19,7 @@ group, gate/up/down NPU tokens per micro-batch, micro-batches in flight seen in 
 | Correctness (last-token KL, greedy tokens) | `quality.sh` | |
 | Config-ranking check (11-16): settings S1-S4 = rows A-D, FFN-split candidates before / after the NPU kernel change | `rk1-1024` `rk2-2048` `rk3-2048` `rk4-4096`; smoke `smoke_rk.sh`, run `chain_rk.sh` | `make_rk_configs.py` (from `hr.json` and the rows' configs) |
 | Per-micro-batch search with our NPU binaries (HeteroMosaic runtime) | `apmb1-L` `apmb2-L` `apmbc-L`, L = 2048, 4096 | `hm_ratio.py` pm patterns, `hm_bins.py config` |
+| Row A kernel ablation and split-unit ablation again, HeteroMosaic's NPU GEMMs = our binaries (11-17) | `kab1n-1024` `abl1n-1024`; smokes `kab1ns-1024` `abl1ns-1024`, run `chain_abl.sh` | `make_rk_configs.py ... abln` (`*.ours.json` of the kab1/abl1 configs, want files) |
 
 `chain_*.sh` are the detached job scripts that ran these stages in order with smoke gates; `phi.sh` builds and checks
 NPU channel counts above 8192 for the p sweep. Configs are generated from the author's `configs_strixP_llama3_8b.json5`

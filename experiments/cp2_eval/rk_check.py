@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Cell gate of the config-ranking check stages (rk*, apmb*; any process with a src= tree).
   rk_check.py D                 process dir: writes D/fingerprint.txt; exit 1 with the reasons if anything differs from the intent
-  rk_check.py dry CFG SRC L [WANT]  the effective config a heteromosaic process would load from CFG on tree SRC (no run)
+  rk_check.py dry CFG SRC L [WANT [INFL]]  the effective config a heteromosaic process would load from CFG on tree SRC (no run)
 Checks: a prefill median in summary.csv; the backend .so and every NPU file the log loaded lie under the cell's tree (a wrong
 HETEROMOSAIC_ROOT would load hw_bins_ours from another tree or fall back to the GPU); in flight seen = intended; no 'Failed to create'
 or 'Reached maximum' line. heteromosaic: the selection line = the group the C++ rule picks from the config the process ran
@@ -108,8 +108,11 @@ def check(D):
     return not bad
 
 
-def dry(cfg, src, L, want=None):
-    eff, bad = summary(json.loads(Path(cfg).read_text()), int(L), src), []
+def dry(cfg, src, L, want=None, infl=None):
+    cfg = json.loads(Path(cfg).read_text())
+    for g in cfg["kernels_gemm_chunked"] if infl else []:   # --inflight N: the runtime sets hetero_inflight of every group (result.config.json)
+        g["hetero_inflight"] = int(infl)
+    eff, bad = summary(cfg, int(L), src), []
     if want:
         compare_want(eff, json.loads(Path(want).read_text()), bad)
     print(f"group #{eff['group']} {eff['schedule']} inflight(config) {eff['inflight']} | gate/up/down {', '.join(eff['gate/up/down'])} | "

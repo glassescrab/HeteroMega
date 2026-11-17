@@ -9,6 +9,7 @@
 #   per-micro-batch placement search (2 in flight): pmb1-L (middle, L=2048/4096) pmb2-L (first x last) pmbc-L (6x5 confirmation)
 #   11-16 config-ranking check: rk1-1024 rk2-2048 rk3-2048 rk4-4096 (settings S1-S4, make_rk_configs.py; rk<S>s-L = 1x1 smoke), our search in the
 #   AFTER environment apmb1-L apmb2-L apmbc-L (L=2048/4096; apmbs-L = 1x1 smoke). Their processes carry src= (tree hm-<src>) and pass rk_check.py.
+#   11-17: abl1n-1024 kab1n-1024 (abl1/kab1 with HeteroMosaic on hm-npualign + our NPU binaries; abl1ns/kab1ns = 1x1 smoke), CFGDIR configs-rk.
 #   bash eval3.sh STAGE --dry prints the effective config of every cell without running anything.
 # A process whose log shows another in-flight count than its case.txt gets BAD_INFLIGHT (aggregate.py drops it).
 # One process per case (evaluate_prefill.py --rounds 1). The stage's process list is shuffled once with a logged seed into
@@ -73,6 +74,11 @@ emit() { # the stage's processes, one line each: CELL L K REPS [tag= nt= infl= E
             n=6; r=5; [ "$STAGE" = kab1s-1024 ] && { n=1; r=1; }
             for c in G0 GKM G1F G1 HK0 HKM HK1 HKU O0p5120 OKMp5120 OK1p5120 O1Fp5120 O1p5120; do procs_i 1 $c 1024 $n $r; done
             [ "$STAGE" = kab1-1024 ] && procs_i 1 O0p6144 1024 6 5; true ;;   # O0 at p*_off = 6144 too: the regime-1 row at 1024 uses the same p as main1a-2048/4096
+        kab1n-1024|kab1ns-1024)   # 11-17 user: kab1-1024 with every HK* cell on hm-npualign, the author's 1024 entry pointed at our NPU binaries;
+            n=6; r=5; [ "$STAGE" = kab1ns-1024 ] && { n=1; r=1; }   # GPU-only and ours cells unchanged (hm-cp2b); same switches per rung as kab1
+            for c in G0 GKM G1F G1 O0p5120 OKMp5120 OK1p5120 O1Fp5120 O1p5120; do procs_i 1 $c 1024 $n $r src=cp2b; done
+            for c in HK0 HKM HK1 HKU; do procs_i 1 $c 1024 $n $r cfg=hm_1024.shipped.ours.json want=abln_hm_1024.shipped_i1.want.json src=npualign; done
+            [ "$STAGE" = kab1n-1024 ] && procs_i 1 O0p6144 1024 6 5 src=cp2b; true ;;
         mech1a-*) L=${STAGE#mech1a-}   # 11-15: A1 diagnostics vs the author's HeteroMosaic entry (HKU = GEN+UNCACHED, labelled fallback HKUnU) at 1 in flight
             hk=HKU; [ "$L" = 1024 ] || hk=HKUnU   # UNCACHED where it fits: full fit only at 1024 (2048 partial, 4096 OOM in main1as)
             for c in $hk O1p5120; do procs_i 1 $c "$L" 1 2 tag=ev1 E=HETEROMEGA_STAGE_EVENTS=@D/ev; done
@@ -173,6 +179,11 @@ emit() { # the stage's processes, one line each: CELL L K REPS [tag= nt= infl= E
         abl1-1024|abl1s-1024)   # 11-15 user: split unit x in flight at 1024; every cell its own tag (plabel has no infl/cfg); smoke = 1x1
             n=6; r=5; [ "$STAGE" = abl1s-1024 ] && { n=1; r=1; }
             for i in 1 2; do procs_i $i OK1p5120 1024 $n $r tag=ch_i$i; procs_i $i H1 1024 $n $r tag=A_i$i; procs_i $i H1 1024 $n $r tag=B_i$i cfg=hp_g0u0d512.json; done ;;
+        abl1n-1024|abl1ns-1024)   # 11-17 user: abl1-1024 with HeteroMosaic's NPU GEMMs = our binaries (H1 cells on hm-npualign, configs -> hw_bins_ours)
+            n=6; r=5; [ "$STAGE" = abl1ns-1024 ] && { n=1; r=1; }   # channel split unchanged (hm-cp2b); smoke = 1x1
+            for i in 1 2; do procs_i $i OK1p5120 1024 $n $r tag=ch_i$i src=cp2b
+                procs_i $i H1 1024 $n $r tag=A_i$i cfg=hm_1024.ours.json want=abln_hm_1024_i$i.want.json src=npualign
+                procs_i $i H1 1024 $n $r tag=B_i$i cfg=hp_g0u0d512.ours.json want=abln_hp_g0u0d512_i$i.want.json src=npualign; done ;;
         v7smoke-*) L=${STAGE#v7smoke-}; procs HS1 "$L" 1 1; procs HS1 "$L" 1 1 tag=ours_gu cfg=hso_$L.json; procs_i 1 G1 "$L" 1 1 ;;   # 8192/16384: 1x1 of all three cells
         *) echo "unknown stage $STAGE" >&2; exit 2 ;;
     esac
@@ -335,7 +346,8 @@ case $STAGE in   # config files a stage needs, written before its schedule is ma
 esac
 ours_pm() { local f; for f in "$CFGDIR"/pm_*_"$1".json; do [[ $f == *.ours.json ]] || python3 "$HMB" config "$f" "${f%.json}.ours.json" > /dev/null || exit 2; done; }
 case $STAGE in rk[1-4]-*|rk[1-4]s-*|apmb*)   # 11-16 stages: rk configs (also the AFTER author entry of apmbc)
-    python3 "$JOBS/make_rk_configs.py" "$CFGDIR" "$HMB" > "$CFGDIR/rk_summary.txt" || { echo "make_rk_configs failed"; exit 2; } ;; esac
+    python3 "$JOBS/make_rk_configs.py" "$CFGDIR" "$HMB" > "$CFGDIR/rk_summary.txt" || { echo "make_rk_configs failed"; exit 2; } ;;
+    abl1n*|kab1n*) python3 "$JOBS/make_rk_configs.py" "$CFGDIR" "$HMB" abln > "$CFGDIR/abln_summary.txt" || { echo "make_rk_configs abln failed"; exit 2; } ;; esac
 case $STAGE in   # pm_*.ours.json = pm configs with our binaries (hm_bins.py config)
     apmb1-*|apmbs-*) python3 "$JOBS/hm_ratio.py" "$CFGDIR" pmb_mid "$LEN" && python3 "$JOBS/hm_ratio.py" "$CFGDIR" pats "$LEN" "$(printf "B%.0s" $(seq $((LEN / 512))))" && ours_pm "$LEN" ;;
     apmb2-*) [ -s "$SD/schedule.txt" ] || { python3 "$JOBS/hm_ratio.py" "$CFGDIR" pmb_ends "$LEN" "$RES/apmb1-$LEN" | tee "$SD.ends.txt"; ours_pm "$LEN"; } ;;
@@ -346,7 +358,7 @@ dry_line() { # CELL L K REPS opts: one line of the effective config (no run)
     for o in "$@"; do case $o in src=*) src=${o#src=} ;; cfg=*) cfg=${o#cfg=} ;; want=*) want=${o#want=} ;; infl=*) infl=${o#infl=} ;; tag=*) tag=${o#tag=} ;; esac; done
     b=$c; [[ $b =~ ^(O[A-Za-z0-9]*)p[0-9]+$ ]] && b=${BASH_REMATCH[1]}
     cell_switches "$b" > /dev/null
-    [ -n "$cfg" ] && eff=$(python3 "$JOBS/rk_check.py" dry "$CFGDIR/$cfg" "/notebooks/hm-$src" "$L" ${want:+"$CFGDIR/$want"} 2>&1)
+    [ -n "$cfg" ] && eff=$(python3 "$JOBS/rk_check.py" dry "$CFGDIR/$cfg" "/notebooks/hm-$src" "$L" "${want:+$CFGDIR/$want}" $infl 2>&1)
     echo "$c${tag:+.$tag} L=$L reps=$reps tree=hm-$src switches=[$(echo $SW | sed 's/HETEROMEGA_//g')] --inflight=${infl:-none} config=${cfg:--} :: $eff"
 }
 [ "$MODE" = --dry ] && { emit | while read -r line; do dry_line $line; done | sort | uniq -c; exit 0; }

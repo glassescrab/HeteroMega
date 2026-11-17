@@ -48,7 +48,7 @@ def matrix(res, stage):
         env = " ".join(sorted(x.replace("HETEROMEGA_", "") for x in (D / "env.txt").read_text().split() if "FINITE_CHECK" not in x)) if (D / "env.txt").exists() else "?"
         method = case.get("method", "")
         part = (f"channel split, NPU channels [0,{case.get('p')})" if method == "merged_ffn" else
-                "all on GPU" if method.startswith("gpu") else split_of(Path(res) / "configs", case.get("config", ""), int(case.get("L", 1024))))
+                "all on GPU" if method.startswith("gpu") else split_of(Path(case.get("cfgdir") or Path(res) / "configs"), case.get("config", ""), int(case.get("L", 1024))))
         status = "DONE" if (D / "DONE").exists() else "FAILED(OOM)" if (D / "FAILED").exists() else "incomplete"
         cell = case.get("cell", D.name)
         key = (method, case.get("build"), part, env, info.get("inflight_seen"), case.get("config"))
@@ -129,5 +129,5 @@ def timed(res, stage):
 if __name__ == "__main__":
     res, stage = sys.argv[1], sys.argv[2]
     print(matrix(res, stage))
-    if not stage.startswith("kab1s"):
+    if not stage.startswith(("kab1s", "kab1ns")):
         print(timed(res, stage))

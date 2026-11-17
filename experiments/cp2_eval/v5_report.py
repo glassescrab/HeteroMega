@@ -24,7 +24,7 @@ for D in sorted((res / stage).glob("*-s[0-9]*")):
     sel = info.get("selection", "")
     if case.get("method", "").startswith("gpu"): ent, split = "-", "all on GPU"
     elif case.get("method") == "merged_ffn": ent, split = "-", f"channel split, NPU channels [0,{case.get('p')})"
-    else: ent, split = group(json.loads((res / "configs" / case["config"]).read_text()), sel)
+    else: ent, split = group(json.loads((Path(case.get("cfgdir") or res / "configs") / case["config"]).read_text()), sel)
     st = "DONE" if (D / "DONE").exists() else "FAILED(OOM)" if (D / "FAILED").exists() else "incomplete"
     st += "".join(" " + b for b in ("BAD_INFLIGHT", "BAD_SELECTION") if (D / b).exists())
     print(f"| {D.name} | {case.get('method')} | {case.get('switches','').replace('HETEROMEGA_','').strip() or '(none)'} | {case.get('config') or '-'} | "

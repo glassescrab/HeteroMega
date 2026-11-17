@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Configs of the config-ranking check (11-16 user, settings S1-S4 = the reported rows). Only gate/up/down of the setting's group change.
-    make_rk_configs.py CFGDIR HM_BINS_PY
+    make_rk_configs.py CFGDIR HM_BINS_PY [abln]   (abln: only the abl1n/kab1n files, see ABLN)
   rk<S>_<cand>_b.json  BEFORE: the author's full entry (hr.json = configs_strixP_llama3_8b.json5 as shipped; attention on the NPU as
                        shipped), gemv_driven_split_K false, chunking_scheduled as the reported cell
   rk<S>_<cand>_a.json  AFTER: the reported cell's FFN-only config with the candidate split, fw_path -> hw_bins_ours (hm_bins.py config)
@@ -77,6 +77,22 @@ def main():
             print(f"S{s} {c:26s} group #{gi} schedule={schedule_of(ag)} in flight {infl}: gate/up/down {', '.join(ffn)}; "
                   f"BEFORE q/k/v/o {', '.join(rows(ag, ATT))}")
 
+# 11-17 abl1n-1024 / kab1n-1024: the abl1-1024 / kab1-1024 HeteroMosaic configs unchanged but fw_path -> hw_bins_ours (<name>.ours.json),
+# want abln_<name>_i<k>.want.json per in-flight count k (intent: the author's 1024 group, split below, attention on the GPU, our binaries)
+ABLN = {"hm_1024.shipped": ([(256, 256, 0)] * 2, (1,)), "hm_1024": ([(512, 512, 0)] * 2, (1, 2)), "hp_g0u0d512": ([(0, 0, 512)] * 2, (1, 2))}
+
+
+def abln(d, hm_bins):
+    ag = json.loads((d / "hr.json").read_text())["kernels_gemm_chunked"][0]
+    for name, (split, infls) in ABLN.items():
+        subprocess.run([sys.executable, hm_bins, "config", str(d / f"{name}.json"), str(d / f"{name}.ours.json")], check=True, stdout=subprocess.DEVNULL)
+        ffn = ["/".join(map(str, x)) for x in split]
+        for i in infls:
+            want = {"setting": f"abln_{name}", "prompt_len": 1024, "group": 0, "schedule": schedule_of(ag), "inflight": i,
+                    "gate/up/down": ffn, "q/k/v/o": ["0/0/0/0"] * len(ffn), "bins": "hw_bins_ours"}
+            (d / f"abln_{name}_i{i}.want.json").write_text(json.dumps(want) + "\n")
+            print(f"abln_{name}_i{i}: {name}.ours.json", json.dumps(want))
+
 
 if __name__ == "__main__":
-    main()
+    abln(Path(sys.argv[1]), sys.argv[2]) if sys.argv[3:] == ["abln"] else main()
