@@ -206,7 +206,7 @@ def plan_prefill(m, k, n, columns=8, rows=4, max_reuse=2):
     for value, name in ((m, "M"), (k, "K"), (n, "N")):
         if value < 128 or value % 128:
             raise ValueError(f"{name} must be >=128 and divisible by128")
-    if m > 4096 or k > 16384 or n > 16384:
+    if m > 4096 or k > 16384 or n > 26624:  # N was <=16384 (gate/up N = 2p, p <= 13312 now)
         raise ValueError("geometry exceeds the existing M4096/K16384/N16384 source bounds")
     if columns != 8 or rows != 4:
         raise ValueError("this schedule requires exactly eight columns and four compute rows")
@@ -222,8 +222,8 @@ def plan_prefill(m, k, n, columns=8, rows=4, max_reuse=2):
                   if reuse <= max_reuse and per_worker_m % reuse == 0)
     groups = per_worker_m // m_reuse
     local_nb = nb // n_columns
-    if local_nb > 64:
-        raise ValueError("local N tile count must be <=64 per N column")
+    if local_nb > 104:  # was 64 (old array8 outer DMA repeat); the merged graph issues one TaskGroup per N64 segment
+        raise ValueError("local N tile count must be <=104 per N column")
     workers = []
     for column in range(columns):
         m_group, n_column = divmod(column, n_columns)

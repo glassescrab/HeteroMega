@@ -393,6 +393,19 @@ void test_slice_packed(const torch::Device &dev) {
             check_equal("L1 slice_packed_ffn down" + tag, got.down, ref.down);
         }
     }
+    // [p, p + inter) wraps: the bytes of pack_ffn_slice of all channels in the order [p, inter) ++ [0, p).
+    for (int64_t p : {int64_t(512), int64_t(1280)}) {
+        const auto cols = [&](const torch::Tensor &t) { return torch::cat({t.slice(1, p), t.slice(1, 0, p)}, 1); };
+        const auto rows = [&](const torch::Tensor &t, int64_t per) { return torch::cat({t.slice(0, p / per), t.slice(0, 0, p / per)}, 0); };
+        FfnLayerQuant rot{cols(g.q), cols(g.s), cols(g.z), cols(u.q), cols(u.s), cols(u.z), rows(d.q, 1), rows(d.s, kTileK), rows(d.z, kTileK)};
+        for (auto layout : {GateUpLayout::kBlocked, GateUpLayout::kInterleaved}) {
+            const auto got = slice_packed_ffn(pg, pu, pd, hidden, inter, p, p + inter, layout);
+            const auto ref = pack_ffn_slice(rot, 0, inter, layout);
+            const std::string tag = " [" + std::to_string(p) + ", " + std::to_string(p + inter) + ") wrapped";
+            check_equal("L1 slice_packed_ffn gate_up" + tag, got.gate_up, ref.gate_up);
+            check_equal("L1 slice_packed_ffn down" + tag, got.down, ref.down);
+        }
+    }
 }
 
 // Level 1: SiLU-and-multiply.

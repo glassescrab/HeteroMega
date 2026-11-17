@@ -82,6 +82,7 @@ int64_t packed_tile_index(int64_t c, int64_t r, int64_t tiles_k, int64_t tiles_n
 // padPackedWeights off). Copies whole tiles on the tensors' device and gives the same bytes as pack_ffn_slice.
 //   gate, up: packed [hidden, inter]; down: packed [inter, hidden]
 // begin and end must be multiples of 128. For [0, inter) the result's down is `down` itself, not a copy.
+// end can exceed inter by up to begin: channels wrap, so [p, p + inter) holds every channel in the order [p, inter) ++ [0, p).
 FfnSliceWeights slice_packed_ffn(const torch::Tensor &gate, const torch::Tensor &up, const torch::Tensor &down, int64_t hidden,
                                  int64_t inter, int64_t begin, int64_t end, GateUpLayout layout = GateUpLayout::kBlocked);
 

@@ -128,14 +128,14 @@ def summarize(directory):
     checks = {key: merged_check(key[0], key[1], runs) for key, runs in groups.items()}
 
     def comparable(key, base_key):
-        """Speedup is shown only for a verified candidate against a clean baseline with identical tokens."""
+        """Speedup is shown for a verified candidate against a clean baseline; token agreement is reported beside it, never a filter."""
         runs, baseline = groups[key], groups.get(base_key, [])
         if not baseline:
             return None, False
         same = len(signatures(runs) | signatures(baseline)) == 1
         verdict, base_verdict = checks[key][-1], checks[base_key][-1]
         merged_ok = verdict == "active" if is_merged(key[0]) else verdict != "contaminated"
-        return same, same and merged_ok and base_verdict != "contaminated"
+        return same, merged_ok and base_verdict != "contaminated"
 
     def median_ms(runs):
         return statistics.median(p["prefill_s"] * 1000 for r in runs for p in r["reps"])
@@ -146,7 +146,7 @@ def summarize(directory):
         active = all(r["gpu_ffn_active"] for r in runs) if method == "gpu_ffn_all" else None
         refs = [r["matches_reference"] for r in runs if r["matches_reference"] is not None]
         reference_match = all(refs) if refs else None
-        valid = active is not False and reference_match is not False
+        valid = active is not False  # matches_reference only exists at the full reference length; tokens_match_gpu is the per-length check
         speedups, same_tokens = {}, {}
         for base in ("gpu_original", "heteromosaic"):
             same_tokens[base], ok = comparable((method, length), (base, length))

@@ -43,7 +43,7 @@ def main():
             ap.error('--build requires --iron-python; preserve the supplied IRON environment')
         if (args.m <= 0 or args.m % 512 or args.hidden <= 0 or args.hidden % 128 or
                 args.intermediate <= 0 or args.intermediate % 128 or args.npu_channels <= 0 or
-                args.npu_channels % 256 or args.npu_channels >= args.intermediate or args.npu_channels > 8192):
+                args.npu_channels % 256 or args.npu_channels >= args.intermediate or args.npu_channels > 13312):
             ap.error('unsupported selected-graph geometry/partition')
         root = Path(__file__).resolve().parents[2]
         graph = root / 'npu/ffn/w4a16_merged_upstream.py'

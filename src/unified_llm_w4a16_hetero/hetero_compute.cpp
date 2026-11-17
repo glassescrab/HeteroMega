@@ -10,6 +10,7 @@
 #include <atomic>
 #include <c10/hip/HIPStream.h>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <future>
 #include <hip/hip_runtime.h>
@@ -26,6 +27,9 @@
 
 #include "cpu_avx_kernels/w4a16_gemv_avx_packed.hpp"
 #include "cpu_avx_kernels/w4a16_gemv_avx_unpacked.hpp"
+#ifdef HETEROMEGA_MERGED_FFN
+#include "heteromega/gpu_ffn.hpp"
+#endif
 
 // Global Thread Pool
 BS::thread_pool<> g_thread_pool;
@@ -47,6 +51,36 @@ int64_t round_up_packed_split_dim(const std::string &layer_type, int64_t dim) {
         return dim;
     }
     return ((dim + pad_spec[0] - 1) / pad_spec[0]) * pad_spec[0];
+}
+
+// The GPU rows of every HeteroMosaic GEMM. With HETEROMEGA_GEMM=fast they use heteromega::gemm_w4a16 where it supports the shape, as
+// QuantizedLinear does, else the baseline's kernel. The NPU keeps reading `weights`: with HETEROMEGA_GEMM_UNCACHED=1, gemm_w4a16 reads its
+// own uncached copy of them and the original stays. The counts go to stderr at exit.
+#ifdef HETEROMEGA_MERGED_FFN
+std::atomic<long> gpu_gemm_fast_calls{0}, gpu_gemm_fallback_calls{0};
+struct GpuGemmReport {
+    ~GpuGemmReport() {
+        if (gpu_gemm_fast_calls + gpu_gemm_fallback_calls > 0)
+            std::fprintf(stderr, "HETERO_GPU_GEMM fast=%ld fallback=%ld\n", gpu_gemm_fast_calls.load(), gpu_gemm_fallback_calls.load());
+    }
+} gpu_gemm_report;
+#endif
+
+void gpu_gemm_packed(torch::Tensor &out, const torch::Tensor &x, const torch::Tensor &weights, int64_t k, int64_t n, hipStream_t stream) {
+#ifdef HETEROMEGA_MERGED_FFN
+    if (heteromega::configured_gemm_kernel() == heteromega::GemmKernel::kHeteroMega) {
+        const int64_t m = x.numel() / k;
+        if (x.size(-1) == k && x.is_contiguous() && out.is_contiguous() && heteromega::gemm_w4a16_supports(m, k, n)) {
+            if (gpu_gemm_fast_calls++ == 0)
+                std::fprintf(stderr, "HETERO_GPU_GEMM heteromega::gemm_w4a16 first call M=%ld K=%ld N=%ld\n", (long)m, (long)k, (long)n);
+            heteromega::gemm_w4a16(out, x, weights, k, n, k, n, stream);
+            return;
+        }
+        if (gpu_gemm_fallback_calls++ == 0)
+            std::fprintf(stderr, "HETERO_GPU_GEMM baseline kernel first fallback M=%ld K=%ld N=%ld\n", (long)m, (long)k, (long)n);
+    }
+#endif
+    hipkernels::w4a16_gemm_fused_packed(out, x, weights, k, n, stream);
 }
 } // namespace
 
@@ -218,7 +252,7 @@ std::future<int> hetero_matmul_out_gemm_packed_M(torch::Tensor &output, const to
             if (debug_verbosity >= 2) {
                 std::cout << "DEBUG: Calling GEMM (Split GPU part)" << std::endl;
             }
-            hipkernels::w4a16_gemm_fused_packed(output_2d, input_2d, weights, in_features, out_features, call_stream);
+            gpu_gemm_packed(output_2d, input_2d, weights, in_features, out_features, call_stream);
         }
 
         if (npu_M <= 0) {
@@ -271,7 +305,7 @@ std::future<int> hetero_matmul_out_gemm_packed_M(torch::Tensor &output, const to
         if (debug_verbosity >= 2) {
             std::cout << "DEBUG: Calling GEMM" << std::endl;
         }
-        hipkernels::w4a16_gemm_fused_packed(output_2d, input_2d, weights, in_features, out_features, call_stream);
+        gpu_gemm_packed(output_2d, input_2d, weights, in_features, out_features, call_stream);
 
         release_event(hip_event);
         return std::future<int>();
@@ -325,7 +359,7 @@ std::future<int> hetero_matmul_out_gemm_packed_K(torch::Tensor &output, const to
     // Launch K1 contribution as early as possible to maximize overlap with
     // config lookup, NPU K0 launch, and K0 GPU fallback path.
     auto temp_output_2d = temp_output.slice(0, 0, M);
-    hipkernels::w4a16_gemm_fused_packed(temp_output_2d, input_buf_1.slice(0, 0, M), weights1, K1_internal, N, call_stream);
+    gpu_gemm_packed(temp_output_2d, input_buf_1.slice(0, 0, M), weights1, K1_internal, N, call_stream);
 
     bool npu_launched = false;
     std::future<int> npu_fut;
@@ -427,12 +461,12 @@ std::future<int> hetero_matmul_out_gemm_packed_K(torch::Tensor &output, const to
                 std::cout << "Split NPU portion M and K wise" << std::endl;
             auto out_slice = output_2d.slice(0, 0, gpu_rows_k0);
             auto in_slice = input_buf_0.slice(0, 0, gpu_rows_k0);
-            hipkernels::w4a16_gemm_fused_packed(out_slice, in_slice, weights0, K0_internal, N, call_stream);
+            gpu_gemm_packed(out_slice, in_slice, weights0, K0_internal, N, call_stream);
         }
     } else {
         if (debug_verbosity >= 2)
             std::cout << (force_gpu_only ? "Split K GPU-Only Path" : "Split K GPU Fallback of NPU Portion") << std::endl;
-        hipkernels::w4a16_gemm_fused_packed(output_2d, input_buf_0.slice(0, 0, M), weights0, K0_internal, N, call_stream);
+        gpu_gemm_packed(output_2d, input_buf_0.slice(0, 0, M), weights0, K0_internal, N, call_stream);
     }
 
     if (npu_launched) {
@@ -1019,7 +1053,7 @@ std::future<int> npu_top_matmul_out_gemm_packed(torch::Tensor &output, const tor
 
         auto input_2d = x.view({-1, in_features});
         auto output_2d = output.view({-1, out_features});
-        hipkernels::w4a16_gemm_fused_packed(output_2d, input_2d, weights, in_features, out_features, call_stream);
+        gpu_gemm_packed(output_2d, input_2d, weights, in_features, out_features, call_stream);
         release_event(hip_event);
         return std::future<int>();
 

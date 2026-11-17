@@ -329,6 +329,7 @@ uint8_t *make_uncached_copy(const uint8_t *packed, size_t bytes) {
     const hipError_t allocated = hipExtMallocWithFlags(reinterpret_cast<void **>(&copy), rounded, hipDeviceMallocUncached);
     if (allocated != hipSuccess) {
         std::fprintf(stderr, "gemm_w4a16: UNCACHED_FALLBACK %zu bytes: %s\n", rounded, hipGetErrorString(allocated));
+        (void)hipGetLastError(); // else the next check_launch on this thread throws this allocation's error
         return nullptr;
     }
     hipLaunchKernelGGL(copy_words_kernel, dim3(static_cast<unsigned>(rounded / 4096)), dim3(256), 0, copy_stream, reinterpret_cast<v4u *>(copy),
@@ -379,6 +380,7 @@ struct InputReuse {
     bool active = false;
     const void *x = nullptr;
     int64_t k = 0;
+    int64_t m = 0; // rows gemm_w4a16 prepared; 0 (mark_prepared) matches any. HeteroMosaic's GPU rows of Q, K and V differ.
     hipStream_t stream = nullptr;
     int hits = 0;
 };
@@ -406,6 +408,7 @@ GemmInputReuse::~GemmInputReuse() { input_reuse = InputReuse{}; }
 void GemmInputReuse::mark_prepared(const void *x, int64_t k, hipStream_t stream) {
     input_reuse.x = x;
     input_reuse.k = k;
+    input_reuse.m = 0;
     input_reuse.stream = stream;
 }
 int GemmInputReuse::hits() const { return input_reuse.hits; }
@@ -440,7 +443,7 @@ void gemm_w4a16(torch::Tensor &out, const torch::Tensor &x, const torch::Tensor 
     float *sums = nullptr;
     uint16_t *xt = nullptr;
     gemm_input_buffers(m, k, stream, &sums, &xt);
-    if (input_reuse.active && input_reuse.x == xp && input_reuse.k == k && input_reuse.stream == stream) {
+    if (input_reuse.active && input_reuse.x == xp && input_reuse.k == k && (input_reuse.m == 0 || input_reuse.m == m) && input_reuse.stream == stream) {
         ++input_reuse.hits;
     } else {
         hipLaunchKernelGGL(prepare_input_kernel, dim3(tiles_used, static_cast<unsigned>(m / 32)), dim3(32), 0, stream, xp, sums, xt,
@@ -449,6 +452,7 @@ void gemm_w4a16(torch::Tensor &out, const torch::Tensor &x, const torch::Tensor 
         if (input_reuse.active) {
             input_reuse.x = xp;
             input_reuse.k = k;
+            input_reuse.m = m;
             input_reuse.stream = stream;
         }
     }
